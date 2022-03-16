@@ -1,0 +1,252 @@
+//--------ロリエンジン仕様書--------//
+
+基本事項
+　
+・ゲームシステム系のコードに関してはゲームシステムファイル内のGameSceneクラスに書いてください
+・実行時のタイトルバーはmain.cppにある変数gameNameを変更してください
+・以下の使い方の関数の引数部分には ~（波線） が入っている関数があります。
+　これは何かしらの引数が設定されている場合に入っています
+　この引数については基本的にエンジン側でコメント説明があるためそれを見て引数を入れてください
+・クラス宣言では*での宣言になるためnew deleteを忘れないようお願いいたします
+
+//---GameSceneクラス---//
+
+Initialize関数->
+　ゲームで使用する変数の初期化を書いてください
+
+Update関数->
+　ゲームループの更新処理を書いてください
+
+Draw関数->
+　描画前処理、描画処理を書いてください
+
+GameSceneのデストラクタ->
+　ゲームループで使用したクラスの解放、破棄の処理を書いてください
+　破棄の行う関数
+　　safe_delete();
+
+//---Camera使い方---//
+エンジン側で生成しているカメラを使用します
+生成、初期化はエンジン側で行っています
+
+#include "Camera.h"
+
+　1人称カメラ
+　　camera->UpdateFps(~);
+
+　3人称カメラ
+　　camera->UpdateTps(~);
+
+　各種getter
+　　View Projection Eye(座標) Target(視点) Up(傾き)
+
+　各種setter
+　　position(追従オブジェクト座標)
+
+//---Light使い方---//
+#include "LightGroup.h"
+
+　宣言
+　　LightGroup* name = nullptr;
+
+　生成
+　　name = LightGroup::Create();
+
+　標準ライト
+　　name->DefaultLightSetting();
+
+　各種setter
+　　AmbientColor(環境光の色) DirLightActive(有効か) DirLightDir(方向) DirLightColor(平行光源の色)
+
+//---Sprite使い方---//
+#include　"Sprite.h"
+
+　画像の読み込み
+　　Sprite::LoadTexture(~);
+
+　描画前設定
+　　Sprite::PreDraw(~);
+　　＊SpriteのDraw関数前に必ず書いてください
+
+　描画後設定
+　　name->PostDraw();
+　　＊SpriteのDraw関数後に必ず書いてください
+
+　宣言
+　　Sprite* name = nullptr;
+
+　初期化
+　　name = Sprite::Create(~)
+
+　更新（回転角）
+　　name->SetRotation(~);
+
+　更新（位置）
+　　name->SetPosition(~);
+
+　更新（大きさ）
+　　name->SetSize(~);
+
+　更新（アンカーポイント）
+　　name->SetAnchorPoint(~)
+
+　更新（左右反転）
+　　name->SetIsFlipX(~)
+
+　更新（上下反転）
+　　name->SetIsFlipY(~)
+
+　描画
+　　name->Draw();
+
+//---DebugText使い方---//
+#include "DebugText.h"
+ 宣言
+　　DebugText* name = nullptr;
+
+　初期化
+　　name = DebugText::GetInstance()
+　　name ->Initialize(~);
+　　＊デバックテキストのASCII画像はSpriteのLoadTexture関数にて0番目に読み込まれています
+　　　基本的にそれを使用します。
+
+　文字列の追加
+　　name ->Print(~);
+
+　追加したテキスト全ての描画
+　　name->DrawAll(~);
+
+//---Object3d使い方---//
+#include "bject3d"(Model.hもここに含まれている)
+
+Model
+　宣言
+　　Model* name=nullptr;
+　　＊ModelはSpriteで言うテクスチャです。これをObject3dに読み込ませることでオブジェクトを生成します
+
+　初期化
+　　name =  Model::CreateFromOBJ(~);
+
+Object3d
+
+　描画前設定
+　　name->PreDraw(~);
+　　＊Object3dのDraw関数前に必ず書いてください
+
+　描画後設定
+　　name->PostDraw();
+　　＊Object3dのDraw関数後に必ず書いてください
+
+　宣言
+　　Object3d* name = nullptr;
+
+　初期化
+　　name =  Object3d::Create(~);
+　
+　各種setter
+　　SetPosition(座標) SetRotation(回転角) SetScale(大きさ)
+
+　更新(シェーダーに渡す処理)
+　　name->Update();
+
+　描画
+　　name->Draw();
+
+　ライトのセット
+　　Object3d::SetLightGroup(~);
+
+//---CSVクラス---//
+#include "Csv.h"
+
+　読み込み
+　　Csv::LoadFile(~);
+
+　オブジェクト座標の配列番号の値の取得
+　　int number = Csv::GetChipNum(~);
+
+//---FBXクラス---//
+#include "Fbx.h"
+
+　描画前設定
+　　name->PreDraw(~);
+　　＊FbxのDraw関数前に必ず書いてください
+
+　描画後設定
+　　name->PostDraw();
+　　＊FbxのDraw関数後に必ず書いてください
+
+　Fbx読み込み(保存番号が代入されます)
+　　int number = Fbx::LoadFbx(~);
+
+　宣言
+　　Fbx* name = nullptr;
+
+　初期化
+　　name =  Fbx::Create(~);
+
+　更新(シェーダーに渡す値の更新)
+　　name->SetInformation(~);
+
+　更新(シェーダーに渡す処理)
+　　name->Update();
+
+　描画
+　　name->Draw();
+
+//---NormalMapクラス---//
+#include "NormalMap.h"
+
+　描画前設定
+　　name->PreDraw(~);
+　　＊NormalMapのDraw関数前に必ず書いてください
+
+　描画後設定
+　　name->PostDraw();
+　　＊NormalMapのDraw関数後に必ず書いてください
+
+　テクスチャ読み込み(保存番号が代入されます)
+　　int number = NormalMap::LoadTexture(~);
+　　＊テクスチャ名はL"Resources/～～.型名"です
+
+　宣言
+　　NormalMap* name = nullptr;
+
+　初期化
+　　なし(SetInformationで初期値設定はできる)
+
+　更新(シェーダーに渡す値の更新)
+　　name->SetInformation(~);
+
+　更新(シェーダーに渡す処理)
+　　name->Update();
+
+　描画
+　　name->Draw();
+
+//---Emitter(パーティクル)クラス---//
+#include "Emitter.h"
+
+　テクスチャ読み込み(保存番号が代入されます)
+　　ParticleManager::LoadTexture(~);
+　　＊テクスチャ名はL"Resources/～～.型名"です
+
+　宣言
+　　Emitter* name = nullptr;
+
+　初期化
+　　name->Create(~)
+
+　出現位置とその後の更新設定
+　　name->InEmitter(~);
+
+　更新(シェーダーに渡す処理)
+　　name->Update();
+
+　描画
+　　name->Draw();
+
+
+
+
+
+
