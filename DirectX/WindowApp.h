@@ -1,20 +1,29 @@
 #pragma once
 #include <Windows.h>
-#include "Singleton.h"
 
-class WindowApp : public Singleton< WindowApp >
+class WindowApp
 {
-	friend Singleton< WindowApp >;
-
-private:
-
+public:
+	
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	WindowApp() {};
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~WindowApp() {};
 
-public:
-	//ウィンドウプロ―ジャの生成
+	/// <summary>
+	/// ウィンドウプロ―ジャの生成
+	/// </summary>
+	/// <param name="hwnd"></param>
+	/// <param name="msg"></param>
+	/// <param name="wparam"></param>
+	/// <param name="lparam"></param>
+	/// <returns>ウィンドウプロ―ジャ</returns>
 	static LRESULT WindowProcdure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	MSG msg = {};
 
 	/// <summary>
 	/// 初期化
@@ -61,6 +70,8 @@ public:
 
 private:
 
+	//メッセージ
+	MSG msg = {};
 	//横幅
 	static UINT windowWidth;
 	//立幅

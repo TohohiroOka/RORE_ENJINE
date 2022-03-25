@@ -1,4 +1,4 @@
-#include "Input.h"
+#include "DirectInput.h"
 #include "WindowApp.h"
 #include <cassert>
 
@@ -12,7 +12,7 @@ BOOL CALLBACK DeviceFindCallBack(LPCDIDEVICEINSTANCE ipddi, LPVOID pvRef)
 	return DIENUM_CONTINUE;
 }
 
-void Input::Initialize()
+void DirectInput::Initialize()
 {
 	HRESULT result;
 
@@ -35,7 +35,7 @@ void Input::Initialize()
 	result = devMouse->SetCooperativeLevel(WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 }
 
-bool Input::PushKey(BYTE keyNumber)
+bool DirectInput::PushKey(BYTE keyNumber)
 {
 	// 異常な引数を検出
 	assert(0 <= keyNumber && keyNumber <= 256);
@@ -48,7 +48,7 @@ bool Input::PushKey(BYTE keyNumber)
 	return false;
 }
 
-bool Input::TriggerKey(BYTE keyNumber)
+bool DirectInput::TriggerKey(BYTE keyNumber)
 {
 	// 異常な引数を検出
 	assert(0 <= keyNumber && keyNumber <= 256);
@@ -61,7 +61,7 @@ bool Input::TriggerKey(BYTE keyNumber)
 	return false;
 }
 
-bool Input::PushMouseLeft()
+bool DirectInput::PushMouseLeft()
 {
 	// 0でなければ押している
 	if (mouseState.rgbButtons[0]) {
@@ -72,7 +72,7 @@ bool Input::PushMouseLeft()
 	return false;
 }
 
-bool Input::PushMouseCenter()
+bool DirectInput::PushMouseCenter()
 {
 	// 0でなければ押している
 	if (mouseState.rgbButtons[1]) {
@@ -83,7 +83,7 @@ bool Input::PushMouseCenter()
 	return false;
 }
 
-bool Input::PushMouseRight()
+bool DirectInput::PushMouseRight()
 {
 	// 0でなければ押している
 	if (mouseState.rgbButtons[2]) {
@@ -94,7 +94,7 @@ bool Input::PushMouseRight()
 	return false;
 }
 
-bool Input::TriggerMouseLeft()
+bool DirectInput::TriggerMouseLeft()
 {
 	// 前回が0で、今回が0でなければトリガー
 	if (!mouseStatePre.rgbButtons[0] && mouseState.rgbButtons[0]) {
@@ -105,7 +105,7 @@ bool Input::TriggerMouseLeft()
 	return false;
 }
 
-bool Input::TriggerMouseCenter()
+bool DirectInput::TriggerMouseCenter()
 {
 	// 前回が0で、今回が0でなければトリガー
 	if (!mouseStatePre.rgbButtons[1] && mouseState.rgbButtons[1]) {
@@ -116,7 +116,7 @@ bool Input::TriggerMouseCenter()
 	return false;
 }
 
-bool Input::TriggerMouseRight()
+bool DirectInput::TriggerMouseRight()
 {
 	// 前回が0で、今回が0でなければトリガー
 	if (!mouseStatePre.rgbButtons[2] && mouseState.rgbButtons[2]) {
@@ -127,7 +127,7 @@ bool Input::TriggerMouseRight()
 	return false;
 }
 
-void Input::Update()
+void DirectInput::Update()
 {
 	HRESULT result;
 

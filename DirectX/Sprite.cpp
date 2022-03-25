@@ -210,6 +210,9 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 		return false;
 	}
 
+	rootSignature->SetName(L"SProot");
+	pipelineState->SetName(L"SPpipe");
+
 	return true;
 }
 

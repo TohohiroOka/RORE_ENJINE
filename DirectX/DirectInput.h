@@ -1,23 +1,22 @@
 #pragma once
+#include "Singleton.h"
 #include <DirectXMath.h>
 #include<wrl.h>
 #include<dinput.h>
 #define DIRECTINPUT_VERSION 0x0800
 
-#include "Singleton.h"
-
-class Input : public Singleton< Input >
+class DirectInput : public Singleton< DirectInput >
 {
-	friend Singleton< Input >;
+friend Singleton< DirectInput >;
+
+private://コンストラクタ&デストラクタ
+
+	DirectInput() {};
+	~DirectInput() {};
 
 private:
 	// Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-private://コンストラクタ&デストラクタ
-
-	Input() {};
-	~Input() {};
 
 public://メンバ関数
 

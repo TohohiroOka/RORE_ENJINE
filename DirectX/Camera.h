@@ -1,5 +1,4 @@
 #pragma once
-
 #include <DirectXMath.h>
 
 /// <summary>
@@ -20,9 +19,7 @@ public: // メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="window_width">画面幅</param>
-	/// <param name="window_height">画面高さ</param>
-	Camera(int window_width, int window_height);
+	Camera();
 
 	/// <summary>
 	/// デストラクタ
@@ -30,18 +27,29 @@ public: // メンバ関数
 	virtual ~Camera() = default;
 
 	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+	/// <summary>
 	/// 1人称カメラの更新
 	/// </summary>
 	/// <param name="position">移動量</param>
 	/// <param name="move">移動量</param>
 	/// <param name="speed">感度</param>
-	void UpdateFps(XMFLOAT3& position, XMFLOAT3& move, float speed);
+	void FpsCamera(XMFLOAT3& position, XMFLOAT3& move, float speed);
 
 	/// <summary>
 	/// 3人称カメラの更新
 	/// </summary>
 	/// <param name="distance">追従する物との距離</param>
-	void UpdateTps(XMFLOAT3 distance);
+	void TpsCamera(XMFLOAT3 distance);
+
+	/// <summary>
+	/// カメラのシェイク
+	/// </summary>
+	/// <param name="strength">シェイクの強さ</param>
+	void CameraShake(int strength);
 
 	/// <summary>
 	/// ビュー行列の取得
@@ -77,7 +85,7 @@ public: // メンバ関数
 	/// 追従オブジェクトの座標セット
 	/// </summary>
 	/// <param name="position">追従オブジェクトの座標</param>
-	void SetPosition(XMFLOAT3 position) { this->position=position; }
+	void SetPosition(XMFLOAT3 position) { this->position = position; }
 
 protected: // メンバ変数
 	// ビュー行列
@@ -94,4 +102,6 @@ protected: // メンバ変数
 	XMFLOAT3 up = { 0, 1, 0 };
 	// アスペクト比
 	float aspectRatio = 1.0f;
+	//シェイク座標
+	XMFLOAT3 ShakeDifference = {};
 };

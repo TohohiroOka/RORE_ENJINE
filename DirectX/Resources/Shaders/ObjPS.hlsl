@@ -3,11 +3,19 @@
 Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
-float4 main(VSOutput input) : SV_TARGET
+PSOutput main(VSOutput input)
 {
-	// テクスチャマッピング
-	float4 texcolor = tex.Sample(smp, input.uv);
+	PSOutput output;
 
+	// テクスチャマッピング
+	// テクスチャマッピング
+	float difference = 5.0f;
+	float4 texcolor = tex.Sample(smp, input.uv);
+	float4 bloomColor[4];
+	for (int i = 0; i < 4; i++)
+	{
+		bloomColor[i] = tex.Sample(smp, input.uv / difference * (i + 1));
+	}
 	// 光沢度
 	const float shininess = 4.0f;
 
@@ -45,5 +53,16 @@ float4 main(VSOutput input) : SV_TARGET
 	}
 
 	// シェーディングによる色で描画
-	return shadecolor * texcolor;
+	float4 mainColor = shadecolor * texcolor * color;
+	for (int i = 0; i < 4; i++)
+	{
+		bloomColor[i] = shadecolor * bloomColor[i] * isBloom * color;
+	}
+	output.target0 = float4(mainColor.rgb, color.w);
+	output.target1 = float4(bloomColor[0].rgb, color.w);
+	output.target2 = float4(bloomColor[1].rgb, color.w);
+	output.target3 = float4(bloomColor[2].rgb, color.w);
+	output.target4 = float4(bloomColor[3].rgb, color.w);
+
+	return output;
 }

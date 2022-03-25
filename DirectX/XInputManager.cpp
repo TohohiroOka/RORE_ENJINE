@@ -24,7 +24,7 @@ void XInputManager::Update()
 	if (g_Controllers.state.Gamepad.bLeftTrigger < -STICK_MAX) { g_Controllers.state.Gamepad.bLeftTrigger = -STICK_MAX; }
 }
 
-bool XInputManager::PushButton(XInputManager::PudButton button)
+bool XInputManager::PushButton(PudButton button)
 {
 	bool check = false;
 	if (button == PudButton::PAD_A &&

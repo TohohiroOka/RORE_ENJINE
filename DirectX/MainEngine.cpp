@@ -10,15 +10,24 @@
 
 MainEngine::~MainEngine()
 {
-	safe_delete(camera);
-	safe_delete(postEffect);
+	winApp->Release();
+	safe_delete(winApp);
 }
 
-//メインに書く（初期化処理）
+void MainEngine::AllDelete()
+{
+	safe_delete(scene);
+	safe_delete(camera);
+	safe_delete(postEffect);
+	safe_delete(dXCommon);
+	safe_delete(audio);
+	safe_delete(dXCommon);
+}
+
 void MainEngine::Initialize(const wchar_t* gameName, int window_width, int window_height)
 {
 	//ウィンドウ初期化
-	winApp = WindowApp::GetInstance();
+	winApp = new WindowApp();
 	winApp->Initialize(window_width, window_height, gameName);
 
 	//1フレームの時間設定
@@ -28,18 +37,19 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	QueryPerformanceCounter(&timeStart);
 
 	//directX初期化
-	dXCommon = DirectXCommon::GetInstance();
+	dXCommon = new DirectXCommon();
 	dXCommon->Initialize();
 
 	//key
-	input = Input::GetInstance();
+	input = DirectInput::GetInstance();
 	input->Initialize();
 
-	xinput =XInputManager::GetInstance();
+	//パッド
+	xinput = XInputManager::GetInstance();
 	xinput->Initialize();
 
 	//カメラの初期化
-	camera = new Camera(window_width, window_height);
+	camera = new Camera();
 
 	//Object系の初期化
 	Object3d::StaticInitialize(dXCommon->GetDevice(), camera);
@@ -52,19 +62,23 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 
 	//ゲームシーン初期化
-	scene = GameScene::GetInstance();
-	scene->Initialize(camera);
+	scene = new GameScene();
+	scene->Initialize();
 
+	//デバッグテキストのテクスチャ
 	Sprite::LoadTexture(0, L"Resources/LetterResources/debugfont.png");
 
+	//ポストエフェクト初期化
 	postEffect = new PostEffect();
 	postEffect->Initialize();
+
+	//Audio初期化
+	audio = new Audio();
 
 	//深度の初期化
 	dXCommon->CreateDepth();
 }
 
-//メインに書く（更新処理）
 bool MainEngine::Update()
 {
 	input->Update();
@@ -73,10 +87,12 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)|| GameFin() == true) { return true; }
 	xinput->Update();
 
+	//更新
+	scene->Update(audio, camera);
+
 	return false;
 }
 
-//デバッグ用数字
 void MainEngine::DebugNum(float x, float y, float z)
 {
 	//数字のデバッグ
@@ -84,12 +100,8 @@ void MainEngine::DebugNum(float x, float y, float z)
 	OutputDebugString(str);
 }
 
-//メインに書く（描画処理）
 void MainEngine::Draw()
 {
-	//更新
-	scene->Update(camera);
-
 	//描画
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
 	scene->Draw(dXCommon->GetCmdList());
@@ -141,7 +153,6 @@ void MainEngine::FrameRateKeep() {
 	timeStart = timeEnd; // 入れ替え
 }
 
-//メインに書く（エスケープが入力されたら終了する処理）
 bool MainEngine::GameFin() {
 	//×が押されたとき
 	if (winApp->Update() == true) {

@@ -113,7 +113,10 @@
     <Filter Include="シェーダーファイル\PostEffect">
       <UniqueIdentifier>{bcc09153-9725-4d08-aad7-fe6fcebe4240}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\MainSystem\XInputManager">
+    <Filter Include="エンジンシステム\MainSystem\Input\DirectInput">
+      <UniqueIdentifier>{58311a71-87d7-4957-9612-2c40d99f3fb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\MainSystem\Input\XInputManager">
       <UniqueIdentifier>{6ba36846-abfa-4705-a231-337b7198fd22}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -123,9 +126,6 @@
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>エンジンシステム\Object\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>エンジンシステム\MainSystem\Input</Filter>
     </ClCompile>
     <ClCompile Include="DebugText.cpp">
       <Filter>エンジンシステム\Object\2d\DebugText</Filter>
@@ -215,7 +215,10 @@
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
     </ClCompile>
     <ClCompile Include="XInputManager.cpp">
-      <Filter>エンジンシステム\MainSystem\XInputManager</Filter>
+      <Filter>エンジンシステム\MainSystem\Input\XInputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectInput.cpp">
+      <Filter>エンジンシステム\MainSystem\Input\DirectInput</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,9 +303,6 @@
   <ItemGroup>
     <ClInclude Include="Sprite.h">
       <Filter>エンジンシステム\Object\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>エンジンシステム\MainSystem\Input</Filter>
     </ClInclude>
     <ClInclude Include="DebugText.h">
       <Filter>エンジンシステム\Object\2d\DebugText</Filter>
@@ -428,7 +428,10 @@
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
     </ClInclude>
     <ClInclude Include="XInputManager.h">
-      <Filter>エンジンシステム\MainSystem\XInputManager</Filter>
+      <Filter>エンジンシステム\MainSystem\Input\XInputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectInput.h">
+      <Filter>エンジンシステム\MainSystem\Input\DirectInput</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

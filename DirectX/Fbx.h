@@ -292,8 +292,8 @@ private://静的メンバ変数
 	static ID3D12Device* device;//デバイス
 	static ID3D12GraphicsCommandList* cmdList;//コマンドリスト
 	static std::vector<Data> data;//Fbxデータの格納場所
-	static ComPtr<ID3D12PipelineState>pipelinestate;//パイプラインステートオブジェクト
-	static ComPtr<ID3D12RootSignature>rootsignature;//ルートシグネチャ
+	static ComPtr<ID3D12PipelineState>pipelineState;//パイプラインステートオブジェクト
+	static ComPtr<ID3D12RootSignature>rootSignature;//ルートシグネチャ
 	static ComPtr<ID3D12DescriptorHeap>descHeap;//テクスチャ用デスクリプタヒープの生成
 	static const int textureNum = 512;//テクスチャ最大登録数
 	static ComPtr<ID3D12Resource>texBuffer[textureNum];//テクスチャリソース(テクスチャバッファ)の配列

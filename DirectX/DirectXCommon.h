@@ -1,26 +1,27 @@
 #pragma once
-#include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <d3dx12.h>
 #include <cstdlib>
 
-#include "Singleton.h"
-
-class DirectXCommon : public Singleton< DirectXCommon >
+class DirectXCommon
 {
-	friend Singleton< DirectXCommon >;
-
 private:
 	// Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-private://コンストラクタ&デストラクタ
-
-	DirectXCommon() {};
-	~DirectXCommon();
-
 public://メンバ関数
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <returns></returns>
+	DirectXCommon() {};
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~DirectXCommon();
 
 	/// <summary>
 	/// 初期化

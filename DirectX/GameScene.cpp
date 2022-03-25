@@ -1,16 +1,25 @@
 #include "GameScene.h"
 #include "MainEngine.h"
+#include "SafeDelete.h"
+#include "DirectInput.h"
+#include "XInputManager.h"
+#include "Audio.h"
+#include "Camera.h"
+
 #include <cassert>
 #include <sstream>
 #include <iomanip>
-#include "XInput.h"
+
+//ゲームで使用するクラス宣言
+#include "Player.h"
+#include "Ground.h"
+#include "TouchableObject.h"
 
 const float radian = XM_PI / 180.0f;//ラジアン
 
 GameScene::~GameScene()
 {
 	//newオブジェクトの破棄
-	safe_delete(audio);
 	safe_delete(sprite);
 	safe_delete(emit);
 	safe_delete(uma);
@@ -24,13 +33,14 @@ GameScene::~GameScene()
 	safe_delete(anm);
 	safe_delete(line);
 	safe_delete(line_t);
+	//text->AllDelete();
 	for (int i = 0; i < 10; i++)
 	{
 		safe_delete(line3d[i]);
 	}
 }
 
-void GameScene::Initialize(Camera* camera)
+void GameScene::Initialize()
 {
 	//ライト
 	light = LightGroup::Create();
@@ -41,8 +51,8 @@ void GameScene::Initialize(Camera* camera)
 	//スプライト
 	Sprite::LoadTexture(1, L"Resources/amm.jpg");
 
-	text = DebugText::GetInstance();
-	text->Initialize(0);
+	//text = DebugText::GetInstance();
+	//text->Initialize(0);
 
 	sprite = Sprite::Create();
 	sprite->SetTexNumber(1);
@@ -93,16 +103,12 @@ void GameScene::Initialize(Camera* camera)
 		line3d[i] = new DrawLine3D();
 		line3d[i] = DrawLine3D::Create();
 	}
-
-	//サウンド用
-	audio = new Audio();
 }
 
-void GameScene::Update(Camera* camera)
+void GameScene::Update(Audio* audio, Camera* camera)
 {
-	input = XInputManager::GetInstance();
-
-	camera->SetPosition(PLAYER->GetPosition());
+	DirectInput* input = DirectInput::GetInstance();
+	XInputManager* xinput = XInputManager::GetInstance();
 
 	//Obj
 	PLAYER->Update();
@@ -147,16 +153,20 @@ void GameScene::Update(Camera* camera)
 		line3d[i]->SetLine({ 0,(float)20 * i,(float)i * 10 }, { 0,(float)20 * i,(float)-i * 10 }, { 1,1,1,1 }, 50);
 		line3d[i]->Update(camera);
 	}
-	camera->UpdateTps({ 0,50,-50 });
+
+	//カメラ更新
+	camera->SetPosition(PLAYER->GetPosition());
+	camera->TpsCamera({ 0,0,-100 });
+	camera->Update();
 
 	time++;
 	if (time % 50 < 25)
 	{
-		input->StartVibration();
+		xinput->StartVibration();
 	}
-	else { input->EndVibration(); }
+	else { xinput->EndVibration(); }
 
-	input = nullptr;
+	xinput = nullptr;
 }
 
 void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
@@ -175,10 +185,10 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	anm->Draw(FbxUma);
 	Fbx::PostDraw();
 
-	//スプライト描画
-	Sprite::PreDraw(cmdList);
-	sprite->Draw();
-	Sprite::PostDraw();
+	////スプライト描画
+	//Sprite::PreDraw(cmdList);
+	//sprite->Draw();
+	//Sprite::PostDraw();
 
 	//線
 	DrawLine::PreDraw(cmdList);

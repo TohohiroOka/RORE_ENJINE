@@ -1,9 +1,10 @@
 cbuffer cbuff0 : register(b0)
 {
+	float4 color;//色
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
-	float4 color;
+	float isBloom;//ブルームの有無
 };
 
 cbuffer cbuff1 : register(b1)
@@ -37,4 +38,13 @@ struct VSOutput
 	float4 worldpos : POSITION; // ワールド座標
 	float3 normal :NORMAL; // 法線
 	float2 uv  :TEXCOORD; // uv値
+};
+
+struct PSOutput
+{
+	float4 target0 : SV_TARGET0;
+	float4 target1 : SV_TARGET1;
+	float4 target2 : SV_TARGET2;
+	float4 target3 : SV_TARGET3;
+	float4 target4 : SV_TARGET4;
 };

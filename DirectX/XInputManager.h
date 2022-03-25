@@ -1,11 +1,12 @@
 #pragma once
+#include "Singleton.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <stdio.h>
 #include <commdlg.h>
 #include <basetsd.h>
 #include <objbase.h>
-
 #if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
 #include <XInput.h>
 #pragma comment(lib,"xinput.lib")
@@ -15,8 +16,6 @@
 #endif
 
 #include <DirectXMath.h>
-
-#include "Singleton.h"
 
 class XInputManager : public Singleton< XInputManager >
 {
@@ -59,7 +58,6 @@ public://メンバEnum
 		PAD_LEFT_STICK_PUSH,//左ステック押し込み
 		PAD_RIGHT_STICK_PUSH,//右ステック押し込み
 	};
-
 
 public://メンバ関数
 
@@ -179,5 +177,6 @@ public://メンバ関数
 
 private://メンバ変数
 
+	//コントローラーの情報保持変数
 	CONTROLLER_STATE g_Controllers;
 };

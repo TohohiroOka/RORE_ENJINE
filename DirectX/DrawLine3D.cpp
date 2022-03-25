@@ -192,8 +192,8 @@ void DrawLine3D::StaticInitialize(ID3D12Device* device)
 	//パイプライン設定
 	Pipeline();
 
-	pipelineState->SetName(L"Dlpi");
-	rootSignature->SetName(L"Dlro");
+	rootSignature->SetName(L"DL3root");
+	pipelineState->SetName(L"DL3pipe");
 }
 
 bool DrawLine3D::Initialize()

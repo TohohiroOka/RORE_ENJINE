@@ -1,10 +1,11 @@
 #include "Camera.h"
+#include "WindowApp.h"
 
 using namespace DirectX;
 
-Camera::Camera(int window_width, int window_height)
+Camera::Camera()
 {
-	aspectRatio = (float)window_width / window_height;
+	aspectRatio = (float)WindowApp::GetWindowWidth() / WindowApp::GetWindowHeight();
 
 	// éÀâeçsóÒÇÃåvéZ
 	matProjection = XMMatrixPerspectiveFovLH(
@@ -14,7 +15,14 @@ Camera::Camera(int window_width, int window_height)
 	);
 }
 
-void Camera::UpdateFps(XMFLOAT3& position, XMFLOAT3& move, float speed)
+void Camera::Update()
+{
+	XMFLOAT3 inoutEye = { ShakeDifference.x + eye.x,ShakeDifference.y + eye.y,ShakeDifference.z + eye.z };
+
+	matView = XMMatrixLookAtLH(XMLoadFloat3(&inoutEye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+}
+
+void Camera::FpsCamera(XMFLOAT3& position, XMFLOAT3& move, float speed)
 {
 	const float radian = XM_PI / 180.0f;
 
@@ -22,9 +30,9 @@ void Camera::UpdateFps(XMFLOAT3& position, XMFLOAT3& move, float speed)
 	XMVECTOR v0 = { 0, 0, -200, 0 };
 	XMVECTOR v = XMVector3TransformNormal(v0, rotM);
 
-	target = { position.x - static_cast<float>(cos(static_cast<double>(move.x * radian)) * speed),
-		position.y - static_cast<float>(sin(static_cast<double>(move.y * radian)) * speed),
-		position.z - static_cast<float>(sin(static_cast<double>(move.z * radian)) * speed) };
+	target = { position.x - cosf(static_cast<double>(move.x * radian)) * speed,
+		position.y - sinf(static_cast<double>(move.y * radian)) * speed,
+		position.z - sinf(static_cast<double>(move.z * radian)) * speed };
 	XMVECTOR targetV = { target.x, target.y, target.z, 0 };
 
 	XMVECTOR eyeV = targetV + v;
@@ -34,17 +42,21 @@ void Camera::UpdateFps(XMFLOAT3& position, XMFLOAT3& move, float speed)
 	eye.x = position.x;
 	eye.y = position.y;
 	eye.z = position.z;
-
-	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 }
 
-void Camera::UpdateTps(XMFLOAT3 distance)
+void Camera::TpsCamera(XMFLOAT3 distance)
 {
 	target = { position.x,position.y,position.z };
 
 	eye.x = position.x + distance.x;
 	eye.y = position.y + distance.y;
 	eye.z = position.z + distance.z;
+}
 
-	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+void Camera::CameraShake(int strength)
+{
+	int x = (rand() % strength * 2) - strength;
+	int y = (rand() % strength * 2) - strength;
+
+	ShakeDifference = { (float)x ,(float)y,0.0f };
 }

@@ -3,10 +3,8 @@
 Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
-PSOutput main(VSOutput input)
+float4 main(VSOutput input) : SV_TARGET
 {
-	PSOutput output;
-
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 	// Lambert反射
@@ -14,10 +12,6 @@ PSOutput main(VSOutput input)
 	float diffuse = saturate(dot(-light, input.normal));
 	float brightness = diffuse;
 	float4 shadecolor = float4(brightness, brightness, brightness, 1.0f);
-
 	// 陰影とテクスチャの色を合成
-	output.target0 = shadecolor * texcolor;
-	output.target1 = float4(1 - (shadecolor * texcolor).rgb, 1.0f);
-
-	return output;
+	return texcolor * shadecolor;
 }

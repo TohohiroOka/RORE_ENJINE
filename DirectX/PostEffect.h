@@ -48,7 +48,7 @@ public:
 private://静的メンバ変数
 	
 	//テクスチャバッファの数
-	static const int texBuffNum = 2;
+	static const int texBuffNum = 5;
 	//画面クリアカラー
 	static const float clearColor[4];
 	// ルートシグネチャ

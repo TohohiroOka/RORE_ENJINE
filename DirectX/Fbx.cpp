@@ -20,8 +20,8 @@ FbxManager* Fbx::fbxManager = nullptr;//Fbxの基盤
 ID3D12Device* Fbx::device = nullptr;//デバイス
 ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;//コマンドリスト
 std::vector<Fbx::Data> Fbx::data;//Fbxデータの格納場所
-ComPtr<ID3D12PipelineState> Fbx::pipelinestate;//パイプラインステートオブジェクト
-ComPtr<ID3D12RootSignature> Fbx::rootsignature;//ルートシグネチャ
+ComPtr<ID3D12PipelineState> Fbx::pipelineState;//パイプラインステートオブジェクト
+ComPtr<ID3D12RootSignature> Fbx::rootSignature;//ルートシグネチャ
 ComPtr<ID3D12DescriptorHeap> Fbx::descHeap;//テクスチャ用デスクリプタヒープの生成
 ComPtr<ID3D12Resource> Fbx::texBuffer[textureNum];//テクスチャリソース(テクスチャバッファ)の配列
 FbxTime Fbx::frameTime;
@@ -40,8 +40,8 @@ Fbx::~Fbx()
 
 	data.clear();
 
-	pipelinestate.Reset();
-	rootsignature.Reset();
+	pipelineState.Reset();
+	rootSignature.Reset();
 	descHeap.Reset();
 	for (int i = 0; i < textureNum; i++)
 	{
@@ -166,7 +166,6 @@ void Fbx::Pipeline()
 
 	// ブレンドステートの設定
 	gpipeline.BlendState.RenderTarget[0] = blenddesc;
-	gpipeline.BlendState.RenderTarget[1] = blenddesc;
 
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
@@ -178,9 +177,8 @@ void Fbx::Pipeline()
 	// 図形の形状設定（三角形）
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
-	gpipeline.NumRenderTargets = 2;    // 描画対象は1つ
+	gpipeline.NumRenderTargets = 1;    // 描画対象は1つ
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
 	gpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
 	// デスクリプタレンジ
@@ -207,19 +205,17 @@ void Fbx::Pipeline()
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(rootsignature.ReleaseAndGetAddressOf()));
+	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature.ReleaseAndGetAddressOf()));
 	if (FAILED(result)) { assert(0); }
 
-	gpipeline.pRootSignature = rootsignature.Get();
+	gpipeline.pRootSignature = rootSignature.Get();
 
 	// グラフィックスパイプラインの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(pipelinestate.ReleaseAndGetAddressOf()));
+	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(pipelineState.ReleaseAndGetAddressOf()));
 	if (FAILED(result)) { assert(0); }
-
-	pipelinestate->SetName(L"Fbxpipelinestate");//パイプラインステートオブジェクト
-	rootsignature->SetName(L"Fbxrootsignature");//ルートシグネチャ
-
-
+	
+	rootSignature->SetName(L"Fbxroot");
+	pipelineState->SetName(L"Fbxpipe");
 }
 
 void Fbx::LoadMaterial(int dataNumber, FbxNode* fbxNode) {
@@ -726,8 +722,8 @@ void Fbx::StaticInitialize(ID3D12Device* device)
 	Fbx::device = device;
 
 	Pipeline();
-	pipelinestate->SetName(L"fbxpi");
-	rootsignature->SetName(L"fbxro");
+	pipelineState->SetName(L"fbxpi");
+	rootSignature->SetName(L"fbxro");
 
 	fbxManager = FbxManager::Create();
 
@@ -875,10 +871,10 @@ void Fbx::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	Fbx::cmdList = cmdList;
 
 	//パイプラインステートの設定
-	cmdList->SetPipelineState(pipelinestate.Get());
+	cmdList->SetPipelineState(pipelineState.Get());
 
 	//ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	cmdList->SetGraphicsRootSignature(rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

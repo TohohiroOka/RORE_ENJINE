@@ -2,10 +2,11 @@
 #include "WindowApp.h"
 #include "DirectXCommon.h"
 #include "GameScene.h"
-#include "Input.h"
+#include "DirectInput.h"
 #include "XInputManager.h"
-#include "Singleton.h"
+#include "Audio.h"
 #include "PostEffect.h"
+#include "Singleton.h"
 
 #include <mmsystem.h>
 #include<sstream>
@@ -67,23 +68,24 @@ public://メンバ関数
 	bool GameFin();
 
 	/// <summary>
-	/// Cameraのgetter
+	/// 全ての解放
 	/// </summary>
-	/// <returns>Cameraのインスタンス</returns>
-	Camera* GetCamera() { return camera; }
+	void AllDelete();
 
 private:
 
 	//WindowAppのインスタンス
-	WindowApp* winApp;
+	WindowApp* winApp = nullptr;
 	//DirectXCommonのインスタンス
-	DirectXCommon* dXCommon;
+	DirectXCommon* dXCommon = nullptr;
 	//Inputのインスタンス
-	Input* input;
+	DirectInput* input;
 	//XInputのインスタンス
 	XInputManager* xinput;
+	//Audio
+	Audio* audio = nullptr;
 	//GameSceneのインスタンス
-	GameScene* scene;
+	GameScene* scene = nullptr;
 	//ポストエフェクト
 	PostEffect* postEffect = nullptr;
 	//Cameraのインスタンス

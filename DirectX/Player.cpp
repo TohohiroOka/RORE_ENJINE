@@ -1,6 +1,5 @@
 ﻿#include "Player.h"
-#include "Singleton.h"
-#include "Input.h"
+#include "DirectInput.h"
 #include "DebugText.h"
 #include "SphereCollider.h"
 #include "ParticleManager.h"
@@ -42,12 +41,14 @@ bool Player::Initialize()
 	SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	collider->SetAttribute(COLLISION_ATTR_ALLIES);
 
+	SetScale({ 2,2,2 });
+
 	return true;
 }
 
 void Player::Update()
 {
-	Input* input = Input::GetInstance();
+	DirectInput* input = DirectInput::GetInstance();
 
 	// A,Dで旋回
 	if (input->PushKey(DIK_A)) {

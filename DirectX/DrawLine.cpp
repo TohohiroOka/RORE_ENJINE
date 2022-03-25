@@ -184,6 +184,9 @@ bool DrawLine::StaticInitialize(ID3D12Device* device, int window_width, int wind
 		(float)window_height, 0.0f,
 		0.0f, 1.0f);
 
+	rootSignature->SetName(L"DLroot");
+	pipelineState->SetName(L"DLpipe");
+
 	return true;
 }
 

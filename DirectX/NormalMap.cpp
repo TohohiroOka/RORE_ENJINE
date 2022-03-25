@@ -18,8 +18,8 @@ using namespace std;
 
 ID3D12Device* NormalMap::device = nullptr;//デバイス
 ID3D12GraphicsCommandList* NormalMap::cmdList = nullptr;//コマンドリスト
-ComPtr<ID3D12PipelineState> NormalMap::pipelinestate;//パイプラインステートオブジェクト
-ComPtr<ID3D12RootSignature> NormalMap::rootsignature;//ルートシグネチャ
+ComPtr<ID3D12PipelineState> NormalMap::pipelineState;//パイプラインステートオブジェクト
+ComPtr<ID3D12RootSignature> NormalMap::rootSignature;//ルートシグネチャ
 ComPtr<ID3D12DescriptorHeap> NormalMap::descHeap;//テクスチャ用デスクリプタヒープの生成
 ComPtr<ID3D12Resource> NormalMap::texBuffer[textureNum];//テクスチャリソース(テクスチャバッファ)の配列
 int NormalMap::alltextureNum = 0;
@@ -75,8 +75,8 @@ const unsigned short NormalMap::indices[36] = {
 
 NormalMap::~NormalMap()
 {
-	pipelinestate.Reset();
-	rootsignature.Reset();
+	pipelineState.Reset();
+	rootSignature.Reset();
 	descHeap.Reset();
 	for (int i = 0; i < textureNum; i++)
 	{
@@ -234,13 +234,13 @@ void NormalMap::Pipeline()
 
 	//ルートシグネチャの生成
 	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(),
-		rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+		rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 
 	// パイプラインにルートシグネチャをセット
-	gpipeline.pRootSignature = rootsignature.Get();
+	gpipeline.pRootSignature = rootSignature.Get();
 
 	////グラフィックスパイプラインステートの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 }
 
 void NormalMap::CommonCreate() {
@@ -410,8 +410,8 @@ void NormalMap::StaticInitialize(ID3D12Device* device)
 	//パイプライン設定
 	Pipeline();
 
-	pipelinestate->SetName(L"norpi");
-	rootsignature->SetName(L"norro");
+	rootSignature->SetName(L"NMroot");
+	pipelineState->SetName(L"NMpipe");
 
 }
 
@@ -420,10 +420,10 @@ void NormalMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	NormalMap::cmdList = cmdList;
 
 	//パイプラインステートの設定
-	cmdList->SetPipelineState(pipelinestate.Get());
+	cmdList->SetPipelineState(pipelineState.Get());
 
 	//ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	cmdList->SetGraphicsRootSignature(rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -1,14 +1,20 @@
 #pragma once
-
+#include "Singleton.h"
 #include "Sprite.h"
-#include <Windows.h>
 #include <string>
 
 /// <summary>
 /// デバッグ用文字表示
 /// </summary>
-class DebugText
+class DebugText : public Singleton< DebugText >
 {
+	friend Singleton< DebugText >;
+
+private://コンストラクタ&デストラクタ
+
+	DebugText() {};
+	~DebugText() {};
+
 public:
 	// デバッグテキスト用のテクスチャ番号を指定
 	static const int maxCharCount = 256;	// 最大文字数
@@ -22,14 +28,7 @@ private://静的メンバ変数
 	// スプライトデータの配列
 	static Sprite* spriteDatas[maxCharCount];
 
-
 public:// 静的メンバ関数
-
-	/// <summary>
-	/// インスタンスの生成
-	/// </summary>
-	/// <returns>インスタンス</returns>
-	static DebugText* GetInstance();
 
 	/// <summary>
 	/// 解放処理
@@ -77,12 +76,6 @@ public:// メンバ関数
 	/// </summary>
 	/// <param name="cmdList">コマンドリスト</param>
 	void DrawAll(ID3D12GraphicsCommandList* cmdList);
-
-private:
-	DebugText();
-	DebugText(const DebugText&) = delete;
-	~DebugText();
-	DebugText& operator=(const DebugText&) = delete;
 
 private:
 	// スプライトデータ配列の添え字番号

@@ -102,9 +102,9 @@ private: // 静的メンバ変数
 	// デスクリプタサイズ
 	static UINT descriptorHandleIncrementSize;
 	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootsignature;
+	static ComPtr<ID3D12RootSignature> rootSignature;
 	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelinestate;
+	static ComPtr<ID3D12PipelineState> pipelineState;
 	// デスクリプタヒープ
 	static ComPtr<ID3D12DescriptorHeap> descHeap;
 	//テクスチャ読み込み最大値

@@ -19,8 +19,8 @@ using namespace std;
 /// </summary>
 ID3D12Device* Object3d::device = nullptr;
 ID3D12GraphicsCommandList* Object3d::cmdList = nullptr;
-ComPtr<ID3D12RootSignature> Object3d::rootsignature;
-ComPtr<ID3D12PipelineState> Object3d::pipelinestate;
+ComPtr<ID3D12RootSignature> Object3d::rootSignature;
+ComPtr<ID3D12PipelineState> Object3d::pipelineState;
 Camera* Object3d::camera = nullptr;
 LightGroup* Object3d::lightGroup = nullptr;
 
@@ -142,6 +142,10 @@ void Object3d::CreateGraphicsPipeline()
 
 	// ブレンドステートの設定
 	gpipeline.BlendState.RenderTarget[0] = blenddesc;
+	gpipeline.BlendState.RenderTarget[1] = blenddesc;
+	gpipeline.BlendState.RenderTarget[2] = blenddesc;
+	gpipeline.BlendState.RenderTarget[3] = blenddesc;
+	gpipeline.BlendState.RenderTarget[4] = blenddesc;
 
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
@@ -153,8 +157,12 @@ void Object3d::CreateGraphicsPipeline()
 	// 図形の形状設定（三角形）
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
-	gpipeline.NumRenderTargets = 1;    // 描画対象は1つ
+	gpipeline.NumRenderTargets = 5;    // 描画対象は1つ
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	gpipeline.RTVFormats[3] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	gpipeline.RTVFormats[4] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
 	gpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
 	// デスクリプタレンジ
@@ -179,15 +187,15 @@ void Object3d::CreateGraphicsPipeline()
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	if (FAILED(result)) {
 		assert(0);
 	}
 
-	gpipeline.pRootSignature = rootsignature.Get();
+	gpipeline.pRootSignature = rootSignature.Get();
 
 	// グラフィックスパイプラインの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 
 	if (FAILED(result)) {
 		assert(0);
@@ -230,16 +238,16 @@ Object3d* Object3d::Create(Model* model)
 		object3d->SetModel(model);
 	}
 
-	pipelinestate->SetName(L"objpi");
-	rootsignature->SetName(L"objro");
+	rootSignature->SetName(L"Objroot");
+	pipelineState->SetName(L"Objpipe");
 
 	return object3d;
 }
 
 Object3d::~Object3d()
 {
-	rootsignature.Reset();
-	pipelinestate.Reset();
+	rootSignature.Reset();
+	pipelineState.Reset();
 
 	if (collider) {
 		CollisionManager::GetInstance()->RemoveCollider(collider);
@@ -281,9 +289,11 @@ void Object3d::Update()
 	// 定数バッファへデータ転送
 	ConstBufferDataB0* constMap = nullptr;
 	result = constBuffB0->Map(0, nullptr, (void**)&constMap);
+	constMap->color = this->color;
 	constMap->viewproj = matViewProjection;
 	constMap->world = matWorld;
 	constMap->cameraPos = cameraPos;
+	constMap->isBloom = this->isBloom;
 	constBuffB0->Unmap(0, nullptr);
 
 	// 当たり判定更新
@@ -304,9 +314,9 @@ void Object3d::Draw()
 	}
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipelinestate.Get());
+	cmdList->SetPipelineState(pipelineState.Get());
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	cmdList->SetGraphicsRootSignature(rootSignature.Get());
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
 

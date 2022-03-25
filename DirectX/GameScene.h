@@ -1,10 +1,6 @@
 #pragma once
-
 #include<DirectXMath.h>
 
-#include "Singleton.h"
-#include "SafeDelete.h"
-#include "Audio.h"
 #include "Object3d.h"
 #include "Sprite.h"
 #include "DebugText.h"
@@ -13,24 +9,21 @@
 #include "Fbx.h"
 #include "Easing.h"
 #include "NormalMap.h"
-#include "PostEffect.h"
 #include "DrawLine.h"
 #include "DrawLine3D.h"
 
-#include "Player.h"
-#include "Ground.h"
-#include "TouchableObject.h"
-
-class Input;
+class DirectInput;
 class XInputManager;
+class Audio;
 class Camera;
+
+//ゲームで使用するクラス宣言
 class Player;
 class Ground;
+class TouchableObject;
 
-class GameScene : public Singleton< GameScene >
+class GameScene
 {
-	friend Singleton< GameScene >;
-
 private:// エイリアス
 	// Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -41,23 +34,29 @@ private:// エイリアス
 	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-private://コンストラクタ&デストラクタ
-
-	GameScene() {};
-	~GameScene();
-
 public:// メンバ関数
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	GameScene() {};
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~GameScene();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Camera* camera);
+	void Initialize();
 
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	/// <param name="camera">カメラクラスのインスタンス</param>
-	void Update(Camera* camera);
+	/// <param name="audio">Audioのインスタンス</param>
+	/// <param name="camera">Cameraのインスタンス</param>
+	void Update(Audio* audio, Camera* camera);
 
 	/// <summary>
 	/// 描画
@@ -66,11 +65,8 @@ public:// メンバ関数
 
 private:// メンバ変数
 
-	XInputManager* input = nullptr;
-	Audio* audio = nullptr;
-
 	Sprite* sprite = nullptr;
-	DebugText* text;
+	//DebugText* text;
 	Emitter* emit = nullptr;
 
 	Model* uma = nullptr;

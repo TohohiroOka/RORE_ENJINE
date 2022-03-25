@@ -33,9 +33,11 @@ public: // サブクラス
 	// 定数バッファ用データ構造体B0
 	struct ConstBufferDataB0
 	{
-		XMMATRIX viewproj;    // ビュープロジェクション行列
+		XMFLOAT4 color;
+		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
+		bool isBloom;//ブルームを入れるかどうか
 	};
 
 public: // 静的メンバ関数
@@ -89,9 +91,9 @@ private: // 静的メンバ変数
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootsignature;
+	static ComPtr<ID3D12RootSignature> rootSignature;
 	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelinestate;
+	static ComPtr<ID3D12PipelineState> pipelineState;
 	// カメラ
 	static Camera* camera;
 	// ライト
@@ -162,8 +164,20 @@ public: // メンバ関数
 	/// <summary>
 	/// スケールの設定
 	/// </summary>
-	/// <param name="position">スケール</param>
+	/// <param name="scale">スケール</param>
 	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(XMFLOAT4 color) { this->color = color; }
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="isBloom">ブルームの有無</param>
+	void SetIsBloom(bool isBloom) { this->isBloom = isBloom; }
 
 	/// <summary>
 	/// モデルのセット
@@ -210,6 +224,8 @@ protected: // メンバ変数
 	XMFLOAT3 position = { 0,0,0 };
 	// ローカルワールド変換行列
 	XMMATRIX matWorld = {};
+	//ブルームを行うか
+	bool isBloom = false;
 	// 親オブジェクト
 	Object3d* parent = nullptr;
 	// モデル

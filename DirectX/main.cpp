@@ -1,5 +1,4 @@
 #include "MainEngine.h"
-#include "Singleton.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -20,6 +19,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		engine->Draw();
 		engine->FrameRateKeep();
 	}
+
+	engine->AllDelete();
 
 	return 0;
 }

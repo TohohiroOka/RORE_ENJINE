@@ -142,9 +142,9 @@ private://静的メンバ変数
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState>pipelinestate;
+	static ComPtr<ID3D12PipelineState>pipelineState;
 	//ルートシグネチャ
-	static ComPtr<ID3D12RootSignature>rootsignature;
+	static ComPtr<ID3D12RootSignature>rootSignature;
 	//テクスチャ用デスクリプタヒープの生成
 	static ComPtr<ID3D12DescriptorHeap>descHeap;
 	//テクスチャ最大登録数

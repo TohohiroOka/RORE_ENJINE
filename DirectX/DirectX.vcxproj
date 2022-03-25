@@ -104,7 +104,7 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="LightGroup.cpp" />
     <ClCompile Include="MainEngine.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -267,7 +267,7 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="LightGroup.h" />
     <ClInclude Include="MainEngine.h" />
-    <ClInclude Include="Input.h" />
+    <ClInclude Include="DirectInput.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshCollider.h" />

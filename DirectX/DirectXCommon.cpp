@@ -2,13 +2,11 @@
 #include "WindowApp.h"
 #include <vector>
 #include <cassert>
-#include "SafeDelete.h"
 #include "WindowApp.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
-
 
 Microsoft::WRL::ComPtr<ID3D12Device> DirectXCommon::device = nullptr;//デバイス
 Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXCommon::cmdList = nullptr;//コマンドリスト
@@ -29,12 +27,12 @@ DirectXCommon::~DirectXCommon()
 	dsvHeap.Reset();
 	fence.Reset();
 
-	//ID3D12DebugDevice* debugInterface;
-	//if (SUCCEEDED(device.Get()->QueryInterface(&debugInterface)))
-	//{
-	//	debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
-	//	debugInterface->Release();
-	//}
+	ID3D12DebugDevice* debugInterface;
+	if (SUCCEEDED(device.Get()->QueryInterface(&debugInterface)))
+	{
+		debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+		debugInterface->Release();
+	}
 
 	device.Reset();
 }
