@@ -119,6 +119,9 @@
     <Filter Include="エンジンシステム\MainSystem\Input\XInputManager">
       <UniqueIdentifier>{6ba36846-abfa-4705-a231-337b7198fd22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="エンジンシステム\ShaderManager">
+      <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -220,6 +223,9 @@
     <ClCompile Include="DirectInput.cpp">
       <Filter>エンジンシステム\MainSystem\Input\DirectInput</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShaderManager.cpp">
+      <Filter>エンジンシステム\ShaderManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\BasicPS.hlsl">
@@ -272,6 +278,9 @@
     </FxCompile>
     <FxCompile Include="Resources\Shaders\PostEffectVS.hlsl">
       <Filter>シェーダーファイル\PostEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
+      <Filter>シェーダーファイル\Basic</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -432,6 +441,9 @@
     </ClInclude>
     <ClInclude Include="DirectInput.h">
       <Filter>エンジンシステム\MainSystem\Input\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShaderManager.h">
+      <Filter>エンジンシステム\ShaderManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

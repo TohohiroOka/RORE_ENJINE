@@ -11,6 +11,7 @@
 #include "NormalMap.h"
 #include "DrawLine.h"
 #include "DrawLine3D.h"
+#include "ComputeShaderManager.h"
 
 class DirectInput;
 class XInputManager;
@@ -94,5 +95,12 @@ private:// メンバ変数
 	DrawLine* line_t = nullptr;
 	DrawLine3D* line3d[10] = { nullptr };
 
-	int time = 0;
+	ComputeShaderManager* compute = nullptr;
+	static const int max = 10;
+
+	XMFLOAT3 startPosition[max];//初期座標
+	XMFLOAT3 endPosition[max];//終了座標
+	XMFLOAT3 nowPosition[max];//現在座標
+	float time[max];//時間
+
 };

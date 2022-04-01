@@ -41,6 +41,7 @@ public: // サブクラス
 	};
 
 public: // 静的メンバ関数
+
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
@@ -94,6 +95,7 @@ private: // 静的メンバ変数
 	static ComPtr<ID3D12RootSignature> rootSignature;
 	// パイプラインステートオブジェクト
 	static ComPtr<ID3D12PipelineState> pipelineState;
+
 	// カメラ
 	static Camera* camera;
 	// ライト

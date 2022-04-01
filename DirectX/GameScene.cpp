@@ -103,6 +103,16 @@ void GameScene::Initialize()
 		line3d[i] = new DrawLine3D();
 		line3d[i] = DrawLine3D::Create();
 	}
+
+	compute = new ComputeShaderManager();
+	compute->Initialize();
+	for (int i = 0; i < max; i++)
+	{
+		startPosition[i] = { (float)10 * i,(float)10,(float)10 };//初期座標
+		endPosition[i] = { (float)10,(float)10,(float)10 * i };//終了座標
+		nowPosition[i] = startPosition[i];//現在座標
+		time[i] = i;
+	}
 }
 
 void GameScene::Update(Audio* audio, Camera* camera)
@@ -154,17 +164,11 @@ void GameScene::Update(Audio* audio, Camera* camera)
 		line3d[i]->Update(camera);
 	}
 
+
 	//カメラ更新
 	camera->SetPosition(PLAYER->GetPosition());
 	camera->TpsCamera({ 0,0,-100 });
 	camera->Update();
-
-	time++;
-	if (time % 50 < 25)
-	{
-		xinput->StartVibration();
-	}
-	else { xinput->EndVibration(); }
 
 	xinput = nullptr;
 }
@@ -207,4 +211,12 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	//パーティクル
 	emit->Draw();
 
+
+	compute->PreUpdate(cmdList);
+	compute->ShaderUpdate(max, startPosition, endPosition, nowPosition, time);
+	//for (int i = 0; i < max; i++)
+	//{
+	//	nowPosition[i] = pos[i];
+	//}
+	compute->PostUpdate();
 }

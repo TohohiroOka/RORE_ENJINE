@@ -7,6 +7,7 @@
 #include "Fbx.h"
 #include "NormalMap.h"
 #include "SafeDelete.h"
+#include "ComputeShaderManager.h"
 
 MainEngine::~MainEngine()
 {
@@ -60,7 +61,7 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	Fbx::StaticInitialize(dXCommon->GetDevice());
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
-
+	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 	//ƒQ[ƒ€ƒV[ƒ“‰Šú‰»
 	scene = new GameScene();
 	scene->Initialize();
