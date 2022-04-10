@@ -15,13 +15,24 @@
                                   "space          = 0, "\
                                   "visibility     = SHADER_VISIBILITY_ALL)"
 
+struct Input
+{
+    float3 S_pos;
+    float3 E_pos;
+    float3 N_pos;
+    uint time;
+};
+
 // 共有データ
-RWStructuredBuffer<float> real : register(u0);
+RWStructuredBuffer<Input> real : register(u0);
 
 [RootSignature(RS)]
 [numthreads(1, 1, 1)]
 void main(uint3 gID : SV_GroupID)
 {
     //共有データに配列番号が入る(0~255)
-    real[gID.x] = gID.x;
+    real[gID.x].S_pos = float3(100, 100, 100);
+    real[gID.x].N_pos = float3(real[gID.x].S_pos.x + 100, real[gID.x].S_pos.y, real[gID.x].S_pos.z);
+    real[gID.x].E_pos = real[gID.x].E_pos;
+    real[gID.x].time += 1;
 }

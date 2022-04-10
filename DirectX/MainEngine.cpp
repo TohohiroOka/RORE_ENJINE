@@ -116,6 +116,8 @@ void MainEngine::Draw()
 
 	//コマンド実行
 	dXCommon->AfterDraw();
+
+	scene->GetConstbufferNum();
 }
 
 void MainEngine::FrameRateKeep() {

@@ -20,7 +20,9 @@ ComPtr<ID3D12PipelineState> ComputeShaderManager::pipelineState = nullptr;
 ComPtr<ID3D12DescriptorHeap> ComputeShaderManager::Heap = nullptr;
 //ComPtr<ID3D12DescriptorHeap> ComputeShaderManager::srvUavHeap = nullptr;
 
-std::vector<float>test(256, 0);
+const int MAX = 10;
+ComputeShaderManager::InputData reset = {};
+std::vector<ComputeShaderManager::InputData>test(MAX, reset);
 
 ComputeShaderManager::~ComputeShaderManager()
 {
@@ -133,7 +135,7 @@ void ComputeShaderManager::CreateBuffers()
 	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	desc.MipLevels = 1;
 	desc.SampleDesc = { 1, 0 };
-	desc.Width = (sizeof(float) * test.size() + 0xff) & ~0xff;
+	desc.Width = (sizeof(XMFLOAT3) * test.size() + 0xff) & ~0xff;
 
 	//設定の反映
 	result = device->CreateCommittedResource(&prop, D3D12_HEAP_FLAG_NONE, &desc,
@@ -148,19 +150,28 @@ void ComputeShaderManager::CreateBuffers()
 	outdesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 	outdesc.Format = DXGI_FORMAT_UNKNOWN;
 	outdesc.Buffer.NumElements = test.size();
-	outdesc.Buffer.StructureByteStride = sizeof(float);
+	outdesc.Buffer.StructureByteStride = sizeof(XMFLOAT3);
 
 	device->CreateUnorderedAccessView(inputBuffer.Get(), nullptr, &outdesc, Heap->GetCPUDescriptorHandleForHeapStart());
 }
 
-XMFLOAT3* ComputeShaderManager::ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLOAT3* endPosition,
+void ComputeShaderManager::ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLOAT3* endPosition,
 	XMFLOAT3* nowPosition, float* time)
 {
 	HRESULT result;
-
+	size = max;
+	InputData* inData = new InputData[max];
+	for (int i = 0; i < max; i++)
+	{
+		inData[i].startPosition = startPosition[i];
+		inData[i].endPosition = endPosition[i];
+		inData[i].nowPosition = nowPosition[i];
+		inData[i].time = time[i];
+	}
 	////定数バッファにデータを転送
 	D3D12_RANGE range{ 0, 1 };
-	result = inputBuffer->Map(0, &range, &data);
+	result = inputBuffer->Map(0, &range, (void**)&data);
+	data = inData;
 	inputBuffer->Unmap(0, &range);
 
 	//パイプラインのセット
@@ -178,11 +189,27 @@ XMFLOAT3* ComputeShaderManager::ShaderUpdate(UINT max, XMFLOAT3* startPosition, 
 
 	//コンピュートシェーダーの実行(今回は256個のスレッドグループを指定)
 	cmdList->Dispatch(test.size(), 1, 1);
+}
+
+XMFLOAT3* ComputeShaderManager::GetConstBufferNum()
+{
+	HRESULT result;
+
+	D3D12_RANGE range{ 0, 1 };
+	result = inputBuffer->Map(0, &range, (void**)&data);
+	inputBuffer->Unmap(0, &range);
 
 	//GPUからデータをもらう
-	test.assign((float*)data, (float*)data + test.size());
+	test.assign(data, data + test.size());
 
-	return 0;
+	//出力値の保存変数
+	XMFLOAT3* outputNum = new XMFLOAT3[size];
+	for (int i = 0; i < size; i++)
+	{
+		outputNum[i] = test[i].nowPosition;
+	}
+
+	return outputNum;
 }
 
 void ComputeShaderManager::PreUpdate(ID3D12GraphicsCommandList* cmdList)

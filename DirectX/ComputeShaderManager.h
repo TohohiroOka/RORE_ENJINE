@@ -45,10 +45,10 @@ public:
 	// 定数バッファ用構造体
 	struct InputData
 	{
-		XMFLOAT3 startPosition[IN_OUT_MAX] = {};//初期座標
-		XMFLOAT3 endPosition[IN_OUT_MAX] = {};//終了座標
-		XMFLOAT3 nowPosition[IN_OUT_MAX] = {};//現在座標
-		float time[IN_OUT_MAX] = {};//時間
+		XMFLOAT3 startPosition = {};//初期座標
+		XMFLOAT3 endPosition = {};//終了座標
+		XMFLOAT3 nowPosition = {};//現在座標
+		float time = {};//時間
 	};
 
 	// 定数バッファ用構造体
@@ -109,8 +109,11 @@ public:
 	/// <param name="endPosition">エンド座標配列</param>
 	/// <param name="nowPosition">現在座標配列</param>
 	/// <param name="time">イージング時間</param>
-	XMFLOAT3* ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLOAT3* endPosition,
+	void ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLOAT3* endPosition,
 		XMFLOAT3* nowPosition, float* time);
+
+
+	XMFLOAT3* GetConstBufferNum();
 
 	/// <summary>
 	/// 更新前処理
@@ -127,6 +130,8 @@ private://メンバ変数
 
 	//定数バッファ
 	ComPtr<ID3D12Resource> inputBuffer;
-	//取得データの保管値
-	void* data;
+	//入出力データの中継値
+	InputData* data;
+	//現在のデータサイズ
+	int size = 0;
 };

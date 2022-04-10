@@ -64,6 +64,9 @@ public:// メンバ関数
 	/// </summary>
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 
+
+	void GetConstbufferNum();
+
 private:// メンバ変数
 
 	Sprite* sprite = nullptr;
@@ -102,5 +105,4 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
-
 };

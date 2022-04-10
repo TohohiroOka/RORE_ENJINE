@@ -111,7 +111,7 @@ void GameScene::Initialize()
 		startPosition[i] = { (float)10 * i,(float)10,(float)10 };//初期座標
 		endPosition[i] = { (float)10,(float)10,(float)10 * i };//終了座標
 		nowPosition[i] = startPosition[i];//現在座標
-		time[i] = i;
+		time[i] = 0;
 	}
 }
 
@@ -164,7 +164,6 @@ void GameScene::Update(Audio* audio, Camera* camera)
 		line3d[i]->Update(camera);
 	}
 
-
 	//カメラ更新
 	camera->SetPosition(PLAYER->GetPosition());
 	camera->TpsCamera({ 0,0,-100 });
@@ -214,9 +213,15 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 
 	compute->PreUpdate(cmdList);
 	compute->ShaderUpdate(max, startPosition, endPosition, nowPosition, time);
-	//for (int i = 0; i < max; i++)
-	//{
-	//	nowPosition[i] = pos[i];
-	//}
 	compute->PostUpdate();
+}
+
+void GameScene::GetConstbufferNum()
+{
+	XMFLOAT3* inPos = new XMFLOAT3[max];
+	inPos = compute->GetConstBufferNum();
+	for (int i = 0; i < max; i++)
+	{
+		nowPosition[i] = inPos[i];
+	}
 }
