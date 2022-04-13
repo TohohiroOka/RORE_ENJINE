@@ -8,11 +8,11 @@ using namespace std;
 /// <summary>
 /// 静的メンバ変数の実体
 /// </summary>
-const std::string Model::baseDirectory = "Resources/";
+const std::string Model::baseDirectory = "Resources/OBJ/";
 ID3D12Device* Model::device = nullptr;
 UINT Model::descriptorHandleIncrementSize = 0;
 
-void Model::StaticInitialize(ID3D12Device * device)
+void Model::StaticInitialize(ID3D12Device* device)
 {
 	// 再初期化チェック
 	assert(!Model::device);
@@ -28,7 +28,7 @@ Model* Model::CreateFromOBJ(const std::string& modelname, bool smoothing)
 	// メモリ確保
 	Model* instance = new Model;
 	instance->Initialize(modelname, smoothing);
-	
+
 	return instance;
 }
 
@@ -50,8 +50,8 @@ Model::~Model()
 void Model::Initialize(const std::string& modelname, bool smoothing)
 {
 	// モデル読み込み
-	LoadModel(modelname, smoothing);	
-	
+	LoadModel(modelname, smoothing);
+
 	// メッシュのマテリアルチェック
 	for (auto& m : meshes) {
 		// マテリアルの割り当てがない
@@ -84,7 +84,7 @@ void Model::Initialize(const std::string& modelname, bool smoothing)
 	LoadTextures();
 }
 
-void Model::LoadModel(const std::string & modelname, bool smoothing)
+void Model::LoadModel(const std::string& modelname, bool smoothing)
 {
 	const string filename = modelname + ".obj";
 	const string directoryPath = baseDirectory + modelname + "/";
@@ -227,8 +227,7 @@ void Model::LoadModel(const std::string & modelname, bool smoothing)
 					if (smoothing) {
 						mesh->AddSmoothData(indexPosition, (unsigned short)mesh->GetVertexCount() - 1);
 					}
-				}
-				else {
+				} else {
 					char c;
 					index_stream >> c;
 					// スラッシュ2連続の場合、頂点番号のみ
@@ -239,8 +238,7 @@ void Model::LoadModel(const std::string & modelname, bool smoothing)
 						vertex.normal = { 0, 0, 1 };
 						vertex.uv = { 0, 0 };
 						mesh->AddVertex(vertex);
-					}
-					else {
+					} else {
 						index_stream.seekg(-1, ios_base::cur); // 1文字戻る
 						index_stream >> indexTexcoord;
 						index_stream.seekg(1, ios_base::cur); // スラッシュを飛ばす
@@ -264,8 +262,7 @@ void Model::LoadModel(const std::string & modelname, bool smoothing)
 					mesh->AddIndex(indexCountTex - 1);
 					mesh->AddIndex(indexCountTex);
 					mesh->AddIndex(indexCountTex - 3);
-				}
-				else
+				} else
 				{
 					mesh->AddIndex(indexCountTex);
 				}
@@ -282,7 +279,7 @@ void Model::LoadModel(const std::string & modelname, bool smoothing)
 	}
 }
 
-void Model::LoadMaterial(const std::string & directoryPath, const std::string & filename)
+void Model::LoadMaterial(const std::string& directoryPath, const std::string& filename)
 {
 	// ファイルストリーム
 	std::ifstream file;
@@ -362,7 +359,7 @@ void Model::LoadMaterial(const std::string & directoryPath, const std::string & 
 		}
 	}
 	// ファイルを閉じる
-	file.close();	
+	file.close();
 
 	if (material) {
 		// マテリアルを登録
@@ -370,7 +367,7 @@ void Model::LoadMaterial(const std::string & directoryPath, const std::string & 
 	}
 }
 
-void Model::AddMaterial(Material * material)
+void Model::AddMaterial(Material* material)
 {
 	// コンテナに登録
 	materials.emplace(material->name, material);
@@ -422,11 +419,11 @@ void Model::LoadTextures()
 			// マテリアルにテクスチャ読み込み
 			material->LoadTexture(baseDirectory, cpuDescHandleSRV, gpuDescHandleSRV);
 			textureIndex++;
-		}		
+		}
 	}
 }
 
-void Model::Draw(ID3D12GraphicsCommandList * cmdList)
+void Model::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	// デスクリプタヒープの配列
 	if (descHeap) {
@@ -439,4 +436,3 @@ void Model::Draw(ID3D12GraphicsCommandList * cmdList)
 		mesh->Draw(cmdList);
 	}
 }
-

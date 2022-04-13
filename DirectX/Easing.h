@@ -1,51 +1,65 @@
 #pragma once
-class EASE {
+class Easing
+{
 public:
-	static double InSine(const double change, const double base, const double duration, double time);
+	//等速直線運動
+	static float Lerp(const float& start, const float& end, const float time);
 
-	static double OutSine(const double change, const double base, const double duration, double time);
+	//sin
+	static float InSine(const float& start, const float& end, const float time);
+	static float OutSine(const float& start, const float& end, const float time);
+	static float InOutSine(const float& start, const float& end, const float time);
 
-	static double InOutSine(const double change, const double base, const double duration, double time);
+	//2乗
+	static float InQuad(const float& start, const float& end, const float time);
+	static float OutQuad(const float& start, const float& end, const float time);
+	static float InOutQuad(const float& start, const float& end, const float time);
 
-	static double InQuad(const double change, const double base, const double duration, double time);
+	//3乗
+	static float InCubic(const float& start, const float& end, const float time);
+	static float OutCubic(const float& start, const float& end, const float time);
+	static float InOutCubic(const float& start, const float& end, const float time);
 
-	static double OutQuad(const double change, const double base, const double duration, double time);
+	//4乗
+	static float InQuart(const float& start, const float& end, const float time);
+	static float OutQuart(const float& start, const float& end, const float time);
+	static float InOutQuart(const float& start, const float& end, const float time);
 
-	static double InOutQuad(const double change, const double base, const double duration, double time);
+	//5乗
+	static float InQuint(const float& start, const float& end, const float time);
+	static float OutQuint(const float& start, const float& end, const float time);
+	static float InOutQuint(const float& start, const float& end, const float time);
 
-	static double InCubic(const double change, const double base, const double duration, double time);
+	//Expo
+	static float InExpo(const float& start, const float& end, const float time);
+	static float OutExpo(const float& start, const float& end, const float time);
+	static float InOutExpo(const float& start, const float& end, const float time);
 
-	static double OutCubic(const double change, const double base, const double duration, double time);
+	//Circ
+	static float InCirc(const float& start, const float& end, const float time);
+	static float OutCirc(const float& start, const float& end, const float time);
+	static float InOutCirc(const float& start, const float& end, const float time);
 
-	static double InOutCubic(const double change, const double base, const double duration, double time);
+	//Back
+	static float InBack(const float& start, const float& end, const float time);
+	static float OutBack(const float& start, const float& end, const float time);
+	static float InOutBack(const float& start, const float& end, const float time);
 
-	static double InQuart(const double change, const double base, const double duration, double time);
+	//Elastic
+	static float InElastic(const float& start, const float& end, const float time);
+	static float OutElastic(const float& start, const float& end, const float time);
+	static float InOutElastic(const float& start, const float& end, const float time);
 
-	static double OutQuart(const double change, const double base, const double duration, double time);
+	//Bounce
+	static float InBounce(const float& start, const float& end, const float time);
+	static float OutBounce(const float& start, const float& end, const float time);
+	static float InOutBounce(const float& start, const float& end, const float time);
 
-	static double InOutQuart(const double change, const double base, const double duration, double time);
-
-	static double InQuint(const double change, const double base, const double duration, double time);
-
-	static double OutQuint(const double change, const double base, const double duration, double time);
-
-	static double InOutQuint(const double change, const double base, const double duration, double time);
-
-	static double InExpo(const double change, const double base, const double duration, double time);
-
-	static double OutExpo(const double change, const double base, const double duration, double time);
-
-	static double InBack(const double change, const double base, const double duration, double time);
-
-	static double OutBack(const double change, const double base, const double duration, double time);
-
-	static double InOutBack(const double change, const double base, const double duration, double time);
-
-	static double lerp(const double &start, const double &end, const float time);
-
-	static double easeIn(const double &start, const double &end, const float time);
-
-	static double easeOut(const double &start, const double &end, const float time);
-
-	static double easeInOut(const double &start, const double &end, const float time);
+private:
+	/// <summary>
+	/// Bounce計算用
+	/// </summary>
+	/// <param name="time">イージング時間(0～1)</param>
+	/// <returns>イージング計算結果</returns>
+	static float OutBounceCalculate(float time);
 };

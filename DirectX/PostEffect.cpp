@@ -184,8 +184,8 @@ void PostEffect::StaticInitialize()
 	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 	assert(SUCCEEDED(result));
 
-	rootSignature->SetName(L"PEroot");
-	pipelineState->SetName(L"PEpipe");
+	pipelineState->SetName(L"PostEffectPipe");
+	rootSignature->SetName(L"PostEffectRoot");
 }
 
 void PostEffect::Initialize()
@@ -263,7 +263,7 @@ void PostEffect::Initialize()
 			const UINT depthPitch = rowPitch * WindowApp::GetWindowHeight();
 			//画素イメージ
 			UINT* img = new UINT[pixelCount];
-			for (int j = 0; j < pixelCount; j++) { img[j] = 0xff0000ff; }
+			for (UINT j = 0; j < pixelCount; j++) { img[j] = 0xff0000ff; }
 
 			// テクスチャバッファにデータ転送
 			result = texBuff[i]->WriteToSubresource(0, nullptr,
@@ -299,7 +299,7 @@ void PostEffect::Initialize()
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescHescDesc{};
 	rtvDescHescDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvDescHescDesc.NumDescriptors = texBuffNum;
-	
+
 	//RTV用デスクリプタヒープを生成
 	result = device->CreateDescriptorHeap(&rtvDescHescDesc, IID_PPV_ARGS(&descHeapRTV));
 	assert(SUCCEEDED(result));
@@ -350,34 +350,20 @@ void PostEffect::Initialize()
 
 void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 {
-	if (XInputManager::GetInstance()->TriggerButton(XInputManager::PAD_A))
-	{
-		//デスクリプタヒープにsrv作成
-		static int tex = 0;
-		//テクスチャ番号を0と1で切り替え
-		tex = (tex + 1) % texBuffNum;
-
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = 1;
-		device->CreateShaderResourceView(texBuff[tex].Get(),
-			&srvDesc,
-			descHeapSRV->GetCPUDescriptorHandleForHeapStart());
-	}
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	device->CreateShaderResourceView(texBuff[0].Get(),
+		&srvDesc,
+		descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 
 	//パイプラインステートの設定
 	cmdList->SetPipelineState(pipelineState.Get());
 
 	//ルートシグネチャの設定
 	cmdList->SetGraphicsRootSignature(rootSignature.Get());
-	
-	//パイプラインステートの設定
-	cmdList->SetPipelineState(pipelineState.Get());
-
-	//計算シェーダーの設定
-	cmdList->SetComputeRootSignature(rootSignature.Get());
 
 	//プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -431,13 +417,13 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 	CD3DX12_RECT scissorRects[texBuffNum];
 	for (int i = 0; i < texBuffNum; i++)
 	{
-		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, WindowApp::GetWindowWidth(), WindowApp::GetWindowHeight());
-		scissorRects[i] = CD3DX12_RECT(0, 0, WindowApp::GetWindowWidth(), WindowApp::GetWindowHeight());
+		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowApp::GetWindowWidth(), (FLOAT)WindowApp::GetWindowHeight());
+		scissorRects[i] = CD3DX12_RECT(0, 0, (LONG)WindowApp::GetWindowWidth(), (LONG)WindowApp::GetWindowHeight());
 	}
 	cmdList->RSSetViewports(2, viewports);
 	//シザリング矩形設定
 	cmdList->RSSetScissorRects(2, scissorRects);
-	
+
 	for (int i = 0; i < texBuffNum; i++)
 	{
 		//全画面クリア

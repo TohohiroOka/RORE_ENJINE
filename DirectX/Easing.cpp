@@ -1,176 +1,361 @@
-#include"Easing.h"
-#include<cmath>
+#include "Easing.h"
+#include <cmath>
 
-double EASE::InSine(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (1 - cos((time * 3.14159265359) / 2)) + base;
-}
-
-double EASE::OutSine(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * sin((time * 3.14159265359) / 2) + base;
-}
-
-double EASE::InOutSine(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (-(cos(3.14159265359 * time) - 1) / 2) + base;
-}
-
-
-double EASE::InQuad(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * time * time + base;
-}
-
-double EASE::OutQuad(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (1 - (1 - time) * (1 - time)) + base;
-
-}
-
-double EASE::InOutQuad(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time < 0.5)
-	{
-		return change * 2 * time * time + base;
-	}
-	return change * (1 - pow(-2 * time + 2, 2) / 2) + base;
-}
-
-double EASE::InCubic(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * time * time * time + base;
-}
-
-double EASE::OutCubic(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (1 - pow(1 - time, 3)) + base;
-}
-
-double EASE::InOutCubic(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time <= 0.5)
-	{
-		return change * 4 * time * time * time + base;
-	}
-	return change * (1 - pow(-2 * time + 2, 3) / 2) + base;
-}
-
-double EASE::InQuart(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * time * time * time * time + base;
-}
-
-double EASE::OutQuart(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (1 - pow(1 - time, 4)) + base;
-}
-
-double EASE::InOutQuart(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time <= 0.5)
-	{
-		return change * 8 * time * time * time * time + base;
-	}
-	return change * (1 - pow(-2 * time + 2, 4) / 2) + base;
-}
-
-double EASE::InQuint(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * time * time * time * time * time + base;
-}
-
-double EASE::OutQuint(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (1 - pow(1 - time, 5)) + base;
-}
-
-double EASE::InOutQuint(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time <= 0.5)
-	{
-		return change * 16 * time * time * time * time * time + base;
-	}
-	return change * (1 - pow(-2 * time + 2, 5) / 2) + base;
-}
-
-double EASE::InExpo(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time == 0)
-	{
-		return change * 0 + base;
-	}
-	return change * pow(2, 10 * time - 10) + base;
-}
-
-double EASE::OutExpo(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time == 1)
-	{
-		return change * 1 + base;
-	}
-	return change * (1 - pow(2, -10 * time)) + base;
-}
-
-double EASE::InBack(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (2.70158 * time * time * time - (2.70158 - 1) * time * time) + base;
-
-}
-
-double EASE::OutBack(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	return change * (1 + 2.70158 * pow(time - 1, 3) + (2.70158 - 1) * pow(time - 1, 2)) + base;
-}
-
-double EASE::InOutBack(const double change, const double base, const double duration, double time)
-{
-	time /= duration;
-	if (time < 0.5)
-	{
-		return change * ((pow(2 * time, 2) * ((1.70158 * 1.525 + 1) * 2 * time - 1.70158 * 1.525)) / 2) + base;
-	}
-	return change * ((pow(2 * time - 2, 2) * ((1.70158 * 1.525 + 1) * (time * 2 - 2) + 1.70158 * 1.525) + 2) / 2) + base;
-}
-
-double EASE::lerp(const double &start, const double &end, const float time)
+//“™‘¬’¼ü‰^“®
+float Easing::Lerp(const float& start, const float& end, const float time)
 {
 	return start * (1.0f - time) + end * time;
 }
 
-double EASE::easeIn(const double &start, const double &end, const float time) {
-	float t = time * time;
-	return start * (1.0f - t) + end * t;
-}
-
-double EASE::easeOut(const double &start, const double &end, const float time)
+//sin In
+float Easing::InSine(const float& start, const float& end, const float time)
 {
-	float y = time * (2 - time);
+	float y = (1 - cosf((time * 3.14159265359f) / 2));
 	return start * (1.0f - y) + end * y;
 }
 
-double EASE::easeInOut(const double &start, const double &end, const float time)
+//sin Out
+float Easing::OutSine(const float& start, const float& end, const float time)
 {
-	float y = time * time * (3 - 2 * time);
+	float y = sinf((time * 3.14159265359f) / 2);
 	return start * (1.0f - y) + end * y;
 }
 
+//sin InOut
+float Easing::InOutSine(const float& start, const float& end, const float time)
+{
+	float y = (-(cosf(3.14159265359f * time) - 1) / 2);
+	return start * (1.0f - y) + end * y;
+}
+
+//2æ In
+float Easing::InQuad(const float& start, const float& end, const float time)
+{
+	float y = time * time;
+	return start * (1.0f - y) + end * y;
+}
+
+//2æ Out
+float Easing::OutQuad(const float& start, const float& end, const float time)
+{
+	float y = (1 - (1 - time) * (1 - time));
+	return start * (1.0f - y) + end * y;
+}
+
+//2æ InOut
+float Easing::InOutQuad(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5)
+	{
+		y = 2 * time * time;
+	} else
+	{
+		y = (1 - powf(-2 * time + 2, 2) / 2);
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//3æ In
+float Easing::InCubic(const float& start, const float& end, const float time)
+{
+	float y = time * time * time;
+	return start * (1.0f - y) + end * y;
+}
+
+//3æ Out
+float Easing::OutCubic(const float& start, const float& end, const float time)
+{
+	float y = (1 - powf(1 - time, 3));
+	return start * (1.0f - y) + end * y;
+}
+
+//3æ InOut
+float Easing::InOutCubic(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5)
+	{
+		y = 4 * time * time * time;
+	} else
+	{
+		y = (1 - powf(-2 * time + 2, 3) / 2);
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//4æ In
+float Easing::InQuart(const float& start, const float& end, const float time)
+{
+	float y = time * time * time * time;
+	return start * (1.0f - y) + end * y;
+}
+
+//4æ Out
+float Easing::OutQuart(const float& start, const float& end, const float time)
+{
+	float y = (1 - powf(1 - time, 4));
+	return start * (1.0f - y) + end * y;
+}
+
+//4æ InOut
+float Easing::InOutQuart(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5f)
+	{
+		y = 8 * time * time * time * time;
+	} else
+	{
+		y = (1 - powf(-2 * time + 2, 4) / 2);
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//5æ In
+float Easing::InQuint(const float& start, const float& end, const float time)
+{
+	float y = time * time * time * time * time;
+	return start * (1.0f - y) + end * y;
+}
+
+//5æ Out
+float Easing::OutQuint(const float& start, const float& end, const float time)
+{
+	float y = (1 - powf(1 - time, 5));
+	return start * (1.0f - y) + end * y;
+}
+
+//5æ InOut
+float Easing::InOutQuint(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5f)
+	{
+		y = 16 * time * time * time * time * time;
+	} else
+	{
+		y = (1 - powf(-2 * time + 2, 5) / 2);
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Expo In
+float Easing::InExpo(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time == 0)
+	{
+		y = 0;
+	} else
+	{
+		y = powf(2, 10 * time - 10);
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Expo Out
+float Easing::OutExpo(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time == 1)
+	{
+		y = 1;
+	} else
+	{
+		y = (1 - powf(2, -10 * time));
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Expo InOut
+float Easing::InOutExpo(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time == 0)
+	{
+		y = 0;
+	} else if (time == 1)
+	{
+		y = 1;
+	} else if (time < 0.5)
+	{
+		y = powf(2, 20 * time - 10) / 2;
+	} else
+	{
+		y = (2 - powf(2, -20 * time + 10)) / 2;
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Circ In
+float Easing::InCirc(const float& start, const float& end, const float time)
+{
+	float y = 1 - sqrtf(1 - powf(time, 2));
+	return start * (1.0f - y) + end * y;
+}
+
+//Circ Out
+float Easing::OutCirc(const float& start, const float& end, const float time)
+{
+	float y = sqrtf(1 - powf(time - 1, 2));
+	return start * (1.0f - y) + end * y;
+}
+
+//Circ InOut
+float Easing::InOutCirc(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5)
+	{
+		y = (1 - sqrtf(1 - powf(2 * time, 2))) / 2;
+	} else
+	{
+		y = (sqrtf(1 - powf(-2 * time + 2, 2)) + 1) / 2;
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Back In
+float Easing::InBack(const float& start, const float& end, const float time)
+{
+	float y = 2.70158f * time * time * time - 1.70158f * time * time;
+	return start * (1.0f - y) + end * y;
+}
+
+//Back Out
+float Easing::OutBack(const float& start, const float& end, const float time)
+{
+	float y = 1 + 2.70158f * powf(time - 1, 3) + 1.70158f * powf(time - 1, 2);
+	return start * (1.0f - y) + end * y;
+}
+
+//Back InOut
+float Easing::InOutBack(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5f)
+	{
+		y = (powf(2 * time, 2) * ((1.70158f * 1.525f + 1) * 2 * time - 1.70158f * 1.525f)) / 2;
+	} else
+	{
+		y = (powf(2 * time - 2, 2) * ((1.70158f * 1.525f + 1) * (time * 2 - 2) + 1.70158f * 1.525f) + 2) / 2;
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Elastic In
+float Easing::InElastic(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time == 0)
+	{
+		y = 0;
+	} else if (time == 1)
+	{
+		y = 1;
+	} else
+	{
+		y = -powf(2, 10 * time - 10) * sinf((time * 10 - 10.75f) * (2 * 3.14159265359f) / 3);
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Elastic Out
+float Easing::OutElastic(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time == 0)
+	{
+		y = 0;
+	} else if (time == 1)
+	{
+		y = 1;
+	} else
+	{
+		y = powf(2, -10 * time) * sinf((time * 10 - 0.75f) * (2 * 3.14159265359f) / 3) + 1;
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Elastic InOut
+float Easing::InOutElastic(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time == 0)
+	{
+		y = 0;
+	} else if (time == 1)
+	{
+		y = 1;
+	} else if (time < 0.5)
+	{
+		y = -(powf(2, 20 * time - 10) * sinf((20 * time - 11.125f) * (2 * 3.14159265359f) / 4.5f)) / 2;
+	} else
+	{
+		y = (powf(2, -20 * time + 10) * sinf((20 * time - 11.125f) * (2 * 3.14159265359f) / 4.5f)) / 2 + 1;
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//Bounce In
+float Easing::InBounce(const float& start, const float& end, const float time)
+{
+	float y = 1 - OutBounceCalculate(1 - time);
+	return start * (1.0f - y) + end * y;
+}
+
+//Bounce Out
+float Easing::OutBounce(const float& start, const float& end, const float time)
+{
+	float y = OutBounceCalculate(time);
+	return start * (1.0f - y) + end * y;
+}
+
+//Bounce InOut
+float Easing::InOutBounce(const float& start, const float& end, const float time)
+{
+	float y;
+	if (time < 0.5)
+	{
+		y = (1 - OutBounceCalculate(1 - 2 * time)) / 2;
+	} else
+	{
+		y = (1 + OutBounceCalculate(2 * time - 1)) / 2;
+	}
+
+	return start * (1.0f - y) + end * y;
+}
+
+//BounceŒvŽZ—p
+float Easing::OutBounceCalculate(float time)
+{
+	float y;
+	if (time < 1 / 2.75f)
+	{
+		y = 7.5625f * time * time;
+	} else if (time < 2 / 2.75)
+	{
+		y = 7.5625f * (time -= 1.5f / 2.75f) * time + 0.75f;
+	} else if (time < 2.5 / 2.75)
+	{
+		y = 7.5625f * (time -= 2.25f / 2.75f) * time + 0.9375f;
+	} else
+	{
+		y = 7.5625f * (time -= 2.625f / 2.75f) * time + 0.984375f;
+	}
+
+	return y;
+}

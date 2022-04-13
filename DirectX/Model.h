@@ -110,4 +110,3 @@ private: // メンバ関数
 	void LoadTextures();
 
 };
-

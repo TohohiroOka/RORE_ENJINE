@@ -4,29 +4,28 @@
 #include "GameScene.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
-#include "Audio.h"
 #include "PostEffect.h"
-#include "Singleton.h"
+#include "Camera.h"
 
-#include <mmsystem.h>
 #include<sstream>
 #include <iomanip>
+#include <mmsystem.h>
 
 #pragma comment(lib,"winmm.lib")
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-class MainEngine : public Singleton< MainEngine >
+class MainEngine
 {
-	friend Singleton< MainEngine >;
+public://クラス内部で使用する
+	//深度生成
+	void afterInit();
 
-private://コンストラクタ&デストラクタ
+public://メインに書く
 
-	MainEngine() {};
+	MainEngine() = default;
 	~MainEngine();
-
-public://メンバ関数
 
 	/// <summary>
 	/// 初期化処理
@@ -48,7 +47,7 @@ public://メンバ関数
 	/// <param name="x">値1</param>
 	/// <param name="y">値2</param>
 	/// <param name="z">値3</param>
-	void DebugNum(float x, float y, float z);
+	void debugNum(float x, float y, float z);
 
 	/// <summary>
 	/// 描画
@@ -58,19 +57,14 @@ public://メンバ関数
 	/// <summary>
 	/// フレームレート固定
 	/// </summary>
-	void FrameRateKeep();
+	void frameRateKeep();
 
 	/// <summary>
 	/// エスケープが入力されたら終了する処理
 	/// </summary>
 	/// <param name="winApp">ウィンドウズインスタンス</param>
 	/// <returns>ゲームを続けるか</returns>
-	bool GameFin();
-
-	/// <summary>
-	/// 全ての解放
-	/// </summary>
-	void AllDelete();
+	bool gameFin(WindowApp* winApp);
 
 private:
 
@@ -79,17 +73,15 @@ private:
 	//DirectXCommonのインスタンス
 	DirectXCommon* dXCommon = nullptr;
 	//Inputのインスタンス
-	DirectInput* input;
-	//XInputのインスタンス
-	XInputManager* xinput;
-	//Audio
-	Audio* audio = nullptr;
-	//GameSceneのインスタンス
-	GameScene* scene = nullptr;
-	//ポストエフェクト
-	PostEffect* postEffect = nullptr;
+	DirectInput* input = nullptr;
+	//XInputManager
+	XInputManager* Xinput = nullptr;
 	//Cameraのインスタンス
 	Camera* camera = nullptr;
+	//GameSceneのインスタンス
+	GameScene* scene = nullptr;
+	//ポストエフェクトのインスタンス
+	PostEffect* postEffect = nullptr;
 	//数字表示デバッグ用
 	wchar_t str[256] = {};
 	//フレームレート固定用
@@ -104,9 +96,4 @@ private:
 	LARGE_INTEGER timeFreq;
 	//現在FPS
 	float fps = 0;
-
-private:
-
-	XMFLOAT2 scale = { 1,1 };
-	bool F[2] = { false,true };
 };

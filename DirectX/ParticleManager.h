@@ -1,4 +1,5 @@
 #pragma once
+#include"DirectXCommon.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <DirectXMath.h>
@@ -74,8 +75,7 @@ public: // 静的メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="device">デバイス</param>
-	/// <param name="cmdList">コマンドリスト</param>
-	static void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList);
+	static void Initialize(ID3D12Device* device);
 
 	/// <summary>
 	/// パイプライン生成
@@ -93,6 +93,11 @@ public: // 静的メンバ関数
 	/// <param name="texNum">テクスチャ番号</param>
 	/// <param name="filename">ファイル名</param>
 	static void LoadTexture(UINT texNum, const wchar_t* filename);
+
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void AllDelete();
 
 private: // 静的メンバ変数
 	// デバイス
@@ -149,7 +154,19 @@ public: // メンバ関数
 	/// <summary>
 	/// 更新
 	/// </summary>
+	/// <returns>配列数</returns>
 	int Update(Camera* camera);
+
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	/// <param name="cmdList">描画コマンドリスト</param>
+	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	static void PostDraw();
 
 	/// <summary>
 	/// 描画
@@ -159,7 +176,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 出現しているパーティクルを全て削除する
 	/// </summary>
-	void AllDelete();
+	void ParticlAllDelete();
 
 private: // メンバ変数
 

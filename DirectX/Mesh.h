@@ -6,7 +6,6 @@
 #include <DirectXMath.h>
 #include <d3dx12.h>
 #include "Material.h"
-#include <vector>
 #include <unordered_map>
 
 /// <summary>

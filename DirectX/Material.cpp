@@ -1,6 +1,7 @@
 ﻿#include "Material.h"
 #include <DirectXTex.h>
 #include <cassert>
+#include <string>
 
 using namespace DirectX;
 using namespace std;

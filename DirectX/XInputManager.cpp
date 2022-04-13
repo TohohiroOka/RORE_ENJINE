@@ -1,7 +1,7 @@
 #include "XInputManager.h"
 
 //スティック制限
-#define INPUT_DEADZONE  ( 0.24f * FLOAT(0x7FFF) )
+#define INPUT_DEADZONE  ( 0.41f * FLOAT(0x7FFF) )
 //スティックの上限
 const int STICK_MAX = 32767;
 
@@ -9,6 +9,13 @@ XInputManager::~XInputManager()
 {
 #pragma warning(disable:4995)
 	XInputEnable(FALSE);
+}
+
+XInputManager* XInputManager::GetInstance()
+{
+	static XInputManager instance;
+
+	return &instance;
 }
 
 void XInputManager::Initialize()
@@ -24,70 +31,70 @@ void XInputManager::Update()
 	if (g_Controllers.state.Gamepad.bLeftTrigger < -STICK_MAX) { g_Controllers.state.Gamepad.bLeftTrigger = -STICK_MAX; }
 }
 
-bool XInputManager::PushButton(PudButton button)
+bool XInputManager::PushButton(XInputManager::PUD_BUTTON button)
 {
 	bool check = false;
-	if (button == PudButton::PAD_A &&
+	if (button == PUD_BUTTON::PAD_A &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_A)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_B &&
+	} else if (button == PUD_BUTTON::PAD_B &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_B)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_Y &&
+	} else if (button == PUD_BUTTON::PAD_Y &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_Y)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_X &&
+	} else if (button == PUD_BUTTON::PAD_X &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_X)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LB &&
+	} else if (button == PUD_BUTTON::PAD_LB &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RB &&
+	} else if (button == PUD_BUTTON::PAD_RB &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LT &&
+	} else if (button == PUD_BUTTON::PAD_LT &&
 		g_Controllers.state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RT &&
+	} else if (button == PUD_BUTTON::PAD_RT &&
 		g_Controllers.state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_START &&
+	} else if (button == PUD_BUTTON::PAD_START &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_START)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_BUCK &&
+	} else if (button == PUD_BUTTON::PAD_BUCK &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_UP &&
+	} else if (button == PUD_BUTTON::PAD_UP &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_DOWN &&
+	} else if (button == PUD_BUTTON::PAD_DOWN &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LEFT &&
+	} else if (button == PUD_BUTTON::PAD_LEFT &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RIGHT &&
+	} else if (button == PUD_BUTTON::PAD_RIGHT &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LEFT_STICK_PUSH &&
+	} else if (button == PUD_BUTTON::PAD_LEFT_STICK_PUSH &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RIGHT_STICK_PUSH &&
+	} else if (button == PUD_BUTTON::PAD_RIGHT_STICK_PUSH &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB)
 	{
 		check = true;
@@ -95,75 +102,75 @@ bool XInputManager::PushButton(PudButton button)
 	return check;
 }
 
-bool XInputManager::TriggerButton(PudButton button)
+bool XInputManager::TriggerButton(PUD_BUTTON button)
 {
 	bool check = false;
-	if (button == PudButton::PAD_A &&
+	if (button == PUD_BUTTON::PAD_A &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_A) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_B &&
+	} else if (button == PUD_BUTTON::PAD_B &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_B &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_B) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_Y &&
+	} else if (button == PUD_BUTTON::PAD_Y &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_Y &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_X &&
+	} else if (button == PUD_BUTTON::PAD_X &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_X &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_X) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LB &&
+	} else if (button == PUD_BUTTON::PAD_LB &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RB &&
+	} else if (button == PUD_BUTTON::PAD_RB &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LT &&
+	} else if (button == PUD_BUTTON::PAD_LT &&
 		g_Controllers.state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD &&
 		g_Controllers.lastState.Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RT &&
+	} else if (button == PUD_BUTTON::PAD_RT &&
 		g_Controllers.state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD &&
 		g_Controllers.lastState.Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_START &&
+	} else if (button == PUD_BUTTON::PAD_START &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_START &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_START) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_BUCK &&
+	} else if (button == PUD_BUTTON::PAD_BUCK &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_UP &&
+	} else if (button == PUD_BUTTON::PAD_UP &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_DOWN &&
+	} else if (button == PUD_BUTTON::PAD_DOWN &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_LEFT &&
+	} else if (button == PUD_BUTTON::PAD_LEFT &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) == false)
 	{
 		check = true;
-	} else if (button == PudButton::PAD_RIGHT &&
+	} else if (button == PUD_BUTTON::PAD_RIGHT &&
 		g_Controllers.state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT &&
 		(g_Controllers.lastState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) == false)
 	{
@@ -172,96 +179,96 @@ bool XInputManager::TriggerButton(PudButton button)
 	return check;
 }
 
-bool XInputManager::LeftStickX(bool UpDown)
+bool XInputManager::LeftStickX(bool LeftRight)
 {
-	if (UpDown == true && g_Controllers.state.Gamepad.sThumbLX > INPUT_DEADZONE)
+	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbLX < -INPUT_DEADZONE)
 	{
 		return true;
-	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbLX < -INPUT_DEADZONE)
+	} else if (LeftRight == false && g_Controllers.state.Gamepad.sThumbLX > INPUT_DEADZONE)
 	{
 		return true;
 	} else { return false; }
 }
 
-bool XInputManager::LeftStickY(bool LeftRight)
+bool XInputManager::LeftStickY(bool UpDown)
 {
-	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbLY > INPUT_DEADZONE)
+	if (UpDown == true && g_Controllers.state.Gamepad.sThumbLY > INPUT_DEADZONE)
 	{
 		return true;
-	} else if (LeftRight == false && g_Controllers.state.Gamepad.sThumbLY < -INPUT_DEADZONE)
+	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbLY < -INPUT_DEADZONE)
 	{
 		return true;
 	} else { return false; }
 }
 
-bool XInputManager::RightStickX(bool UpDown)
+bool XInputManager::RightStickX(bool LeftRight)
 {
-	if (UpDown == true && g_Controllers.state.Gamepad.sThumbRX > INPUT_DEADZONE)
+	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbRX < -INPUT_DEADZONE)
 	{
 		return true;
-	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbRX < -INPUT_DEADZONE)
+	} else if (LeftRight == false && g_Controllers.state.Gamepad.sThumbRX > INPUT_DEADZONE)
 	{
 		return true;
 	} else { return false; }
 }
 
-bool XInputManager::RightStickY(bool LeftRight)
+bool XInputManager::RightStickY(bool UpDown)
 {
-	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbRY > INPUT_DEADZONE)
+	if (UpDown == true && g_Controllers.state.Gamepad.sThumbRY > INPUT_DEADZONE)
 	{
 		return true;
-	} else if (LeftRight == false && g_Controllers.state.Gamepad.sThumbRY < -INPUT_DEADZONE)
+	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbRY < -INPUT_DEADZONE)
 	{
 		return true;
 	} else { return false; }
 }
 
-bool XInputManager::TriggerLeftStickX(bool UpDown)
+bool XInputManager::TriggerLeftStickX(bool LeftRight)
 {
-	if (UpDown == true && g_Controllers.state.Gamepad.sThumbLX > INPUT_DEADZONE &&
-		g_Controllers.lastState.Gamepad.sThumbLX <= INPUT_DEADZONE)
-	{
-		return true;
-	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbLX < -INPUT_DEADZONE &&
+	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbLX < -INPUT_DEADZONE &&
 		g_Controllers.lastState.Gamepad.sThumbLX >= -INPUT_DEADZONE)
 	{
 		return true;
+	} if (LeftRight == false && g_Controllers.state.Gamepad.sThumbLX > INPUT_DEADZONE &&
+		g_Controllers.lastState.Gamepad.sThumbLX <= INPUT_DEADZONE)
+	{
+		return true;
 	} else { return false; }
 }
 
-bool XInputManager::TriggerLeftStickY(bool LeftRight)
+bool XInputManager::TriggerLeftStickY(bool UpDown)
 {
-	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbLY > INPUT_DEADZONE &&
+	if (UpDown == true && g_Controllers.state.Gamepad.sThumbLY > INPUT_DEADZONE &&
 		g_Controllers.lastState.Gamepad.sThumbLY <= INPUT_DEADZONE)
 	{
 		return true;
-	} else if (LeftRight == false && g_Controllers.state.Gamepad.sThumbLY < -INPUT_DEADZONE &&
+	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbLY < -INPUT_DEADZONE &&
 		g_Controllers.lastState.Gamepad.sThumbLY >= -INPUT_DEADZONE)
 	{
 		return true;
 	} else { return false; }
 }
 
-bool XInputManager::TriggerRightStickX(bool UpDown)
+bool XInputManager::TriggerRightStickX(bool LeftRight)
 {
-	if (UpDown == true && g_Controllers.state.Gamepad.sThumbRX > INPUT_DEADZONE &&
-		g_Controllers.lastState.Gamepad.sThumbRX <= INPUT_DEADZONE)
+	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbRX < -INPUT_DEADZONE &&
+		g_Controllers.lastState.Gamepad.sThumbRX >= -INPUT_DEADZONE)
 	{
 		return true;
-	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbRX < -INPUT_DEADZONE &&
-		g_Controllers.lastState.Gamepad.sThumbRX >= -INPUT_DEADZONE)
+	}if (LeftRight == false && g_Controllers.state.Gamepad.sThumbRX > INPUT_DEADZONE &&
+		g_Controllers.lastState.Gamepad.sThumbRX <= INPUT_DEADZONE)
 	{
 		return true;
 	} else { return false; }
 }
 
-bool XInputManager::TriggerRightStickY(bool LeftRight)
+bool XInputManager::TriggerRightStickY(bool UpDown)
 {
-	if (LeftRight == true && g_Controllers.state.Gamepad.sThumbRY > INPUT_DEADZONE &&
+	if (UpDown == true && g_Controllers.state.Gamepad.sThumbRY > INPUT_DEADZONE &&
 		g_Controllers.lastState.Gamepad.sThumbRY <= INPUT_DEADZONE)
 	{
 		return true;
-	} else if (LeftRight == false && g_Controllers.state.Gamepad.sThumbRY < -INPUT_DEADZONE &&
+	} else if (UpDown == false && g_Controllers.state.Gamepad.sThumbRY < -INPUT_DEADZONE &&
 		g_Controllers.lastState.Gamepad.sThumbRY >= -INPUT_DEADZONE)
 	{
 		return true;
@@ -317,10 +324,10 @@ float XInputManager::GetPadRStickAngle()
 	return radian;
 }
 
-void XInputManager::StartVibration()
+void XInputManager::StartVibration(STRENGTH strength)
 {
-	g_Controllers.vibration.wLeftMotorSpeed = 65535;
-	g_Controllers.vibration.wRightMotorSpeed = 65535;
+	g_Controllers.vibration.wLeftMotorSpeed = strength;
+	g_Controllers.vibration.wRightMotorSpeed = strength;
 
 	XInputSetState(0, &g_Controllers.vibration);
 }

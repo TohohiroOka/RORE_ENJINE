@@ -75,6 +75,13 @@ const unsigned short NormalMap::indices[36] = {
 
 NormalMap::~NormalMap()
 {
+	vertBuff.Reset();
+	indexBuff.Reset();
+	constBuff.Reset();
+}
+
+void NormalMap::AllDelete()
+{
 	pipelineState.Reset();
 	rootSignature.Reset();
 	descHeap.Reset();
@@ -410,9 +417,8 @@ void NormalMap::StaticInitialize(ID3D12Device* device)
 	//パイプライン設定
 	Pipeline();
 
-	rootSignature->SetName(L"NMroot");
-	pipelineState->SetName(L"NMpipe");
-
+	pipelineState->SetName(L"NormalMapPipe");
+	rootSignature->SetName(L"NormalMapRoot");
 }
 
 void NormalMap::PreDraw(ID3D12GraphicsCommandList* cmdList)

@@ -2,14 +2,11 @@
 #include "WindowApp.h"
 #include <vector>
 #include <cassert>
-#include "WindowApp.h"
+#include "SafeDelete.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
-
-Microsoft::WRL::ComPtr<ID3D12Device> DirectXCommon::device = nullptr;//デバイス
-Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXCommon::cmdList = nullptr;//コマンドリスト
 
 DirectXCommon::~DirectXCommon()
 {
@@ -119,8 +116,8 @@ void DirectXCommon::Initialize()
 
 	// 各種設定をしてスワップチェーンを生成
 	DXGI_SWAP_CHAIN_DESC1 swapchainDesc{};
-	swapchainDesc.Width = WindowApp::GetWindowWidth();
-	swapchainDesc.Height = WindowApp::GetWindowHeight();
+	swapchainDesc.Width = 1280;
+	swapchainDesc.Height = 720;
 	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;// 色情報の書式
 	swapchainDesc.SampleDesc.Count = 1; // マルチサンプルしない
 	swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;// バックバッファ用
@@ -219,6 +216,9 @@ void DirectXCommon::CreateDepth()
 
 void DirectXCommon::BeforeDraw()
 {
+	const UINT WindowWidth = WindowApp::GetWindowWidth();
+	const UINT WindowHeight = WindowApp::GetWindowHeight();
+
 	// バックバッファの番号を取得（2つなので0番か1番）
 	UINT bbIndex = swapchain->GetCurrentBackBufferIndex();
 
@@ -243,9 +243,9 @@ void DirectXCommon::BeforeDraw()
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ビューポートの設定
-	cmdList->RSSetViewports(1, &CD3DX12_VIEWPORT(0.0f, 0.0f, WindowApp::GetWindowWidth() , WindowApp::GetWindowHeight()));
+	cmdList->RSSetViewports(1, &CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowWidth, (FLOAT)WindowHeight));
 	// シザリング矩形の設定
-	cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, WindowApp::GetWindowWidth(), WindowApp::GetWindowHeight()));
+	cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, (LONG)WindowWidth, (LONG)WindowHeight));
 }
 
 void DirectXCommon::AfterDraw()
@@ -277,5 +277,4 @@ void DirectXCommon::AfterDraw()
 
 	// バッファをフリップ（裏表の入替え）
 	swapchain->Present(1, 0);
-
 }

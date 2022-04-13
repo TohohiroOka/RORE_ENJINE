@@ -2,14 +2,14 @@
 #include "WindowApp.h"
 #include <cassert>
 
-//ライブラリのリンク
-#pragma comment(lib,"dinput8.lib")
-#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
 
-// デバイス発見時に実行される
-BOOL CALLBACK DeviceFindCallBack(LPCDIDEVICEINSTANCE ipddi, LPVOID pvRef)
+DirectInput* DirectInput::GetInstance()
 {
-	return DIENUM_CONTINUE;
+	static DirectInput instance;
+
+	return &instance;
 }
 
 void DirectInput::Initialize()
@@ -17,30 +17,61 @@ void DirectInput::Initialize()
 	HRESULT result;
 
 	//DirectInputのインスタンス生成
-	result = DirectInput8Create(WindowApp::GetWinInstance(), DIRECTINPUT_VERSION,
-		IID_IDirectInput8, (void**)&dinput, nullptr);
-	
-	//キーボードデバイス生成
-	result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
-	// マウスデバイスの生成	
-	result = dinput->CreateDevice(GUID_SysMouse, &devMouse, NULL);
+	result = DirectInput8Create(
+		WindowApp::GetWinInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dinput, nullptr);
 
-	//入力データ形式のセット(キー)
-	result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
-	//排他制御レベルのセット(キー)
-	result = devkeyboard->SetCooperativeLevel(WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	// 入力データ形式のセット(マウス)
-	result = devMouse->SetDataFormat(&c_dfDIMouse2); // 標準形式
-	// 排他制御レベルのセット(マウス)
-	result = devMouse->SetCooperativeLevel(WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	///-----------------キー入力初期化-----------------///
+
+	//キーボードデバイスの設定
+	result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
+	//入力データ形式のセット
+	result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);	//標準形式
+	//排他制御レベルのセット
+	result = devkeyboard->SetCooperativeLevel(
+		WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+
+
+	///----------------マウス入力初期化----------------///
+
+	//マウスデバイスの設定
+	result = dinput->CreateDevice(GUID_SysMouse, &devmouse, NULL);
+	//入力データ形式のセット
+	result = devmouse->SetDataFormat(&c_dfDIMouse);	//標準形式
+	//排他制御レベルのセット
+	result = devmouse->SetCooperativeLevel(
+		WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+}
+
+void DirectInput::Update()
+{
+	HRESULT result;
+
+	///-----------------キー入力更新-----------------///
+
+	//前回のキー入力を保存
+	memcpy(keyPre, key, sizeof(key));
+	//キーボード情報の取得開始
+	result = devkeyboard->Acquire();
+	//全キーの入力状態を取得する
+	result = devkeyboard->GetDeviceState(sizeof(key), key);
+
+	///----------------マウス入力更新----------------///
+
+	//前回のマウス入力を保存
+	mousePre = mouse;
+	//マウス情報の取得開始
+	result = devmouse->Acquire();
+	//マウスの入力状態を取得する
+	result = devmouse->GetDeviceState(sizeof(mouse), &mouse);
+	//マウス座標を取得する
+	GetCursorPos(&mousePoint);
+	//スクリーン座標をクライアント座標に変換する
+	ScreenToClient(WindowApp::GetHwnd(), &mousePoint);
 }
 
 bool DirectInput::PushKey(BYTE keyNumber)
 {
-	// 異常な引数を検出
-	assert(0 <= keyNumber && keyNumber <= 256);
-
-	//指定キーを押していなければtrueを返す
+	//指定のキーを押していればtrueを返す
 	if (key[keyNumber]) {
 		return true;
 	}
@@ -50,104 +81,68 @@ bool DirectInput::PushKey(BYTE keyNumber)
 
 bool DirectInput::TriggerKey(BYTE keyNumber)
 {
-	// 異常な引数を検出
-	assert(0 <= keyNumber && keyNumber <= 256);
-
-	//指定キーを押していなければtrueを返す
-	if (key[keyNumber]&& !keyPre[keyNumber]) {
+	//指定のキーを押した瞬間ならtrueを返す
+	if (key[keyNumber] && !keyPre[keyNumber]) {
 		return true;
 	}
 	//そうでなければfalseを返す
 	return false;
 }
 
-bool DirectInput::PushMouseLeft()
+bool DirectInput::ReleaseKey(BYTE keyNumber)
 {
-	// 0でなければ押している
-	if (mouseState.rgbButtons[0]) {
+	//指定のキーを離した瞬間ならtrueを返す
+	if (!key[keyNumber] && keyPre[keyNumber]) {
 		return true;
 	}
-
-	// 押していない
+	//そうでなければfalseを返す
 	return false;
 }
 
-bool DirectInput::PushMouseCenter()
+bool DirectInput::PushMouseButton(const int mouseButton)
 {
-	// 0でなければ押している
-	if (mouseState.rgbButtons[1]) {
+	//指定のボタンを押していればtrueを返す
+	if (mouse.rgbButtons[mouseButton]) {
 		return true;
 	}
-
-	// 押していない
+	//そうでなければfalseを返す
 	return false;
 }
 
-bool DirectInput::PushMouseRight()
+bool DirectInput::TriggerMouseButton(const int mouseButton)
 {
-	// 0でなければ押している
-	if (mouseState.rgbButtons[2]) {
+	//指定のボタンを押した瞬間ならtrueを返す
+	if (mouse.rgbButtons[mouseButton] &&
+		!mousePre.rgbButtons[mouseButton]) {
 		return true;
 	}
-
-	// 押していない
+	//そうでなければfalseを返す
 	return false;
 }
 
-bool DirectInput::TriggerMouseLeft()
+bool DirectInput::ReleaseMouseButton(const int mouseButton)
 {
-	// 前回が0で、今回が0でなければトリガー
-	if (!mouseStatePre.rgbButtons[0] && mouseState.rgbButtons[0]) {
+	//指定のボタンを離した瞬間ならtrueを返す
+	if (!mouse.rgbButtons[mouseButton] &&
+		mousePre.rgbButtons[mouseButton]) {
 		return true;
 	}
-
-	// トリガーでない
+	//そうでなければfalseを返す
 	return false;
 }
 
-bool DirectInput::TriggerMouseCenter()
+DirectX::XMFLOAT2 DirectInput::GetMousePoint()
 {
-	// 前回が0で、今回が0でなければトリガー
-	if (!mouseStatePre.rgbButtons[1] && mouseState.rgbButtons[1]) {
-		return true;
-	}
-
-	// トリガーでない
-	return false;
+	return DirectX::XMFLOAT2((float)mousePoint.x, (float)mousePoint.y);
 }
 
-bool DirectInput::TriggerMouseRight()
+DirectX::XMFLOAT2 DirectInput::GetMouseVelocity()
 {
-	// 前回が0で、今回が0でなければトリガー
-	if (!mouseStatePre.rgbButtons[2] && mouseState.rgbButtons[2]) {
-		return true;
-	}
-
-	// トリガーでない
-	return false;
+	return DirectX::XMFLOAT2((float)mouse.lX, (float)mouse.lY);
 }
 
-void DirectInput::Update()
+float DirectInput::GetMouseWheelVelocity()
 {
-	HRESULT result;
-
-	//-----------キー--------------//
-	//キーボード情報の取得開始
-	result = devkeyboard->Acquire();
-
-	//前回キー入力を保存
-	memcpy(keyPre, key, sizeof(key));
-
-	//全キーの入力状態を取得する
-	result = devkeyboard->GetDeviceState(sizeof(key), key);
-
-	//-----------マウス--------------//
-	// マウス動作開始
-	result = devMouse->Acquire();
-
-	// 前回の入力を保存
-	mouseStatePre = mouseState;
-
-	// マウスの入力
-	result = devMouse->GetDeviceState(sizeof(mouseState), &mouseState);
+	float wheel = mouse.lZ / 120.0f;
+	return wheel;
 }

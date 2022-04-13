@@ -1,12 +1,11 @@
 #pragma once
-#include "Singleton.h"
-
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <stdio.h>
 #include <commdlg.h>
 #include <basetsd.h>
 #include <objbase.h>
+
 #if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
 #include <XInput.h>
 #pragma comment(lib,"xinput.lib")
@@ -17,14 +16,19 @@
 
 #include <DirectXMath.h>
 
-class XInputManager : public Singleton< XInputManager >
+class XInputManager final
 {
-	friend Singleton< XInputManager >;
-
-private://コンストラクタ&デストラクタ
-
-	XInputManager() {};
+private: //シングルトン化
+	//コンストラクタを隠蔽
+	XInputManager() = default;
+	//デストラクタを隠蔽
 	~XInputManager();
+
+public:
+	//コピーコンストラクタを無効化
+	XInputManager(const XInputManager& input) = delete;
+	//代入演算子を無効化
+	void operator = (const XInputManager& input) = delete;
 
 private://メンバ構造体
 
@@ -40,7 +44,7 @@ private://メンバ構造体
 public://メンバEnum
 
 	//ゲームパッドキーコンフィグ
-	enum PudButton {
+	enum PUD_BUTTON {
 		PAD_A = 0,//A
 		PAD_B,//B
 		PAD_Y,//Y
@@ -59,7 +63,20 @@ public://メンバEnum
 		PAD_RIGHT_STICK_PUSH,//右ステック押し込み
 	};
 
+	enum STRENGTH {
+		SMALL = 10000,
+		MEDIUM = 20000,
+		LARGE = 40000,
+		MAX = 65535,
+	};
+
 public://メンバ関数
+
+	/// <summary>
+	/// インスタンス取得
+	/// </summary>
+	/// <returns>入力</returns>
+	static XInputManager* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -76,70 +93,70 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="button">ボタン</param>
 	/// <returns>押されているか否か</returns>
-	bool PushButton(PudButton button);
+	bool PushButton(PUD_BUTTON button);
 
 	/// <summary>
 	/// 指定ボタンのトリガーをチェック
 	/// </summary>
 	/// <param name="button">ボタン</param>
 	/// <returns>押されているか否か</returns>
-	bool TriggerButton(PudButton button);
+	bool TriggerButton(PUD_BUTTON button);
 
 	/// <summary>
 	/// 左スティックのX軸チェック
 	/// </summary>
-	/// <param name="UpDown">Up -> true / Down -> false</param>
+	/// <param name="LeftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool LeftStickX(bool UpDown);
+	bool LeftStickX(bool LeftRight);
 
 	/// <summary>
 	/// 左スティックのY軸チェック
 	/// </summary>
-	/// <param name="LeftRight">Left -> true / Right -> false</param>
+	/// <param name="UpDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool LeftStickY(bool LeftRight);
+	bool LeftStickY(bool UpDown);
 
 	/// <summary>
 	/// 右スティックのX軸チェック
 	/// </summary>
-	/// <param name="UpDown">Up -> true / Down -> false</param>
+	/// <param name="LeftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool RightStickX(bool UpDown);
+	bool RightStickX(bool LeftRight);
 
 	/// <summary>
 	/// 右スティックのY軸チェック
 	/// </summary>
-	/// <param name="LeftRight">Left -> true / Right -> false</param>
+	/// <param name="UpDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool RightStickY(bool LeftRight);
+	bool RightStickY(bool UpDown);
 
 	/// <summary>
 	/// 左スティックのX軸トリガーでチェック
 	/// </summary>
-	/// <param name="UpDown">Up -> true / Down -> false</param>
+	/// <param name="LeftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerLeftStickX(bool UpDown);
+	bool TriggerLeftStickX(bool LeftRight);
 
 	/// <summary>
 	/// 左スティックのY軸トリガーでチェック
 	/// </summary>
+	/// <param name="UpDown">Up -> true / Down -> false</param>
+	/// <returns>true/false</returns>
+	bool TriggerLeftStickY(bool UpDown);
+
+	/// <summary>
+	/// 右スティックのX軸トリガーでチェック
+	/// </summary>
 	/// <param name="LeftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerLeftStickY(bool LeftRight);
+	bool TriggerRightStickX(bool LeftRight);
 
 	/// <summary>
 	/// 右スティックのX軸トリガーでチェック
 	/// </summary>
 	/// <param name="UpDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerRightStickX(bool UpDown);
-
-	/// <summary>
-	/// 右スティックのY軸トリガーでチェック
-	/// </summary>
-	/// <param name="LeftRight">Left -> true / Right -> false</param>
-	/// <returns>true/false</returns>
-	bool TriggerRightStickY(bool LeftRight);
+	bool TriggerRightStickY(bool UpDown);
 
 	/// <summary>
 	/// ゲームパッドの左スティックの傾きを取得
@@ -168,7 +185,8 @@ public://メンバ関数
 	/// <summary>
 	/// 振動開始
 	/// </summary>
-	void StartVibration();
+	/// <param name="strength">強さ</param>
+	void StartVibration(STRENGTH strength);
 
 	/// <summary>
 	/// 振動開始
@@ -177,6 +195,5 @@ public://メンバ関数
 
 private://メンバ変数
 
-	//コントローラーの情報保持変数
 	CONTROLLER_STATE g_Controllers;
 };

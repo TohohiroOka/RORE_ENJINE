@@ -4,7 +4,6 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 
-class BaseCollider;
 class Camera;
 
 class NormalMap
@@ -88,6 +87,11 @@ public://Ã“Iƒƒ“ƒoŠÖ”
 	/// •`‰æŒãˆ—
 	/// </summary>
 	static void PostDraw();
+
+	/// <summary>
+	/// ‰ğ•úˆ—
+	/// </summary>
+	static void AllDelete();
 
 public://ƒƒ“ƒoŠÖ”
 

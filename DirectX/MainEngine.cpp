@@ -1,8 +1,9 @@
 #include "MainEngine.h"
-#include "Object3d.h"
-#include "Sprite.h"
 #include "DrawLine.h"
 #include "DrawLine3D.h"
+#include "GameScene.h"
+#include "Object3d.h"
+#include "Sprite.h"
 #include "Emitter.h"
 #include "Fbx.h"
 #include "NormalMap.h"
@@ -11,18 +12,19 @@
 
 MainEngine::~MainEngine()
 {
-	winApp->Release();
-	safe_delete(winApp);
-}
-
-void MainEngine::AllDelete()
-{
-	safe_delete(scene);
 	safe_delete(camera);
+	safe_delete(scene);
 	safe_delete(postEffect);
+	DebugText::AllDelete();
+	DrawLine3D::AllDelete();
+	DrawLine::AllDelete();
+	Object3d::AllDelete();
+	Sprite::AllDelete();
+	Fbx::AllDelete();
+	ParticleManager::AllDelete();
+	NormalMap::AllDelete();
 	safe_delete(dXCommon);
-	safe_delete(audio);
-	safe_delete(dXCommon);
+	safe_delete(winApp);
 }
 
 void MainEngine::Initialize(const wchar_t* gameName, int window_width, int window_height)
@@ -46,8 +48,8 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	input->Initialize();
 
 	//パッド
-	xinput = XInputManager::GetInstance();
-	xinput->Initialize();
+	Xinput = XInputManager::GetInstance();
+	Xinput->Initialize();
 
 	//カメラの初期化
 	camera = new Camera();
@@ -55,26 +57,21 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	//Object系の初期化
 	Object3d::StaticInitialize(dXCommon->GetDevice(), camera);
 	Sprite::StaticInitialize(dXCommon->GetDevice());
-	DrawLine::StaticInitialize(dXCommon->GetDevice(), window_width, window_height);
+	DrawLine::StaticInitialize(dXCommon->GetDevice());
 	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
-	ParticleManager::Initialize(dXCommon->GetDevice(), dXCommon->GetCmdList());
+	ParticleManager::Initialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	Fbx::StaticInitialize(dXCommon->GetDevice());
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
-	//ゲームシーン初期化
+
 	scene = new GameScene();
 	scene->Initialize();
 
-	//デバッグテキストのテクスチャ
 	Sprite::LoadTexture(0, L"Resources/LetterResources/debugfont.png");
 
-	//ポストエフェクト初期化
 	postEffect = new PostEffect();
 	postEffect->Initialize();
-
-	//Audio初期化
-	audio = new Audio();
 
 	//深度の初期化
 	dXCommon->CreateDepth();
@@ -83,22 +80,15 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 bool MainEngine::Update()
 {
 	input->Update();
+	Xinput->Update();
 
 	//エスケープか×が押されたときゲーム終了
-	if (input->PushKey(DIK_ESCAPE)|| GameFin() == true) { return true; }
-	xinput->Update();
+	if (input->PushKey(DIK_ESCAPE) || gameFin(winApp) == true) { return true; }
 
 	//更新
-	scene->Update(audio, camera);
+	scene->Update(camera);
 
 	return false;
-}
-
-void MainEngine::DebugNum(float x, float y, float z)
-{
-	//数字のデバッグ
-	swprintf_s(str, L"%f,%f,%f\n", x, y, z);
-	OutputDebugString(str);
 }
 
 void MainEngine::Draw()
@@ -116,11 +106,16 @@ void MainEngine::Draw()
 
 	//コマンド実行
 	dXCommon->AfterDraw();
-
-	scene->GetConstbufferNum();
 }
 
-void MainEngine::FrameRateKeep() {
+void MainEngine::debugNum(float x, float y, float z)
+{
+	//数字のデバッグ
+	swprintf_s(str, L"%f,%f,%f\n", x, y, z);
+	OutputDebugString(str);
+}
+
+void MainEngine::frameRateKeep() {
 	// 今の時間を取得
 	QueryPerformanceCounter(&timeEnd);
 	// (今の時間 - 前フレームの時間) / 周波数 = 経過時間(秒単位)
@@ -156,7 +151,8 @@ void MainEngine::FrameRateKeep() {
 	timeStart = timeEnd; // 入れ替え
 }
 
-bool MainEngine::GameFin() {
+//メインに書く（エスケープが入力されたら終了する処理）
+bool MainEngine::gameFin(WindowApp* winApp) {
 	//×が押されたとき
 	if (winApp->Update() == true) {
 		return true;

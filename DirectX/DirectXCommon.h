@@ -47,23 +47,20 @@ public://メンバ関数
 	/// デバイスのgetter
 	/// </summary>
 	/// <returns>デバイス</returns>
-	static ID3D12Device* GetDevice() { return device.Get(); }
+	ID3D12Device* GetDevice() { return device.Get(); }
 
 	/// <summary>
 	/// コマンドリストのgetter
 	/// </summary>
 	/// <returns>コマンドリスト</returns>
-	static ID3D12GraphicsCommandList* GetCmdList() { return cmdList.Get(); }
-
-private://静的メンバ変数
-
-	//デバイス
-	static ComPtr<ID3D12Device> device;
-	//コマンドリスト
-	static ComPtr<ID3D12GraphicsCommandList> cmdList;
+	ID3D12GraphicsCommandList* GetCmdList() { return cmdList.Get(); }
 
 private://メンバ変数
 
+	//デバイス
+	ComPtr<ID3D12Device> device;
+	//コマンドリスト
+	ComPtr<ID3D12GraphicsCommandList> cmdList;
 	//ファクトリー
 	ComPtr<IDXGIFactory6> dxgiFactory;
 	//コマンドアロケータ
@@ -87,4 +84,3 @@ private://メンバ変数
 	//コマンドリスト完了までのカウント
 	UINT64 fenceVal = 0;
 };
-

@@ -68,7 +68,8 @@ public://静的メンバ関数
 	/// <summary>
 	/// Objectの生成
 	/// </summary>
-	static DrawLine3D* Create();
+	/// <param name="LineNum">線の本数</param>
+	static DrawLine3D* Create(UINT LineNum);
 
 	/// <summary>
 	/// 描画前処理
@@ -81,13 +82,18 @@ public://静的メンバ関数
 	/// </summary>
 	static void PostDraw();
 
+	/// <summary>
+	/// 静的終了処理
+	/// </summary>
+	static void AllDelete();
+
 public://メンバ関数
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <returns>成否</returns>
-	bool Initialize();
+	bool Initialize(UINT LineNum);
 
 	/// <summary>
 	/// 更新
@@ -100,9 +106,13 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="startPoint">始点</param>
 	/// <param name="endPoint">終点</param>
-	/// <param name="color">色</param>
 	/// <param name="width">線の幅</param>
-	void SetLine(DirectX::XMFLOAT3 startPoint, DirectX::XMFLOAT3 endPoint, XMFLOAT4 color, float width);
+	void SetLine(XMFLOAT3 startPoint[], XMFLOAT3 endPoint[], float width);
+
+	/// <summary>
+	/// 色の変更
+	/// </summary>
+	void SetColor(XMFLOAT4 color) { this->color = color; }
 
 	/// <summary>
 	/// //描画
@@ -112,10 +122,15 @@ public://メンバ関数
 
 private://静的メンバ変数
 
-	// 頂点数
+	// 一本分の頂点数
 	static const int vertNum = 4;
-	// インデックス数
+	// 一本分のインデックス数
 	static const int indexNum = 12;
+	// 一本分のインデックBasics
+	unsigned short BASE_INDICES[indexNum] = {
+	0,1,2,1,2,3,
+	2,1,0,3,2,1
+	};
 	//デバイス
 	static ID3D12Device* device;
 	//コマンドリスト
@@ -127,6 +142,8 @@ private://静的メンバ変数
 
 protected://メンバ変数
 
+	//頂点配列
+	std::vector<Vertex> vertices;
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//頂点バッファビュー
@@ -135,6 +152,10 @@ protected://メンバ変数
 	ComPtr<ID3D12Resource> indexBuff;
 	//インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView{};
+	//頂点データの要素数
+	UINT VERTEX_ARRAY_NUM = 0;
+	//インデックスデータの要素数
+	UINT INDEX_ARRAY_NUM = 0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
 	// 色

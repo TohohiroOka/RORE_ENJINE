@@ -7,20 +7,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	const int window_height = 720;// c•
 
 	//ƒQ[ƒ€–¼
-	const wchar_t* gameName = L"DirectXGame";
+	const wchar_t* gameName = L"NAVE";
 
 	//‘S‘Ì‚Ì‰Šú‰»
-	MainEngine* engine = MainEngine::GetInstance();
+	MainEngine* engine = nullptr;
+	engine = new MainEngine();
 	engine->Initialize(gameName, window_width, window_height);
 
 	while (true)
 	{
 		if (engine->Update() == true) { break; }
 		engine->Draw();
-		engine->FrameRateKeep();
+		engine->frameRateKeep();
 	}
 
-	engine->AllDelete();
+	//“o˜^‰ğœ
+	delete engine;
 
 	return 0;
 }

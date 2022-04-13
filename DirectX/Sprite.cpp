@@ -24,12 +24,15 @@ ComPtr<ID3D12Resource> Sprite::texBuff[srvCount];
 
 Sprite::~Sprite()
 {
-	rootSignature.Reset();
-	pipelineState.Reset();
 	descHeap.Reset();
 	vertBuff.Reset();
 	constBuff.Reset();
+}
 
+void Sprite::AllDelete()
+{
+	rootSignature.Reset();
+	pipelineState.Reset();
 	for (int i = 0; i < srvCount; i++)
 	{
 		texBuff[i].Reset();
@@ -123,6 +126,7 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 	// デプスステンシルステート
 	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS; // 常に上書きルール
+	gpipeline.DepthStencilState.DepthEnable = false;
 
 	// レンダーターゲットのブレンド設定
 	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
@@ -210,8 +214,8 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 		return false;
 	}
 
-	rootSignature->SetName(L"SProot");
-	pipelineState->SetName(L"SPpipe");
+	pipelineState->SetName(L"SpritePipe");
+	rootSignature->SetName(L"SpriteRoot");
 
 	return true;
 }
@@ -312,7 +316,7 @@ void Sprite::PostDraw()
 	Sprite::cmdList = nullptr;
 }
 
-Sprite* Sprite::Create()
+Sprite* Sprite::Create(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	// Spriteのインスタンスを生成
 	Sprite* sprite = new Sprite();
@@ -321,7 +325,7 @@ Sprite* Sprite::Create()
 	}
 
 	// 初期化
-	if (!sprite->Initialize()) {
+	if (!sprite->Initialize(texNumber, anchorpoint, isFlipX, isFlipY)) {
 		delete sprite;
 		assert(0);
 		return nullptr;
@@ -332,8 +336,13 @@ Sprite* Sprite::Create()
 	return sprite;
 }
 
-bool Sprite::Initialize()
+bool Sprite::Initialize(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
 {
+	this->texNumber = texNumber;
+	this->anchorpoint = anchorpoint;
+	this->isFlipX = isFlipX;
+	this->isFlipY = isFlipY;
+
 	HRESULT result = S_FALSE;
 
 	// 頂点バッファ生成
@@ -382,6 +391,7 @@ bool Sprite::Initialize()
 	return true;
 }
 
+
 void Sprite::Update()
 {
 	// ワールド行列の更新
@@ -397,7 +407,7 @@ void Sprite::Update()
 	HRESULT result = this->constBuff->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result)) {
 		constMap->color = this->color;
-		constMap->mat = XMMatrixIdentity();	// 行列の合成	
+		constMap->mat = this->matWorld * matProjection;	// 行列の合成	
 		this->constBuff->Unmap(0, nullptr);
 	}
 }
@@ -430,10 +440,10 @@ void Sprite::TransferVertices()
 	// 左下、左上、右下、右上
 	enum { LB, LT, RB, RT };
 
-	float left = (0.0f - anchorpoint.x) * scale.x;
-	float right = (1.0f - anchorpoint.x) * scale.x;
-	float top = (0.0f - anchorpoint.x) * scale.y;
-	float bottom = (1.0f - anchorpoint.x) * scale.y;
+	float left = (0.0f - anchorpoint.x) * size.x;
+	float right = (1.0f - anchorpoint.x) * size.x;
+	float top = (0.0f - anchorpoint.x) * size.y;
+	float bottom = (1.0f - anchorpoint.x) * size.y;
 	if (isFlipX)
 	{// 左右入れ替え
 		left = -left;

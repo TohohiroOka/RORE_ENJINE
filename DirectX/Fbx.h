@@ -1,11 +1,11 @@
 #pragma once
-#include<fbxsdk.h>
+#include <fbxsdk.h>
 #include <wrl.h>
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <DirectXMath.h>
-#include<DirectXTex.h>
-#include<map>
+#include <DirectXTex.h>
+#include <map>
 
 class Camera;
 
@@ -207,7 +207,7 @@ private://静的メンバ関数関数
 	static std::string ExtractFileName(const std::string& path);
 
 public://静的メンバ関数
-	
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -242,6 +242,11 @@ public://静的メンバ関数
 	/// 描画後処理
 	/// </summary>
 	static void PostDraw();
+
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void AllDelete();
 
 public:
 

@@ -5,14 +5,13 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <d3dx12.h>
-#include <string>
 
 #include "Model.h"
-#include "Camera.h"
 #include "LightGroup.h"
 #include "CollisionInfo.h"
 
 class BaseCollider;
+class Camera;
 
 /// <summary>
 /// 3Dオブジェクト
@@ -41,12 +40,16 @@ public: // サブクラス
 	};
 
 public: // 静的メンバ関数
-
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
 	/// <param name="device">デバイス</param>
 	static void StaticInitialize(ID3D12Device* device, Camera* camera = nullptr);
+
+	/// <summary>
+	/// 静的終了処理
+	/// </summary>
+	static void AllDelete();
 
 	/// <summary>
 	/// グラフィックパイプラインの生成
@@ -95,7 +98,6 @@ private: // 静的メンバ変数
 	static ComPtr<ID3D12RootSignature> rootSignature;
 	// パイプラインステートオブジェクト
 	static ComPtr<ID3D12PipelineState> pipelineState;
-
 	// カメラ
 	static Camera* camera;
 	// ライト
@@ -111,7 +113,7 @@ public: // メンバ関数
 	/// デストラクタ
 	/// </summary>
 	virtual ~Object3d();
-	
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -134,82 +136,10 @@ public: // メンバ関数
 	void UpdateWorldMatrix();
 
 	/// <summary>
-	/// 座標の取得
-	/// </summary>
-	/// <returns>座標</returns>
-	const XMFLOAT3& GetPosition() { return position; }
-
-	/// <summary>
-	/// 回転の取得
-	/// </summary>
-	/// <returns>回転</returns>
-	const XMFLOAT3& GetRotation() { return rotation; }
-
-	/// <summary>
-	/// ワールド行列の取得
-	/// </summary>
-	/// <returns>ワールド行列</returns>
-	const XMMATRIX& GetMatWorld() {	return matWorld; }
-
-	/// <summary>
-	/// 座標の設定
-	/// </summary>
-	/// <param name="position">座標</param>
-	void SetPosition(XMFLOAT3 position) { this->position = position; }
-
-	/// <summary>
-	/// 回転角の設定
-	/// </summary>
-	/// <param name="rotation">回転角</param>
-	void SetRotation(XMFLOAT3 rotation) { this->rotation = rotation; }
-
-	/// <summary>
-	/// スケールの設定
-	/// </summary>
-	/// <param name="scale">スケール</param>
-	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
-
-	/// <summary>
-	/// 輝度の設定
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(XMFLOAT4 color) { this->color = color; }
-
-	/// <summary>
-	/// 輝度の設定
-	/// </summary>
-	/// <param name="isBloom">ブルームの有無</param>
-	void SetIsBloom(bool isBloom) { this->isBloom = isBloom; }
-
-	/// <summary>
-	/// モデルのセット
-	/// </summary>
-	/// <param name="model">モデル</param>
-	void SetModel(Model* model) { this->model = model; }
-
-	/// <summary>
-	/// コライダーのセット
-	/// </summary>
-	/// <param name="collider">コライダー</param>
-	void SetCollider(BaseCollider* collider);
-
-	/// <summary>
 	/// 衝突時コールバック関数
 	/// </summary>
 	/// <param name="info">衝突情報</param>
 	virtual void OnCollision(const CollisionInfo& info) {}
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	/// <returns></returns>
-	XMFLOAT3 GetWorldPosition();
-
-	/// <summary>
-	/// モデルを取得
-	/// </summary>
-	/// <returns>モデル</returns>
-	inline Model* GetModel() { return model; }
 
 protected: // メンバ変数
 
@@ -226,7 +156,7 @@ protected: // メンバ変数
 	XMFLOAT3 position = { 0,0,0 };
 	// ローカルワールド変換行列
 	XMMATRIX matWorld = {};
-	//ブルームを行うか
+	//ブルームの有無
 	bool isBloom = false;
 	// 親オブジェクト
 	Object3d* parent = nullptr;
@@ -234,5 +164,90 @@ protected: // メンバ変数
 	Model* model = nullptr;
 	// コライダー
 	BaseCollider* collider = nullptr;
-};
 
+public:
+
+	/// <summary>
+/// 座標の取得
+/// </summary>
+/// <returns>座標</returns>
+	const XMFLOAT3& GetPosition() { return position; }
+
+	/// <summary>
+	/// 回転の取得
+	/// </summary>
+	/// <returns>回転</returns>
+	const XMFLOAT3& GetRotation() { return rotation; }
+
+	/// <summary>
+	/// 色の取得
+	/// </summary>
+	/// <returns>色</returns>
+	const XMFLOAT4& GetColor() { return color; }
+
+	/// <summary>
+	/// 大きさの取得
+	/// </summary>
+	/// <returns>大きさ</returns>
+	const XMFLOAT3& GetScale() { return scale; }
+
+	/// <summary>
+	/// ワールド行列の取得
+	/// </summary>
+	/// <returns>ワールド行列</returns>
+	const XMMATRIX& GetMatWorld() { return matWorld; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetPosition(XMFLOAT3 position) { this->position = position; }
+
+	/// <summary>
+	/// 回転角の設定
+	/// </summary>
+	/// <param name="rotation">回転角</param>
+	void SetRotation(XMFLOAT3 rotation) { this->rotation = rotation; }
+
+	/// <summary>
+	/// スケールの設定
+	/// </summary>
+	/// <param name="position">スケール</param>
+	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(XMFLOAT4 color) { this->color = color; }
+
+	/// <summary>
+	/// ブルームのセット
+	/// </summary>
+	/// <param name="isBloom">ブルーム有->true / 無->false</param>
+	void SetBloom(bool isBloom) { this->isBloom = isBloom; }
+
+	/// <summary>
+	/// モデルのセット
+	/// </summary>
+	/// <param name="model">モデル</param>
+	void SetModel(Model* model) { this->model = model; }
+
+	/// <summary>
+	/// コライダーのセット
+	/// </summary>
+	/// <param name="collider">コライダー</param>
+	void SetCollider(BaseCollider* collider);
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns></returns>
+	XMFLOAT3 GetWorldPosition();
+
+	/// <summary>
+	/// モデルを取得
+	/// </summary>
+	/// <returns>モデル</returns>
+	inline Model* GetModel() { return model; }
+};

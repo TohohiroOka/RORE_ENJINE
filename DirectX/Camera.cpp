@@ -30,9 +30,9 @@ void Camera::FpsCamera(XMFLOAT3& position, XMFLOAT3& move, float speed)
 	XMVECTOR v0 = { 0, 0, -200, 0 };
 	XMVECTOR v = XMVector3TransformNormal(v0, rotM);
 
-	target = { position.x - cosf(static_cast<double>(move.x * radian)) * speed,
-		position.y - sinf(static_cast<double>(move.y * radian)) * speed,
-		position.z - sinf(static_cast<double>(move.z * radian)) * speed };
+	target = { position.x - cosf(move.x * radian) * speed,
+		position.y - sinf(move.y * radian) * speed,
+		position.z - sinf(move.z * radian) * speed };
 	XMVECTOR targetV = { target.x, target.y, target.z, 0 };
 
 	XMVECTOR eyeV = targetV + v;
@@ -53,10 +53,15 @@ void Camera::TpsCamera(XMFLOAT3 distance)
 	eye.z = position.z + distance.z;
 }
 
-void Camera::CameraShake(int strength)
+void Camera::StartCameraShake(int strength)
 {
 	int x = (rand() % strength * 2) - strength;
 	int y = (rand() % strength * 2) - strength;
 
 	ShakeDifference = { (float)x ,(float)y,0.0f };
+}
+
+void Camera::EndCameraShake()
+{
+	ShakeDifference = { 0.0f,0.0f,0.0f };
 }

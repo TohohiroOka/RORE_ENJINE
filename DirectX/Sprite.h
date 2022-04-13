@@ -69,11 +69,19 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// スプライト生成
 	/// </summary>
+	/// <param name="texNumber">テクスチャ番号</param>
+	/// <param name="anchorpoint">アンカーポイント</param>
+	/// <param name="isFlipX">左右反転するか</param>
+	/// <param name="isFlipY">上下反転するか</param>
 	/// <returns>Sprite</returns>
-	static Sprite* Create();
+	static Sprite* Create(UINT texNumber, XMFLOAT2 anchorpoint = { 0.5f, 0.5f }, bool isFlipX = false, bool isFlipY = false);
+
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void AllDelete();
 
 protected: // 静的メンバ変数
-
 	// テクスチャの最大枚数
 	static const int srvCount = 512;
 	// 頂点数
@@ -108,8 +116,12 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="texNumber">テクスチャ番号</param>
+	/// <param name="anchorpoint">アンカーポイント</param>
+	/// <param name="isFlipX">左右反転するか</param>
+	/// <param name="isFlipY">上下反転するか</param>
 	/// <returns>成否</returns>
-	bool Initialize();
+	bool Initialize(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
 
 	/// <summary>
 	/// 更新
@@ -122,7 +134,6 @@ public: // メンバ関数
 	void Draw();
 
 protected: // メンバ変数
-
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	// 定数バッファ
@@ -136,7 +147,7 @@ protected: // メンバ変数
 	// 座標
 	XMFLOAT2 position{ 0, 0 };
 	// スプライト幅、高さ
-	XMFLOAT2 scale = { 100.0f, 100.0f };
+	XMFLOAT2 size = { 100.0f, 100.0f };
 	// アンカーポイント
 	XMFLOAT2 anchorpoint = { 0, 0 };
 	// ワールド行列
@@ -153,7 +164,6 @@ protected: // メンバ変数
 	XMFLOAT2 texSize = { 500.0f, 500.0f };
 
 protected: // メンバ関数
-
 	/// <summary>
 	/// 頂点データ転送
 	/// </summary>
@@ -162,116 +172,107 @@ protected: // メンバ関数
 public:
 
 	/// <summary>
-	/// 位置取得
+	/// 座標の取得
 	/// </summary>
-	/// <returns>position</returns>
+	/// <returns>座標</returns>
 	const XMFLOAT2& GetPosition() { return position; }
 
 	/// <summary>
-	/// 回転角取得
+	/// 回転角の取得
 	/// </summary>
-	/// <returns>rotation</returns>
+	/// <returns>回転角</returns>
 	const float GetRotation() { return rotation; }
 
 	/// <summary>
-	/// 大きさ取得
+	/// 大きさの取得
 	/// </summary>
-	/// <returns>scale</returns>
-	const XMFLOAT2& GetScale() { return scale; }
+	/// <returns>大きさ</returns>
+	const XMFLOAT2& GetSize() { return size; }
 
 	/// <summary>
-	/// テクスチャ幅取得
+	/// 高さの取得
 	/// </summary>
-	/// <returns>texSize</returns>
+	/// <returns>高さ</returns>
 	const XMFLOAT2& GetTexSize() { return texSize; }
 
 	/// <summary>
-	/// テクスチャ始点取得
+	/// 終点の取得
 	/// </summary>
-	/// <returns>texLeftTop</returns>
+	/// <returns>終点</returns>
 	const XMFLOAT2& GetTexLeftTop() { return texLeftTop; }
 
 	/// <summary>
-	/// 色取得
+	/// 色の取得
 	/// </summary>
-	/// <returns>color</returns>
+	/// <returns>色</returns>
 	const XMFLOAT4& GetColor() { return color; }
 
 	/// <summary>
-	/// アンカーポイント取得
+	/// アンカーポイントの取得
 	/// </summary>
-	/// <returns>anchorpoint</returns>
+	/// <returns>アンカーポイント</returns>
 	const XMFLOAT2& GetAnchorpoint() { return anchorpoint; }
 
 	/// <summary>
-	/// 左右反転取得
+	/// 左右反転フラグの取得
 	/// </summary>
-	/// <returns>isFlipX</returns>
+	/// <returns>左右反転フラグ</returns>
 	const bool GetIsFlipX() { return isFlipX; }
 
 	/// <summary>
-	/// 上下反転取得
+	/// 上下反転フラグの取得
 	/// </summary>
-	/// <returns>isFlipY</returns>
+	/// <returns>左右反転フラグ</returns>
 	const bool GetIsFlipY() { return isFlipY; }
 
 	/// <summary>
-	/// テクスチャ番号セット
+	/// テクスチャ番号の入力
 	/// </summary>
-	/// <param name="texNumber">テクスチャ番号</param>
 	void SetTexNumber(UINT texNumber) { this->texNumber = texNumber; };
 
 	/// <summary>
-	/// 位置セット
+	/// 座標の入力
 	/// </summary>
-	/// <param name="position">位置</param>
 	void SetPosition(const XMFLOAT2& position) { this->position = position; }
 
 	/// <summary>
-	/// 回転角セット
+	/// 回転角の入力
 	/// </summary>
-	/// <param name="rotation">回転角</param>
 	void SetRotation(float rotation) { this->rotation = rotation; }
 
 	/// <summary>
-	/// 大きさセット
+	/// 大きさの入力
 	/// </summary>
-	/// <param name="scale">大きさ</param>
-	void SetScale(const XMFLOAT2& scale) { this->scale = scale; }
+	void SetSize(const XMFLOAT2& size) { this->size = size; }
 
 	/// <summary>
-	/// テクスチャの幅セット
+	/// 高さの入力
 	/// </summary>
-	/// <param name="texSize">テクスチャの幅</param>
 	void SetTexSize(const XMFLOAT2& texSize) { this->texSize = texSize; }
 
 	/// <summary>
-	/// テクスチャ始点セット
+	/// 終点の入力
 	/// </summary>
-	/// <param name="texLeftTop">テクスチャ始点</param>
 	void SetTexLeftTop(const XMFLOAT2& texLeftTop) { this->texLeftTop = texLeftTop; }
 
 	/// <summary>
-	/// 色セット
+	/// 色の入力
 	/// </summary>
-	/// <param name="color">色</param>
 	void SetColor(const XMFLOAT4& color) { this->color = color; }
 
 	/// <summary>
-	/// アンカーポイントセット
+	/// アンカーポイントの入力
 	/// </summary>
-	/// <param name="anchorpoint">アンカーポイント</param>
 	void SetAnchorpoint(const XMFLOAT2& anchorpoint) { this->anchorpoint = anchorpoint; }
 
 	/// <summary>
-	/// 左右反転セット
+	/// 左右反転フラグの入力
 	/// </summary>
-	/// <param name="isFlipX">左右反転</param>
 	void SetIsFlipX(bool isFlipX) { this->isFlipX = isFlipX; };
 
 	/// <summary>
-	/// 上下反転セット
+	/// 上下反転フラグの入力
 	/// </summary>
-	/// <param name="isFlipY">上下反転</param>
 	void SetIsFlipY(bool isFlipY) { this->isFlipY = isFlipY; };
+
 };

@@ -9,6 +9,14 @@ PSOutput main(VSOutput input)
 
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
+	float4 bloomColor;
+	float difference[2];//ずらす量
+	difference[0] = lerp(0.0f, 5.0f, input.svpos.x);
+	difference[1] = lerp(0.0f, 5.0f, input.svpos.y);
+	bloomColor = tex.Sample(smp, (input.uv.x + difference[0], input.uv.y + difference[1])) / 2;
+	bloomColor += tex.Sample(smp, (input.uv.x + difference[0], input.uv.y - difference[1])) / 2;
+	bloomColor += tex.Sample(smp, (input.uv.x - difference[0], input.uv.y + difference[1])) / 2;
+	bloomColor += tex.Sample(smp, (input.uv.x - difference[0], input.uv.y - difference[1])) / 2;
 
 	// 光沢度
 	const float shininess = 4.0f;
@@ -28,12 +36,6 @@ PSOutput main(VSOutput input)
 		{
 			// ライトに向かうベクトルと法線の内積
 			float3 dotlightnormal = dot(dirLights[i].lightv, input.normal);
-
-			////トゥーンシェード
-			//dotlightnormal.x = step(0.5, dotlightnormal.x);
-			//dotlightnormal.y = step(0.5, dotlightnormal.y);
-			//dotlightnormal.z = step(0.5, dotlightnormal.z);
-
 			// 反射光ベクトル
 			float3 reflect = normalize(-dirLights[i].lightv + 2 * dotlightnormal * input.normal);
 			// 拡散反射光
@@ -43,14 +45,20 @@ PSOutput main(VSOutput input)
 
 			// 全て加算する
 			shadecolor.rgb += (diffuse + specular) * dirLights[i].lightcolor;
+
+			//トゥーンシェード
+			shadecolor.x = step(0.5, shadecolor.x);
+			shadecolor.y = step(0.5, shadecolor.y);
+			shadecolor.z = step(0.5, shadecolor.z);
 		}
 	}
 
 	// シェーディングによる色で描画
 	float4 mainColor = shadecolor * texcolor * color;
+	bloomColor = shadecolor * bloomColor * isBloom * color;
 
 	output.target0 = float4(mainColor.rgb, color.w);
-	output.target1 = float4(mainColor.rgb, color.w) * isBloom;
+	output.target1 = float4(bloomColor.rgb, color.w);
 
 	return output;
 }

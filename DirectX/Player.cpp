@@ -154,7 +154,7 @@ void Player::Update()
 	Ray ray;
 	ray.start = sphereCollider->center;
 	ray.start.m128_f32[1] += sphereCollider->GetRadius();
-	ray.dir = { 0,-0.1,0,0 };
+	ray.dir = { 0.0f,-0.1f,0.0f,0.0f };
 	RaycastHit raycastHit;
 
 	// 接地状態

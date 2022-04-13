@@ -33,11 +33,11 @@ void Csv::LoadFile(string fileName, vector<vector<int>> map)
 
 int Csv::GetChipNum(vector<vector<int>> map, float chipSize, XMFLOAT2 position)
 {
-	int X = position.x / chipSize;
-	int Y = position.y / chipSize;
+	int X = (UINT)(position.x / chipSize);
+	int Y = (UINT)(position.y / chipSize);
 
-	int maxX = map[0].size();
-	int maxY = map.size();
+	int maxX = (UINT)map[0].size();
+	int maxY = (UINT)map.size();
 
 	if (X < 0 || X >= maxX || Y < 0 || Y >= maxY)
 	{

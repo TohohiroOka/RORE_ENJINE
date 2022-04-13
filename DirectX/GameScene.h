@@ -55,9 +55,8 @@ public:// メンバ関数
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	/// <param name="audio">Audioのインスタンス</param>
 	/// <param name="camera">Cameraのインスタンス</param>
-	void Update(Audio* audio, Camera* camera);
+	void Update(Camera* camera);
 
 	/// <summary>
 	/// 描画
@@ -68,6 +67,9 @@ public:// メンバ関数
 	void GetConstbufferNum();
 
 private:// メンバ変数
+
+	//音
+	Audio* audio = nullptr;
 
 	Sprite* sprite = nullptr;
 	//DebugText* text;
@@ -96,7 +98,7 @@ private:// メンバ変数
 
 	DrawLine* line = nullptr;
 	DrawLine* line_t = nullptr;
-	DrawLine3D* line3d[10] = { nullptr };
+	DrawLine3D* line3d = nullptr;
 
 	ComputeShaderManager* compute = nullptr;
 	static const int max = 10;

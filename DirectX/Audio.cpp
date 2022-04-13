@@ -20,7 +20,7 @@ Audio::~Audio()
 	//xAudio2解放
 	xAudio2.Reset();
 
-	const int size = SData.size();
+	const int size = (UINT)SData.size();
 
 	//バッファのメモリを解放
 	for (int i = 0; i < size; i++)
@@ -39,7 +39,7 @@ Audio::~Audio()
 int Audio::SoundLoadWave(const char* fileName)
 {
 	//現在の配列サイズ
-	int size = SData.size();
+	int size = (UINT)SData.size();
 
 	SoundData* soundData = nullptr;
 	soundData = new SoundData();

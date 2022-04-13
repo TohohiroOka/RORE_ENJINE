@@ -1,8 +1,7 @@
 #include "ParticleManager.h"
-#include "DirectXCommon.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
-#include "Camera.h"
+#include"Camera.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -22,8 +21,13 @@ ComPtr<ID3D12Resource> ParticleManager::texBuffer[textureNum];
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
-
 ParticleManager::~ParticleManager()
+{
+	vertBuff.Reset();
+	constBuff.Reset();
+}
+
+void ParticleManager::AllDelete()
 {
 	rootSignature.Reset();
 	pipelineState.Reset();
@@ -126,12 +130,12 @@ void ParticleManager::Pipeline()
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 		{ // スケール
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
+			"SCALE", 0, DXGI_FORMAT_R32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 		{ // 色
-			"COLOR", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
+			"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
@@ -155,6 +159,7 @@ void ParticleManager::Pipeline()
 	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
 	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;	// RBGA全てのチャンネルを描画
 	blenddesc.BlendEnable = true;
+	// 加算ブレンディング
 	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
 	blenddesc.SrcBlend = D3D12_BLEND_ONE;
 	blenddesc.DestBlend = D3D12_BLEND_ONE;
@@ -221,19 +226,15 @@ void ParticleManager::CommonCreate() {
 	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
 }
 
-void ParticleManager::Initialize(ID3D12Device* device,ID3D12GraphicsCommandList* cmdList)
+void ParticleManager::Initialize(ID3D12Device* device)
 {
 	ParticleManager::device = device;
-	ParticleManager::cmdList = cmdList;
 
 	//共通データ生成
 	CommonCreate();
 
 	//パイプライン設定
 	Pipeline();
-
-	rootSignature->SetName(L"PMroot");
-	pipelineState->SetName(L"PMpipe");
 }
 
 void ParticleManager::LoadTexture(UINT texNum, const wchar_t* filename)
@@ -448,6 +449,12 @@ int ParticleManager::Update(Camera* camera)
 {
 	HRESULT result;
 
+	//表示時間をが過ぎたパーティクルを削除
+	particle.remove_if([](Particle& x) {
+		return x.frame >= x.num_frame;
+		}
+	);
+
 	//全パーティクル更新
 	for (std::forward_list<Particle>::iterator it = particle.begin();
 		it != particle.end(); it++) {
@@ -463,13 +470,8 @@ int ParticleManager::Update(Camera* camera)
 		it->color.x = it->color.x - (it->s_color.x - it->e_color.x) / it->num_frame;//赤
 		it->color.y = it->color.y - (it->s_color.y - it->e_color.y) / it->num_frame;//緑
 		it->color.z = it->color.z - (it->s_color.z - it->e_color.z) / it->num_frame;//青
+		it->color.w = it->color.w - (it->s_color.w - it->e_color.w) / it->num_frame;//明度
 	}
-
-	//表示時間をが過ぎたパーティクルを削除
-	particle.remove_if([](Particle& x) {
-		return x.frame >= x.num_frame;
-		}
-	);
 
 	Vertex* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
@@ -498,11 +500,17 @@ int ParticleManager::Update(Camera* camera)
 	constMap->matBillboard = matBillboard;// 行列の合成
 	constBuff->Unmap(0, nullptr);
 
-	return count;
+	return (int)std::distance(particle.begin(), particle.end());
 }
 
-void ParticleManager::Draw()
+void ParticleManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
+	// PreDrawとPostDrawがペアで呼ばれていなければエラー
+	assert(ParticleManager::cmdList == nullptr);
+
+	// コマンドリストをセット
+	ParticleManager::cmdList = cmdList;
+
 	//パイプラインステートの設定
 	cmdList->SetPipelineState(pipelineState.Get());
 
@@ -512,12 +520,22 @@ void ParticleManager::Draw()
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
+}
+
+void ParticleManager::PostDraw()
+{
+	// コマンドリストを解除
+	ParticleManager::cmdList = nullptr;
+}
+
+void ParticleManager::Draw()
+{
+	//頂点バッファをセット
+	cmdList->IASetVertexBuffers(0, 1, &vbView);
+
 	//デスクリプタヒープをセット
 	ID3D12DescriptorHeap* ppHeaps[] = { descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-
-	//頂点バッファをセット
-	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
 	//定数バッファをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
@@ -533,7 +551,7 @@ void ParticleManager::Draw()
 	cmdList->DrawInstanced((UINT)std::distance(particle.begin(), particle.end()), 1, 0, 0);
 }
 
-void ParticleManager::AllDelete()
+void ParticleManager::ParticlAllDelete()
 {
 	particle.clear();
 }

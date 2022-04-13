@@ -1,4 +1,5 @@
 ﻿#include "Object3d.h"
+#include "Camera.h"
 #include "BaseCollider.h"
 #include "CollisionManager.h"
 
@@ -24,7 +25,7 @@ ComPtr<ID3D12PipelineState> Object3d::pipelineState;
 Camera* Object3d::camera = nullptr;
 LightGroup* Object3d::lightGroup = nullptr;
 
-void Object3d::StaticInitialize(ID3D12Device * device, Camera* camera)
+void Object3d::StaticInitialize(ID3D12Device* device, Camera* camera)
 {
 	// 再初期化チェック
 	assert(!Object3d::device);
@@ -38,8 +39,18 @@ void Object3d::StaticInitialize(ID3D12Device * device, Camera* camera)
 	// グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
 
+	pipelineState->SetName(L"Object3dPipe");
+	rootSignature->SetName(L"Object3dRoot");
+
 	// モデルの静的初期化
 	Model::StaticInitialize(device);
+}
+
+void Object3d::AllDelete()
+{
+	//ルートシグネチャとパイプラインステート解放
+	rootSignature.Reset();
+	pipelineState.Reset();
 }
 
 void Object3d::CreateGraphicsPipeline()
@@ -196,7 +207,7 @@ void Object3d::CreateGraphicsPipeline()
 	}
 }
 
-void Object3d::PreDraw(ID3D12GraphicsCommandList * cmdList)
+void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(Object3d::cmdList == nullptr);
@@ -232,21 +243,18 @@ Object3d* Object3d::Create(Model* model)
 		object3d->SetModel(model);
 	}
 
-	rootSignature->SetName(L"Objroot");
-	pipelineState->SetName(L"Objpipe");
-
 	return object3d;
 }
 
 Object3d::~Object3d()
 {
-	rootSignature.Reset();
-	pipelineState.Reset();
-
+	//コライダー解放
 	if (collider) {
 		CollisionManager::GetInstance()->RemoveCollider(collider);
 		delete collider;
 	}
+
+	constBuffB0.Reset();
 }
 
 bool Object3d::Initialize()
@@ -261,7 +269,7 @@ bool Object3d::Initialize()
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB0) + 0xff)&~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB0) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffB0));
@@ -274,7 +282,7 @@ void Object3d::Update()
 	assert(camera);
 
 	HRESULT result;
-	
+
 	UpdateWorldMatrix();
 
 	const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
@@ -283,11 +291,11 @@ void Object3d::Update()
 	// 定数バッファへデータ転送
 	ConstBufferDataB0* constMap = nullptr;
 	result = constBuffB0->Map(0, nullptr, (void**)&constMap);
-	constMap->color = this->color;
+	constMap->color = color;
 	constMap->viewproj = matViewProjection;
 	constMap->world = matWorld;
 	constMap->cameraPos = cameraPos;
-	constMap->isBloom = this->isBloom;
+	constMap->isBloom = isBloom;
 	constBuffB0->Unmap(0, nullptr);
 
 	// 当たり判定更新
@@ -347,7 +355,7 @@ void Object3d::UpdateWorldMatrix()
 	}
 }
 
-void Object3d::SetCollider(BaseCollider * collider)
+void Object3d::SetCollider(BaseCollider* collider)
 {
 	collider->SetObject(this);
 	this->collider = collider;

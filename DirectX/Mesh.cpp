@@ -1,6 +1,7 @@
 ﻿#include "Mesh.h"
 #include <d3dcompiler.h>
 #include <cassert>
+#include <vector>
 
 #pragma comment(lib, "d3dcompiler.lib")
 

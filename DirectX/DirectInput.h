@@ -1,29 +1,47 @@
 #pragma once
-#include "Singleton.h"
+#include <wrl.h>
+#define DIRECTINPUT_VERSION 0x0800	//DirectInputのバージョン指定
+#include <dinput.h>
 #include <DirectXMath.h>
-#include<wrl.h>
-#include<dinput.h>
-#define DIRECTINPUT_VERSION 0x0800
 
-class DirectInput : public Singleton< DirectInput >
+class DirectInput final
 {
-friend Singleton< DirectInput >;
-
-private://コンストラクタ&デストラクタ
-
-	DirectInput() {};
-	~DirectInput() {};
-
-private:
-	// Microsoft::WRL::を省略
+public: //エイリアス
+	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public://メンバ関数
+public: //列挙
+	//マウスボタン
+	enum MouseButton
+	{
+		MOUSE_LEFT,
+		MOUSE_RIGHT,
+		MOUSE_WHEEL
+	};
+
+private: //シングルトン化
+	//コンストラクタを隠蔽
+	DirectInput() = default;
+	//デストラクタを隠蔽
+	~DirectInput() = default;
+
+public:
+	//コピーコンストラクタを無効化
+	DirectInput(const DirectInput& input) = delete;
+	//代入演算子を無効化
+	void operator = (const DirectInput& input) = delete;
+
+public: //メンバ関数
+
+	/// <summary>
+	/// インスタンス取得
+	/// </summary>
+	/// <returns>入力</returns>
+	static DirectInput* GetInstance();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="winApp">ウィンドウズインスタンス</param>
 	void Initialize();
 
 	/// <summary>
@@ -32,64 +50,80 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-	/// 特定のキーが押されているかのチェック
+	/// キーの押下をチェック
 	/// </summary>
-	/// <param name="keyNumber">キー番号(DIK_0等)</param>
-	/// <returns>押されているならtrue</returns>
+	/// <param name = "keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>押されているか</returns>
 	bool PushKey(BYTE keyNumber);
 
 	/// <summary>
 	/// キーのトリガーをチェック
 	/// </summary>
-	/// <param name="keyNumber">キー番号(DIK_0等)</param>
-	/// <returns>トリガーで押されているならtrue</returns>
+	/// <param name = "keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>トリガーか</returns>
 	bool TriggerKey(BYTE keyNumber);
 
 	/// <summary>
-	/// マウスの左ボタンが押されているかのチェック
+	/// キーを離したかチェック
 	/// </summary>
-	/// <returns>押されているならtrue</returns>
-	bool PushMouseLeft();
+	/// <param name = "keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>離したか</returns>
+	bool ReleaseKey(BYTE keyNumber);
 
 	/// <summary>
-	/// マウスのカーソルボタンが押されているかのチェック
+	/// マウスボタンの押下をチェック
 	/// </summary>
-	/// <returns>押されているならtrue</returns>
-	bool PushMouseCenter();
+	/// <param name = "mouseButton">マウスボタン</param>
+	/// <returns>押されているか</returns>
+	bool PushMouseButton(const int mouseButton);
 
 	/// <summary>
-	/// マウスの右ボタンが押されているかのチェック
+	/// マウスボタンのトリガーをチェック
 	/// </summary>
-	/// <returns>押されているならtrue</returns>
-	bool PushMouseRight();
+	/// <param name = "mouseButton">マウスボタン</param>
+	/// <returns>トリガーか</returns>
+	bool TriggerMouseButton(const int mouseButton);
 
 	/// <summary>
-	/// トリガーでのマウスの左ボタンが押されているかのチェック
+	/// マウスボタンを離したかチェック
 	/// </summary>
-	/// <returns>トリガーで押されているならtrue</returns>
-	bool TriggerMouseLeft();
+	/// <param name = "mouseButton">マウスボタン</param>
+	/// <returns>離したか</returns>
+	bool ReleaseMouseButton(const int mouseButton);
 
 	/// <summary>
-	/// トリガーでのマウスのカーソルボタンが押されているかのチェック
+	/// マウスポインターの座標を取得
 	/// </summary>
-	/// <returns>トリガーで押されているならtrue</returns>
-	bool TriggerMouseCenter();
+	/// <returns>マウスポインターの座標</returns>
+	DirectX::XMFLOAT2 GetMousePoint();
 
 	/// <summary>
-	/// トリガーでのマウスの右ボタンが押されているかのチェック
+	/// 1フレームのマウスの移動量の取得
 	/// </summary>
-	/// <returns>トリガーで押されているならtrue</returns>
-	bool TriggerMouseRight();
+	/// <returns>1フレームのマウスの移動量</returns>
+	DirectX::XMFLOAT2 GetMouseVelocity();
 
-private://変数
-	//キー
+	/// <summary>
+	/// 1フレームのマウスホイールの移動量の取得
+	/// </summary>
+	/// <returns>1フレームのマウスホイールの移動量</returns>
+	float GetMouseWheelVelocity();
+
+private: //メンバ変数
+	//DirectInputのインスタンス生成
 	ComPtr<IDirectInput8> dinput;
-	ComPtr<IDirectInputDevice8>devkeyboard;
+	//キーボードのデバイス
+	ComPtr<IDirectInputDevice8> devkeyboard;
+	//全キーの状態
 	BYTE key[256] = {};
-	BYTE keyPre[256] = {};//前回キーの状態
-
-	//マウス
-	ComPtr<IDirectInputDevice8> devMouse;
-	DIMOUSESTATE2 mouseState = {};
-	DIMOUSESTATE2 mouseStatePre = {};
+	//前回の全キーの状態
+	BYTE keyPre[256] = {};
+	//マウスのデバイス
+	ComPtr<IDirectInputDevice8> devmouse;
+	//マウスの状態
+	DIMOUSESTATE mouse;
+	//前回のマウスの状態
+	DIMOUSESTATE mousePre;
+	//マウスポインター
+	POINT mousePoint;
 };

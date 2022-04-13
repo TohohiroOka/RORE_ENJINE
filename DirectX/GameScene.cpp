@@ -19,43 +19,57 @@ const float radian = XM_PI / 180.0f;//ラジアン
 
 GameScene::~GameScene()
 {
-	//newオブジェクトの破棄
+	//audioの解放
+	safe_delete(audio);
+
+	//ライトの解放
+	safe_delete(light);
+
+	//スプライトの解放
 	safe_delete(sprite);
+
+	//パーティクルの解放
 	safe_delete(emit);
+
+	//Modelの解放
 	safe_delete(uma);
 	safe_delete(ground);
 	safe_delete(block);
+
+	//Objの解放
 	safe_delete(PLAYER);
 	safe_delete(GROUND);
 	safe_delete(BLOCK);
+
+	//normalMapの解放
 	safe_delete(water);
-	safe_delete(light);
+
+	//Fbxの解放
 	safe_delete(anm);
+
+	//lineの解放
 	safe_delete(line);
 	safe_delete(line_t);
-	//text->AllDelete();
-	for (int i = 0; i < 10; i++)
-	{
-		safe_delete(line3d[i]);
-	}
+	safe_delete(line3d);
+
+	//コンピュートシェーダーの解放
+	safe_delete(compute);
 }
 
 void GameScene::Initialize()
 {
+	//サウンド用
+	audio = new Audio();
+
 	//ライト
 	light = LightGroup::Create();
-	light->DefaultLightSetting();
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light);
 
 	//スプライト
 	Sprite::LoadTexture(1, L"Resources/amm.jpg");
 
-	//text = DebugText::GetInstance();
-	//text->Initialize(0);
-
-	sprite = Sprite::Create();
-	sprite->SetTexNumber(1);
+	sprite = Sprite::Create(1);
 
 	//object3d
 	uma = Model::CreateFromOBJ("uma");
@@ -98,11 +112,8 @@ void GameScene::Initialize()
 	line = DrawLine::Create();
 	line_t = new DrawLine();
 	line_t = DrawLine::Create();
-	for (int i = 0 ; i < 10; i++)
-	{
-		line3d[i] = new DrawLine3D();
-		line3d[i] = DrawLine3D::Create();
-	}
+	line3d = new DrawLine3D();
+	line3d = DrawLine3D::Create(10);
 
 	compute = new ComputeShaderManager();
 	compute->Initialize();
@@ -115,7 +126,7 @@ void GameScene::Initialize()
 	}
 }
 
-void GameScene::Update(Audio* audio, Camera* camera)
+void GameScene::Update(Camera* camera)
 {
 	DirectInput* input = DirectInput::GetInstance();
 	XInputManager* xinput = XInputManager::GetInstance();
@@ -158,11 +169,16 @@ void GameScene::Update(Audio* audio, Camera* camera)
 	line->Update();
 	line_t->SetLine({ 20,500 }, { 500,400 }, { 1,1,1,1 }, 50);
 	line_t->Update();
+	XMFLOAT3 S_pos[10];
+	XMFLOAT3 E_pos[10];
 	for (int i = 0; i < 10; i++)
 	{
-		line3d[i]->SetLine({ 0,(float)20 * i,(float)i * 10 }, { 0,(float)20 * i,(float)-i * 10 }, { 1,1,1,1 }, 50);
-		line3d[i]->Update(camera);
+		S_pos[i] = { 0,(float)20 * i,(float)i * 10 };
+		E_pos[i] = { 0,(float)20 * i,(float)-i * 10 };
 	}
+	line3d->SetLine(S_pos, E_pos, 50);
+	line3d->SetColor({ 1,1,1,1 });
+	line3d->Update(camera);
 
 	//カメラ更新
 	camera->SetPosition(PLAYER->GetPosition());
@@ -201,14 +217,13 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	
 	//線3d
 	DrawLine3D::PreDraw(cmdList);
-	for (int i = 0; i < 10; i++)
-	{
-		line3d[i]->Draw();
-	}
+	line3d->Draw();
 	DrawLine3D::PostDraw();
 
+	ParticleManager::PreDraw(cmdList);
 	//パーティクル
 	emit->Draw();
+	ParticleManager::PostDraw();
 
 
 	compute->PreUpdate(cmdList);

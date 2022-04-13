@@ -13,7 +13,6 @@
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
-
 using namespace std;
 
 ID3D12Device* DrawLine3D::device = nullptr;//デバイス
@@ -25,6 +24,15 @@ const float PI = 3.141592f;
 
 DrawLine3D::~DrawLine3D()
 {
+	//バッファを解放
+	vertBuff.Reset();
+	indexBuff.Reset();
+	constBuff.Reset();
+}
+
+void DrawLine3D::AllDelete()
+{
+	//ルートシグネチャとパイプラインステート解放
 	pipelineState.Reset();
 	rootSignature.Reset();
 }
@@ -164,7 +172,7 @@ void DrawLine3D::Pipeline()
 	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 }
 
-DrawLine3D* DrawLine3D::Create()
+DrawLine3D* DrawLine3D::Create(UINT LineNum)
 {
 	HRESULT result = S_FALSE;
 
@@ -174,7 +182,7 @@ DrawLine3D* DrawLine3D::Create()
 	}
 
 	// 初期化
-	if (!instance->Initialize()) {
+	if (!instance->Initialize(LineNum)) {
 		delete instance;
 		assert(0);
 		return nullptr;
@@ -192,23 +200,20 @@ void DrawLine3D::StaticInitialize(ID3D12Device* device)
 	//パイプライン設定
 	Pipeline();
 
-	rootSignature->SetName(L"DL3root");
-	pipelineState->SetName(L"DL3pipe");
+	pipelineState->SetName(L"DrawLine3dPipe");
+	rootSignature->SetName(L"DrawLine3dRoot");
 }
 
-bool DrawLine3D::Initialize()
+bool DrawLine3D::Initialize(UINT LineNum)
 {
 	HRESULT result = S_FALSE;
 
-	unsigned short indices[indexNum] = {
-		0,1,2,2,1,3,
-		2,1,0,3,1,2
-	};
-
+	//頂点データの要素数
+	VERTEX_ARRAY_NUM = vertNum * LineNum;
 	//頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-	const UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * vertNum);
-	//インデックスデータ全体のサイズ
-	const UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * indexNum);
+	const UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * VERTEX_ARRAY_NUM);
+	//頂点データの要素数変更
+	vertices.resize(VERTEX_ARRAY_NUM);
 
 	//頂点バッファ生成
 	result = device->CreateCommittedResource(
@@ -224,12 +229,36 @@ bool DrawLine3D::Initialize()
 	}
 
 	// 頂点バッファへのデータ転送
-	SetLine({}, {}, {}, 0);
+	Vertex* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result)) {
+		std::copy(vertices.begin(), vertices.end(), vertMap);
+		vertBuff->Unmap(0, nullptr);
+	}
 
 	//頂点バッファビューの生成
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(Vertex);
+
+	//インデック配列の要素数
+	INDEX_ARRAY_NUM = indexNum * LineNum;
+	//インデックスデータ全体のサイズ
+	const UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * INDEX_ARRAY_NUM);
+
+	//使うインデックスの作成
+	std::vector<unsigned short> indices;
+	for (int i = 0; i < INDEX_ARRAY_NUM; i++)
+	{
+		//仮インデックス
+		unsigned short addIndex;
+
+		//ベース + 一本で使うインデックス番号の最大値 * (現在の配列数 / 一本分の配列の最大数)
+		addIndex = BASE_INDICES[i % indexNum] + 4 * (int)(i / indexNum);
+
+		//配列の一番後ろに入れる
+		indices.push_back(addIndex);
+	}
 
 	//インデックスバッファ生成
 	result = device->CreateCommittedResource(
@@ -239,11 +268,15 @@ bool DrawLine3D::Initialize()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&indexBuff));
+	if (FAILED(result)) {
+		assert(0);
+		return false;
+	}
 
 	//インデックスバッファへのデータ転送
 	unsigned short* indexMap = nullptr;
 	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
-	memcpy(indexMap, indices, sizeof(indices));
+	std::copy(indices.begin(), indices.end(), indexMap);
 	indexBuff->Unmap(0, nullptr);
 
 	//インデックスバッファビューの作成
@@ -259,7 +292,6 @@ bool DrawLine3D::Initialize()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
-
 	if (FAILED(result)) {
 		assert(0);
 		return false;
@@ -269,40 +301,50 @@ bool DrawLine3D::Initialize()
 }
 
 float DrawLine3D::GetAngle(XMFLOAT3 startPoint, XMFLOAT3 endPoint) {
-	float radian = -atan2f(endPoint.y - startPoint.y, hypot(endPoint.z - startPoint.z, endPoint.x - startPoint.x)) * (180.0f / PI);
-	return radian;
+	float angle = atan2f(endPoint.y - startPoint.y, endPoint.x - startPoint.x) * (180.0f / PI);
+	return angle;
 }
 
-void DrawLine3D::SetLine(XMFLOAT3 startPoint, XMFLOAT3 endPoint, XMFLOAT4 color, float width)
+void DrawLine3D::SetLine(XMFLOAT3 startPoint[], XMFLOAT3 endPoint[], float width)
 {
 	HRESULT result;
 
-	this->color = color;
-
 	//幅
-	XMFLOAT3 lineWidth1 = {};
-	XMFLOAT3 lineWidth2 = {};
-	const float angle = GetAngle(startPoint, endPoint);
-	lineWidth1.x = width * cosf((angle + 90.0f) * (PI / 180.0f));
-	lineWidth1.y = width * sinf((angle + 90.0f) * (PI / 180.0f));
-	lineWidth1.z = width * sinf((angle + 90.0f) * (PI / 180.0f));
-	lineWidth2.x = width * cosf((angle - 90.0f) * (PI / 180.0f));
-	lineWidth2.y = width * sinf((angle - 90.0f) * (PI / 180.0f));
-	lineWidth2.z = width * sinf((angle - 90.0f) * (PI / 180.0f));
+	XMFLOAT2 lineWidth1 = {};
+	XMFLOAT2 lineWidth2 = {};
 
-	// 頂点データ
-	Vertex vertices[vertNum];
+	//線の本数分回す
+	const int LineNum = VERTEX_ARRAY_NUM / vertNum;
+	for (int i = 0; i < LineNum; i++)
+	{
+		//角度
+		const float angle = GetAngle(startPoint[i], endPoint[i]);
 
-	vertices[0].pos = { startPoint.x + lineWidth2.x, startPoint.y + lineWidth2.y, startPoint.z }; // 左上
-	vertices[1].pos = { endPoint.x + lineWidth2.x, endPoint.y + lineWidth2.y, endPoint.z }; // 左下
-	vertices[2].pos = { startPoint.x + lineWidth1.x, startPoint.y + lineWidth1.y, startPoint.z }; // 右上
-	vertices[3].pos = { endPoint.x + lineWidth1.x, endPoint.y + lineWidth1.y, endPoint.z }; // 右下
+		//幅調整用値
+		float LEFT = (angle + 90.0f) * (PI / 180.0f);
+		float RIGHT = (angle - 90.0f) * (PI / 180.0f);
+
+		lineWidth1.x = width * cosf(LEFT);
+		lineWidth1.y = width * sinf(LEFT);
+		lineWidth2.x = width * cosf(RIGHT);
+		lineWidth2.y = width * sinf(RIGHT);
+
+		// 頂点データ
+		int arrayNum = i * 4;
+		vertices[arrayNum].pos = { endPoint[i].x + lineWidth2.x, endPoint[i].y + lineWidth2.y, endPoint[i].z }; // 左下
+		arrayNum++;
+		vertices[arrayNum].pos = { startPoint[i].x + lineWidth2.x, startPoint[i].y + lineWidth2.y, startPoint[i].z }; // 左上
+		arrayNum++;
+		vertices[arrayNum].pos = { endPoint[i].x + lineWidth1.x, endPoint[i].y + lineWidth1.y, endPoint[i].z }; // 右下
+		arrayNum++;
+		vertices[arrayNum].pos = { startPoint[i].x + lineWidth1.x, startPoint[i].y + lineWidth1.y, startPoint[i].z }; // 右上
+	}
 
 	// 頂点バッファへのデータ転送
 	Vertex* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(result)) {
-		memcpy(vertMap, vertices, sizeof(vertices));
+		std::copy(vertices.begin(), vertices.end(), vertMap);
 		vertBuff->Unmap(0, nullptr);
 	}
 }
@@ -374,5 +416,5 @@ void DrawLine3D::Draw()
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 
 	//描画コマンド
-	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
+	cmdList->DrawIndexedInstanced(INDEX_ARRAY_NUM, 1, 0, 0, 0);
 }

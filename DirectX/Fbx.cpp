@@ -32,14 +32,17 @@ std::string Fbx::fileName;//ファイルネームの保持
 
 Fbx::~Fbx()
 {
-	int size = data.size();
+	int size = (UINT)data.size();
 	for (int i = 0; i < size; i++)
 	{
 		data[i].fbxUpdate.fbxScene->Destroy();
 	}
 
 	data.clear();
+}
 
+void Fbx::AllDelete()
+{
 	pipelineState.Reset();
 	rootSignature.Reset();
 	descHeap.Reset();
@@ -213,14 +216,16 @@ void Fbx::Pipeline()
 	// グラフィックスパイプラインの生成
 	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(pipelineState.ReleaseAndGetAddressOf()));
 	if (FAILED(result)) { assert(0); }
-	
-	rootSignature->SetName(L"Fbxroot");
-	pipelineState->SetName(L"Fbxpipe");
+
+	pipelineState->SetName(L"Fbxpipelinestate");//パイプラインステートオブジェクト
+	rootSignature->SetName(L"Fbxrootsignature");//ルートシグネチャ
+
+
 }
 
 void Fbx::LoadMaterial(int dataNumber, FbxNode* fbxNode) {
 	HRESULT result = S_FALSE;
-	
+
 	//テクスチャの有無確認
 	bool textureLoaded = false;
 
@@ -265,7 +270,7 @@ void Fbx::LoadMaterial(int dataNumber, FbxNode* fbxNode) {
 					string name = ExtractFileName(path_str);
 
 					//テクスチャ読み込み
-					LoadTexture(dataNumber, directoryPath +fileName + '/' + name);
+					LoadTexture(dataNumber, directoryPath + fileName + '/' + name);
 					textureLoaded = true;
 				}
 			}
@@ -472,7 +477,7 @@ void Fbx::CollectMeshFaces(int dataNumber, FbxMesh* fbxMesh)
 void Fbx::CollectSkin(int dataNumber, FbxMesh* fbxMesh)
 {
 	//スキニング情報
-	FbxSkin* fbxSkin = 
+	FbxSkin* fbxSkin =
 		static_cast<FbxSkin*>(fbxMesh->GetDeformer(0, FbxDeformer::eSkin));
 
 	//スキニング情報が無ければ終了
@@ -681,9 +686,9 @@ void Fbx::LoadAnimation(int dataNumber)
 }
 
 int Fbx::LoadFbx(const std::string fileName)
-{	
+{
 	//現在の配列番号
-	const int dataNumber = data.size();
+	const int dataNumber = (UINT)data.size();
 
 	//空のデータを一つ増やす
 	Data addData;
@@ -711,7 +716,7 @@ int Fbx::LoadFbx(const std::string fileName)
 
 	//ノード読み込み
 	LoadNode(dataNumber, data[dataNumber].fbxUpdate.fbxScene->GetRootNode());
-	
+
 	LoadAnimation(dataNumber);
 
 	return dataNumber;
@@ -722,8 +727,9 @@ void Fbx::StaticInitialize(ID3D12Device* device)
 	Fbx::device = device;
 
 	Pipeline();
-	pipelineState->SetName(L"fbxpi");
-	rootSignature->SetName(L"fbxro");
+
+	pipelineState->SetName(L"FbxPipe");
+	rootSignature->SetName(L"FbxRoot");
 
 	fbxManager = FbxManager::Create();
 
