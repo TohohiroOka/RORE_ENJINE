@@ -69,7 +69,7 @@ public://静的メンバ関数
 	/// Objectの生成
 	/// </summary>
 	/// <param name="LineNum">線の本数</param>
-	static DrawLine3D* Create(UINT LineNum);
+	static std::unique_ptr<DrawLine3D> Create(UINT LineNum);
 
 	/// <summary>
 	/// 描画前処理

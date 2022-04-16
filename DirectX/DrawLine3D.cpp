@@ -2,7 +2,6 @@
 #include "Camera.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
-#include"Camera.h"
 
 #include <fstream>
 #include <sstream>
@@ -172,7 +171,7 @@ void DrawLine3D::Pipeline()
 	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 }
 
-DrawLine3D* DrawLine3D::Create(UINT LineNum)
+std::unique_ptr<DrawLine3D> DrawLine3D::Create(UINT LineNum)
 {
 	HRESULT result = S_FALSE;
 
@@ -190,7 +189,7 @@ DrawLine3D* DrawLine3D::Create(UINT LineNum)
 
 	instance->Update(NULL);
 
-	return instance;
+	return std::unique_ptr<DrawLine3D>(instance);
 }
 
 void DrawLine3D::StaticInitialize(ID3D12Device* device)
@@ -300,7 +299,8 @@ bool DrawLine3D::Initialize(UINT LineNum)
 	return true;
 }
 
-float DrawLine3D::GetAngle(XMFLOAT3 startPoint, XMFLOAT3 endPoint) {
+float DrawLine3D::GetAngle(XMFLOAT3 startPoint, XMFLOAT3 endPoint)
+{
 	float angle = atan2f(endPoint.y - startPoint.y, endPoint.x - startPoint.x) * (180.0f / PI);
 	return angle;
 }

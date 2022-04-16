@@ -79,6 +79,19 @@ private:
 	/// </summary>
 	void CreateBuffers();
 
+public://静的メンバ関数
+
+	/// <summary>
+	/// 静的初期化
+	/// </summary>
+	static void StaticInitialize(ID3D12Device* device);
+
+	/// <summary>
+	/// インスタンスの生成
+	/// </summary>
+	/// <returns></returns>
+	static std::unique_ptr<ComputeShaderManager> Create();
+
 public:
 
 	/// <summary>
@@ -90,11 +103,6 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~ComputeShaderManager();
-
-	/// <summary>
-	/// 静的初期化
-	/// </summary>
-	static void StaticInitialize(ID3D12Device* device);
 
 	/// <summary>
 	/// 初期化
@@ -112,13 +120,16 @@ public:
 	void ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLOAT3* endPosition,
 		XMFLOAT3* nowPosition, float* time);
 
-
+	/// <summary>
+	/// 計算結果の取得(cmdList実行後に取得可能)
+	/// </summary>
+	/// <returns></returns>
 	XMFLOAT3* GetConstBufferNum();
 
 	/// <summary>
 	/// 更新前処理
 	/// </summary>
-	/// <param name="cmdList"></param>
+	/// <param name="cmdList">コマンドリスト</param>
 	void PreUpdate(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>

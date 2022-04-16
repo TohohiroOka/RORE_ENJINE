@@ -11,7 +11,16 @@ private: // エイリアス
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 
-public:
+public://静的メンバ関数
+
+	/// <summary>
+	/// インスタンスの生成
+	/// </summary>
+	/// <param name="texNumber">テクスチャ番号</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<Emitter> Create(int texNumber);
+
+public://メンバ関数
 
 	/// <summary>
 	/// コンストラクタ
@@ -22,9 +31,6 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~Emitter();
-
-	//生成
-	void Create(int texNumber);
 
 	/// <summary>
 	/// パーティクルの発生地点
@@ -66,5 +72,5 @@ private:
 	//パーティクル制御
 	int count = 0;
 	//パーティクルクラス
-	ParticleManager* particleManager = nullptr;
+	std::unique_ptr<ParticleManager> particleManager = nullptr;
 };

@@ -1,9 +1,8 @@
 #pragma once
-#include"DirectXCommon.h"
 #include <wrl.h>
 #include <d3d12.h>
-#include <DirectXMath.h>
 #include <d3dx12.h>
+#include <DirectXMath.h>
 #include<forward_list>
 
 class Camera;
@@ -95,6 +94,13 @@ public: // 静的メンバ関数
 	static void LoadTexture(UINT texNum, const wchar_t* filename);
 
 	/// <summary>
+	/// インスタンス生成
+	/// </summary>
+	/// <param name="texNumber">テクスチャ番号</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<ParticleManager> Create(UINT texNumber);
+
+	/// <summary>
 	/// 解放処理
 	/// </summary>
 	static void AllDelete();
@@ -134,8 +140,7 @@ public: // メンバ関数
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
-	/// <param name="texNumber">テクスチャ番号</param>
-	void Create(UINT texNumber);
+	void Initialize();
 
 	/// <summary>
 	/// パーティクルの追加

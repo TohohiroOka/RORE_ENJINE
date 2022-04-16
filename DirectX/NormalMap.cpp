@@ -72,7 +72,6 @@ const unsigned short NormalMap::indices[36] = {
 	20,21,22,22,21,23,
 };
 
-
 NormalMap::~NormalMap()
 {
 	vertBuff.Reset();
@@ -326,7 +325,8 @@ int NormalMap::LoadTexture(const wchar_t* filename)
 	return alltextureNum - 1;
 }
 
-void NormalMap::Create() {
+void NormalMap::Initialize()
+{
 	HRESULT result = S_FALSE;
 
 	//頂点バッファ生成
@@ -337,6 +337,7 @@ void NormalMap::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
+	assert(SUCCEEDED(result));
 
 	//法線方向の計算
 	for (int i = 0; i < _countof(indices) / 3; i++)
@@ -385,6 +386,7 @@ void NormalMap::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&indexBuff));
+	assert(SUCCEEDED(result));
 
 	//インデックスバッファへのデータ転送
 	unsigned short* indexMap = nullptr;
@@ -405,6 +407,18 @@ void NormalMap::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
+	assert(SUCCEEDED(result));
+}
+
+std::unique_ptr<NormalMap> NormalMap::Create()
+{
+	// 3Dオブジェクトのインスタンスを生成
+	NormalMap* instance = new NormalMap();
+
+	// 初期化
+	instance->Initialize();
+
+	return std::unique_ptr<NormalMap>(instance);
 }
 
 void NormalMap::StaticInitialize(ID3D12Device* device)

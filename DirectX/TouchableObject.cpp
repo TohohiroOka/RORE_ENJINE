@@ -2,7 +2,7 @@
 #include "MeshCollider.h"
 #include "CollisionAttribute.h"
 
-TouchableObject * TouchableObject::Create(Model * model)
+std::unique_ptr<TouchableObject> TouchableObject::Create(Model * model)
 {
 	// オブジェクトのインスタンスを生成
 	TouchableObject* instance = new TouchableObject();
@@ -16,7 +16,7 @@ TouchableObject * TouchableObject::Create(Model * model)
 		assert(0);
 	}
 
-	return instance;
+	return std::unique_ptr<TouchableObject>(instance);
 }
 
 bool TouchableObject::Initialize(Model * model)

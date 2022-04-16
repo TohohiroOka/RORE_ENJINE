@@ -297,10 +297,9 @@ void ParticleManager::LoadTexture(UINT texNum, const wchar_t* filename)
 			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
 }
 
-void ParticleManager::Create(UINT texNumber) {
+void ParticleManager::Initialize()
+{
 	HRESULT result = S_FALSE;
-
-	this->texNumber = texNumber;
 
 	// 頂点バッファ生成
 	result = device->CreateCommittedResource(
@@ -310,10 +309,7 @@ void ParticleManager::Create(UINT texNumber) {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
-	if (FAILED(result)) {
-		assert(0);
-		return;
-	}
+	assert(SUCCEEDED(result));
 
 	// 頂点バッファへのデータ転送
 	Vertex* vertMap = nullptr;
@@ -336,7 +332,20 @@ void ParticleManager::Create(UINT texNumber) {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
+	assert(SUCCEEDED(result));
+}
 
+std::unique_ptr<ParticleManager> ParticleManager::Create(UINT texNumber)
+{
+	// 3Dオブジェクトのインスタンスを生成
+	ParticleManager* instance = new ParticleManager();
+
+	instance->texNumber = texNumber;
+
+	// 初期化
+	instance->Initialize();
+
+	return std::unique_ptr<ParticleManager>(instance);
 }
 
 void ParticleManager::Add(int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity,

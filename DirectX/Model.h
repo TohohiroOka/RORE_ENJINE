@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -42,7 +41,7 @@ public: // 静的メンバ関数
 	/// <param name="modelname">モデル名</param>
 	/// <param name="modelname">エッジ平滑化フラグ</param>
 	/// <returns>生成されたモデル</returns>
-	static Model* CreateFromOBJ(const std::string& modelname, bool smoothing = false);
+	static std::unique_ptr<Model> CreateFromOBJ(const std::string& modelname, bool smoothing = false);
 
 public: // メンバ関数
 	/// <summary>

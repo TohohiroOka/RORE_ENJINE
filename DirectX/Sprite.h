@@ -1,13 +1,11 @@
 #pragma once
 #include <wrl.h>
 #include <d3d12.h>
+#include <d3dx12.h>
 #include <DirectXMath.h>
 
 class DirectXCommon;
 
-/// <summary>
-/// スプライト
-/// </summary>
 class Sprite
 {
 protected: // エイリアス
@@ -70,11 +68,8 @@ public: // 静的メンバ関数
 	/// スプライト生成
 	/// </summary>
 	/// <param name="texNumber">テクスチャ番号</param>
-	/// <param name="anchorpoint">アンカーポイント</param>
-	/// <param name="isFlipX">左右反転するか</param>
-	/// <param name="isFlipY">上下反転するか</param>
-	/// <returns>Sprite</returns>
-	static Sprite* Create(UINT texNumber, XMFLOAT2 anchorpoint = { 0.5f, 0.5f }, bool isFlipX = false, bool isFlipY = false);
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<Sprite> Create(UINT texNumber);
 
 	/// <summary>
 	/// 解放処理
@@ -274,5 +269,4 @@ public:
 	/// 上下反転フラグの入力
 	/// </summary>
 	void SetIsFlipY(bool isFlipY) { this->isFlipY = isFlipY; };
-
 };

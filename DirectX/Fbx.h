@@ -233,6 +233,13 @@ public://静的メンバ関数
 	static int LoadFbx(const std::string fileName);
 
 	/// <summary>
+	/// 格納されているFBXデータを元にデータを作成する
+	/// </summary>
+	/// <param name="modelNumber">保存番号</param>
+	static std::unique_ptr<Fbx> Create(UINT modelNumber);
+
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
@@ -251,15 +258,9 @@ public://静的メンバ関数
 public:
 
 	/// <summary>
-	/// 格納されているFBXデータを元にデータを作成する
-	/// </summary>
-	/// <param name="modelNumber">保存番号</param>
-	void CreateModel(UINT modelNumber);
-
-	/// <summary>
 	/// 生成
 	/// </summary>
-	void Create();
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -292,6 +293,7 @@ public:
 
 
 private://静的メンバ変数
+
 	static FbxManager* fbxManager;//Fbxの基盤
 	static FbxTime frameTime;//1フレームの時間
 	static ID3D12Device* device;//デバイス

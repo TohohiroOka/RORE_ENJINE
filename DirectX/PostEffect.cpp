@@ -1,8 +1,6 @@
 #include "PostEffect.h"
 #include "WindowApp.h"
 #include "XInputManager.h"
-
-#include <d3dx12.h>
 #include <d3dcompiler.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -21,6 +19,10 @@ PostEffect::PostEffect()
 
 PostEffect::~PostEffect()
 {
+}
+
+void PostEffect::AllDelete()
+{
 	for (int i = 0; i < texBuffNum; i++)
 	{
 		texBuff[i].Reset();
@@ -33,13 +35,8 @@ PostEffect::~PostEffect()
 	pipelineState.Reset();
 }
 
-void PostEffect::StaticInitialize()
+void PostEffect::CreateGraphicsPipeline()
 {
-	// nullptrチェック
-	assert(device);
-
-	Sprite::device = device;
-
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> vsBlob; // 頂点シェーダオブジェクト
 	ComPtr<ID3DBlob> psBlob;	// ピクセルシェーダオブジェクト
@@ -184,6 +181,13 @@ void PostEffect::StaticInitialize()
 	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 	assert(SUCCEEDED(result));
 
+}
+
+void PostEffect::StaticInitialize()
+{
+	CreateGraphicsPipeline();
+
+	//名前設定
 	pipelineState->SetName(L"PostEffectPipe");
 	rootSignature->SetName(L"PostEffectRoot");
 }
@@ -191,8 +195,6 @@ void PostEffect::StaticInitialize()
 void PostEffect::Initialize()
 {
 	HRESULT result;
-
-	StaticInitialize();
 
 	//頂点バッファ生成
 	result = device->CreateCommittedResource(
@@ -346,6 +348,21 @@ void PostEffect::Initialize()
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	device->CreateDepthStencilView(depthBuff.Get(), &dsvDesc, descHeapDSV->GetCPUDescriptorHandleForHeapStart());
+}
+
+std::unique_ptr<PostEffect> PostEffect::Create()
+{
+	// Spriteのインスタンスを生成
+	PostEffect* instance = new PostEffect();
+	if (instance == nullptr) {
+		return nullptr;
+	}
+
+	// 初期化
+	instance->Initialize();
+
+	//ユニークポインタを返す
+	return std::unique_ptr<PostEffect>(instance);
 }
 
 void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)

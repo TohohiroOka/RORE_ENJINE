@@ -3,120 +3,83 @@
 #include "SafeDelete.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
-#include "Audio.h"
 #include "Camera.h"
 
 #include <cassert>
 #include <sstream>
 #include <iomanip>
 
-//ゲームで使用するクラス宣言
-#include "Player.h"
-#include "Ground.h"
-#include "TouchableObject.h"
-
 const float radian = XM_PI / 180.0f;//ラジアン
+using namespace std;
 
 GameScene::~GameScene()
 {
-	//audioの解放
-	safe_delete(audio);
-
-	//ライトの解放
-	safe_delete(light);
-
-	//スプライトの解放
-	safe_delete(sprite);
-
-	//パーティクルの解放
-	safe_delete(emit);
-
-	//Modelの解放
-	safe_delete(uma);
-	safe_delete(ground);
-	safe_delete(block);
-
-	//Objの解放
-	safe_delete(PLAYER);
-	safe_delete(GROUND);
-	safe_delete(BLOCK);
-
-	//normalMapの解放
-	safe_delete(water);
-
-	//Fbxの解放
-	safe_delete(anm);
-
-	//lineの解放
-	safe_delete(line);
-	safe_delete(line_t);
-	safe_delete(line3d);
-
-	//コンピュートシェーダーの解放
-	safe_delete(compute);
 }
 
 void GameScene::Initialize()
 {
 	//サウンド用
-	audio = new Audio();
+	audio = make_unique<Audio>();
 
 	//ライト
 	light = LightGroup::Create();
+
 	// 3Dオブエクトにライトをセット
-	Object3d::SetLightGroup(light);
+	Object3d::SetLightGroup(light.get());
 
 	//スプライト
 	Sprite::LoadTexture(1, L"Resources/amm.jpg");
 
 	sprite = Sprite::Create(1);
 
-	//object3d
+	//モデル読み込み
 	uma = Model::CreateFromOBJ("uma");
 	ground = Model::CreateFromOBJ("wall");
 	block = Model::CreateFromOBJ("Square");
 
-	PLAYER = Player::Create(uma);
+	//プレイヤー生成
+	PLAYER = Player::Create(uma.get());
 	
-	GROUND = Ground::Create(ground);
-	GROUND->SetScale(100);
-	GROUND->SetPosition({ 1, -5, 0 });
+	//地面生成
+	GROUND = Ground::Create(ground.get());
 	
-	TouchableObject* Tobject3d = TouchableObject::Create(block);
+	//触れられるオブジェクト生成
+	std::unique_ptr<TouchableObject> Tobject3d = TouchableObject::Create(block.get());
 	Tobject3d->SetScale(10.0f);
 	Tobject3d->SetPosition({ -100,0,-100 });
-	BLOCK = Tobject3d;
+	BLOCK = std::move(Tobject3d);
 
-	//NormalMap
+	//NormalMapテクスチャの読み込み
 	tex[0] = NormalMap::LoadTexture(L"Resources/white1x1.png");
 	tex[1] = NormalMap::LoadTexture(L"Resources/wN1.jpg");
 	tex[2] = NormalMap::LoadTexture(L"Resources/pN2.png");
 
-	water = new NormalMap();
-	water->Create();
+	//水オブジェクト生成
+	water= NormalMap::Create();
+	water->SetPosition({ 100,5,100 });
+	water->SetScale({ 2,2,2 });
+	water->SetMainTexColor({ 1.0f,1.0f,1.0f,1.0f });
+	water->SetSubTexColor1({ 0.1f, 0.7f, 1.0f, 0.5f });
+	water->SetSubTexColor2({ 1.0f, 1.0f, 1.0f, 0.5f });
 
-	//Fbx
+	//Fbxモデルの読み込み
 	FbxUma = Fbx::LoadFbx("uma");
 
-	anm = new Fbx();
-	anm->CreateModel(FbxUma);
+	//Fbxモデルオブジェクトの生成
+	anm = Fbx::Create(FbxUma);
 
-	//パーティクル用
+	//パーティクル用テクスチャの読み込み
 	ParticleManager::LoadTexture(0, L"Resources/particle/effect1.png");
 
-	emit = new Emitter();
-	emit->Create(0);
+	emit = Emitter::Create(0);
 
 	//線
-	line = new DrawLine();
 	line = DrawLine::Create();
-	line_t = new DrawLine();
 	line_t = DrawLine::Create();
-	line3d = new DrawLine3D();
 	line3d = DrawLine3D::Create(10);
 
-	compute = new ComputeShaderManager();
-	compute->Initialize();
+	//コンピュートシェーダー生成
+	compute = ComputeShaderManager::Create();
 	for (int i = 0; i < max; i++)
 	{
 		startPosition[i] = { (float)10 * i,(float)10,(float)10 };//初期座標
@@ -145,8 +108,8 @@ void GameScene::Update(Camera* camera)
 	if (lightPos < -30) { lightF = false; }
 
 	uvPos += 0.2f;
-	water->SetInformation({ 100,5,100 }, { 0,0,0 }, { 2,2,2 },
-		{ 1.0f,1.0f,1.0f,1.0f }, { 0.1f, 0.7f, 1.0f, 0.5f }, { 1.0f, 1.0f, 1.0f, 0.5f }, lightPos, uvPos);
+	water->SetUvPosition(uvPos);
+	water->SetLightPosition(lightPos);
 	water->Update(camera);
 
 	//Fbx

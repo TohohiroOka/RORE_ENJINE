@@ -216,27 +216,24 @@ void DrawLine::PostDraw()
 	DrawLine::cmdList = nullptr;
 }
 
-DrawLine* DrawLine::Create()
+std::unique_ptr<DrawLine> DrawLine::Create()
 {
 	// Spriteのインスタンスを生成
-	DrawLine* drawLine = new DrawLine();
-	if (drawLine == nullptr) {
+	DrawLine* instance = new DrawLine();
+	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	// 初期化
-	if (!drawLine->Initialize()) {
-		delete drawLine;
+	if (!instance->Initialize()) {
+		delete instance;
 		assert(0);
 		return nullptr;
 	}
 
-	drawLine->Update();
+	instance->Update();
 
-	pipelineState->SetName(L"Sppi");
-	rootSignature->SetName(L"Spro");
-
-	return drawLine;
+	return std::unique_ptr<DrawLine>(instance);
 }
 
 bool DrawLine::Initialize()

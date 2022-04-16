@@ -316,24 +316,25 @@ void Sprite::PostDraw()
 	Sprite::cmdList = nullptr;
 }
 
-Sprite* Sprite::Create(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
+std::unique_ptr<Sprite> Sprite::Create(UINT texNumber)
 {
 	// Spriteのインスタンスを生成
-	Sprite* sprite = new Sprite();
-	if (sprite == nullptr) {
+	Sprite* instance = new Sprite();
+	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	// 初期化
-	if (!sprite->Initialize(texNumber, anchorpoint, isFlipX, isFlipY)) {
-		delete sprite;
+	if (!instance->Initialize(texNumber, { 0.5f,0.5f }, false, false)) {
+		delete instance;
 		assert(0);
 		return nullptr;
 	}
 
-	sprite->Update();
+	instance->Update();
 
-	return sprite;
+	//ユニークポインタを返す
+	return std::unique_ptr<Sprite>(instance);
 }
 
 bool Sprite::Initialize(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)

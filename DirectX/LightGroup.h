@@ -1,16 +1,12 @@
 ﻿#pragma once
-
 #include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
-#include <DirectXMath.h>
 #include <d3dx12.h>
+#include <DirectXMath.h>
 
 #include "DirectionalLight.h"
 
-/// <summary>
-/// ライト
-/// </summary>
 class LightGroup
 {
 private: // エイリアス
@@ -49,7 +45,7 @@ public: // 静的メンバ関数
 	/// インスタンス生成
 	/// </summary>
 	/// <returns>インスタンス</returns>
-	static LightGroup* Create();
+	static std::unique_ptr<LightGroup> Create();
 
 private: // 静的メンバ変数
 	// デバイス

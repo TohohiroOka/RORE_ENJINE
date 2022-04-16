@@ -14,8 +14,6 @@ MainEngine::~MainEngine()
 {
 	safe_delete(camera);
 	safe_delete(scene);
-	safe_delete(postEffect);
-	DebugText::AllDelete();
 	DrawLine3D::AllDelete();
 	DrawLine::AllDelete();
 	Object3d::AllDelete();
@@ -23,6 +21,7 @@ MainEngine::~MainEngine()
 	Fbx::AllDelete();
 	ParticleManager::AllDelete();
 	NormalMap::AllDelete();
+	postEffect->AllDelete();
 	safe_delete(dXCommon);
 	safe_delete(winApp);
 }
@@ -63,6 +62,7 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	Fbx::StaticInitialize(dXCommon->GetDevice());
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
+	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 
 	scene = new GameScene();
@@ -70,8 +70,7 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 
 	Sprite::LoadTexture(0, L"Resources/LetterResources/debugfont.png");
 
-	postEffect = new PostEffect();
-	postEffect->Initialize();
+	postEffect = PostEffect::Create();
 
 	//[“x‚Ì‰Šú‰»
 	dXCommon->CreateDepth();

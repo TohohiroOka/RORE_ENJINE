@@ -43,10 +43,60 @@ void ComputeShaderManager::StaticInitialize(ID3D12Device* device)
 	CreateDescriptor();
 }
 
+std::unique_ptr<ComputeShaderManager> ComputeShaderManager::Create()
+{
+	// 3Dオブジェクトのインスタンスを生成
+	ComputeShaderManager* instance = new ComputeShaderManager();
+	if (instance == nullptr) {
+		return nullptr;
+	}
+
+	// 初期化
+	instance->Initialize();
+
+	return std::unique_ptr<ComputeShaderManager>(instance);
+}
+
 void ComputeShaderManager::Initialize()
 {
-	//定数バッファの生成
-	CreateBuffers();
+	HRESULT result = S_FALSE;
+
+	//定数バッファの設定
+	D3D12_HEAP_PROPERTIES prop{};
+	prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+	prop.CreationNodeMask = 1;
+	prop.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+	prop.Type = D3D12_HEAP_TYPE_CUSTOM;
+	prop.VisibleNodeMask = 1;
+	//サイズは定数バッファと同じように指定
+	D3D12_RESOURCE_DESC desc{};
+	desc.Alignment = 0;
+	desc.DepthOrArraySize = 1;
+	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.Height = 1;
+	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	desc.MipLevels = 1;
+	desc.SampleDesc = { 1, 0 };
+	desc.Width = (sizeof(XMFLOAT3) * test.size() + 0xff) & ~0xff;
+
+	//設定の反映
+	result = device->CreateCommittedResource(&prop, D3D12_HEAP_FLAG_NONE, &desc,
+		D3D12_RESOURCE_STATE_UNORDERED_ACCESS, nullptr,
+		IID_PPV_ARGS(&inputBuffer));
+	if (FAILED(result)) {
+		assert(0);
+	}
+
+	//今回はGPUから受け取るのはchar型にしています
+	D3D12_UNORDERED_ACCESS_VIEW_DESC outdesc{};
+	outdesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	outdesc.Format = DXGI_FORMAT_UNKNOWN;
+	outdesc.Buffer.NumElements = test.size();
+	outdesc.Buffer.StructureByteStride = sizeof(XMFLOAT3);
+
+	device->CreateUnorderedAccessView(inputBuffer.Get(), nullptr, &outdesc, Heap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void ComputeShaderManager::LoadShader()
@@ -111,48 +161,6 @@ void ComputeShaderManager::CreateDescriptor()
 	if (FAILED(result)) {
 		assert(0);
 	}
-}
-
-void ComputeShaderManager::CreateBuffers()
-{
-	HRESULT result = S_FALSE;
-
-	//定数バッファの設定
-	D3D12_HEAP_PROPERTIES prop{};
-	prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-	prop.CreationNodeMask = 1;
-	prop.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-	prop.Type = D3D12_HEAP_TYPE_CUSTOM;
-	prop.VisibleNodeMask = 1;
-	//サイズは定数バッファと同じように指定
-	D3D12_RESOURCE_DESC desc{};
-	desc.Alignment = 0;
-	desc.DepthOrArraySize = 1;
-	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-	desc.Format = DXGI_FORMAT_UNKNOWN;
-	desc.Height = 1;
-	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	desc.MipLevels = 1;
-	desc.SampleDesc = { 1, 0 };
-	desc.Width = (sizeof(XMFLOAT3) * test.size() + 0xff) & ~0xff;
-
-	//設定の反映
-	result = device->CreateCommittedResource(&prop, D3D12_HEAP_FLAG_NONE, &desc,
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS, nullptr,
-		IID_PPV_ARGS(&inputBuffer));
-	if (FAILED(result)) {
-		assert(0);
-	}
-
-	//今回はGPUから受け取るのはchar型にしています
-	D3D12_UNORDERED_ACCESS_VIEW_DESC outdesc{};
-	outdesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-	outdesc.Format = DXGI_FORMAT_UNKNOWN;
-	outdesc.Buffer.NumElements = test.size();
-	outdesc.Buffer.StructureByteStride = sizeof(XMFLOAT3);
-
-	device->CreateUnorderedAccessView(inputBuffer.Get(), nullptr, &outdesc, Heap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void ComputeShaderManager::ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLOAT3* endPosition,

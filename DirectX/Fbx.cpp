@@ -737,7 +737,8 @@ void Fbx::StaticInitialize(ID3D12Device* device)
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);
 }
 
-void Fbx::Create() {
+void Fbx::Initialize()
+{
 	HRESULT result = S_FALSE;
 
 	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * data[modelNumber].vertices.size());
@@ -751,7 +752,7 @@ void Fbx::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
-
+	assert(SUCCEEDED(result));
 
 	//インデックスバッファ生成
 	result = device->CreateCommittedResource(
@@ -761,6 +762,7 @@ void Fbx::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&indexBuff));
+	assert(SUCCEEDED(result));
 
 	//頂点バッファへのデータ転送
 	Vertex* vertMap = nullptr;
@@ -792,6 +794,7 @@ void Fbx::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffTransform));
+	assert(SUCCEEDED(result));
 
 	//定数バッファSkinの生成
 	result = device->CreateCommittedResource(
@@ -801,15 +804,21 @@ void Fbx::Create() {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffSkin));
-
+	assert(SUCCEEDED(result));
 }
 
-void Fbx::CreateModel(UINT modelNumber) {
-	//テクスチャ番号コピー
-	this->modelNumber = modelNumber;
+std::unique_ptr<Fbx> Fbx::Create(UINT modelNumber)
+{
+	// 3Dオブジェクトのインスタンスを生成
+	Fbx* instance = new Fbx();
 
-	//obj生成
-	Create();
+	//テクスチャ番号コピー
+	instance->modelNumber = modelNumber;
+
+	//初期化
+	instance->Initialize();
+
+	return std::unique_ptr<Fbx>(instance);
 }
 
 void Fbx::Update(Camera* camera)
@@ -902,7 +911,7 @@ void Fbx::Draw(int modelNumber)
 	//二回目の呼び出しから呼ばれない
 	if (this->modelNumber != modelNumber)
 	{
-		CreateModel(modelNumber);
+		Create(modelNumber);
 	}
 
 	//頂点バッファの設定

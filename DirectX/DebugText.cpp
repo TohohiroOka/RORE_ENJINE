@@ -1,6 +1,7 @@
 #include "DebugText.h"
+#include <string>
 
-Sprite* DebugText::spriteDatas[maxCharCount] = {};
+std::unique_ptr<Sprite> DebugText::spriteDatas[maxCharCount] = {};
 
 DebugText::DebugText()
 {
@@ -8,13 +9,6 @@ DebugText::DebugText()
 
 DebugText::~DebugText()
 {
-}
-
-void DebugText::AllDelete()
-{
-	for (int i = 0; i < _countof(spriteDatas); i++) {
-		delete spriteDatas[i];
-	}
 }
 
 DebugText* DebugText::GetInstance()
@@ -29,7 +23,8 @@ void DebugText::Initialize(UINT texnumber)
 	for (int i = 0; i < _countof(spriteDatas); i++)
 	{
 		// スプライトを生成する
-		spriteDatas[i] = Sprite::Create(texnumber, { 0, 0 });
+		spriteDatas[i] = Sprite::Create(texnumber);
+		spriteDatas[i]->SetAnchorpoint({ 0, 0 });
 	}
 }
 

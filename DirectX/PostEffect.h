@@ -6,11 +6,23 @@ class PostEffect : public Sprite
 private://静的メンバ関数
 
 	/// <summary>
+	/// グラフィックスパイプラインの生成
+	/// </summary>
+	static void CreateGraphicsPipeline();
+
+public://メンバ関数
+
+	/// <summary>
 	/// 静的初期化
 	/// </summary>
 	static void StaticInitialize();
 
-public:
+	/// <summary>
+	/// インスタンスの生成
+	/// </summary>
+	static std::unique_ptr<PostEffect> Create();
+
+public://メンバ関数
 
 	/// <summary>
 	/// コンストラクタ
@@ -44,6 +56,11 @@ public:
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
 	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
+
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	void AllDelete();
 
 private://静的メンバ変数
 	

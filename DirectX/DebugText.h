@@ -1,8 +1,5 @@
 #pragma once
-
 #include "Sprite.h"
-#include <Windows.h>
-#include <string>
 
 /// <summary>
 /// デバッグ用文字表示
@@ -20,7 +17,7 @@ public:
 private://静的メンバ変数
 
 	// スプライトデータの配列
-	static Sprite* spriteDatas[maxCharCount];
+	static std::unique_ptr<Sprite> spriteDatas[maxCharCount];
 
 
 public:// 静的メンバ関数
@@ -30,11 +27,6 @@ public:// 静的メンバ関数
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static DebugText* GetInstance();
-
-	/// <summary>
-	/// 解放処理
-	/// </summary>
-	static void AllDelete();
 
 public:// メンバ関数
 

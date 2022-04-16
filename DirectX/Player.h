@@ -8,7 +8,7 @@ public:
 	/// 3Dオブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static Player* Create(Model *model = nullptr);
+	static std::unique_ptr<Player> Create(Model *model = nullptr);
 public:
 
 	/// <summary>

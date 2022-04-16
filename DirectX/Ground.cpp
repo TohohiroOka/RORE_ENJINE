@@ -2,7 +2,7 @@
 #include "MeshCollider.h"
 #include "CollisionAttribute.h"
 
-Ground * Ground::Create(Model * model)
+std::unique_ptr<Ground> Ground::Create(Model * model)
 {
 	// オブジェクトのインスタンスを生成
 	Ground* instance = new Ground();
@@ -16,7 +16,10 @@ Ground * Ground::Create(Model * model)
 		assert(0);
 	}
 
-	return instance;
+	instance->SetScale(100);
+	instance->SetPosition({ 1, -5, 0 });
+
+	return std::unique_ptr<Ground>(instance);
 }
 
 bool Ground::Initialize(Model * model)

@@ -8,7 +8,7 @@
 
 using namespace DirectX;
 
-Player * Player::Create(Model * model)
+std::unique_ptr<Player> Player::Create(Model * model)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Player* instance = new Player();
@@ -26,7 +26,7 @@ Player * Player::Create(Model * model)
 		instance->SetModel(model);
 	}
 
-	return instance;
+	return std::unique_ptr<Player>(instance);
 }
 
 bool Player::Initialize()

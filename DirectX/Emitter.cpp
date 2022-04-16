@@ -3,13 +3,16 @@
 
 Emitter::~Emitter()
 {
-	delete particleManager;
 }
 
-void Emitter::Create(int texNumber)
+std::unique_ptr<Emitter> Emitter::Create(int texNumber)
 {
-	particleManager = new ParticleManager();
-	particleManager->Create(texNumber);
+	// 3Dオブジェクトのインスタンスを生成
+	Emitter* instance = new Emitter();
+
+	instance->particleManager = ParticleManager::Create(texNumber);
+
+	return std::unique_ptr<Emitter>(instance);
 }
 
 void Emitter::InEmitter(int maxCount, int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity,

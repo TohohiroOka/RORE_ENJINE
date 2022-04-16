@@ -3,8 +3,8 @@
 #include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
-#include <DirectXMath.h>
 #include <d3dx12.h>
+#include <DirectXMath.h>
 
 #include "Model.h"
 #include "LightGroup.h"
@@ -13,9 +13,6 @@
 class BaseCollider;
 class Camera;
 
-/// <summary>
-/// 3Dオブジェクト
-/// </summary>
 class Object3d
 {
 protected: // エイリアス
@@ -87,9 +84,10 @@ public: // 静的メンバ関数
 	/// 3Dオブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static Object3d* Create(Model* model = nullptr);
+	static std::unique_ptr<Object3d> Create(Model* model = nullptr);
 
 private: // 静的メンバ変数
+
 	// デバイス
 	static ID3D12Device* device;
 	// コマンドリスト
@@ -104,6 +102,7 @@ private: // 静的メンバ変数
 	static LightGroup* lightGroup;
 
 public: // メンバ関数
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -143,9 +142,10 @@ public: // メンバ関数
 
 protected: // メンバ変数
 
+	// 名前
 	const char* name = nullptr;
-
-	ComPtr<ID3D12Resource> constBuffB0; // 定数バッファ
+	// 定数バッファ
+	ComPtr<ID3D12Resource> constBuffB0;
 	// 色
 	XMFLOAT4 color = { 1,1,1,1 };
 	// ローカルスケール

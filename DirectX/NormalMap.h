@@ -78,6 +78,13 @@ public://静的メンバ関数
 	static int LoadTexture(const wchar_t* filename);
 
 	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <returns></returns>
+	static std::unique_ptr<NormalMap> Create();
+
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
@@ -96,39 +103,15 @@ public://静的メンバ関数
 public://メンバ関数
 
 	/// <summary>
-	/// 情報のセット
-	/// </summary>
-	/// <param name="position">座標</param>
-	/// <param name="rotation">回転角</param>
-	/// <param name="scale">大きさ</param>
-	/// <param name="color1">メインカラー</param>
-	/// <param name="color2">サブ1カラー</param>
-	/// <param name="color3">サブ2カラー</param>
-	/// <param name="light">ライトの位置</param
-	/// <param name="uvPos">テクスチャの位置</param>
-	void SetInformation(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale,
-		XMFLOAT4 color1, XMFLOAT4 color2, XMFLOAT4 color3, float light, float uvPos)
-	{
-		this->position = position;
-		this->rotation = rotation;
-		this->scale = scale;
-		this->color1 = color1;
-		this->color2 = color2;
-		this->color3 = color3;
-		this->light = light;
-		this->uvPos = uvPos;
-	}
-
-	/// <summary>
 	/// 更新
 	/// </summary>
 	/// <param name="camera">カメラのインスタンス</param>
 	void Update(Camera* camera);
-
+	
 	/// <summary>
-	/// Objectの生成
+	/// 初期化
 	/// </summary>
-	void Create();
+	void Initialize();
 
 	/// <summary>
 	/// //描画
@@ -137,7 +120,6 @@ public://メンバ関数
 	/// <param name="normalTex">法線テクスチャ1</param>
 	/// <param name="normalTex2">法線テクスチャ2</param>
 	void Draw(int colorTex, int normalTex, int normalTex2);
-
 
 private://静的メンバ変数
 
@@ -202,4 +184,46 @@ private://メンバ変数
 	float uvPos = 0;
 	//光の位置
 	float light = 0;
+
+public:
+
+	/// <summary>
+	/// 座標
+	/// </summary>
+	void SetPosition(const XMFLOAT3& position) { this->position = position; }
+
+	/// <summary>
+	/// 回転角
+	/// </summary>
+	void SetRotation(const XMFLOAT3& rotation) { this->rotation = rotation; }
+
+	/// <summary>
+	/// 大きさ
+	/// </summary>
+	void SetScale(const XMFLOAT3& scale) { this->scale = scale; }
+
+	/// <summary>
+	/// メインテクスチャの色
+	/// </summary>
+	void SetMainTexColor(const XMFLOAT4& color1) { this->color1 = color1; }
+
+	/// <summary>
+	/// サブテクスチャ1の色
+	/// </summary>
+	void SetSubTexColor1(const XMFLOAT4& subColor1) { this->color2 = subColor1; }
+
+	/// <summary>
+	/// サブテクスチャ2の色
+	/// </summary>
+	void SetSubTexColor2(const XMFLOAT4& subColor2) { this->color3 = subColor2; }
+
+	/// <summary>
+	/// ライトの位置
+	/// </summary>
+	void SetLightPosition(const float& light) { this->light = light; }
+
+	/// <summary>
+	/// uv座標
+	/// </summary>
+	void SetUvPosition(bool uvPos) { this->uvPos = uvPos; };
 };

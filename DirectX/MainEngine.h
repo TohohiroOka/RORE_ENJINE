@@ -7,7 +7,7 @@
 #include "PostEffect.h"
 #include "Camera.h"
 
-#include<sstream>
+#include <sstream>
 #include <iomanip>
 #include <mmsystem.h>
 
@@ -81,7 +81,7 @@ private:
 	//GameSceneのインスタンス
 	GameScene* scene = nullptr;
 	//ポストエフェクトのインスタンス
-	PostEffect* postEffect = nullptr;
+	std::unique_ptr<PostEffect> postEffect = nullptr;
 	//数字表示デバッグ用
 	wchar_t str[256] = {};
 	//フレームレート固定用

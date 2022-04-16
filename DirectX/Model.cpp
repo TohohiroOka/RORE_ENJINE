@@ -23,13 +23,13 @@ void Model::StaticInitialize(ID3D12Device* device)
 	Mesh::StaticInitialize(device);
 }
 
-Model* Model::CreateFromOBJ(const std::string& modelname, bool smoothing)
+std::unique_ptr<Model> Model::CreateFromOBJ(const std::string& modelname, bool smoothing)
 {
 	// メモリ確保
 	Model* instance = new Model;
 	instance->Initialize(modelname, smoothing);
 
-	return instance;
+	return std::unique_ptr<Model>(instance);
 }
 
 Model::~Model()

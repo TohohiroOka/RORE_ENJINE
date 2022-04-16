@@ -8,7 +8,7 @@ public:
 	/// オブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static Ground* Create(Model* model = nullptr);
+	static std::unique_ptr<Ground> Create(Model* model = nullptr);
 
 	/// <summary>
 	/// 初期化

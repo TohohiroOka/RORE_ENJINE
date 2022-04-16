@@ -225,25 +225,25 @@ void Object3d::PostDraw()
 	Object3d::cmdList = nullptr;
 }
 
-Object3d* Object3d::Create(Model* model)
+std::unique_ptr<Object3d> Object3d::Create(Model* model)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Object3d* object3d = new Object3d();
-	if (object3d == nullptr) {
+	Object3d* instance = new Object3d();
+	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	// 初期化
-	if (!object3d->Initialize()) {
-		delete object3d;
+	if (!instance->Initialize()) {
+		delete instance;
 		assert(0);
 	}
 
 	if (model) {
-		object3d->SetModel(model);
+		instance->SetModel(model);
 	}
 
-	return object3d;
+	return std::unique_ptr<Object3d>(instance);
 }
 
 Object3d::~Object3d()

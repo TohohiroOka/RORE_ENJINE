@@ -1,12 +1,9 @@
 #pragma once
-
 #include <wrl.h>
 #include <d3d12.h>
+#include <d3dx12.h>
 #include <DirectXMath.h>
 
-/// <summary>
-/// スプライト
-/// </summary>
 class DrawLine
 {
 protected: // エイリアス
@@ -59,7 +56,7 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// スプライト生成
 	/// </summary>
-	static DrawLine* Create();
+	static std::unique_ptr<DrawLine> Create();
 
 	/// <summary>
 	/// 解放処理
