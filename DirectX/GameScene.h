@@ -12,6 +12,8 @@
 #include "DrawLine.h"
 #include "DrawLine3D.h"
 #include "ComputeShaderManager.h"
+#include "FreeFallCircle.h"
+#include "Cannonball.h"
 
 class DirectInput;
 class XInputManager;
@@ -96,8 +98,6 @@ private:// メンバ変数
 
 	XMFLOAT3 cameraPosition = { 0,0,50 };
 
-	DrawLine* line = nullptr;
-	DrawLine* line_t = nullptr;
 	DrawLine3D* line3d = nullptr;
 
 	ComputeShaderManager* compute = nullptr;
@@ -107,4 +107,7 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
+
+	FreeFallCircle* circle = nullptr;
+	Cannonball* cannonball = nullptr;
 };

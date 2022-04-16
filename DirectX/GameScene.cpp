@@ -40,6 +40,7 @@ GameScene::~GameScene()
 	safe_delete(PLAYER);
 	safe_delete(GROUND);
 	safe_delete(BLOCK);
+	safe_delete(circle);
 
 	//normalMapの解放
 	safe_delete(water);
@@ -48,12 +49,13 @@ GameScene::~GameScene()
 	safe_delete(anm);
 
 	//lineの解放
-	safe_delete(line);
-	safe_delete(line_t);
 	safe_delete(line3d);
 
 	//コンピュートシェーダーの解放
 	safe_delete(compute);
+
+	safe_delete(circle);
+	safe_delete(cannonball);
 }
 
 void GameScene::Initialize()
@@ -78,14 +80,17 @@ void GameScene::Initialize()
 
 	PLAYER = Player::Create(uma);
 	
+	circle = FreeFallCircle::Create(block);
+	cannonball = Cannonball::Create(block);
+
 	GROUND = Ground::Create(ground);
 	GROUND->SetScale(100);
 	GROUND->SetPosition({ 1, -5, 0 });
 	
 	TouchableObject* Tobject3d = TouchableObject::Create(block);
 	Tobject3d->SetScale(10.0f);
-	Tobject3d->SetPosition({ -100,0,-100 });
 	BLOCK = Tobject3d;
+	BLOCK->SetPosition({ -10, 0, 0 });
 
 	//NormalMap
 	tex[0] = NormalMap::LoadTexture(L"Resources/white1x1.png");
@@ -108,10 +113,6 @@ void GameScene::Initialize()
 	emit->Create(0);
 
 	//線
-	line = new DrawLine();
-	line = DrawLine::Create();
-	line_t = new DrawLine();
-	line_t = DrawLine::Create();
 	line3d = new DrawLine3D();
 	line3d = DrawLine3D::Create(10);
 
@@ -135,6 +136,8 @@ void GameScene::Update(Camera* camera)
 	PLAYER->Update();
 	GROUND->Update();
 	BLOCK->Update();
+	circle->Update();
+	cannonball->Update();
 
 	//NormalMap
 	XMFLOAT4 normal = { 1.0f,1.0f,1.0f,1.0f };
@@ -165,10 +168,6 @@ void GameScene::Update(Camera* camera)
 	emit->Update(camera);
 
 	////線
-	line->SetLine({ 300,300 }, { 700,700 }, { 1,1,1,1 }, 50);
-	line->Update();
-	line_t->SetLine({ 20,500 }, { 500,400 }, { 1,1,1,1 }, 50);
-	line_t->Update();
 	XMFLOAT3 S_pos[10];
 	XMFLOAT3 E_pos[10];
 	for (int i = 0; i < 10; i++)
@@ -196,6 +195,8 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 
 	Object3d::PreDraw(cmdList);
 	PLAYER->Draw();
+	circle->Draw();
+	cannonball->Draw();
 	GROUND->Draw();
 	BLOCK->Draw();
 	Object3d::PostDraw();
@@ -209,12 +210,6 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	//sprite->Draw();
 	//Sprite::PostDraw();
 
-	//線
-	DrawLine::PreDraw(cmdList);
-	line->Draw();
-	line_t->Draw();
-	DrawLine::PostDraw();
-	
 	//線3d
 	DrawLine3D::PreDraw(cmdList);
 	line3d->Draw();
