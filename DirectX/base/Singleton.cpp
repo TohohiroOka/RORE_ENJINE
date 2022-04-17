@@ -1,12 +1,11 @@
 #include "Singleton.h"
 
-namespace {
-
+namespace
+{
     constexpr int kMaxFinalizersSize = 256;
     std::mutex gMutex;
     int gNumFinalizersSize = 0;
     SingletonFinalizer::FinalizerFunc gFinalizers[kMaxFinalizersSize];
-
 }
 
 void SingletonFinalizer::addFinalizer(FinalizerFunc func) {

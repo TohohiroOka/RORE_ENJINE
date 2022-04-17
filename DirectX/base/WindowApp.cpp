@@ -30,7 +30,7 @@ void WindowApp::Initialize(const int window_Width, const int window_height,const
 	// ウィンドウクラスをOSに登録
 	RegisterClassEx(&winClass);
 	// ウィンドウサイズ{ X座標 Y座標 横幅 縦幅 }
-	RECT wrc = { 0, 0, windowWidth, windowHeight };
+	RECT wrc = { 0, 0, (LONG)windowWidth, (LONG)windowHeight };
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);// 自動でサイズ補正
 
 	// ウィンドウオブジェクトの生成

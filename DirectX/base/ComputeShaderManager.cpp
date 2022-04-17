@@ -93,7 +93,7 @@ void ComputeShaderManager::Initialize()
 	D3D12_UNORDERED_ACCESS_VIEW_DESC outdesc{};
 	outdesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 	outdesc.Format = DXGI_FORMAT_UNKNOWN;
-	outdesc.Buffer.NumElements = test.size();
+	outdesc.Buffer.NumElements = (UINT)test.size();
 	outdesc.Buffer.StructureByteStride = sizeof(XMFLOAT3);
 
 	device->CreateUnorderedAccessView(inputBuffer.Get(), nullptr, &outdesc, Heap->GetCPUDescriptorHandleForHeapStart());
@@ -196,7 +196,7 @@ void ComputeShaderManager::ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLO
 	cmdList->SetComputeRootDescriptorTable(0, handle);
 
 	//コンピュートシェーダーの実行(今回は256個のスレッドグループを指定)
-	cmdList->Dispatch(test.size(), 1, 1);
+	cmdList->Dispatch((UINT)test.size(), 1, 1);
 }
 
 XMFLOAT3* ComputeShaderManager::GetConstBufferNum()
