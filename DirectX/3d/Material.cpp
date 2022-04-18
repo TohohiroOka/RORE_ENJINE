@@ -15,7 +15,6 @@ Material::~Material()
 {
 	texbuff.Reset();
 	constBuff.Reset();
-
 }
 
 void Material::StaticInitialize(ID3D12Device * device)

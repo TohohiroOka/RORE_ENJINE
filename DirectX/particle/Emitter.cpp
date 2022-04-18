@@ -35,7 +35,7 @@ void Emitter::Draw()
 	particleManager->Draw();
 }
 
-void Emitter::AllDelete()
+void Emitter::ParticlAllDelete()
 {
-	particleManager->AllDelete();
+	particleManager->ParticlAllDelete();
 }

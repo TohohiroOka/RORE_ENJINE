@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
@@ -9,6 +8,7 @@
 #include "Model.h"
 #include "LightGroup.h"
 #include "CollisionInfo.h"
+#include "GraphicsPipelineManager.h"
 
 class BaseCollider;
 class Camera;
@@ -36,22 +36,20 @@ public: // サブクラス
 		bool isBloom;//ブルームを入れるかどうか
 	};
 
-public: // 静的メンバ関数
-	/// <summary>
-	/// 静的初期化
-	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device, Camera* camera = nullptr);
-
-	/// <summary>
-	/// 静的終了処理
-	/// </summary>
-	static void AllDelete();
+private: // 静的メンバ関数
 
 	/// <summary>
 	/// グラフィックパイプラインの生成
 	/// </summary>
 	static void CreateGraphicsPipeline();
+
+public: // 静的メンバ関数
+
+	/// <summary>
+	/// 静的初期化
+	/// </summary>
+	/// <param name="device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* device, Camera* camera = nullptr);
 
 	/// <summary>
 	/// カメラのセット
@@ -86,16 +84,19 @@ public: // 静的メンバ関数
 	/// <returns></returns>
 	static std::unique_ptr<Object3d> Create(Model* model = nullptr);
 
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void Finalize();
+
 private: // 静的メンバ変数
 
 	// デバイス
 	static ID3D12Device* device;
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootSignature;
-	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelineState;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	// カメラ
 	static Camera* camera;
 	// ライト
@@ -168,9 +169,9 @@ protected: // メンバ変数
 public:
 
 	/// <summary>
-/// 座標の取得
-/// </summary>
-/// <returns>座標</returns>
+	/// 座標の取得
+	/// </summary>
+	/// <returns>座標</returns>
 	const XMFLOAT3& GetPosition() { return position; }
 
 	/// <summary>

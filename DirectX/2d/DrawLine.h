@@ -4,6 +4,8 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 
+#include "GraphicsPipelineManager.h"
+
 class DrawLine
 {
 protected: // エイリアス
@@ -33,6 +35,13 @@ public: // サブクラス
 		XMMATRIX mat;	// ３Ｄ変換行列
 	};
 
+private: // 静的メンバ関数
+
+	/// <summary>
+	/// グラフィックパイプラインの生成
+	/// </summary>
+	static void CreateGraphicsPipeline();
+
 public: // 静的メンバ関数
 
 	/// <summary>
@@ -61,7 +70,7 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 解放処理
 	/// </summary>
-	static void AllDelete();
+	static void Finalize();
 
 protected: // 静的メンバ変数
 
@@ -71,10 +80,8 @@ protected: // 静的メンバ変数
 	static ID3D12Device* device;
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootSignature;
-	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelineState;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	// 射影行列
 	static XMMATRIX matProjection;
 
@@ -124,6 +131,7 @@ public: // メンバ関数
 	void Draw();
 
 protected: // メンバ変数
+
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	// 定数バッファ

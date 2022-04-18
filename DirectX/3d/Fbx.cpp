@@ -1,8 +1,9 @@
 #include "Fbx.h"
 #include "Camera.h"
 #include "BaseCollider.h"
-#include <d3dcompiler.h>
+#include "SafeDelete.h"
 
+#include <d3dcompiler.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -20,8 +21,7 @@ FbxManager* Fbx::fbxManager = nullptr;//Fbxの基盤
 ID3D12Device* Fbx::device = nullptr;//デバイス
 ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;//コマンドリスト
 std::vector<Fbx::Data> Fbx::data;//Fbxデータの格納場所
-ComPtr<ID3D12PipelineState> Fbx::pipelineState;//パイプラインステートオブジェクト
-ComPtr<ID3D12RootSignature> Fbx::rootSignature;//ルートシグネチャ
+std::unique_ptr<GraphicsPipelineManager> Fbx::pipeline = nullptr;
 ComPtr<ID3D12DescriptorHeap> Fbx::descHeap;//テクスチャ用デスクリプタヒープの生成
 ComPtr<ID3D12Resource> Fbx::texBuffer[textureNum];//テクスチャリソース(テクスチャバッファ)の配列
 FbxTime Fbx::frameTime;
@@ -38,189 +38,47 @@ Fbx::~Fbx()
 		data[i].fbxUpdate.fbxScene->Destroy();
 	}
 
+	constBuffTransform.Reset();
+	constBuffSkin.Reset();
+	vertBuff.Reset();
+	indexBuff.Reset();
+
 	data.clear();
 }
 
-void Fbx::AllDelete()
+void Fbx::CreateGraphicsPipeline()
 {
-	pipelineState.Reset();
-	rootSignature.Reset();
-	descHeap.Reset();
-	for (int i = 0; i < textureNum; i++)
-	{
-		texBuffer[i].Reset();
-	}
-}
-
-void Fbx::Pipeline()
-{
-	HRESULT result = S_FALSE;
-	ComPtr<ID3DBlob> vsBlob; // 頂点シェーダオブジェクト
-	ComPtr<ID3DBlob> psBlob;    // ピクセルシェーダオブジェクト
-	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
-
-	assert(device);
-
-	//デスクリプタヒープの生成
-	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
-	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	descHeapDesc.NumDescriptors = textureNum;
-	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
-
-	// 頂点シェーダの読み込みとコンパイル
-	result = D3DCompileFromFile(
-		L"Resources/Shaders/FbxVS.hlsl",    // シェーダファイル名
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
-		"main", "vs_5_0",    // エントリーポイント名、シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0,
-		&vsBlob, &errorBlob);
-	if (FAILED(result)) {
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
-
-	// ピクセルシェーダの読み込みとコンパイル
-	result = D3DCompileFromFile(
-		L"Resources/Shaders/FbxPS.hlsl",    // シェーダファイル名
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
-		"main", "ps_5_0",    // エントリーポイント名、シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0,
-		&psBlob, &errorBlob);
-	if (FAILED(result)) {
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
-
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
+		{ // xyz座標
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{ // 法線ベクトル(1行で書いたほうが見やすい)
+		{ // 法線ベクトル
 			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{ // uv座標(1行で書いたほうが見やすい)
+		{ // uv座標
 			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{
+		{//ボーン番号
 			"BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{
+		{//ボーン影響度
 			"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 	};
 
-	// グラフィックスパイプラインの流れを設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
-	gpipeline.VS = CD3DX12_SHADER_BYTECODE(vsBlob.Get());
-	gpipeline.PS = CD3DX12_SHADER_BYTECODE(psBlob.Get());
-
-	// サンプルマスク
-	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	// ラスタライザステート
-	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	// デプスステンシルステート
-	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-
-	// レンダーターゲットのブレンド設定
-	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;    // RBGA全てのチャンネルを描画
-	blenddesc.BlendEnable = true;
-	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	// ブレンドステートの設定
-	gpipeline.BlendState.RenderTarget[0] = blenddesc;
-
-	// 深度バッファのフォーマット
-	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	// 頂点レイアウトの設定
-	gpipeline.InputLayout.pInputElementDescs = inputLayout;
-	gpipeline.InputLayout.NumElements = _countof(inputLayout);
-
-	// 図形の形状設定（三角形）
-	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	gpipeline.NumRenderTargets = 1;    // 描画対象は1つ
-	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	gpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
-
-	// デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV;
-	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
-
-	// ルートパラメータ
-	CD3DX12_ROOT_PARAMETER rootparams[3];
-	// CBV（座標変換行列用）
-	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-	// SRV（テクスチャ）
-	rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	// CBV (スキニング用)
-	rootparams[2].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
-
-	// スタティックサンプラー
-	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
-
-	// ルートシグネチャの設定
-	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
-	rootSignatureDesc.Init_1_0(_countof(rootparams), rootparams, 1, &samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	ComPtr<ID3DBlob> rootSigBlob;
-	// バージョン自動判定のシリアライズ
-	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
-	// ルートシグネチャの生成
-	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature.ReleaseAndGetAddressOf()));
-	if (FAILED(result)) { assert(0); }
-
-	gpipeline.pRootSignature = rootSignature.Get();
-
-	// グラフィックスパイプラインの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(pipelineState.ReleaseAndGetAddressOf()));
-	if (FAILED(result)) { assert(0); }
-
-	pipelineState->SetName(L"Fbxpipelinestate");//パイプラインステートオブジェクト
-	rootSignature->SetName(L"Fbxrootsignature");//ルートシグネチャ
-
-
+	pipeline = GraphicsPipelineManager::Create("Fbx",
+		GraphicsPipelineManager::OBJECT_KINDS::FBX, inputLayout, _countof(inputLayout));
 }
 
 void Fbx::LoadMaterial(int dataNumber, FbxNode* fbxNode) {
@@ -724,12 +582,24 @@ int Fbx::LoadFbx(const std::string fileName)
 
 void Fbx::StaticInitialize(ID3D12Device* device)
 {
+	HRESULT result = S_FALSE;
+
+	// 再初期化チェック
+	assert(!Fbx::device);
+
+	// nullptrチェック
+	assert(device);
+
 	Fbx::device = device;
 
-	Pipeline();
+	CreateGraphicsPipeline();
 
-	pipelineState->SetName(L"FbxPipe");
-	rootSignature->SetName(L"FbxRoot");
+	//デスクリプタヒープの生成
+	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
+	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	descHeapDesc.NumDescriptors = textureNum;
+	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
 
 	fbxManager = FbxManager::Create();
 
@@ -886,10 +756,10 @@ void Fbx::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	Fbx::cmdList = cmdList;
 
 	//パイプラインステートの設定
-	cmdList->SetPipelineState(pipelineState.Get());
+	cmdList->SetPipelineState(pipeline->pipelineState.Get());
 
 	//ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -966,4 +836,14 @@ void Fbx::ConvertMatrixFormFbx(DirectX::XMMATRIX* dst, const FbxMatrix& src)
 			dst->r[i].m128_f32[j] = (float)src.Get(i, j);
 		}
 	}
+}
+
+void Fbx::Finalize()
+{
+	descHeap.Reset();
+	for (int i = 0; i < textureNum; i++)
+	{
+		texBuffer[i].Reset();
+	}
+	pipeline.reset();
 }

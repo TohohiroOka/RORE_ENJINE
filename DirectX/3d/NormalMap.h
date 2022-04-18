@@ -4,6 +4,8 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 
+#include "GraphicsPipelineManager.h"
+
 class Camera;
 
 class NormalMap
@@ -44,7 +46,7 @@ private://静的メンバ関数
 	/// <summary>
 	/// パイプライン生成
 	/// </summary>
-	static void Pipeline();
+	static void CreateGraphicsPipeline();
 
 	/// <summary>
 	/// テクスチャデスクリプタの生成
@@ -98,7 +100,7 @@ public://静的メンバ関数
 	/// <summary>
 	/// 解放処理
 	/// </summary>
-	static void AllDelete();
+	static void Finalize();
 
 public://メンバ関数
 
@@ -127,10 +129,8 @@ private://静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	//パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState>pipelineState;
-	//ルートシグネチャ
-	static ComPtr<ID3D12RootSignature>rootSignature;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	//テクスチャ用デスクリプタヒープの生成
 	static ComPtr<ID3D12DescriptorHeap>descHeap;
 	//テクスチャ最大登録数

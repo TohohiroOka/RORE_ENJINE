@@ -263,7 +263,10 @@ void DirectXCommon::AfterDraw()
 	ID3D12CommandList* cmdLists[] = { cmdList.Get() };// コマンドリストの配列
 	cmdQueue->ExecuteCommandLists(1, cmdLists);
 
-	// コマンドリストの実行完了を待つ
+	// バッファをフリップ（裏表の入替え）
+	swapchain->Present(1, 0);
+
+	// コマンドキューの実行完了を待つ
 	cmdQueue->Signal(fence.Get(), ++fenceVal);
 	if (fence->GetCompletedValue() != fenceVal) {
 		HANDLE event = CreateEvent(nullptr, false, false, nullptr);
@@ -274,7 +277,4 @@ void DirectXCommon::AfterDraw()
 
 	cmdAllocator->Reset(); // キューをクリア
 	cmdList->Reset(cmdAllocator.Get(), nullptr);// 再びコマンドリストを貯める準備
-
-	// バッファをフリップ（裏表の入替え）
-	swapchain->Present(1, 0);
 }

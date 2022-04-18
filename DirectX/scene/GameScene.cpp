@@ -1,6 +1,5 @@
 #include "GameScene.h"
 #include "MainEngine.h"
-#include "SafeDelete.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "Camera.h"
@@ -9,7 +8,6 @@
 #include <sstream>
 #include <iomanip>
 
-const float radian = XM_PI / 180.0f;//ラジアン
 using namespace std;
 
 GameScene::~GameScene()
@@ -167,10 +165,10 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	anm->Draw(FbxUma);
 	Fbx::PostDraw();
 
-	////スプライト描画
-	//Sprite::PreDraw(cmdList);
-	//sprite->Draw();
-	//Sprite::PostDraw();
+	//スプライト描画
+	Sprite::PreDraw(cmdList);
+	sprite->Draw();
+	Sprite::PostDraw();
 
 	//線
 	DrawLine::PreDraw(cmdList);

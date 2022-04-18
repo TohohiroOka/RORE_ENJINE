@@ -9,29 +9,28 @@
 #include "NormalMap.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
+#include "GraphicsPipelineManager.h"
+
+using namespace DirectX;
+using namespace Microsoft::WRL;
 
 MainEngine::~MainEngine()
 {
 	safe_delete(camera);
 	safe_delete(scene);
-	DrawLine3D::AllDelete();
-	DrawLine::AllDelete();
-	Object3d::AllDelete();
-	Sprite::AllDelete();
-	Fbx::AllDelete();
-	ParticleManager::AllDelete();
-	NormalMap::AllDelete();
-	postEffect->AllDelete();
+	Object3d::Finalize();
+	DrawLine3D::Finalize();
+	DrawLine::Finalize();
+	Sprite::Finalize();
+	Fbx::Finalize();
+	ParticleManager::Finalize();
+	NormalMap::Finalize();
+	postEffect->Finalize();
 	safe_delete(dXCommon);
-	safe_delete(winApp);
 }
 
-void MainEngine::Initialize(const wchar_t* gameName, int window_width, int window_height)
+void MainEngine::Initialize()
 {
-	//ウィンドウ初期化
-	winApp = new WindowApp();
-	winApp->Initialize(window_width, window_height, gameName);
-
 	//1フレームの時間設定
 	QueryPerformanceFrequency(&timeFreq);
 
@@ -54,11 +53,12 @@ void MainEngine::Initialize(const wchar_t* gameName, int window_width, int windo
 	camera = new Camera();
 
 	//Object系の初期化
+	GraphicsPipelineManager::StaticInitialize(dXCommon->GetDevice());
 	Object3d::StaticInitialize(dXCommon->GetDevice(), camera);
 	Sprite::StaticInitialize(dXCommon->GetDevice());
 	DrawLine::StaticInitialize(dXCommon->GetDevice());
 	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
-	ParticleManager::Initialize(dXCommon->GetDevice());
+	ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	Fbx::StaticInitialize(dXCommon->GetDevice());
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
@@ -82,7 +82,7 @@ bool MainEngine::Update()
 	Xinput->Update();
 
 	//エスケープか×が押されたときゲーム終了
-	if (input->PushKey(DIK_ESCAPE) || gameFin(winApp) == true) { return true; }
+	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//更新
 	scene->Update(camera);
@@ -114,7 +114,8 @@ void MainEngine::debugNum(float x, float y, float z)
 	OutputDebugString(str);
 }
 
-void MainEngine::frameRateKeep() {
+void MainEngine::frameRateKeep()
+{
 	// 今の時間を取得
 	QueryPerformanceCounter(&timeEnd);
 	// (今の時間 - 前フレームの時間) / 周波数 = 経過時間(秒単位)
@@ -148,13 +149,4 @@ void MainEngine::frameRateKeep() {
 	}
 
 	timeStart = timeEnd; // 入れ替え
-}
-
-//メインに書く（エスケープが入力されたら終了する処理）
-bool MainEngine::gameFin(WindowApp* winApp) {
-	//×が押されたとき
-	if (winApp->Update() == true) {
-		return true;
-	} else { return false; }
-
 }

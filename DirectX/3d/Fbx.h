@@ -7,6 +7,8 @@
 #include <DirectXTex.h>
 #include <map>
 
+#include "GraphicsPipelineManager.h"
+
 class Camera;
 
 class Fbx
@@ -134,7 +136,7 @@ private://静的メンバ関数関数
 	/// <summary>
 	/// パイプライン設定
 	/// </summary>
-	static void Pipeline();
+	static void CreateGraphicsPipeline();
 
 	/// <summary>
 	/// ノード読み込み
@@ -253,7 +255,7 @@ public://静的メンバ関数
 	/// <summary>
 	/// 解放処理
 	/// </summary>
-	static void AllDelete();
+	static void Finalize();
 
 public:
 
@@ -294,32 +296,57 @@ public:
 
 private://静的メンバ変数
 
-	static FbxManager* fbxManager;//Fbxの基盤
-	static FbxTime frameTime;//1フレームの時間
-	static ID3D12Device* device;//デバイス
-	static ID3D12GraphicsCommandList* cmdList;//コマンドリスト
-	static std::vector<Data> data;//Fbxデータの格納場所
-	static ComPtr<ID3D12PipelineState>pipelineState;//パイプラインステートオブジェクト
-	static ComPtr<ID3D12RootSignature>rootSignature;//ルートシグネチャ
-	static ComPtr<ID3D12DescriptorHeap>descHeap;//テクスチャ用デスクリプタヒープの生成
-	static const int textureNum = 512;//テクスチャ最大登録数
-	static ComPtr<ID3D12Resource>texBuffer[textureNum];//テクスチャリソース(テクスチャバッファ)の配列
-	static int vecSize;//現在の配列数
-	static const std::string subTexture;//textureが無い時のtexture
-	static const std::string directoryPath;//ファイルパス
-	static std::string fileName;//ファイルネームの保持
+	//Fbxの基盤
+	static FbxManager* fbxManager;
+	//1フレームの時間
+	static FbxTime frameTime;
+	//デバイス
+	static ID3D12Device* device;
+	//コマンドリスト
+	static ID3D12GraphicsCommandList* cmdList;
+	//Fbxデータの格納場所
+	static std::vector<Data> data;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	//テクスチャ用デスクリプタヒープ
+	static ComPtr<ID3D12DescriptorHeap>descHeap;
+	//テクスチャ最大登録数
+	static const int textureNum = 512;
+	//テクスチャリソース(テクスチャバッファ)の配列
+	static ComPtr<ID3D12Resource>texBuffer[textureNum];
+	//現在の配列数
+	static int vecSize;
+	//textureが無い時のtexture
+	static const std::string subTexture;
+	//ファイルパス
+	static const std::string directoryPath;
+	//ファイルネームの保持
+	static std::string fileName;
 
-private://動的メンバ変数
-	UINT modelNumber = -1;//テクスチャ番号
-	ComPtr<ID3D12Resource> constBuffTransform;//定数バッファ
-	ComPtr<ID3D12Resource> constBuffSkin;//定数バッファ
-	ComPtr<ID3D12Resource> vertBuff;//頂点バッファ
-	D3D12_VERTEX_BUFFER_VIEW vbView;//頂点バッファビュー
-	ComPtr<ID3D12Resource> indexBuff;//インデックスバッファ
-	D3D12_INDEX_BUFFER_VIEW ibView;//インデックスバッファビュー
-	XMMATRIX matWorld;// ローカルワールド変換行列
-	XMFLOAT3 position = {};//座標
-	XMFLOAT3 rotation = {};//回転角
-	XMFLOAT3 scale = {};//大きさ
-	bool isAnimation = false;//アニメーションするか
+private://メンバ変数
+
+	//テクスチャ番号
+	UINT modelNumber = -1;
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuffTransform;
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuffSkin;
+	//頂点バッファ
+	ComPtr<ID3D12Resource> vertBuff;
+	//頂点バッファビュー
+	D3D12_VERTEX_BUFFER_VIEW vbView;
+	//インデックスバッファ
+	ComPtr<ID3D12Resource> indexBuff;
+	//インデックスバッファビュー
+	D3D12_INDEX_BUFFER_VIEW ibView;
+	// ローカルワールド変換行列
+	XMMATRIX matWorld;
+	//座標
+	XMFLOAT3 position = {};
+	//回転角
+	XMFLOAT3 rotation = {};
+	//大きさ
+	XMFLOAT3 scale = {};
+	//アニメーションするか
+	bool isAnimation = false;
 };

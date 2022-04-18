@@ -1,5 +1,4 @@
 #pragma once
-#include "WindowApp.h"
 #include "DirectXCommon.h"
 #include "GameScene.h"
 #include "DirectInput.h"
@@ -13,15 +12,8 @@
 
 #pragma comment(lib,"winmm.lib")
 
-using namespace DirectX;
-using namespace Microsoft::WRL;
-
 class MainEngine
 {
-public://クラス内部で使用する
-	//深度生成
-	void afterInit();
-
 public://メインに書く
 
 	MainEngine() = default;
@@ -30,10 +22,7 @@ public://メインに書く
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	/// <param name="gameName">タイトルバー名</param>
-	/// <param name="window_width">画面幅</param>
-	/// <param name="window_height">画面高さ</param>
-	void Initialize(const wchar_t* gameName, int window_width, int window_height);
+	void Initialize();
 
 	/// <summary>
 	/// 更新処理
@@ -59,17 +48,8 @@ public://メインに書く
 	/// </summary>
 	void frameRateKeep();
 
-	/// <summary>
-	/// エスケープが入力されたら終了する処理
-	/// </summary>
-	/// <param name="winApp">ウィンドウズインスタンス</param>
-	/// <returns>ゲームを続けるか</returns>
-	bool gameFin(WindowApp* winApp);
-
 private:
 
-	//WindowAppのインスタンス
-	WindowApp* winApp = nullptr;
 	//DirectXCommonのインスタンス
 	DirectXCommon* dXCommon = nullptr;
 	//Inputのインスタンス

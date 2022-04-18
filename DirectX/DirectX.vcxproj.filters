@@ -32,9 +32,6 @@
     <Filter Include="シェーダーファイル\Sprite">
       <UniqueIdentifier>{c79de487-cd11-4978-a7f8-3162e4c4f1d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\Basic">
-      <UniqueIdentifier>{110cc445-8ccf-4738-abfc-f7275b52f11a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\Obj">
       <UniqueIdentifier>{47c0745e-d963-4c4e-a611-83305efb37e6}</UniqueIdentifier>
     </Filter>
@@ -104,9 +101,6 @@
     <Filter Include="エンジンシステム\Object\3d\DrawLine3D">
       <UniqueIdentifier>{23dfebfc-16ed-4a5a-ab22-b48d8195c6e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\DrawLine">
-      <UniqueIdentifier>{e1ee08c3-3b6d-4994-8504-e70b2931b8f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\DrawLine3D">
       <UniqueIdentifier>{39c8b700-fc76-4b07-b2e0-aafb12ec0439}</UniqueIdentifier>
     </Filter>
@@ -119,14 +113,23 @@
     <Filter Include="エンジンシステム\MainSystem\Input\XInputManager">
       <UniqueIdentifier>{6ba36846-abfa-4705-a231-337b7198fd22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\ShaderManager">
-      <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\TouchableObject">
       <UniqueIdentifier>{6255b243-2811-4e38-8770-7b4529e36078}</UniqueIdentifier>
     </Filter>
     <Filter Include="ゲームシステム\Scene">
       <UniqueIdentifier>{8677fbf2-e109-497b-99fb-14bb695dc881}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\NormalMap">
+      <UniqueIdentifier>{110cc445-8ccf-4738-abfc-f7275b52f11a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Basic">
+      <UniqueIdentifier>{a8a993ee-4e2d-4f0e-bfdd-b29afe531222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\DrawLine2d">
+      <UniqueIdentifier>{e1ee08c3-3b6d-4994-8504-e70b2931b8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\MainSystem\ShaderManager">
+      <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -185,7 +188,7 @@
       <Filter>エンジンシステム\Audio</Filter>
     </ClCompile>
     <ClCompile Include="base\ComputeShaderManager.cpp">
-      <Filter>エンジンシステム\ShaderManager</Filter>
+      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
     </ClCompile>
     <ClCompile Include="base\Csv.cpp">
       <Filter>エンジンシステム\CSV</Filter>
@@ -235,14 +238,14 @@
     <ClCompile Include="scene\GameScene.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="base\GraphicsPipelineManager.cpp">
+      <Filter>エンジンシステム\MainSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="base\ShaderManager.cpp">
+      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\BasicPS.hlsl">
-      <Filter>シェーダーファイル\Basic</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\BasicVS.hlsl">
-      <Filter>シェーダーファイル\Basic</Filter>
-    </FxCompile>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
       <Filter>シェーダーファイル\Sprite</Filter>
     </FxCompile>
@@ -270,12 +273,6 @@
     <FxCompile Include="Resources\Shaders\FbxVS.hlsl">
       <Filter>シェーダーファイル\Fbx</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLinePS.hlsl">
-      <Filter>シェーダーファイル\DrawLine</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLineVS.hlsl">
-      <Filter>シェーダーファイル\DrawLine</Filter>
-    </FxCompile>
     <FxCompile Include="Resources\Shaders\DrawLine3DPS.hlsl">
       <Filter>シェーダーファイル\DrawLine3D</Filter>
     </FxCompile>
@@ -288,14 +285,23 @@
     <FxCompile Include="Resources\Shaders\PostEffectVS.hlsl">
       <Filter>シェーダーファイル\PostEffect</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\NormalMapPS.hlsl">
+      <Filter>シェーダーファイル\NormalMap</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\NormalMapVS.hlsl">
+      <Filter>シェーダーファイル\NormalMap</Filter>
+    </FxCompile>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
       <Filter>シェーダーファイル\Basic</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\DrawLine2DPS.hlsl">
+      <Filter>シェーダーファイル\DrawLine2d</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\DrawLine2DVS.hlsl">
+      <Filter>シェーダーファイル\DrawLine2d</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\BasicShaderHeader.hlsli">
-      <Filter>シェーダーファイル\Basic</Filter>
-    </None>
     <None Include="Resources\Shaders\Sprite.hlsli">
       <Filter>シェーダーファイル\Sprite</Filter>
     </None>
@@ -308,14 +314,17 @@
     <None Include="Resources\Shaders\Fbx.hlsli">
       <Filter>シェーダーファイル\Fbx</Filter>
     </None>
-    <None Include="Resources\Shaders\DrawLine.hlsli">
-      <Filter>シェーダーファイル\DrawLine</Filter>
-    </None>
     <None Include="Resources\Shaders\DrawLine3D.hlsli">
       <Filter>シェーダーファイル\DrawLine3D</Filter>
     </None>
     <None Include="Resources\Shaders\PostEffect.hlsli">
       <Filter>シェーダーファイル\PostEffect</Filter>
+    </None>
+    <None Include="Resources\Shaders\NormalMap.hlsli">
+      <Filter>シェーダーファイル\NormalMap</Filter>
+    </None>
+    <None Include="Resources\Shaders\DrawLine2D.hlsli">
+      <Filter>シェーダーファイル\DrawLine2d</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -389,7 +398,7 @@
       <Filter>エンジンシステム\Audio</Filter>
     </ClInclude>
     <ClInclude Include="base\ComputeShaderManager.h">
-      <Filter>エンジンシステム\ShaderManager</Filter>
+      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
     </ClInclude>
     <ClInclude Include="base\Csv.h">
       <Filter>エンジンシステム\CSV</Filter>
@@ -453,6 +462,12 @@
     </ClInclude>
     <ClInclude Include="scene\GameScene.h">
       <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="base\GraphicsPipelineManager.h">
+      <Filter>エンジンシステム\MainSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="base\ShaderManager.h">
+      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

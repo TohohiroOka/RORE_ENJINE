@@ -108,7 +108,9 @@
     <ClCompile Include="base\ComputeShaderManager.cpp" />
     <ClCompile Include="base\Csv.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
+    <ClCompile Include="base\GraphicsPipelineManager.cpp" />
     <ClCompile Include="base\MainEngine.cpp" />
+    <ClCompile Include="base\ShaderManager.cpp" />
     <ClCompile Include="base\Singleton.cpp" />
     <ClCompile Include="base\WindowApp.cpp" />
     <ClCompile Include="camera\Camera.cpp" />
@@ -134,13 +136,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\BasicPS.hlsl">
+    <FxCompile Include="Resources\Shaders\NormalMapPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\BasicVS.hlsl">
+    <FxCompile Include="Resources\Shaders\NormalMapVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -158,13 +160,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLinePS.hlsl">
+    <FxCompile Include="Resources\Shaders\DrawLine2DPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLineVS.hlsl">
+    <FxCompile Include="Resources\Shaders\DrawLine2DVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -238,8 +240,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\BasicShaderHeader.hlsli" />
-    <None Include="Resources\Shaders\DrawLine.hlsli" />
+    <None Include="Resources\Shaders\NormalMap.hlsli" />
+    <None Include="Resources\Shaders\DrawLine2D.hlsli" />
     <None Include="Resources\Shaders\DrawLine3D.hlsli" />
     <None Include="Resources\Shaders\Fbx.hlsli" />
     <None Include="Resources\Shaders\Obj.hlsli" />
@@ -274,8 +276,10 @@
     <ClInclude Include="base\ComputeShaderManager.h" />
     <ClInclude Include="base\Csv.h" />
     <ClInclude Include="base\DirectXCommon.h" />
+    <ClInclude Include="base\GraphicsPipelineManager.h" />
     <ClInclude Include="base\MainEngine.h" />
     <ClInclude Include="base\SafeDelete.h" />
+    <ClInclude Include="base\ShaderManager.h" />
     <ClInclude Include="base\Singleton.h" />
     <ClInclude Include="base\WindowApp.h" />
     <ClInclude Include="camera\Camera.h" />

@@ -22,6 +22,11 @@ public://メンバ関数
 	/// </summary>
 	static std::unique_ptr<PostEffect> Create();
 
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	void Finalize();
+
 public://メンバ関数
 
 	/// <summary>
@@ -57,26 +62,19 @@ public://メンバ関数
 	/// <param name="cmdList">描画コマンドリスト</param>
 	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
 
-	/// <summary>
-	/// 解放処理
-	/// </summary>
-	void AllDelete();
-
 private://静的メンバ変数
 	
 	//テクスチャバッファの数
 	static const int texBuffNum = 2;
 	//画面クリアカラー
 	static const float clearColor[4];
-	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootSignature;
-	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelineState;
+	//テクスチャバッファ
+	static ComPtr<ID3D12Resource> texBuff[texBuffNum];
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 
 private://メンバ変数
 
-	//テクスチャバッファ
-	ComPtr<ID3D12Resource> texBuff[texBuffNum];
 	//SRV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
 	//テクスチャバッファ

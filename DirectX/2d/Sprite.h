@@ -4,7 +4,7 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 
-class DirectXCommon;
+#include "GraphicsPipelineManager.h"
 
 class Sprite
 {
@@ -35,6 +35,13 @@ public: // サブクラス
 		XMFLOAT4 color;	// 色 (RGBA)
 		XMMATRIX mat;	// ３Ｄ変換行列
 	};
+
+private: // 静的メンバ関数
+
+	/// <summary>
+	/// グラフィックパイプラインの生成
+	/// </summary>
+	static void CreateGraphicsPipeline();
 
 public: // 静的メンバ関数
 
@@ -74,7 +81,7 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 解放処理
 	/// </summary>
-	static void AllDelete();
+	static void Finalize();
 
 protected: // 静的メンバ変数
 	// テクスチャの最大枚数
@@ -85,10 +92,8 @@ protected: // 静的メンバ変数
 	static ID3D12Device* device;
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootSignature;
-	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelineState;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	// 射影行列
 	static XMMATRIX matProjection;
 	// デスクリプタヒープ

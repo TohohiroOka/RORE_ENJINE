@@ -1,4 +1,6 @@
+#include "WindowApp.h"
 #include "MainEngine.h"
+#include "SafeDelete.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -9,20 +11,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//ƒQ[ƒ€–¼
 	const wchar_t* gameName = L"NAVE";
 
+	//ƒEƒBƒ“ƒhƒE‰Šú‰»
+	WindowApp* winApp = new WindowApp();
+	winApp->Initialize(window_width, window_height, gameName);
+
 	//‘S‘Ì‚Ì‰Šú‰»
-	MainEngine* engine = nullptr;
-	engine = new MainEngine();
-	engine->Initialize(gameName, window_width, window_height);
+	MainEngine* engine = new MainEngine();
+	engine->Initialize();
 
 	while (true)
 	{
-		if (engine->Update() == true) { break; }
+		if (engine->Update()|| winApp->Update()) { break; }
 		engine->Draw();
 		engine->frameRateKeep();
 	}
 
 	//“o˜^‰ğœ
-	delete engine;
+	safe_delete(engine);
+	winApp->Release();
 
 	return 0;
 }

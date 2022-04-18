@@ -5,6 +5,7 @@
 #include <DirectXMath.h>
 #include<forward_list>
 
+#include "GraphicsPipelineManager.h"
 class Camera;
 
 class ParticleManager
@@ -68,23 +69,25 @@ private: // 定数
 	static const int vertexCount = 512;// 頂点数
 	std::forward_list<Particle>particle;
 
+private: // 静的メンバ関数
+
+	/// <summary>
+	/// パイプライン生成
+	/// </summary>
+	static void CreateGraphicsPipeline();
+
+	/// <summary>
+	/// テクスチャデスクリプタの生成
+	/// </summary>
+	static void CommonCreate();
+
 public: // 静的メンバ関数
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="device">デバイス</param>
-	static void Initialize(ID3D12Device* device);
-
-	/// <summary>
-	/// パイプライン生成
-	/// </summary>
-	static void Pipeline();
-
-	/// <summary>
-	/// テクスチャデスクリプタの生成
-	/// </summary>
-	static void CommonCreate();
+	static void StaticInitialize(ID3D12Device* device);
 
 	/// <summary>
 	/// テクスチャ読み込み
@@ -103,19 +106,18 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 解放処理
 	/// </summary>
-	static void AllDelete();
+	static void Finalize();
 
 private: // 静的メンバ変数
+
 	// デバイス
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	// デスクリプタサイズ
 	static UINT descriptorHandleIncrementSize;
-	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootSignature;
-	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelineState;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	// デスクリプタヒープ
 	static ComPtr<ID3D12DescriptorHeap> descHeap;
 	//テクスチャ読み込み最大値

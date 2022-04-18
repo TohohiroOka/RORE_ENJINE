@@ -18,7 +18,6 @@ ComPtr<ID3DBlob> ComputeShaderManager::computeShader = nullptr;
 ComPtr<ID3D12RootSignature> ComputeShaderManager::rootSignature = nullptr;
 ComPtr<ID3D12PipelineState> ComputeShaderManager::pipelineState = nullptr;
 ComPtr<ID3D12DescriptorHeap> ComputeShaderManager::Heap = nullptr;
-//ComPtr<ID3D12DescriptorHeap> ComputeShaderManager::srvUavHeap = nullptr;
 
 const int MAX = 10;
 ComputeShaderManager::InputData reset = {};
@@ -26,6 +25,7 @@ std::vector<ComputeShaderManager::InputData>test(MAX, reset);
 
 ComputeShaderManager::~ComputeShaderManager()
 {
+	inputBuffer.Reset();
 	computeShader.Reset();
 	rootSignature.Reset();
 	pipelineState.Reset();

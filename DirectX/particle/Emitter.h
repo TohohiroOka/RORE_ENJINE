@@ -60,7 +60,7 @@ public://メンバ関数
 	/// <summary>
 	/// 削除
 	/// </summary>
-	void AllDelete();
+	void ParticlAllDelete();
 
 	/// <summary>
 	/// 生成してあるパーティクルの個数

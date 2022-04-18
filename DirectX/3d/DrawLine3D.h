@@ -4,6 +4,8 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 
+#include "GraphicsPipelineManager.h"
+
 class Camera;
 
 class DrawLine3D
@@ -36,7 +38,7 @@ private://静的メンバ関数
 	/// <summary>
 	/// パイプライン生成
 	/// </summary>
-	static void Pipeline();
+	static void CreateGraphicsPipeline();
 
 	/// <summary>
 	/// 角度を求める
@@ -85,7 +87,7 @@ public://静的メンバ関数
 	/// <summary>
 	/// 静的終了処理
 	/// </summary>
-	static void AllDelete();
+	static void Finalize();
 
 public://メンバ関数
 
@@ -135,10 +137,8 @@ private://静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	//パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState>pipelineState;
-	//ルートシグネチャ
-	static ComPtr<ID3D12RootSignature>rootSignature;
+	//パイプライン
+	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 
 protected://メンバ変数
 
