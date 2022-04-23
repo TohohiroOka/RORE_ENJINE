@@ -10,8 +10,18 @@
 
 using namespace std;
 
-GameScene::~GameScene()
+std::unique_ptr<GameScene> GameScene::Create()
 {
+	// 3Dオブジェクトのインスタンスを生成
+	GameScene* instance = new GameScene();
+	if (instance == nullptr) {
+		return nullptr;
+	}
+
+	// 初期化
+	instance->Initialize();
+
+	return std::unique_ptr<GameScene>(instance);
 }
 
 void GameScene::Initialize()
@@ -21,7 +31,11 @@ void GameScene::Initialize()
 
 	//ライト
 	light = LightGroup::Create();
-
+	//light->DefaultLightSetting();
+	light->SetPointLightActive(0, true);
+	light->SetPointLightPos(0, { -100,0,-100 });
+	light->SetPointLightColor(0, { 1,1,1 });
+	light->SetPointLightAtten(0, { 0.001f,0.00023f,0.000001f });
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());
 
@@ -92,6 +106,13 @@ void GameScene::Update(Camera* camera)
 	DirectInput* input = DirectInput::GetInstance();
 	XInputManager* xinput = XInputManager::GetInstance();
 
+	//カメラのセット
+	Object3d::SetCamera(camera);
+	NormalMap::SetCamera(camera);
+	Fbx::SetCamera(camera);
+	DrawLine3D::SetCamera(camera);
+	ParticleManager::SetCamera(camera);
+
 	//Obj
 	PLAYER->Update();
 	GROUND->Update();
@@ -108,11 +129,11 @@ void GameScene::Update(Camera* camera)
 	uvPos += 0.2f;
 	water->SetUvPosition(uvPos);
 	water->SetLightPosition(lightPos);
-	water->Update(camera);
+	water->Update();
 
 	//Fbx
 	anm->SetInformation({ 0,0,0 }, { 0,0,0 }, { 10,10,10 }, true);
-	anm->Update(camera);
+	anm->Update();
 
 	//パーティクル
 	emit->InEmitter(50, 30, { (float)(rand() % 5)-20,0,(float)(rand() % 5) }, { 0,2,0 },
@@ -120,10 +141,12 @@ void GameScene::Update(Camera* camera)
 
 	//ライト
 	light->Update();
+	// 3Dオブエクトにライトをセット
+	Object3d::SetLightGroup(light.get());
 
 	//スプライト
 	sprite->Update();
-	emit->Update(camera);
+	emit->Update();
 
 	////線
 	line->SetLine({ 300,300 }, { 700,700 }, { 1,1,1,1 }, 50);
@@ -139,13 +162,14 @@ void GameScene::Update(Camera* camera)
 	}
 	line3d->SetLine(S_pos, E_pos, 50);
 	line3d->SetColor({ 1,1,1,1 });
-	line3d->Update(camera);
+	line3d->Update();
 
 	//カメラ更新
 	camera->SetPosition(PLAYER->GetPosition());
-	camera->TpsCamera({ 0,0,-100 });
+	camera->TpsCamera({ 0,50,-100 });
 	camera->Update();
 
+	input = nullptr;
 	xinput = nullptr;
 }
 

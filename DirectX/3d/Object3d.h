@@ -49,7 +49,7 @@ public: // 静的メンバ関数
 	/// 静的初期化
 	/// </summary>
 	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device, Camera* camera = nullptr);
+	static void StaticInitialize(ID3D12Device* device);
 
 	/// <summary>
 	/// カメラのセット

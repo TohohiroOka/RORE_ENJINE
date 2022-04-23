@@ -55,16 +55,14 @@ public:
 	static std::unique_ptr<ShaderManager> Create();
 
 	/// <summary>
-	/// 解放処理
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// シェーダーの読み込み
 	/// </summary>
 	void LoadShader();
 
-	
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	void Finalize();
 
 public:
 

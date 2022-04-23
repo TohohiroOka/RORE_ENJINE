@@ -10,6 +10,21 @@ private:
 	// Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+private://メンバ関数
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+public://静的メンバ関数
+
+	/// <summary>
+	/// directXCommon生成
+	/// </summary>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<DirectXCommon> Create();
+
 public://メンバ関数
 
 	/// <summary>
@@ -22,11 +37,6 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~DirectXCommon();
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
 
 	/// <summary>
 	/// 深度バッファ生成

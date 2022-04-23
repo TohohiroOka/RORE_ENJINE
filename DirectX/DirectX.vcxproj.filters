@@ -244,6 +244,9 @@
     <ClCompile Include="base\ShaderManager.cpp">
       <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
     </ClCompile>
+    <ClCompile Include="base\FrameRateKeep.cpp">
+      <Filter>エンジンシステム\MainSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -468,6 +471,9 @@
     </ClInclude>
     <ClInclude Include="base\ShaderManager.h">
       <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\FrameRateKeep.h">
+      <Filter>エンジンシステム\MainSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

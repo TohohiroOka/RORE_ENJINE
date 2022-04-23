@@ -11,8 +11,9 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 using namespace std;
 
-ID3D12Device* DrawLine3D::device = nullptr;//デバイス
-ID3D12GraphicsCommandList* DrawLine3D::cmdList = nullptr;//コマンドリスト
+ID3D12Device* DrawLine3D::device = nullptr;
+ID3D12GraphicsCommandList* DrawLine3D::cmdList = nullptr;
+Camera* DrawLine3D::camera = nullptr;
 std::unique_ptr<GraphicsPipelineManager> DrawLine3D::pipeline;
 
 const float PI = 3.141592f;
@@ -56,7 +57,7 @@ std::unique_ptr<DrawLine3D> DrawLine3D::Create(UINT LineNum)
 		return nullptr;
 	}
 
-	instance->Update(NULL);
+	instance->Update();
 
 	return std::unique_ptr<DrawLine3D>(instance);
 }
@@ -241,7 +242,7 @@ void DrawLine3D::PostDraw()
 	DrawLine3D::cmdList = nullptr;
 }
 
-void DrawLine3D::Update(Camera* camera)
+void DrawLine3D::Update()
 {
 	//ワールド行列変換
 	XMMATRIX matWorld = XMMatrixIdentity();

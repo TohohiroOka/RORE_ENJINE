@@ -25,9 +25,9 @@ void Emitter::InEmitter(int maxCount, int maxFrame, XMFLOAT3 position, XMFLOAT3 
 	}
 }
 
-void Emitter::Update(Camera* camera)
+void Emitter::Update()
 {
-	count = particleManager->Update(camera);
+	count = particleManager->Update();
 }
 
 void Emitter::Draw()

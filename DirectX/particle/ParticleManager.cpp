@@ -5,8 +5,9 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-ID3D12Device* ParticleManager::device;
-ID3D12GraphicsCommandList* ParticleManager::cmdList;
+ID3D12Device* ParticleManager::device = nullptr;
+ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
+Camera* ParticleManager::camera = nullptr;
 UINT ParticleManager::descriptorHandleIncrementSize = 0;
 std::unique_ptr<GraphicsPipelineManager> ParticleManager::pipeline;
 ComPtr<ID3D12DescriptorHeap> ParticleManager::descHeap;
@@ -215,7 +216,7 @@ void ParticleManager::Add(int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity,
 	p.e_color = endColor;
 }
 
-XMMATRIX ParticleManager::UpdateViewMatrix(Camera* camera)
+XMMATRIX ParticleManager::UpdateViewMatrix()
 {
 	//注意点
 	XMVECTOR eyePosition = XMLoadFloat3(&camera->GetEye());
@@ -301,7 +302,7 @@ XMMATRIX ParticleManager::UpdateViewMatrix(Camera* camera)
 	return matView;
 }
 
-int ParticleManager::Update(Camera* camera)
+int ParticleManager::Update()
 {
 	HRESULT result;
 
@@ -352,7 +353,7 @@ int ParticleManager::Update(Camera* camera)
 	// 定数バッファへデータ転送
 	ConstBufferData* constMap = nullptr;
 	result = constBuff->Map(0, nullptr, (void**)&constMap);
-	constMap->mat = UpdateViewMatrix(camera) * camera->GetProjection();// 行列の合成
+	constMap->mat = UpdateViewMatrix() * camera->GetProjection();// 行列の合成
 	constMap->matBillboard = matBillboard;// 行列の合成
 	constBuff->Unmap(0, nullptr);
 

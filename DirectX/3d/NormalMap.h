@@ -85,6 +85,14 @@ public://静的メンバ関数
 	/// <returns></returns>
 	static std::unique_ptr<NormalMap> Create();
 
+	/// <summary>
+	/// カメラのセット
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	static void SetCamera(Camera* camera) {
+		NormalMap::camera = camera;
+	}
+
 
 	/// <summary>
 	/// 描画前処理
@@ -107,8 +115,7 @@ public://メンバ関数
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="camera">カメラのインスタンス</param>
-	void Update(Camera* camera);
+	void Update();
 	
 	/// <summary>
 	/// 初期化
@@ -129,6 +136,8 @@ private://静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
+	//カメラ
+	static Camera* camera;
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	//テクスチャ用デスクリプタヒープの生成

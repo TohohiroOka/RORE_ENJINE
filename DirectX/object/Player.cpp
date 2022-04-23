@@ -41,6 +41,7 @@ bool Player::Initialize()
 	SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	collider->SetAttribute(COLLISION_ATTR_ALLIES);
 
+	SetBloom(true);
 	SetScale({ 2,2,2 });
 
 	return true;
@@ -182,4 +183,6 @@ void Player::Update()
 	}
 	// 行列の更新など
 	Object3d::Update();
+
+	input = nullptr;
 }

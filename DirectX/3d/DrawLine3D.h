@@ -74,6 +74,14 @@ public://静的メンバ関数
 	static std::unique_ptr<DrawLine3D> Create(UINT LineNum);
 
 	/// <summary>
+	/// カメラのセット
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	static void SetCamera(Camera* camera) {
+		DrawLine3D::camera = camera;
+	}
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
@@ -100,8 +108,7 @@ public://メンバ関数
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="camera">カメラのインスタンス</param>
-	void Update(Camera* camera);
+	void Update();
 
 	/// <summary>
 	/// 線の情報セット
@@ -137,6 +144,8 @@ private://静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
+	//カメラ
+	static Camera* camera;
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 

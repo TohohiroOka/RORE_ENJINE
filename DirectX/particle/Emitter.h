@@ -50,7 +50,7 @@ public://ƒƒ“ƒoŠÖ”
 	/// <summary>
 	/// XV
 	/// </summary>
-	void Update(Camera* camera);
+	void Update();
 
 	/// <summary>
 	/// •`‰æ

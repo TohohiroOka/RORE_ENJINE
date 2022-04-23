@@ -84,6 +84,7 @@ public: // 静的メンバ関数
 	static void Finalize();
 
 protected: // 静的メンバ変数
+
 	// テクスチャの最大枚数
 	static const int srvCount = 512;
 	// 頂点数

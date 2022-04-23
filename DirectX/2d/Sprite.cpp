@@ -52,6 +52,8 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 		return false;
 	}
 
+	Sprite::LoadTexture(0, L"Resources/LetterResources/debugfont.png");
+
 	return true;
 }
 

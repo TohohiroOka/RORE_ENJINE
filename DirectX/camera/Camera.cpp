@@ -15,6 +15,18 @@ Camera::Camera()
 	);
 }
 
+std::unique_ptr<Camera> Camera::Create()
+{
+	// Spriteのインスタンスを生成
+	Camera* instance = new Camera();
+	if (instance == nullptr) {
+		return nullptr;
+	}
+
+	//ユニークポインタを返す
+	return std::unique_ptr<Camera>(instance);
+}
+
 void Camera::Update()
 {
 	XMFLOAT3 inoutEye = { ShakeDifference.x + eye.x,ShakeDifference.y + eye.y,ShakeDifference.z + eye.z };

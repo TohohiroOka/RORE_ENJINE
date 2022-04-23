@@ -49,18 +49,6 @@ ID3DBlob* CompileShader(const LPCWSTR fileName, LPCSTR target)
 	return blob;
 }
 
-void ShaderManager::Finalize()
-{
-	obj.reset();
-	//sprite.reset();
-	fbx.reset();
-	//drawLine2d.reset();
-	drawLine3d.reset();
-	//postEffect.reset();
-	//normalMap.reset();
-	//particle.reset();
-}
-
 std::unique_ptr<ShaderManager> ShaderManager::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
@@ -132,4 +120,16 @@ void ShaderManager::LoadShader()
 	//coシェーダー
 	Compute = std::make_unique<BLOB_OBJECT>();
 	Compute->cs = CompileShader(L"BasicCS.hlsl", csModel);
+}
+
+void ShaderManager::Finalize()
+{
+	obj.reset();
+	sprite.reset();
+	fbx.reset();
+	drawLine2d.reset();
+	drawLine3d.reset();
+	postEffect.reset();
+	normalMap.reset();
+	particle.reset();
 }

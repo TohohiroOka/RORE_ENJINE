@@ -34,6 +34,24 @@ DirectXCommon::~DirectXCommon()
 	device.Reset();
 }
 
+std::unique_ptr<DirectXCommon> DirectXCommon::Create()
+{
+	//インスタンスを生成
+	DirectXCommon* instance = new DirectXCommon();
+	if (instance == nullptr) {
+		return nullptr;
+	}
+
+	// 初期化
+	instance->Initialize();
+
+	//深度の初期化
+	instance->CreateDepth();
+
+	//ユニークポインタを返す
+	return std::unique_ptr<DirectXCommon>(instance);
+}
+
 void DirectXCommon::Initialize()
 {
 	HRESULT result;

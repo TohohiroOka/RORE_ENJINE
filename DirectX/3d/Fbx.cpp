@@ -15,20 +15,19 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 using namespace std;
 
-using namespace DirectX;
-
-FbxManager* Fbx::fbxManager = nullptr;//Fbxの基盤
-ID3D12Device* Fbx::device = nullptr;//デバイス
-ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;//コマンドリスト
-std::vector<Fbx::Data> Fbx::data;//Fbxデータの格納場所
+FbxManager* Fbx::fbxManager = nullptr;
+ID3D12Device* Fbx::device = nullptr;
+Camera* Fbx::camera = nullptr;
+ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;
+std::vector<Fbx::Data> Fbx::data;
 std::unique_ptr<GraphicsPipelineManager> Fbx::pipeline = nullptr;
-ComPtr<ID3D12DescriptorHeap> Fbx::descHeap;//テクスチャ用デスクリプタヒープの生成
-ComPtr<ID3D12Resource> Fbx::texBuffer[textureNum];//テクスチャリソース(テクスチャバッファ)の配列
+ComPtr<ID3D12DescriptorHeap> Fbx::descHeap;
+ComPtr<ID3D12Resource> Fbx::texBuffer[textureNum];
 FbxTime Fbx::frameTime;
-int Fbx::vecSize = 0;//現在の配列数確認
+int Fbx::vecSize = 0;
 const std::string Fbx::subTexture = "Resources/subTexture/white1x1.png";
 const string Fbx::directoryPath = "Resources/Fbx/";
-std::string Fbx::fileName;//ファイルネームの保持
+std::string Fbx::fileName;
 
 Fbx::~Fbx()
 {
@@ -691,7 +690,7 @@ std::unique_ptr<Fbx> Fbx::Create(UINT modelNumber)
 	return std::unique_ptr<Fbx>(instance);
 }
 
-void Fbx::Update(Camera* camera)
+void Fbx::Update()
 {
 	HRESULT result;
 	XMMATRIX matScale, matRot, matTrans;

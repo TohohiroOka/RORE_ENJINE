@@ -36,6 +36,14 @@ private:// エイリアス
 	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
 
+public://静的メンバ関数
+
+	/// <summary>
+	/// インスタンスの生成
+	/// </summary>
+	/// <returns></returns>
+	static std::unique_ptr<GameScene> Create();
+
 public:// メンバ関数
 
 	/// <summary>
@@ -46,7 +54,7 @@ public:// メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GameScene();
+	~GameScene() {};
 
 	/// <summary>
 	/// 初期化

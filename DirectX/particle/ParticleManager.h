@@ -104,6 +104,14 @@ public: // 静的メンバ関数
 	static std::unique_ptr<ParticleManager> Create(UINT texNumber);
 
 	/// <summary>
+	/// カメラのセット
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	static void SetCamera(Camera* camera) {
+		ParticleManager::camera = camera;
+	}
+
+	/// <summary>
 	/// 解放処理
 	/// </summary>
 	static void Finalize();
@@ -114,6 +122,8 @@ private: // 静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
+	//
+	static Camera* camera;
 	// デスクリプタサイズ
 	static UINT descriptorHandleIncrementSize;
 	//パイプライン
@@ -131,8 +141,11 @@ private: // 静的メンバ変数
 
 private:// 静的メンバ関数
 
-	//ビュー行列を更新
-	static XMMATRIX UpdateViewMatrix(Camera* camera);
+	/// <summary>
+	/// ビュー行列の更新
+	/// </summary>
+	/// <returns>ビュー行列</returns>
+	static XMMATRIX UpdateViewMatrix();
 
 public: // メンバ関数
 
@@ -162,7 +175,7 @@ public: // メンバ関数
 	/// 更新
 	/// </summary>
 	/// <returns>配列数</returns>
-	int Update(Camera* camera);
+	int Update();
 
 	/// <summary>
 	/// 描画前処理

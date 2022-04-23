@@ -18,6 +18,7 @@ using namespace std;
 
 ID3D12Device* NormalMap::device = nullptr;
 ID3D12GraphicsCommandList* NormalMap::cmdList = nullptr;
+Camera* NormalMap::camera = nullptr;
 std::unique_ptr<GraphicsPipelineManager> NormalMap::pipeline;
 ComPtr<ID3D12DescriptorHeap> NormalMap::descHeap;
 ComPtr<ID3D12Resource> NormalMap::texBuffer[textureNum];
@@ -320,7 +321,7 @@ void NormalMap::PostDraw()
 	NormalMap::cmdList = nullptr;
 }
 
-void NormalMap::Update(Camera* camera)
+void NormalMap::Update()
 {
 	//ÉèÅ[ÉãÉhçsóÒïœä∑
 	XMMATRIX matWorld = XMMatrixIdentity();

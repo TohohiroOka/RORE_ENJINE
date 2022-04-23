@@ -240,6 +240,13 @@ public://静的メンバ関数
 	/// <param name="modelNumber">保存番号</param>
 	static std::unique_ptr<Fbx> Create(UINT modelNumber);
 
+	/// <summary>
+	/// カメラのセット
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	static void SetCamera(Camera* camera) {
+		Fbx::camera = camera;
+	}
 
 	/// <summary>
 	/// 描画前処理
@@ -267,8 +274,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="camera">カメラのインスタンス</param>
-	void Update(Camera* camera);
+	void Update();
 
 	/// <summary>
 	/// 描画
@@ -304,6 +310,8 @@ private://静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
+	//カメラ
+	static Camera* camera;
 	//Fbxデータの格納場所
 	static std::vector<Data> data;
 	//パイプライン

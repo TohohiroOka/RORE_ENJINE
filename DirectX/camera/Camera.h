@@ -1,5 +1,5 @@
 #pragma once
-
+#include <d3dx12.h>
 #include <DirectXMath.h>
 
 /// <summary>
@@ -14,6 +14,14 @@ protected: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
+
+public://静的メンバ関数
+
+	/// <summary>
+	/// インスタンスの生成
+	/// </summary>
+	/// <returns></returns>
+	static std::unique_ptr<Camera> Create();
 
 public: // メンバ関数
 

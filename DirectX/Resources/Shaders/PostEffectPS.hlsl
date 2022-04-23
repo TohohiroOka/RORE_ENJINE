@@ -18,7 +18,6 @@ float4 main(VSOutput input) : SV_TARGET
 	float stepWidth = 0.001;
 	float4 col = { 0, 0, 0, 0 };
 	float4 MainTex = tex0.Sample(smp, input.uv);
-	float4 color1 = tex1.Sample(smp, input.uv);
 
 	for (float py = -sigma * 2; py <= sigma * 2; py += stepWidth)
 	{
@@ -26,7 +25,7 @@ float4 main(VSOutput input) : SV_TARGET
 		{
 			float2 pickUV = input.uv + float2(px, py);
 			float weight = Gaussian(input.uv, pickUV, sigma);
-			col += color1 * weight;
+			col += tex1.Sample(smp, pickUV) * weight;
 			totalWeight += weight;
 		}
 	}

@@ -1,9 +1,6 @@
 #include "PostEffect.h"
 #include "WindowApp.h"
-#include "XInputManager.h"
-#include <d3dcompiler.h>
-
-#pragma comment(lib, "d3dcompiler.lib")
+#include "DirectInput.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -235,12 +232,19 @@ std::unique_ptr<PostEffect> PostEffect::Create()
 
 void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 {
+	int texBuf = 0;
+
+	if (DirectInput::GetInstance()->PushKey(DIK_Z))
+	{
+		texBuf++;
+	}
+
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
-	device->CreateShaderResourceView(texBuff[0].Get(),
+	device->CreateShaderResourceView(texBuff[texBuf].Get(),
 		&srvDesc,
 		descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 

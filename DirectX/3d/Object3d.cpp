@@ -18,7 +18,7 @@ Camera* Object3d::camera = nullptr;
 LightGroup* Object3d::lightGroup = nullptr;
 std::unique_ptr<GraphicsPipelineManager> Object3d::pipeline;
 
-void Object3d::StaticInitialize(ID3D12Device* device, Camera* camera)
+void Object3d::StaticInitialize(ID3D12Device* device)
 {
 	// 初期化チェック
 	assert(!Object3d::device);
@@ -27,7 +27,6 @@ void Object3d::StaticInitialize(ID3D12Device* device, Camera* camera)
 	assert(device);
 
 	Object3d::device = device;
-	Object3d::camera = camera;
 
 	// グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
@@ -187,8 +186,6 @@ void Object3d::Draw()
 
 void Object3d::UpdateWorldMatrix()
 {
-	assert(camera);
-
 	XMMATRIX matScale, matRot, matTrans;
 
 	// スケール、回転、平行移動行列の計算
