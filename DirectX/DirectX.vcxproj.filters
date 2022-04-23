@@ -247,6 +247,12 @@
     <ClCompile Include="base\FrameRateKeep.cpp">
       <Filter>エンジンシステム\MainSystem</Filter>
     </ClCompile>
+    <ClCompile Include="object\FrictionObject.cpp">
+      <Filter>ゲームシステム</Filter>
+    </ClCompile>
+    <ClCompile Include="object\AirResistanceObject.cpp">
+      <Filter>ゲームシステム</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -474,6 +480,12 @@
     </ClInclude>
     <ClInclude Include="base\FrameRateKeep.h">
       <Filter>エンジンシステム\MainSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="object\FrictionObject.h">
+      <Filter>ゲームシステム</Filter>
+    </ClInclude>
+    <ClInclude Include="object\AirResistanceObject.h">
+      <Filter>ゲームシステム</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

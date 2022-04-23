@@ -3,14 +3,6 @@
 
 std::unique_ptr<Sprite> DebugText::spriteDatas[maxCharCount] = {};
 
-DebugText::DebugText()
-{
-}
-
-DebugText::~DebugText()
-{
-}
-
 DebugText* DebugText::GetInstance()
 {
 	static DebugText instance;
@@ -65,6 +57,8 @@ void DebugText::NPrint(int len, const char* text)
 		//XV
 		spriteDatas[spriteIndex]->Update();
 
+		spriteDatas[spriteIndex]->SetColor({ red,green,blue,1 });
+
 		// •¶š‚ğ‚P‚Âi‚ß‚é
 		spriteIndex++;
 	}
@@ -80,4 +74,12 @@ void DebugText::DrawAll(ID3D12GraphicsCommandList* cmdList)
 	}
 
 	spriteIndex = 0;
+}
+
+void DebugText::Finalize()
+{
+	for (int i = 0; i < maxCharCount; i++)
+	{
+		spriteDatas[i].reset();
+	}
 }

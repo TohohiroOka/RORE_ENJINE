@@ -46,7 +46,19 @@ public:// メンバ関数
 		posY = y;
 	}
 
+	/// <summary>
+	/// サイズ変更
+	/// </summary>
+	/// <param name="size"></param>
 	inline void SetSize(float size) { this->size = size; }
+
+	/// <summary>
+	/// 色変更
+	/// </summary>
+	/// <param name="size"></param>
+	inline void SetColor(float red, float green, float blue) { 
+		this->size = size;
+	}
 
 	/// <summary>
 	/// 出力する文字の設定
@@ -70,10 +82,15 @@ public:// メンバ関数
 	/// <param name="cmdList">コマンドリスト</param>
 	void DrawAll(ID3D12GraphicsCommandList* cmdList);
 
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void Finalize();
+
 private:
-	DebugText();
+	DebugText() {};
 	DebugText(const DebugText&) = delete;
-	~DebugText();
+	~DebugText() {};
 	DebugText& operator=(const DebugText&) = delete;
 
 private:
@@ -83,6 +100,10 @@ private:
 	float posX = 0.0f;
 	float posY = 0.0f;
 	float size = 1.0f;
+	float red = 1.0f;
+	float green = 1.0f;
+	float blue = 1.0f;
+
 
 	char buffer[bufferSize];
 };

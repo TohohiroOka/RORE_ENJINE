@@ -18,6 +18,8 @@
 #include "Player.h"
 #include "Ground.h"
 #include "TouchableObject.h"
+#include "FrictionObject.h"
+#include "AirResistanceObject.h"
 
 class DirectInput;
 class XInputManager;
@@ -81,7 +83,6 @@ private:// メンバ変数
 	std::unique_ptr<Audio> audio = nullptr;
 
 	std::unique_ptr<Sprite> sprite = nullptr;
-	//DebugText* text;
 	std::unique_ptr<Emitter> emit = nullptr;
 
 	std::unique_ptr<Model> uma = nullptr;
@@ -116,4 +117,7 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
+
+	std::unique_ptr<FrictionObject> frictionObject = nullptr;
+	std::unique_ptr<AirResistanceObject> airResistanceObject = nullptr;
 };

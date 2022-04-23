@@ -17,6 +17,7 @@ using namespace Microsoft::WRL;
 
 MainEngine::~MainEngine()
 {
+	DebugText::GetInstance()->Finalize();
 	scene.reset();
 	Object3d::Finalize();
 	DrawLine3D::Finalize();
@@ -56,6 +57,7 @@ void MainEngine::Initialize()
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
+	DebugText::GetInstance()->Initialize(0);
 
 	scene = GameScene::Create();
 

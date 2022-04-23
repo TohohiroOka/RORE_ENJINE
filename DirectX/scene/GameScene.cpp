@@ -99,6 +99,11 @@ void GameScene::Initialize()
 		nowPosition[i] = startPosition[i];//現在座標
 		time[i] = 0;
 	}
+
+	//摩擦オブジェクト
+	frictionObject = FrictionObject::Create(block.get());
+	//空気抵抗オブジェクト
+	airResistanceObject = AirResistanceObject::Create(block.get());
 }
 
 void GameScene::Update(Camera* camera)
@@ -117,6 +122,10 @@ void GameScene::Update(Camera* camera)
 	PLAYER->Update();
 	GROUND->Update();
 	BLOCK->Update();
+	//摩擦オブジェクト
+	frictionObject->Update();
+	//空気抵抗オブジェクト
+	airResistanceObject->Update();
 
 	//NormalMap
 	XMFLOAT4 normal = { 1.0f,1.0f,1.0f,1.0f };
@@ -183,6 +192,8 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	PLAYER->Draw();
 	GROUND->Draw();
 	BLOCK->Draw();
+	frictionObject->Draw();
+	airResistanceObject->Draw();
 	Object3d::PostDraw();
 
 	Fbx::PreDraw(cmdList);
@@ -192,18 +203,22 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	//スプライト描画
 	Sprite::PreDraw(cmdList);
 	sprite->Draw();
+
+	//デバッグテキスト描画
+	DebugText::GetInstance()->DrawAll(cmdList);
+
 	Sprite::PostDraw();
 
-	//線
-	DrawLine::PreDraw(cmdList);
-	line->Draw();
-	line_t->Draw();
-	DrawLine::PostDraw();
+	////線
+	//DrawLine::PreDraw(cmdList);
+	//line->Draw();
+	//line_t->Draw();
+	//DrawLine::PostDraw();
 	
-	//線3d
-	DrawLine3D::PreDraw(cmdList);
-	line3d->Draw();
-	DrawLine3D::PostDraw();
+	////線3d
+	//DrawLine3D::PreDraw(cmdList);
+	//line3d->Draw();
+	//DrawLine3D::PostDraw();
 
 	ParticleManager::PreDraw(cmdList);
 	//パーティクル
