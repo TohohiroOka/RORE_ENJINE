@@ -10,6 +10,15 @@ private://静的メンバ関数
 	/// </summary>
 	static void CreateGraphicsPipeline();
 
+public: // サブクラス
+
+	// 定数バッファ用データ構造体B0
+	struct ConstBufferData
+	{
+		XMFLOAT4 outlineColor;//アウトラインの色
+		float outlineWidth;//アウトラインの太さ
+	};
+
 public://メンバ関数
 
 	/// <summary>
@@ -65,7 +74,7 @@ public://メンバ関数
 private://静的メンバ変数
 	
 	//テクスチャバッファの数
-	static const int texBuffNum = 2;
+	static const int texBuffNum = 3;
 	//画面クリアカラー
 	static const float clearColor[4];
 	//テクスチャバッファ

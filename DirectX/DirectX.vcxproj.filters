@@ -131,6 +131,12 @@
     <Filter Include="エンジンシステム\MainSystem\ShaderManager">
       <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="エンジンシステム\MainSystem\FrameRateKeep">
+      <UniqueIdentifier>{31f81314-112e-490b-815e-a28a447dffdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\MainSystem\GraphicsPipelineManager">
+      <UniqueIdentifier>{9e796eba-af2b-476b-bf30-138d92a52ee6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -238,14 +244,14 @@
     <ClCompile Include="scene\GameScene.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="base\GraphicsPipelineManager.cpp">
-      <Filter>エンジンシステム\MainSystem</Filter>
-    </ClCompile>
     <ClCompile Include="base\ShaderManager.cpp">
       <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
     </ClCompile>
     <ClCompile Include="base\FrameRateKeep.cpp">
-      <Filter>エンジンシステム\MainSystem</Filter>
+      <Filter>エンジンシステム\MainSystem\FrameRateKeep</Filter>
+    </ClCompile>
+    <ClCompile Include="base\GraphicsPipelineManager.cpp">
+      <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -466,14 +472,14 @@
     <ClInclude Include="scene\GameScene.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="base\GraphicsPipelineManager.h">
-      <Filter>エンジンシステム\MainSystem</Filter>
-    </ClInclude>
     <ClInclude Include="base\ShaderManager.h">
       <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
     </ClInclude>
     <ClInclude Include="base\FrameRateKeep.h">
-      <Filter>エンジンシステム\MainSystem</Filter>
+      <Filter>エンジンシステム\MainSystem\FrameRateKeep</Filter>
+    </ClInclude>
+    <ClInclude Include="base\GraphicsPipelineManager.h">
+      <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

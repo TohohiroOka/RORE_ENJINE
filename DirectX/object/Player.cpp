@@ -41,7 +41,13 @@ bool Player::Initialize()
 	SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	collider->SetAttribute(COLLISION_ATTR_ALLIES);
 
-	SetBloom(true);
+	//SetBloom(true);
+
+	SetOutline(true);
+	SetOutlineWidth(0.002f);
+	SetOutlineColor({ 1,1,1,1 });
+
+	//SetToon(true);
 	SetScale({ 2,2,2 });
 
 	return true;

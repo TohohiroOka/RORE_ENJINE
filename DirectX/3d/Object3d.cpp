@@ -17,6 +17,8 @@ ID3D12GraphicsCommandList* Object3d::cmdList = nullptr;
 Camera* Object3d::camera = nullptr;
 LightGroup* Object3d::lightGroup = nullptr;
 std::unique_ptr<GraphicsPipelineManager> Object3d::pipeline;
+XMFLOAT4 Object3d::outlineColor = {};
+float Object3d::outlineWidth = 0.0f;
 
 void Object3d::StaticInitialize(ID3D12Device* device)
 {
@@ -131,6 +133,8 @@ void Object3d::Update()
 	constMap->world = matWorld;
 	constMap->cameraPos = cameraPos;
 	constMap->isBloom = isBloom;
+	constMap->isToon = isToon;
+	constMap->isOutline = isOutline;
 	constBuffB0->Unmap(0, nullptr);
 
 	// 当たり判定更新

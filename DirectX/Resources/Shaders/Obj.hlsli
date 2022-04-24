@@ -4,7 +4,9 @@ cbuffer cbuff0 : register(b0)
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
-	bool isBloom;//ブルームの有無
+	uint isBloom;//ブルームの有無
+	uint isToon;//トゥーンの有無
+	uint isOutline;//アウトラインの有無
 };
 
 cbuffer cbuff1 : register(b1)
@@ -75,7 +77,8 @@ cbuffer cbuff2 : register(b2)
 struct VSOutput
 {
 	float4 svpos : SV_POSITION; // システム用頂点座標
-	float4 worldpos : POSITION; // ワールド座標
+	float4 worldpos : POSITION0; // ワールド座標
+	float4 outputpos : POSITION1; // ワールド座標
 	float3 normal :NORMAL; // 法線
 	float2 uv  :TEXCOORD; // uv値
 };
@@ -85,4 +88,5 @@ struct PSOutput
 {
 	float4 target0 : SV_TARGET0;
 	float4 target1 : SV_TARGET1;
+	float4 target2 : SV_TARGET2;
 };

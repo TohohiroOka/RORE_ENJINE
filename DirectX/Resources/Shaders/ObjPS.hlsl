@@ -9,10 +9,14 @@ SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color);
 
 /// <summary>
-/// リムライトのセット
+/// トゥーンのセット
 /// </summary>
-float4 SetLimLight(float4 texcolor, float4 color);
+float4 SetToon(float4 shadecolor);
 
+/// <summary>
+/// アウトラインのセット
+/// </summary>
+float4 SetOutline(float2 uv, float outlineWidth);
 
 PSOutput main(VSOutput input)
 {
@@ -144,25 +148,26 @@ PSOutput main(VSOutput input)
 		}
 	}
 
+	//ポストエフェクト処理
+
 	//ブルーム処理
+	float4 bloom = float4(0, 0, 0, 0);
 	if (isBloom)
 	{
-		output.target1 = SetBloom(shadecolor, texcolor, color);
+		bloom = SetBloom(shadecolor, texcolor, color);
 	}
 
-	//リムライト
-
-
-	////トゥーンシェード
-	//shadecolor.x = step(0.4, shadecolor.r);
-	//shadecolor.y = step(0.4, shadecolor.g);
-	//shadecolor.z = step(0.4, shadecolor.b);
-
+	//トゥーンシェード
+	if (isToon)
+	{
+		shadecolor = SetToon(shadecolor);
+	}
 
 	// シェーディングによる色で描画
 	float4 mainColor = shadecolor * texcolor * color;
 	output.target0 = float4(mainColor.rgb, color.w);
-
+	output.target1 = bloom;
+	output.target2 = texcolor * color * isOutline;
 	return output;
 }
 
@@ -174,37 +179,33 @@ float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color)
 	//ブルームをかける場所
 	float4 bloomColor = step(1.0, LuminousIntensity) * texcolor * color;
 
-	////一定値以下ならブルームをかけない
-	//bloomColor.r = step(0.2, bloomColor.r) * bloomColor.r;
-	//bloomColor.g = step(0.2, bloomColor.g) * bloomColor.g;
-	//bloomColor.b = step(0.2, bloomColor.b) * bloomColor.b;
-
 	return bloomColor;
 }
 
-//float4 SetLimLight(float4 texcolor, float4 color)
-//{
-//	float3 EyeDir;   // Uniform 視線ベクトル
-//	float3 LightDir; // Uniform ライトベクトル
-//
-//	// 視線ベクトル
-//	float3 eye_vector = normalize(EyeDir);
-//	// ライトベクトル
-//	float3 light_vector = normalize(LightDir);
-//	// 法線
-//	float3 normal = normalize(Normal);
-//	// リムライトの強さ
-//	float rim_power = 2.0;
-//
-//	// 内積の値を反転しモデルの縁部分が1.0、視線と平行部分を0.0にする。
-//	float rim = 1.0 - dot(normal, eye_vector);
-//
-//	// リムライトの強さを補正
-//	rim = pow(abs(rim), rim_power);
-//
-//	// 太陽との逆光を計算（頂点シェーダでOK）
-//	float light_rim = max(dot(-light_vector, eye_vector), 0.0);
-//
-//	// モデルの縁計算と、太陽の逆光計算を乗算
-//	float3 color = rim * light_rim;
-//}
+float4 SetToon(float4 shadecolor)
+{
+	//トゥーンの色範囲
+	float toonLighrRange = 0.525;
+	//明暗の中間幅
+	float contourWidth = 0.1;
+
+	//明るい
+	float3 bright;
+	bright.r = step(toonLighrRange, shadecolor.r);
+	bright.g = step(toonLighrRange, shadecolor.g);
+	bright.b = step(toonLighrRange, shadecolor.b);
+	//暗い
+	float3 dark;
+	dark.r = (1 - step(toonLighrRange, shadecolor.r));
+	dark.g = (1 - step(toonLighrRange, shadecolor.g));
+	dark.b = (1 - step(toonLighrRange, shadecolor.b));
+
+	//中間
+	float3 intermediate;
+	intermediate.r = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.r);
+	intermediate.g = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.g);
+	intermediate.b = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.b);
+
+	//現在の色
+	return float4(bright + dark + intermediate, 1);
+}

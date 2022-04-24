@@ -33,7 +33,9 @@ public: // サブクラス
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		bool isBloom;//ブルームを入れるかどうか
+		unsigned int isBloom;//ブルームの有無
+		unsigned int isToon;//トゥーンの有無
+		unsigned int isOutline;//アウトラインの有無
 	};
 
 private: // 静的メンバ関数
@@ -101,6 +103,10 @@ private: // 静的メンバ変数
 	static Camera* camera;
 	// ライト
 	static LightGroup* lightGroup;
+	//アウトラインの色
+	static XMFLOAT4 outlineColor;
+	//アウトラインの幅
+	static float outlineWidth;
 
 public: // メンバ関数
 
@@ -159,6 +165,10 @@ protected: // メンバ変数
 	XMMATRIX matWorld = {};
 	//ブルームの有無
 	bool isBloom = false;
+	//トゥーンの有無
+	bool isToon = false;
+	//アウトラインの有無
+	bool isOutline = false;
 	// 親オブジェクト
 	Object3d* parent = nullptr;
 	// モデル
@@ -227,6 +237,30 @@ public:
 	/// </summary>
 	/// <param name="isBloom">ブルーム有->true / 無->false</param>
 	void SetBloom(bool isBloom) { this->isBloom = isBloom; }
+	
+	/// <summary>
+	/// トゥーンのセット
+	/// </summary>
+	/// <param name="isToon">トゥーン有->true / 無->false</param>
+	void SetToon(bool isToon) { this->isToon = isToon; }
+
+	/// <summary>
+	/// アウトラインのセット
+	/// </summary>
+	/// <param name="isOutline">アウトライン有->true / 無->false</param>
+	void SetOutline(bool isOutline) { this->isOutline = isOutline; }
+
+	/// <summary>
+	/// アウトラインの色セット
+	/// </summary>
+	/// <param name="outlineColor">幅</param>
+	static void SetOutlineColor(XMFLOAT4 outlineColor) { Object3d::outlineColor = outlineColor; }
+
+	/// <summary>
+	/// アウトラインの幅セット
+	/// </summary>
+	/// <param name="outlineWidth">幅</param>
+	static void SetOutlineWidth(float outlineWidth) { Object3d::outlineWidth = outlineWidth; }
 
 	/// <summary>
 	/// モデルのセット
@@ -251,4 +285,17 @@ public:
 	/// </summary>
 	/// <returns>モデル</returns>
 	inline Model* GetModel() { return model; }
+
+	/// <summary>
+	/// アウトラインの色取得
+	/// </summary>
+	/// <param name="outlineColor">幅</param>
+	static XMFLOAT4 GetOutlineColor() { return outlineColor; }
+
+	/// <summary>
+	/// アウトラインの幅取得
+	/// </summary>
+	/// <param name="outlineWidth">幅</param>
+	static float GetOutlineWidth() { return outlineWidth; }
+
 };

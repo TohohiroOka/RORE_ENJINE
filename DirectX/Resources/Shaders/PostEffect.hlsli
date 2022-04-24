@@ -1,5 +1,7 @@
 cbuffer cbuff0:register(b0)
 {
+	float4 outlineColor;//アウトラインの色
+	float outlineWidth;//アウトラインの太さ
 };
 
 struct VSOutput

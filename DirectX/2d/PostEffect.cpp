@@ -1,6 +1,7 @@
 #include "PostEffect.h"
 #include "WindowApp.h"
 #include "DirectInput.h"
+#include "Object3d.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -232,11 +233,18 @@ std::unique_ptr<PostEffect> PostEffect::Create()
 
 void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 {
-	int texBuf = 0;
 
-	if (DirectInput::GetInstance()->PushKey(DIK_Z))
+	// 定数バッファへデータ転送
+	ConstBufferData* constMap = nullptr;
+	HRESULT result= constBuff->Map(0, nullptr, (void**)&constMap);
+	constMap->outlineColor = Object3d::GetOutlineColor();
+	constMap->outlineWidth = Object3d::GetOutlineWidth();
+	constBuff->Unmap(0, nullptr);
+
+	static int tex = 0;
+	if (DirectInput::GetInstance()->TriggerKey(DIK_B))
 	{
-		texBuf++;
+		tex = (tex + 1) % texBuffNum;
 	}
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -244,7 +252,7 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
-	device->CreateShaderResourceView(texBuff[texBuf].Get(),
+	device->CreateShaderResourceView(texBuff[tex].Get(),
 		&srvDesc,
 		descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 
@@ -299,7 +307,7 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 	//深度ステンシルビュー用デスクリプタヒープのハンドル取得
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = descHeapDSV->GetCPUDescriptorHandleForHeapStart();
 	//レンダーターゲットをセット
-	cmdList->OMSetRenderTargets(2, rtvHs, false, &dsvH);
+	cmdList->OMSetRenderTargets(texBuffNum, rtvHs, false, &dsvH);
 
 	//ビューポート設定
 	CD3DX12_VIEWPORT viewports[texBuffNum];
@@ -309,9 +317,9 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowApp::GetWindowWidth(), (FLOAT)WindowApp::GetWindowHeight());
 		scissorRects[i] = CD3DX12_RECT(0, 0, (LONG)WindowApp::GetWindowWidth(), (LONG)WindowApp::GetWindowHeight());
 	}
-	cmdList->RSSetViewports(2, viewports);
+	cmdList->RSSetViewports(texBuffNum, viewports);
 	//シザリング矩形設定
-	cmdList->RSSetScissorRects(2, scissorRects);
+	cmdList->RSSetScissorRects(texBuffNum, scissorRects);
 
 	for (int i = 0; i < texBuffNum; i++)
 	{
