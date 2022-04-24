@@ -1,10 +1,7 @@
 #pragma once
 #include "Sprite.h"
 
-/// <summary>
-/// デバッグ用文字表示
-/// </summary>
-class DebugText
+class DebugText : public Sprite
 {
 public:
 	// デバッグテキスト用のテクスチャ番号を指定
@@ -18,7 +15,6 @@ private://静的メンバ変数
 
 	// スプライトデータの配列
 	static std::unique_ptr<Sprite> spriteDatas[maxCharCount];
-
 
 public:// 静的メンバ関数
 
@@ -41,21 +37,29 @@ public:// メンバ関数
 	/// </summary>
 	/// <param name="x">x軸</param>
 	/// <param name="y">y軸</param>
-	inline void SetPos(float x, float y) {
-		posX = x;
-		posY = y;
-	}
+	inline void SetPos(XMFLOAT2 pos) {this->pos = pos;}
 
+	/// <summary>
+	/// 大きさのセット
+	/// </summary>
+	/// <param name="size"></param>
 	inline void SetSize(float size) { this->size = size; }
 
 	/// <summary>
 	/// 出力する文字の設定
 	/// </summary>
 	/// <param name="text">文字</param>
-	/// <param name="x">x軸の位置</param>
-	/// <param name="y">y軸の位置</param>
+	/// <param name="pos">座標</param>
 	/// <param name="size">大きさ</param>
-	void Print(const std::string& text, float x, float y, float size = 1.0f);
+	void Print(const std::string& text, XMFLOAT2 pos, float size = 1.0f);
+
+	/// <summary>
+	/// 数値の文字出力
+	/// </summary>
+	/// <param name="num">数値</param>
+	/// <param name="pos">座標</param>
+	/// <param name="size">大きさ</param>
+	void PrintNum(const float& num, XMFLOAT2 pos, float size = 1.0f);
 
 	/// <summary>
 	/// 
@@ -70,18 +74,22 @@ public:// メンバ関数
 	/// <param name="cmdList">コマンドリスト</param>
 	void DrawAll(ID3D12GraphicsCommandList* cmdList);
 
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void Finalize();
+
 private:
-	DebugText();
+	DebugText() {};
 	DebugText(const DebugText&) = delete;
-	~DebugText();
+	~DebugText() {};
 	DebugText& operator=(const DebugText&) = delete;
 
 private:
 	// スプライトデータ配列の添え字番号
 	int spriteIndex = 0;
 
-	float posX = 0.0f;
-	float posY = 0.0f;
+	XMFLOAT2 pos = {};
 	float size = 1.0f;
 
 	char buffer[bufferSize];

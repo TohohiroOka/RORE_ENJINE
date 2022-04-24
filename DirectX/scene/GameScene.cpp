@@ -2,13 +2,12 @@
 #include "MainEngine.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
+#include "DebugText.h"
 #include "Camera.h"
 
 #include <cassert>
 #include <sstream>
 #include <iomanip>
-
-using namespace std;
 
 std::unique_ptr<GameScene> GameScene::Create()
 {
@@ -27,7 +26,7 @@ std::unique_ptr<GameScene> GameScene::Create()
 void GameScene::Initialize()
 {
 	//サウンド用
-	audio = make_unique<Audio>();
+	audio = std::make_unique<Audio>();
 
 	//ライト
 	light = LightGroup::Create();
@@ -192,6 +191,7 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	//スプライト描画
 	Sprite::PreDraw(cmdList);
 	sprite->Draw();
+	DebugText::GetInstance()->DrawAll(cmdList);
 	Sprite::PostDraw();
 
 	//線
@@ -210,7 +210,7 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	emit->Draw();
 	ParticleManager::PostDraw();
 
-
+	//コンピュートシェーダー
 	compute->PreUpdate(cmdList);
 	compute->ShaderUpdate(max, startPosition, endPosition, nowPosition, time);
 	compute->PostUpdate();

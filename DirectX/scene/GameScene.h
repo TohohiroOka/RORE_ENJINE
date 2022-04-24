@@ -5,7 +5,6 @@
 #include "Audio.h"
 #include "Object3d.h"
 #include "Sprite.h"
-#include "DebugText.h"
 #include "Emitter.h"
 #include "LightGroup.h"
 #include "Fbx.h"
@@ -72,7 +71,9 @@ public:// メンバ関数
 	/// </summary>
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 
-
+	/// <summary>
+	/// コンピュートシェーダーからの計算結果取得
+	/// </summary>
 	void GetConstbufferNum();
 
 private:// メンバ変数
@@ -80,35 +81,46 @@ private:// メンバ変数
 	//音
 	std::unique_ptr<Audio> audio = nullptr;
 
+	//スプライト
 	std::unique_ptr<Sprite> sprite = nullptr;
-	//DebugText* text;
+
+	//パーティクル
 	std::unique_ptr<Emitter> emit = nullptr;
 
+	//モデル
 	std::unique_ptr<Model> uma = nullptr;
 	std::unique_ptr<Model> ground = nullptr;
 	std::unique_ptr<Model> block = nullptr;
 
+	//自作クラス
 	std::unique_ptr<Player> PLAYER = nullptr;
 	std::unique_ptr<Ground> GROUND = nullptr;
+
+	//Obj
 	std::unique_ptr<Object3d> BLOCK = nullptr;
 
-	int tex[3];
+	//NormalMap
 	std::unique_ptr<NormalMap> water = nullptr;
+	int tex[3];
 	bool lightF = false;
 	float lightPos = 0;
 	float uvPos = 0;
 
+	//ライト
 	std::unique_ptr<LightGroup> light = nullptr;
 
+	//Fbx
 	std::unique_ptr<Fbx> anm = nullptr;
 	int FbxUma;
 
 	XMFLOAT3 cameraPosition = { 0,0,50 };
 
+	//線
 	std::unique_ptr<DrawLine> line = nullptr;
 	std::unique_ptr<DrawLine> line_t = nullptr;
 	std::unique_ptr<DrawLine3D> line3d = nullptr;
 
+	//コンピュートシェーダー
 	std::unique_ptr<ComputeShaderManager> compute = nullptr;
 	static const int max = 10;
 

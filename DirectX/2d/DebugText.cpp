@@ -3,14 +3,6 @@
 
 std::unique_ptr<Sprite> DebugText::spriteDatas[maxCharCount] = {};
 
-DebugText::DebugText()
-{
-}
-
-DebugText::~DebugText()
-{
-}
-
 DebugText* DebugText::GetInstance()
 {
 	static DebugText instance;
@@ -28,10 +20,21 @@ void DebugText::Initialize(UINT texnumber)
 	}
 }
 
-void DebugText::Print(const std::string& text, float x, float y, float size)
+void DebugText::Print(const std::string& text, XMFLOAT2 pos, float size)
 {
-	SetPos(x, y);
+	SetPos(pos);
 	SetSize(size);
+
+	NPrint((UINT)text.size(), text.c_str());
+}
+
+void DebugText::PrintNum(const float& num, XMFLOAT2 pos, float size)
+{
+	SetPos(pos);
+	SetSize(size);
+
+	//”’l‚ðstring‚É•ÏŠ·
+	std::string text = std::to_string(num);
 
 	NPrint((UINT)text.size(), text.c_str());
 }
@@ -58,7 +61,7 @@ void DebugText::NPrint(int len, const char* text)
 		int fontIndexX = fontIndex % fontLineCount;
 
 		// À•WŒvŽZ
-		spriteDatas[spriteIndex]->SetPosition({ this->posX + fontWidth * this->size * i, this->posY });
+		spriteDatas[spriteIndex]->SetPosition({ this->pos.x + fontWidth * this->size * i, this->pos.y });
 		spriteDatas[spriteIndex]->SetTexLeftTop({ (float)fontIndexX * fontWidth, (float)fontIndexY * fontHeight });
 		spriteDatas[spriteIndex]->SetTexSize({ (float)fontWidth, (float)fontHeight });
 		spriteDatas[spriteIndex]->SetSize({ fontWidth * this->size, fontHeight * this->size });
@@ -80,4 +83,12 @@ void DebugText::DrawAll(ID3D12GraphicsCommandList* cmdList)
 	}
 
 	spriteIndex = 0;
+}
+
+void DebugText::Finalize()
+{
+	for (int i = 0; i < maxCharCount; i++)
+	{
+		spriteDatas[i].reset();
+	}
 }
