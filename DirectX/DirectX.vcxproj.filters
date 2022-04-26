@@ -166,9 +166,6 @@
     <ClCompile Include="3d\DrawLine3D.cpp">
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
     </ClCompile>
-    <ClCompile Include="3d\Fbx.cpp">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
-    </ClCompile>
     <ClCompile Include="3d\NormalMap.cpp">
       <Filter>エンジンシステム\Object\3d\NormalMap</Filter>
     </ClCompile>
@@ -254,6 +251,9 @@
       <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
     </ClCompile>
     <ClCompile Include="FbxModel.cpp">
+      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\FbxmManager.cpp">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClCompile>
   </ItemGroup>
@@ -376,9 +376,6 @@
     <ClInclude Include="3d\DrawLine3D.h">
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
     </ClInclude>
-    <ClInclude Include="3d\Fbx.h">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
-    </ClInclude>
     <ClInclude Include="3d\NormalMap.h">
       <Filter>エンジンシステム\Object\3d\NormalMap</Filter>
     </ClInclude>
@@ -485,6 +482,9 @@
       <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
     </ClInclude>
     <ClInclude Include="FbxModel.h">
+      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\FbxmManager.h">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClInclude>
   </ItemGroup>

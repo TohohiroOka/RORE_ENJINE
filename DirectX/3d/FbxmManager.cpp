@@ -1,32 +1,29 @@
-#include "Fbx.h"
+#include "FbxmManager.h"
 #include "Camera.h"
 #include "BaseCollider.h"
 #include "SafeDelete.h"
 
-#include <d3dcompiler.h>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#pragma comment(lib, "d3dcompiler.lib")
-
 using namespace DirectX;
 using namespace Microsoft::WRL;
 using namespace std;
 
-ID3D12Device* Fbx::device = nullptr;
-Camera* Fbx::camera = nullptr;
-LightGroup* Fbx::lightGroup = nullptr;
-ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> Fbx::pipeline = nullptr;
+ID3D12Device* FbxmManager::device = nullptr;
+Camera* FbxmManager::camera = nullptr;
+LightGroup* FbxmManager::lightGroup = nullptr;
+ID3D12GraphicsCommandList* FbxmManager::cmdList = nullptr;
+std::unique_ptr<GraphicsPipelineManager> FbxmManager::pipeline = nullptr;
 
-Fbx::~Fbx()
+FbxmManager::~FbxmManager()
 {
 	constBuffB0.Reset();
 }
 
-void Fbx::CreateGraphicsPipeline()
+void FbxmManager::CreateGraphicsPipeline()
 {
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
@@ -61,24 +58,24 @@ void Fbx::CreateGraphicsPipeline()
 		GraphicsPipelineManager::OBJECT_KINDS::FBX, inputLayout, _countof(inputLayout));
 }
 
-void Fbx::StaticInitialize(ID3D12Device* device)
+void FbxmManager::StaticInitialize(ID3D12Device* device)
 {
 	HRESULT result = S_FALSE;
 
 	// 再初期化チェック
-	assert(!Fbx::device);
+	assert(!FbxmManager::device);
 
 	// nullptrチェック
 	assert(device);
 
-	Fbx::device = device;
+	FbxmManager::device = device;
 
 	CreateGraphicsPipeline();
 
 	FbxModel::StaticInitialize(device);
 }
 
-void Fbx::Initialize()
+void FbxmManager::Initialize()
 {
 	HRESULT result = S_FALSE;
 	// 定数バッファ1の生成
@@ -92,10 +89,10 @@ void Fbx::Initialize()
 	assert(SUCCEEDED(result));
 }
 
-std::unique_ptr<Fbx> Fbx::Create(FbxModel* model)
+std::unique_ptr<FbxmManager> FbxmManager::Create(FbxModel* model)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Fbx* instance = new Fbx();
+	FbxmManager* instance = new FbxmManager();
 
 	//初期化
 	instance->Initialize();
@@ -105,10 +102,10 @@ std::unique_ptr<Fbx> Fbx::Create(FbxModel* model)
 		instance->SetModel(model);
 	}
 
-	return std::unique_ptr<Fbx>(instance);
+	return std::unique_ptr<FbxmManager>(instance);
 }
 
-void Fbx::Update()
+void FbxmManager::Update()
 {
 	HRESULT result;
 	XMMATRIX matScale, matRot, matTrans;
@@ -145,9 +142,9 @@ void Fbx::Update()
 	model->Update();
 }
 
-void Fbx::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void FbxmManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
-	Fbx::cmdList = cmdList;
+	FbxmManager::cmdList = cmdList;
 
 	//パイプラインステートの設定
 	cmdList->SetPipelineState(pipeline->pipelineState.Get());
@@ -161,17 +158,17 @@ void Fbx::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	FbxModel::PreDraw(cmdList);
 }
 
-void Fbx::PostDraw()
+void FbxmManager::PostDraw()
 {
 	// コマンドリストを解除
-	Fbx::cmdList = nullptr;
+	FbxmManager::cmdList = nullptr;
 }
 
-void Fbx::Draw()
+void FbxmManager::Draw()
 {
 	// nullptrチェック
 	assert(device);
-	assert(Fbx::cmdList);
+	assert(FbxmManager::cmdList);
 
 	// モデルの割り当てがなければ描画しない
 	if (model == nullptr) {
@@ -188,7 +185,7 @@ void Fbx::Draw()
 	model->Draw(cmdList);
 }
 
-void Fbx::Finalize()
+void FbxmManager::Finalize()
 {
 	FbxModel::Finalize();
 	pipeline.reset();

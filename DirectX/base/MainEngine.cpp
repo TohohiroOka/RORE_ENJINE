@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "DebugText.h"
 #include "Emitter.h"
-#include "Fbx.h"
+#include "FbxmManager.h"
 #include "NormalMap.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
@@ -24,7 +24,7 @@ MainEngine::~MainEngine()
 	DrawLine3D::Finalize();
 	DrawLine::Finalize();
 	Sprite::Finalize();
-	Fbx::Finalize();
+	FbxmManager::Finalize();
 	ParticleManager::Finalize();
 	NormalMap::Finalize();
 	postEffect->Finalize();
@@ -54,7 +54,7 @@ void MainEngine::Initialize()
 	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
 	ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
-	Fbx::StaticInitialize(dXCommon->GetDevice());
+	FbxmManager::StaticInitialize(dXCommon->GetDevice());
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());

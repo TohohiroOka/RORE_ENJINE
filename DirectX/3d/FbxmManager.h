@@ -5,7 +5,7 @@
 class Camera;
 class LightGroup;
 
-class Fbx
+class FbxmManager
 {
 protected:// エイリアス
 	// Microsoft::WRL::を省略
@@ -43,12 +43,12 @@ public://静的メンバ関数
 	/// コンストラクタ
 	/// </summary>
 	/// <returns></returns>
-	Fbx() {};
+	FbxmManager() {};
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Fbx();
+	~FbxmManager();
 
 	/// <summary>
 	/// 初期化
@@ -60,19 +60,19 @@ public://静的メンバ関数
 	/// インスタンスの生成
 	/// </summary>
 	/// <param name="model">モデル</param
-	static std::unique_ptr<Fbx> Create(FbxModel* model = nullptr);
+	static std::unique_ptr<FbxmManager> Create(FbxModel* model = nullptr);
 
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) { Fbx::camera = camera; }
+	static void SetCamera(Camera* camera) { FbxmManager::camera = camera; }
 
 	/// <summary>
 	/// ライトグループのセット
 	/// </summary>
 	/// <param name="lightGroup">ライトグループ</param>
-	static void SetLightGroup(LightGroup* lightGroup) { Fbx::lightGroup = lightGroup; }
+	static void SetLightGroup(LightGroup* lightGroup) { FbxmManager::lightGroup = lightGroup; }
 
 	/// <summary>
 	/// 描画前処理
@@ -225,13 +225,13 @@ public:
 	/// アウトラインの色セット
 	/// </summary>
 	/// <param name="outlineColor">幅</param>
-	static void SetOutlineColor(XMFLOAT4 outlineColor) { Fbx::outlineColor = outlineColor; }
+	static void SetOutlineColor(XMFLOAT4 outlineColor) { FbxmManager::outlineColor = outlineColor; }
 
 	/// <summary>
 	/// アウトラインの幅セット
 	/// </summary>
 	/// <param name="outlineWidth">幅</param>
-	static void SetOutlineWidth(float outlineWidth) { Fbx::outlineWidth = outlineWidth; }
+	static void SetOutlineWidth(float outlineWidth) { FbxmManager::outlineWidth = outlineWidth; }
 
 	/// <summary>
 	/// モデルのセット

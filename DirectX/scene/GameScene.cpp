@@ -77,7 +77,7 @@ void GameScene::Initialize()
 	danceModel = FbxModel::Create("uma");
 
 	//Fbxモデルオブジェクトの生成
-	anm = Fbx::Create(danceModel.get());
+	anm = FbxmManager::Create(danceModel.get());
 	anm->SetScale({ 10,10,10 });
 	anm->SetAnimation(true);
 	anm->SetOutline(true);
@@ -112,7 +112,7 @@ void GameScene::Update(Camera* camera)
 	//カメラのセット
 	Object3d::SetCamera(camera);
 	NormalMap::SetCamera(camera);
-	Fbx::SetCamera(camera);
+	FbxmManager::SetCamera(camera);
 	DrawLine3D::SetCamera(camera);
 	ParticleManager::SetCamera(camera);
 
@@ -145,7 +145,7 @@ void GameScene::Update(Camera* camera)
 	light->Update();
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());
-	Fbx::SetLightGroup(light.get());
+	FbxmManager::SetLightGroup(light.get());
 
 	//スプライト
 	sprite->Update();
@@ -188,9 +188,9 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	BLOCK->Draw();
 	Object3d::PostDraw();
 
-	Fbx::PreDraw(cmdList);
+	FbxmManager::PreDraw(cmdList);
 	anm->Draw();
-	Fbx::PostDraw();
+	FbxmManager::PostDraw();
 
 	//スプライト描画
 	Sprite::PreDraw(cmdList);

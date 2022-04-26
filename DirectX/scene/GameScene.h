@@ -7,7 +7,7 @@
 #include "Sprite.h"
 #include "Emitter.h"
 #include "LightGroup.h"
-#include "Fbx.h"
+#include "FbxmManager.h"
 #include "Easing.h"
 #include "NormalMap.h"
 #include "DrawLine.h"
@@ -113,7 +113,7 @@ private:// ƒƒ“ƒo•Ï”
 	std::unique_ptr<FbxModel> danceModel = nullptr;
 
 	//Fbx
-	std::unique_ptr<Fbx> anm = nullptr;
+	std::unique_ptr<FbxmManager> anm = nullptr;
 
 	//ƒJƒƒ‰À•W
 	XMFLOAT3 cameraPosition = { 0,0,50 };
