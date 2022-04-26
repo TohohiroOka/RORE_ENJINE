@@ -81,6 +81,7 @@ private: // メンバ変数
 	ComPtr<ID3D12DescriptorHeap> descHeap;
 
 private: // メンバ関数
+
 	/// <summary>
 	/// モデル読み込み
 	/// </summary>

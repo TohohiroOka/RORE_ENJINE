@@ -151,6 +151,14 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	{
 		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->fbx->vs.Get());
 		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->fbx->ps.Get());
+
+		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
+		gpipeline.BlendState.RenderTarget[1] = blenddesc;
+		gpipeline.BlendState.RenderTarget[2] = blenddesc;
+
+		gpipeline.NumRenderTargets = 3;    // 描画対象は1つ
+		gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
 	}
 	//DrawLine3d
 	else if (objectKind == OBJECT_KINDS::DRAW_LAIN_3D)
@@ -263,20 +271,24 @@ void GraphicsPipelineManager::CreateRootSignature()
 		rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ）
 		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		// 不明
+		// CBV (ライト)
 		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 	}
 	//Fbx
 	else if (objectKind == OBJECT_KINDS::FBX)
 	{
 		// ルートパラメータ
-		rootparams.resize(3);
+		rootparams.resize(5);
 		// CBV（座標変換行列用）
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+		// CBV（マテリアルデータ用）
+		rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		// CBV (ライト)
+		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// CBV (スキニング用)
-		rootparams[2].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
+		rootparams[4].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
 	}
 	//DrawLine3d
 	else if (objectKind == OBJECT_KINDS::DRAW_LAIN_3D)

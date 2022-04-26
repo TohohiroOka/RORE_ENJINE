@@ -1,15 +1,9 @@
 #pragma once
-#include <fbxsdk.h>
-#include <wrl.h>
-#include <d3d12.h>
-#include <d3dx12.h>
-#include <DirectXMath.h>
-#include <DirectXTex.h>
-#include <map>
-
+#include "FbxModel.h"
 #include "GraphicsPipelineManager.h"
 
 class Camera;
+class LightGroup;
 
 class Fbx
 {
@@ -22,113 +16,18 @@ protected:// エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-public://固定値
-	//ボーンの最大値
-	static const int MAX_BONES = 32;
-
 private://構造体宣言
-	static const int MAX_BONE_INDICES = 4;
-	//頂点データ3D
-	struct Vertex
-	{
-		XMFLOAT3 pos;
-		XMFLOAT3 normal;
-		XMFLOAT2 uv;
-		UINT boneIndex[MAX_BONE_INDICES];
-		float boneWhight[MAX_BONE_INDICES];
-	};
-
-	//ノード
-	struct Node
-	{
-		//名前
-		std::string name;
-		//ローカルスケール
-		DirectX::XMVECTOR scaling = { 1.0f,1.0f,1.0f,0.0f };
-		//ローカル回転
-		DirectX::XMVECTOR rotation = { 0.0f,0.0f,0.0f,0.0f };
-		//ローカル移動
-		DirectX::XMVECTOR translation = { 0.0f,0.0f,0.0f,1.0f };
-		//ローカル変形行列
-		DirectX::XMMATRIX transform;
-		//グローバル変形行列
-		DirectX::XMMATRIX globalTransform;
-		//親ノード
-		Node* parent = nullptr;
-	};
-
-	//ボーン
-	struct Bone
-	{
-		//名前
-		std::string name;
-
-		//初期姿勢行列
-		DirectX::XMMATRIX invInitialPose;
-
-		//クラスター
-		FbxCluster* fbxCluster;
-
-		//コンストラクタ
-		Bone(const std::string& name)
-		{
-			this->name = name;
-		}
-	};
-
-	//マテリアル用
-	struct Material
-	{
-		std::string name;//マテリアル名
-		XMFLOAT3 ambient;//アンビエント影響度
-		XMFLOAT3 diffuse;//ディフューズ影響度
-		XMFLOAT3 emissive;// エミッシブ
-		XMFLOAT3 bump;// バンプ
-		XMFLOAT3 specular;//スペキュラ影響度
-		float alpha;//アルファ
-		std::string textureFilename;//テクスチャファイル名
-		//コンストラクタ
-		Material() {
-			ambient = { 0.3f,0.3f,0.3f };
-			diffuse = { 0.3f,0.3f,0.3f };
-			specular = { 0.3f,0.3f,0.3f };
-			alpha = 1.0f;
-		}
-	};
 
 	//定数バッファ用データB0
-	struct ConstBufferDataTransform
+	struct ConstBufferDataB0
 	{
-		XMMATRIX viewproj;//ビュープロジェクション行列
-		XMMATRIX world;//ワールド行列
-		XMFLOAT3 cameraPos;//カメラ座標（ワールド座標）
-		XMFLOAT4 color;//色
-	};
-
-	//スキン用定数バッファデータ
-	struct ConstBufferDataSkin
-	{
-		XMMATRIX bones[MAX_BONES];
-	};
-
-	struct FbxUpdate
-	{
-		bool isAnimation = false;//アニメーション可能か
-		FbxScene* fbxScene = nullptr;
-		FbxTime startTime;//フレームのスタート
-		FbxTime stopTime;;//フレームの最後
-		FbxTime nowTime;//現在の進行フレーム
-	};
-
-	//Fbxデータ
-	struct Data
-	{
-		Material material;
-		std::vector<Vertex> vertices;
-		std::vector<unsigned short>indices;
-		std::vector<Node> nodes;
-		std::vector<Bone> bones;
-		FbxUpdate fbxUpdate;
+		XMFLOAT4 color;
+		XMMATRIX viewproj; // ビュープロジェクション行列
+		XMMATRIX world; // ワールド行列
+		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
+		unsigned int isBloom;//ブルームの有無
+		unsigned int isToon;//トゥーンの有無
+		unsigned int isOutline;//アウトラインの有無
 	};
 
 private://静的メンバ関数関数
@@ -137,76 +36,6 @@ private://静的メンバ関数関数
 	/// パイプライン設定
 	/// </summary>
 	static void CreateGraphicsPipeline();
-
-	/// <summary>
-	/// ノード読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fbxNode">ノード</param>
-	/// <param name="parent">親ノード</param>
-	static void LoadNode(int dataNumber, FbxNode* fbxNode, Node* parent = nullptr);
-
-	/// <summary>
-	/// メッシュを探す
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fbxNode">ノード</param>
-	static void CollectMesh(int dataNumber, FbxNode* fbxNode);
-
-	/// <summary>
-	/// 頂点読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fbxMesh">メッシュ</param>
-	static void CollectVertices(int dataNumber, FbxMesh* fbxMesh);
-
-	/// <summary>
-	/// 面ごとの読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fbxMesh">メッシュ</param>
-	static void CollectMeshFaces(int dataNumber, FbxMesh* fbxMesh);
-
-	/// <summary>
-	/// スキニング情報の読み取り
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fbxMesh">メッシュ</param>
-	static void CollectSkin(int dataNumber, FbxMesh* fbxMesh);
-
-	/// <summary>
-	/// マテリアル読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fbxNode">ノード</param>
-	static void LoadMaterial(int dataNumber, FbxNode* fbxNode);
-
-	/// <summary>
-	/// テクスチャ読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fileName">ファイル名</param>
-	static void LoadTexture(int dataNumber, const std::string fileName);
-
-	/// <summary>
-	/// アニメーション読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	static void LoadAnimation(int dataNumber);
-
-	/// <summary>
-	/// //行列の変換
-	/// </summary>
-	/// <param name="dst">格納するXMMATRIX型変数</param>
-	/// <param name="src">変換するFbxMatrix型変数</param>
-	static void ConvertMatrixFormFbx(DirectX::XMMATRIX* dst, const FbxMatrix& src);
-
-	/// <summary>
-	/// //ファイル名抽出
-	/// </summary>
-	/// <param name="path">ファイルパス</param>
-	/// <returns></returns>
-	static std::string ExtractFileName(const std::string& path);
 
 public://静的メンバ関数
 
@@ -228,25 +57,22 @@ public://静的メンバ関数
 	static void StaticInitialize(ID3D12Device* device);
 
 	/// <summary>
-	/// Fbxファイルの読み込み
+	/// インスタンスの生成
 	/// </summary>
-	/// <param name="fileName">ファイル名</param>
-	/// <returns>保存番号</returns>
-	static int LoadFbx(const std::string fileName);
-
-	/// <summary>
-	/// 格納されているFBXデータを元にデータを作成する
-	/// </summary>
-	/// <param name="modelNumber">保存番号</param>
-	static std::unique_ptr<Fbx> Create(UINT modelNumber);
+	/// <param name="model">モデル</param
+	static std::unique_ptr<Fbx> Create(FbxModel* model = nullptr);
 
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) {
-		Fbx::camera = camera;
-	}
+	static void SetCamera(Camera* camera) { Fbx::camera = camera; }
+
+	/// <summary>
+	/// ライトグループのセット
+	/// </summary>
+	/// <param name="lightGroup">ライトグループ</param>
+	static void SetLightGroup(LightGroup* lightGroup) { Fbx::lightGroup = lightGroup; }
 
 	/// <summary>
 	/// 描画前処理
@@ -279,82 +105,143 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="modelNumber"></param>
-	void Draw(int modelNumber);
-
-	/// <summary>
-	/// 情報のセット
-	/// </summary>
-	/// <param name="position"></param>
-	/// <param name="rotation"></param>
-	/// <param name="scale"></param>
-	/// <param name="isAnimation"></param
-	void SetInformation(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale, bool isAnimation) {
-		this->position = position;
-		this->rotation = rotation;
-		this->scale = scale;
-		this->isAnimation = isAnimation;
-	}
-
-	//ワールド行列の取得
-	const XMMATRIX& GetMatWorld() { return matWorld; }
-
+	void Draw();
 
 private://静的メンバ変数
 
-	//Fbxの基盤
-	static FbxManager* fbxManager;
-	//1フレームの時間
-	static FbxTime frameTime;
 	//デバイス
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	//カメラ
+	// カメラ
 	static Camera* camera;
-	//Fbxデータの格納場所
-	static std::vector<Data> data;
+	// ライト
+	static LightGroup* lightGroup;
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
-	//テクスチャ用デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap>descHeap;
-	//テクスチャ最大登録数
-	static const int textureNum = 512;
-	//テクスチャリソース(テクスチャバッファ)の配列
-	static ComPtr<ID3D12Resource>texBuffer[textureNum];
-	//現在の配列数
-	static int vecSize;
-	//textureが無い時のtexture
-	static const std::string subTexture;
-	//ファイルパス
-	static const std::string directoryPath;
-	//ファイルネームの保持
-	static std::string fileName;
+	//アウトラインの色
+	static XMFLOAT4 outlineColor;
+	//アウトラインの幅
+	static float outlineWidth;
 
 private://メンバ変数
 
-	//テクスチャ番号
-	UINT modelNumber = -1;
+	//モデル
+	FbxModel* model = nullptr;
 	//定数バッファ
-	ComPtr<ID3D12Resource> constBuffTransform;
-	//定数バッファ
-	ComPtr<ID3D12Resource> constBuffSkin;
-	//頂点バッファ
-	ComPtr<ID3D12Resource> vertBuff;
-	//頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vbView;
-	//インデックスバッファ
-	ComPtr<ID3D12Resource> indexBuff;
-	//インデックスバッファビュー
-	D3D12_INDEX_BUFFER_VIEW ibView;
-	// ローカルワールド変換行列
-	XMMATRIX matWorld;
+	ComPtr<ID3D12Resource> constBuffB0;
 	//座標
 	XMFLOAT3 position = {};
-	//回転角
+	// 回転角
 	XMFLOAT3 rotation = {};
-	//大きさ
-	XMFLOAT3 scale = {};
-	//アニメーションするか
-	bool isAnimation = false;
+	// ローカルスケール
+	XMFLOAT3 scale = { 1,1,1 };
+	// 色
+	XMFLOAT4 color = { 1,1,1,1 };
+	// ローカルワールド変換行列
+	XMMATRIX matWorld = {};
+	//ブルームの有無
+	bool isBloom = false;
+	//トゥーンの有無
+	bool isToon = false;
+	//アウトラインの有無
+	bool isOutline = false;
+
+public:
+
+	/// <summary>
+	/// 座標の取得
+	/// </summary>
+	/// <returns>座標</returns>
+	const XMFLOAT3& GetPosition() { return position; }
+
+	/// <summary>
+	/// 回転の取得
+	/// </summary>
+	/// <returns>回転</returns>
+	const XMFLOAT3& GetRotation() { return rotation; }
+
+	/// <summary>
+	/// 色の取得
+	/// </summary>
+	/// <returns>色</returns>
+	const XMFLOAT4& GetColor() { return color; }
+
+	/// <summary>
+	/// 大きさの取得
+	/// </summary>
+	/// <returns>大きさ</returns>
+	const XMFLOAT3& GetScale() { return scale; }
+
+	/// <summary>
+	/// ワールド行列の取得
+	/// </summary>
+	/// <returns>ワールド行列</returns>
+	const XMMATRIX& GetMatWorld() { return matWorld; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetPosition(XMFLOAT3 position) { this->position = position; }
+
+	/// <summary>
+	/// 回転角の設定
+	/// </summary>
+	/// <param name="rotation">回転角</param>
+	void SetRotation(XMFLOAT3 rotation) { this->rotation = rotation; }
+
+	/// <summary>
+	/// スケールの設定
+	/// </summary>
+	/// <param name="position">スケール</param>
+	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(XMFLOAT4 color) { this->color = color; }
+
+	/// <summary>
+	/// ブルームのセット
+	/// </summary>
+	/// <param name="isBloom">ブルーム有->true / 無->false</param>
+	void SetBloom(bool isBloom) { this->isBloom = isBloom; }
+
+	/// <summary>
+	/// トゥーンのセット
+	/// </summary>
+	/// <param name="isToon">トゥーン有->true / 無->false</param>
+	void SetToon(bool isToon) { this->isToon = isToon; }
+
+	/// <summary>
+	/// アウトラインのセット
+	/// </summary>
+	/// <param name="isOutline">アウトライン有->true / 無->false</param>
+	void SetOutline(bool isOutline) { this->isOutline = isOutline; }
+
+	/// <summary>
+	/// アウトラインの色セット
+	/// </summary>
+	/// <param name="outlineColor">幅</param>
+	static void SetOutlineColor(XMFLOAT4 outlineColor) { Fbx::outlineColor = outlineColor; }
+
+	/// <summary>
+	/// アウトラインの幅セット
+	/// </summary>
+	/// <param name="outlineWidth">幅</param>
+	static void SetOutlineWidth(float outlineWidth) { Fbx::outlineWidth = outlineWidth; }
+
+	/// <summary>
+	/// モデルのセット
+	/// </summary>
+	/// <param name="model">モデル</param>
+	void SetModel(FbxModel* model) { this->model = model; }
+
+	/// <summary>
+	/// スケールの設定
+	/// </summary>
+	/// <param name="position">スケール</param>
+	void SetAnimation(bool isAnimation) { model->isAnimation = isAnimation; }
 };

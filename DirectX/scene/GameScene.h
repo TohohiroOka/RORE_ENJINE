@@ -109,10 +109,13 @@ private:// メンバ変数
 	//ライト
 	std::unique_ptr<LightGroup> light = nullptr;
 
+	//FbxModel
+	std::unique_ptr<FbxModel> danceModel = nullptr;
+
 	//Fbx
 	std::unique_ptr<Fbx> anm = nullptr;
-	int FbxUma;
 
+	//カメラ座標
 	XMFLOAT3 cameraPosition = { 0,0,50 };
 
 	//線

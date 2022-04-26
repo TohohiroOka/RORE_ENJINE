@@ -118,6 +118,7 @@
     <ClCompile Include="base\WindowApp.cpp" />
     <ClCompile Include="camera\Camera.cpp" />
     <ClCompile Include="easing\Easing.cpp" />
+    <ClCompile Include="FbxModel.cpp" />
     <ClCompile Include="input\DirectInput.cpp" />
     <ClCompile Include="input\XInputManager.cpp" />
     <ClCompile Include="light\LightGroup.cpp" />
@@ -288,6 +289,7 @@
     <ClInclude Include="base\WindowApp.h" />
     <ClInclude Include="camera\Camera.h" />
     <ClInclude Include="easing\Easing.h" />
+    <ClInclude Include="FbxModel.h" />
     <ClInclude Include="input\DirectInput.h" />
     <ClInclude Include="input\XInputManager.h" />
     <ClInclude Include="light\CircleShadow.h" />

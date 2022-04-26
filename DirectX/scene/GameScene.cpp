@@ -74,10 +74,14 @@ void GameScene::Initialize()
 	water->SetSubTexColor2({ 1.0f, 1.0f, 1.0f, 0.5f });
 
 	//Fbxモデルの読み込み
-	FbxUma = Fbx::LoadFbx("uma");
+	danceModel = FbxModel::Create("uma");
 
 	//Fbxモデルオブジェクトの生成
-	anm = Fbx::Create(FbxUma);
+	anm = Fbx::Create(danceModel.get());
+	anm->SetScale({ 10,10,10 });
+	anm->SetAnimation(true);
+	anm->SetOutline(true);
+	anm->SetToon(true);
 
 	//パーティクル用テクスチャの読み込み
 	ParticleManager::LoadTexture(0, L"Resources/particle/effect1.png");
@@ -131,7 +135,6 @@ void GameScene::Update(Camera* camera)
 	water->Update();
 
 	//Fbx
-	anm->SetInformation({ 0,0,0 }, { 0,0,0 }, { 10,10,10 }, true);
 	anm->Update();
 
 	//パーティクル
@@ -142,26 +145,27 @@ void GameScene::Update(Camera* camera)
 	light->Update();
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());
+	Fbx::SetLightGroup(light.get());
 
 	//スプライト
 	sprite->Update();
 	emit->Update();
 
 	////線
-	line->SetLine({ 300,300 }, { 700,700 }, { 1,1,1,1 }, 50);
-	line->Update();
-	line_t->SetLine({ 20,500 }, { 500,400 }, { 1,1,1,1 }, 50);
-	line_t->Update();
-	XMFLOAT3 S_pos[10];
-	XMFLOAT3 E_pos[10];
-	for (int i = 0; i < 10; i++)
-	{
-		S_pos[i] = { 0,(float)20 * i,(float)i * 10 };
-		E_pos[i] = { 0,(float)20 * i,(float)-i * 10 };
-	}
-	line3d->SetLine(S_pos, E_pos, 50);
-	line3d->SetColor({ 1,1,1,1 });
-	line3d->Update();
+	//line->SetLine({ 300,300 }, { 700,700 }, { 1,1,1,1 }, 50);
+	//line->Update();
+	//line_t->SetLine({ 20,500 }, { 500,400 }, { 1,1,1,1 }, 50);
+	//line_t->Update();
+	//XMFLOAT3 S_pos[10];
+	//XMFLOAT3 E_pos[10];
+	//for (int i = 0; i < 10; i++)
+	//{
+	//	S_pos[i] = { 0,(float)20 * i,(float)i * 10 };
+	//	E_pos[i] = { 0,(float)20 * i,(float)-i * 10 };
+	//}
+	//line3d->SetLine(S_pos, E_pos, 50);
+	//line3d->SetColor({ 1,1,1,1 });
+	//line3d->Update();
 
 	//カメラ更新
 	camera->SetPosition(PLAYER->GetPosition());
@@ -185,7 +189,7 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	Object3d::PostDraw();
 
 	Fbx::PreDraw(cmdList);
-	anm->Draw(FbxUma);
+	anm->Draw();
 	Fbx::PostDraw();
 
 	//スプライト描画
