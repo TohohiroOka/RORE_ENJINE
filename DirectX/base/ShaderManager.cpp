@@ -118,8 +118,13 @@ void ShaderManager::LoadShader()
 	particle->gs = CompileShader(L"ParticleGS.hlsl", gsModel);
 
 	//coシェーダー
-	Compute = std::make_unique<BLOB_OBJECT>();
-	Compute->cs = CompileShader(L"BasicCS.hlsl", csModel);
+	compute = std::make_unique<BLOB_OBJECT>();
+	compute->cs = CompileShader(L"BasicCS.hlsl", csModel);
+
+	//Pmxシェーダー
+	pmx = std::make_unique<BLOB_OBJECT>();
+	pmx->vs = CompileShader(L"PmxVS.hlsl", vsModel);
+	pmx->ps = CompileShader(L"PmxPS.hlsl", psModel);
 }
 
 void ShaderManager::Finalize()
@@ -132,4 +137,5 @@ void ShaderManager::Finalize()
 	postEffect.reset();
 	normalMap.reset();
 	particle.reset();
+	pmx.reset();
 }

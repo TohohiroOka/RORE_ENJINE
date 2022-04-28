@@ -137,6 +137,12 @@
     <Filter Include="エンジンシステム\MainSystem\GraphicsPipelineManager">
       <UniqueIdentifier>{9e796eba-af2b-476b-bf30-138d92a52ee6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="エンジンシステム\Object\3d\Pmx">
+      <UniqueIdentifier>{903d0c30-545b-43bb-a58e-f7ac0068f6f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Pmx">
+      <UniqueIdentifier>{fd1cc638-d91e-4f0c-9045-ff1630adafc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -176,9 +182,6 @@
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClCompile>
     <ClCompile Include="3d\Mesh.cpp">
-      <Filter>エンジンシステム\Object\3d\OBJ</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\MeshCollider.cpp">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClCompile>
     <ClCompile Include="3d\Model.cpp">
@@ -250,11 +253,26 @@
     <ClCompile Include="base\GraphicsPipelineManager.cpp">
       <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
     </ClCompile>
-    <ClCompile Include="FbxModel.cpp">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
-    </ClCompile>
     <ClCompile Include="3d\FbxmManager.cpp">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\FbxModel.cpp">
+      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\PmxModel.cpp">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\Pmx.cpp">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\MeshCollider.cpp">
+      <Filter>エンジンシステム\Object\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\PmxMaterial.cpp">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\PmxMesh.cpp">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +330,12 @@
     <FxCompile Include="Resources\Shaders\DrawLine2DVS.hlsl">
       <Filter>シェーダーファイル\DrawLine2d</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\PmxPS.hlsl">
+      <Filter>シェーダーファイル\Pmx</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\PmxVS.hlsl">
+      <Filter>シェーダーファイル\Pmx</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite.hlsli">
@@ -337,6 +361,9 @@
     </None>
     <None Include="Resources\Shaders\DrawLine2D.hlsli">
       <Filter>シェーダーファイル\DrawLine2d</Filter>
+    </None>
+    <None Include="Resources\Shaders\Pmx.hlsli">
+      <Filter>シェーダーファイル\Pmx</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -392,9 +419,6 @@
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClInclude>
     <ClInclude Include="3d\Mesh.h">
-      <Filter>エンジンシステム\Object\3d\OBJ</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\MeshCollider.h">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClInclude>
     <ClInclude Include="3d\Model.h">
@@ -481,11 +505,26 @@
     <ClInclude Include="base\GraphicsPipelineManager.h">
       <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
     </ClInclude>
-    <ClInclude Include="FbxModel.h">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
-    </ClInclude>
     <ClInclude Include="3d\FbxmManager.h">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\FbxModel.h">
+      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\PmxModel.h">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\Pmx.h">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\MeshCollider.h">
+      <Filter>エンジンシステム\Object\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\PmxMaterial.h">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\PmxMesh.h">
+      <Filter>エンジンシステム\Object\3d\Pmx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@
 #include "Emitter.h"
 #include "FbxmManager.h"
 #include "NormalMap.h"
+#include "Pmx.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
@@ -58,6 +59,7 @@ void MainEngine::Initialize()
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
+	Pmx::StaticInitialize(dXCommon->GetDevice());
 
 	DebugText::GetInstance()->Initialize(0);
 

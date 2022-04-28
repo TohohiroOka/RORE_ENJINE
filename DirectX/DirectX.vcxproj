@@ -99,12 +99,17 @@
     <ClCompile Include="3d\CollisionPrimitive.cpp" />
     <ClCompile Include="3d\DrawLine3D.cpp" />
     <ClCompile Include="3d\FbxmManager.cpp" />
+    <ClCompile Include="3d\FbxModel.cpp" />
     <ClCompile Include="3d\Material.cpp" />
     <ClCompile Include="3d\Mesh.cpp" />
     <ClCompile Include="3d\MeshCollider.cpp" />
     <ClCompile Include="3d\Model.cpp" />
     <ClCompile Include="3d\NormalMap.cpp" />
     <ClCompile Include="3d\Object3d.cpp" />
+    <ClCompile Include="3d\Pmx.cpp" />
+    <ClCompile Include="3d\PmxMaterial.cpp" />
+    <ClCompile Include="3d\PmxMesh.cpp" />
+    <ClCompile Include="3d\PmxModel.cpp" />
     <ClCompile Include="3d\SphereCollider.cpp" />
     <ClCompile Include="audio\Audio.cpp" />
     <ClCompile Include="base\ComputeShaderManager.cpp" />
@@ -118,7 +123,6 @@
     <ClCompile Include="base\WindowApp.cpp" />
     <ClCompile Include="camera\Camera.cpp" />
     <ClCompile Include="easing\Easing.cpp" />
-    <ClCompile Include="FbxModel.cpp" />
     <ClCompile Include="input\DirectInput.cpp" />
     <ClCompile Include="input\XInputManager.cpp" />
     <ClCompile Include="light\LightGroup.cpp" />
@@ -218,6 +222,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\PmxPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\PmxVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Resources\Shaders\PostEffectPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -250,6 +266,7 @@
     <None Include="Resources\Shaders\Fbx.hlsli" />
     <None Include="Resources\Shaders\Obj.hlsli" />
     <None Include="Resources\Shaders\Particle.hlsli" />
+    <None Include="Resources\Shaders\Pmx.hlsli" />
     <None Include="Resources\Shaders\PostEffect.hlsli" />
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
@@ -267,12 +284,17 @@
     <ClInclude Include="3d\CollisionTypes.h" />
     <ClInclude Include="3d\DrawLine3D.h" />
     <ClInclude Include="3d\FbxmManager.h" />
+    <ClInclude Include="3d\FbxModel.h" />
     <ClInclude Include="3d\Material.h" />
     <ClInclude Include="3d\Mesh.h" />
     <ClInclude Include="3d\MeshCollider.h" />
     <ClInclude Include="3d\Model.h" />
     <ClInclude Include="3d\NormalMap.h" />
     <ClInclude Include="3d\Object3d.h" />
+    <ClInclude Include="3d\Pmx.h" />
+    <ClInclude Include="3d\PmxMaterial.h" />
+    <ClInclude Include="3d\PmxMesh.h" />
+    <ClInclude Include="3d\PmxModel.h" />
     <ClInclude Include="3d\QueryCallback.h" />
     <ClInclude Include="3d\RaycastHit.h" />
     <ClInclude Include="3d\SphereCollider.h" />
@@ -289,7 +311,6 @@
     <ClInclude Include="base\WindowApp.h" />
     <ClInclude Include="camera\Camera.h" />
     <ClInclude Include="easing\Easing.h" />
-    <ClInclude Include="FbxModel.h" />
     <ClInclude Include="input\DirectInput.h" />
     <ClInclude Include="input\XInputManager.h" />
     <ClInclude Include="light\CircleShadow.h" />

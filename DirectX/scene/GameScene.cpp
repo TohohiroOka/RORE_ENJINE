@@ -102,6 +102,12 @@ void GameScene::Initialize()
 		nowPosition[i] = startPosition[i];//現在座標
 		time[i] = 0;
 	}
+
+	pmxModel = PmxModel::Create("KG式タマモクロスVer1.00");
+
+	pmx = Pmx::Create(pmxModel.get());
+	pmx->SetScale({ 3,3,3 });
+	pmx->SetPosition({ 100,0,0 });
 }
 
 void GameScene::Update(Camera* camera)
@@ -115,6 +121,7 @@ void GameScene::Update(Camera* camera)
 	FbxmManager::SetCamera(camera);
 	DrawLine3D::SetCamera(camera);
 	ParticleManager::SetCamera(camera);
+	Pmx::SetCamera(camera);
 
 	//Obj
 	PLAYER->Update();
@@ -134,6 +141,9 @@ void GameScene::Update(Camera* camera)
 	water->SetLightPosition(lightPos);
 	water->Update();
 
+	//pmx
+	pmx->Update();
+
 	//Fbx
 	anm->Update();
 
@@ -146,6 +156,7 @@ void GameScene::Update(Camera* camera)
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());
 	FbxmManager::SetLightGroup(light.get());
+	Pmx::SetLightGroup(light.get());
 
 	//スプライト
 	sprite->Update();
@@ -213,6 +224,10 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	//パーティクル
 	emit->Draw();
 	ParticleManager::PostDraw();
+
+	Pmx::PreDraw(cmdList);
+	pmx->Draw();
+	Pmx::PostDraw();
 
 	//コンピュートシェーダー
 	compute->PreUpdate(cmdList);

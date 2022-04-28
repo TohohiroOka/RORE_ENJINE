@@ -83,6 +83,8 @@ public:
 	//Particleのシェーダーオブジェクト
 	std::unique_ptr<BLOB_OBJECT> particle = nullptr;
 	//Computeのシェーダーオブジェクト
-	std::unique_ptr<BLOB_OBJECT> Compute = nullptr;
+	std::unique_ptr<BLOB_OBJECT> compute = nullptr;
+	//Pmxのシェーダーオブジェクト
+	std::unique_ptr<BLOB_OBJECT> pmx = nullptr;
 };
 

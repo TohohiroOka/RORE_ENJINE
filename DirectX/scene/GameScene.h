@@ -13,6 +13,7 @@
 #include "DrawLine.h"
 #include "DrawLine3D.h"
 #include "ComputeShaderManager.h"
+#include "Pmx.h"
 
 #include "Player.h"
 #include "Ground.h"
@@ -131,4 +132,8 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
+
+	std::unique_ptr<PmxModel> pmxModel = nullptr;
+
+	std::unique_ptr<Pmx> pmx = nullptr;
 };

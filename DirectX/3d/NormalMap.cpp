@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
-#include"Camera.h"
+#include "Camera.h"
 
 #include <fstream>
 #include <sstream>

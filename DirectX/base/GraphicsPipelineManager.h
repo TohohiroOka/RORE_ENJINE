@@ -24,6 +24,7 @@ public://ƒƒ“ƒoenum
 		PARTICLE,
 		NORMAL_MAP,
 		POST_EFFECT,
+		PMX,
 	};
 
 private://ƒƒ“ƒoŠÖ”

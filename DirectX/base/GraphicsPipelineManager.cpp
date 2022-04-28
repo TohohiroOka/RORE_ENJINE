@@ -240,6 +240,20 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		// ブレンドステートの再設定
 		gpipeline.BlendState.RenderTarget[0] = blenddesc;
 	}
+	//Pmx
+	else if (objectKind == OBJECT_KINDS::PMX)
+	{
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->pmx->vs.Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->pmx->ps.Get());
+
+		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
+		gpipeline.BlendState.RenderTarget[1] = blenddesc;
+		gpipeline.BlendState.RenderTarget[2] = blenddesc;
+
+		gpipeline.NumRenderTargets = 3;    // 描画対象は1つ
+		gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	}
 
 	// 頂点レイアウトの設定
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -377,6 +391,20 @@ void GraphicsPipelineManager::CreateRootSignature()
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ1）
 		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+	}
+	//Pmx
+	else if (objectKind == OBJECT_KINDS::PMX)
+	{
+		// ルートパラメータ
+		rootparams.resize(4);
+		// CBV（座標変換行列用）
+		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+		// CBV（マテリアルデータ用）
+		rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
+		// SRV（テクスチャ）
+		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		// CBV (ライト)
+		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 	}
 
 	// ルートシグネチャの設定
