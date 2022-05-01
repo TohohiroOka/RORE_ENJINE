@@ -4,6 +4,8 @@
 #include "XInputManager.h"
 #include "DebugText.h"
 #include "Camera.h"
+#include <imgui.h>
+#include <iomanip>
 
 #include <cassert>
 #include <sstream>
@@ -218,6 +220,15 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	compute->PreUpdate(cmdList);
 	compute->ShaderUpdate(max, startPosition, endPosition, nowPosition, time);
 	compute->PostUpdate();
+}
+
+void GameScene::ImguiDraw()
+{
+	ImGui::Begin("Light");
+	ImGui::SetWindowPos(ImVec2(0, 0));
+	ImGui::SetWindowSize(ImVec2(500, 200));
+	ImGui::InputFloat("aaa", aaa);
+	ImGui::End();
 }
 
 void GameScene::GetConstbufferNum()

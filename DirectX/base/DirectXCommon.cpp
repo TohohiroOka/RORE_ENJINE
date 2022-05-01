@@ -2,14 +2,24 @@
 #include "WindowApp.h"
 #include <vector>
 #include <cassert>
-#include "SafeDelete.h"
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx12.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
 
+using namespace Microsoft::WRL;
+
 DirectXCommon::~DirectXCommon()
 {
+	//imguiの解放
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+	imguiHeap.Reset();
+
+	//directX系の解放
 	dxgiFactory.Reset();
 	cmdList.Reset();
 	cmdAllocator.Reset();
@@ -24,6 +34,7 @@ DirectXCommon::~DirectXCommon()
 	dsvHeap.Reset();
 	fence.Reset();
 
+	//解放漏れ確認
 	ID3D12DebugDevice* debugInterface;
 	if (SUCCEEDED(device.Get()->QueryInterface(&debugInterface)))
 	{
@@ -47,6 +58,9 @@ std::unique_ptr<DirectXCommon> DirectXCommon::Create()
 
 	//深度の初期化
 	instance->CreateDepth();
+
+	// imgui初期化
+	instance->InitImgui();
 
 	//ユニークポインタを返す
 	return std::unique_ptr<DirectXCommon>(instance);
@@ -232,7 +246,46 @@ void DirectXCommon::CreateDepth()
 		dsvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void DirectXCommon::BeforeDraw()
+void DirectXCommon::InitImgui()
+{
+	HRESULT result = S_FALSE;
+
+	// デスクリプタヒープを生成
+	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	heapDesc.NumDescriptors = 1;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	result = device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&imguiHeap));
+	if (FAILED(result)) {
+		assert(0);
+	}
+
+	// スワップチェーンの情報を取得
+	DXGI_SWAP_CHAIN_DESC swcDesc = {};
+	result = swapchain->GetDesc(&swcDesc);
+	if (FAILED(result)) {
+		assert(0);
+	}
+
+	if (ImGui::CreateContext() == nullptr) {
+		assert(0);
+	}
+	if (!ImGui_ImplWin32_Init(WindowApp::GetHwnd())) {
+		assert(0);
+	}
+	if (!ImGui_ImplDX12_Init(
+		GetDevice(),
+		swcDesc.BufferCount,
+		swcDesc.BufferDesc.Format,
+		imguiHeap.Get(),
+		imguiHeap->GetCPUDescriptorHandleForHeapStart(),
+		imguiHeap->GetGPUDescriptorHandleForHeapStart()))
+	{
+		assert(0);
+	}
+}
+
+void DirectXCommon::PreDraw()
 {
 	const UINT WindowWidth = WindowApp::GetWindowWidth();
 	const UINT WindowHeight = WindowApp::GetWindowHeight();
@@ -264,13 +317,24 @@ void DirectXCommon::BeforeDraw()
 	cmdList->RSSetViewports(1, &CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowWidth, (FLOAT)WindowHeight));
 	// シザリング矩形の設定
 	cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, (LONG)WindowWidth, (LONG)WindowHeight));
+
+	// imgui開始
+	ImGui_ImplDX12_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 }
 
-void DirectXCommon::AfterDraw()
+void DirectXCommon::PostDraw()
 {
+	// imgui描画
+	ImGui::Render();
+	ID3D12DescriptorHeap* ppHeaps[] = { imguiHeap.Get() };
+	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), cmdList.Get());
+
 	// バックバッファの番号を取得（2つなので0番か1番）
 	UINT bbIndex = swapchain->GetCurrentBackBufferIndex();
-
+	//リソースバリアの変更
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffers[bbIndex].Get(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 

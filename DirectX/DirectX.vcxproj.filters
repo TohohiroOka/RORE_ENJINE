@@ -17,18 +17,6 @@
     <Filter Include="エンジンシステム\Audio">
       <UniqueIdentifier>{d50b3b7c-f0ed-427f-ae1c-45dc69a89fe1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\MainSystem">
-      <UniqueIdentifier>{67675b7e-5f68-4193-8d4f-1cc9fe252ed8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\MainSystem\Input">
-      <UniqueIdentifier>{c9ef2e81-bfcf-41ca-b3c8-821026159bee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\MainSystem\DirectXCommon">
-      <UniqueIdentifier>{c4924800-ddb9-4297-b120-7d63cc5ccb07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\MainSystem\WindowApp">
-      <UniqueIdentifier>{c8b9b141-feab-43bc-9dc3-65df95c04218}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\Sprite">
       <UniqueIdentifier>{c79de487-cd11-4978-a7f8-3162e4c4f1d6}</UniqueIdentifier>
     </Filter>
@@ -52,9 +40,6 @@
     </Filter>
     <Filter Include="エンジンシステム\Light">
       <UniqueIdentifier>{4aa578b4-27fc-4eb3-ab2f-ee4aa96fefae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\MainSystem\MainEngine">
-      <UniqueIdentifier>{d363d3f2-8b0d-4d98-b20d-8210587ec264}</UniqueIdentifier>
     </Filter>
     <Filter Include="ゲームシステム\Ground">
       <UniqueIdentifier>{12d2ba67-d429-4db9-aa2d-c60f1ccf1397}</UniqueIdentifier>
@@ -89,9 +74,6 @@
     <Filter Include="エンジンシステム\Object\3d\NormalMap">
       <UniqueIdentifier>{33098a72-0ba7-4f18-abcc-d65a91016ae6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\MainSystem\Singleton">
-      <UniqueIdentifier>{436617b7-49ce-48ec-902c-d3b0bc7ea860}</UniqueIdentifier>
-    </Filter>
     <Filter Include="エンジンシステム\Object\2d\PostEffect">
       <UniqueIdentifier>{0395157f-cfe5-4ae8-b61c-ca939ad99a27}</UniqueIdentifier>
     </Filter>
@@ -106,12 +88,6 @@
     </Filter>
     <Filter Include="シェーダーファイル\PostEffect">
       <UniqueIdentifier>{bcc09153-9725-4d08-aad7-fe6fcebe4240}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\MainSystem\Input\DirectInput">
-      <UniqueIdentifier>{58311a71-87d7-4957-9612-2c40d99f3fb3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\MainSystem\Input\XInputManager">
-      <UniqueIdentifier>{6ba36846-abfa-4705-a231-337b7198fd22}</UniqueIdentifier>
     </Filter>
     <Filter Include="ゲームシステム\TouchableObject">
       <UniqueIdentifier>{6255b243-2811-4e38-8770-7b4529e36078}</UniqueIdentifier>
@@ -128,13 +104,37 @@
     <Filter Include="シェーダーファイル\DrawLine2d">
       <UniqueIdentifier>{e1ee08c3-3b6d-4994-8504-e70b2931b8f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\MainSystem\ShaderManager">
+    <Filter Include="エンジンシステム\Base">
+      <UniqueIdentifier>{67675b7e-5f68-4193-8d4f-1cc9fe252ed8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Input">
+      <UniqueIdentifier>{c9ef2e81-bfcf-41ca-b3c8-821026159bee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Input\DirectInput">
+      <UniqueIdentifier>{58311a71-87d7-4957-9612-2c40d99f3fb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Input\XInputManager">
+      <UniqueIdentifier>{6ba36846-abfa-4705-a231-337b7198fd22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\DirectXCommon">
+      <UniqueIdentifier>{c4924800-ddb9-4297-b120-7d63cc5ccb07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\WindowApp">
+      <UniqueIdentifier>{c8b9b141-feab-43bc-9dc3-65df95c04218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\MainEngine">
+      <UniqueIdentifier>{d363d3f2-8b0d-4d98-b20d-8210587ec264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Singleton">
+      <UniqueIdentifier>{436617b7-49ce-48ec-902c-d3b0bc7ea860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\ShaderManager">
       <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\MainSystem\FrameRateKeep">
+    <Filter Include="エンジンシステム\Base\FrameRateKeep">
       <UniqueIdentifier>{31f81314-112e-490b-815e-a28a447dffdb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\MainSystem\GraphicsPipelineManager">
+    <Filter Include="エンジンシステム\Base\GraphicsPipelineManager">
       <UniqueIdentifier>{9e796eba-af2b-476b-bf30-138d92a52ee6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -191,22 +191,22 @@
       <Filter>エンジンシステム\Audio</Filter>
     </ClCompile>
     <ClCompile Include="base\ComputeShaderManager.cpp">
-      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
+      <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClCompile>
     <ClCompile Include="base\Csv.cpp">
       <Filter>エンジンシステム\CSV</Filter>
     </ClCompile>
     <ClCompile Include="base\DirectXCommon.cpp">
-      <Filter>エンジンシステム\MainSystem\DirectXCommon</Filter>
+      <Filter>エンジンシステム\Base\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="base\MainEngine.cpp">
-      <Filter>エンジンシステム\MainSystem\MainEngine</Filter>
+      <Filter>エンジンシステム\Base\MainEngine</Filter>
     </ClCompile>
     <ClCompile Include="base\Singleton.cpp">
-      <Filter>エンジンシステム\MainSystem\Singleton</Filter>
+      <Filter>エンジンシステム\Base\Singleton</Filter>
     </ClCompile>
     <ClCompile Include="base\WindowApp.cpp">
-      <Filter>エンジンシステム\MainSystem\WindowApp</Filter>
+      <Filter>エンジンシステム\Base\WindowApp</Filter>
     </ClCompile>
     <ClCompile Include="camera\Camera.cpp">
       <Filter>エンジンシステム\Camera</Filter>
@@ -215,10 +215,10 @@
       <Filter>ゲームシステム\Easing</Filter>
     </ClCompile>
     <ClCompile Include="input\DirectInput.cpp">
-      <Filter>エンジンシステム\MainSystem\Input\DirectInput</Filter>
+      <Filter>エンジンシステム\Base\Input\DirectInput</Filter>
     </ClCompile>
     <ClCompile Include="input\XInputManager.cpp">
-      <Filter>エンジンシステム\MainSystem\Input\XInputManager</Filter>
+      <Filter>エンジンシステム\Base\Input\XInputManager</Filter>
     </ClCompile>
     <ClCompile Include="light\LightGroup.cpp">
       <Filter>エンジンシステム\Light</Filter>
@@ -242,18 +242,18 @@
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
     <ClCompile Include="base\ShaderManager.cpp">
-      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
+      <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClCompile>
     <ClCompile Include="base\FrameRateKeep.cpp">
-      <Filter>エンジンシステム\MainSystem\FrameRateKeep</Filter>
+      <Filter>エンジンシステム\Base\FrameRateKeep</Filter>
     </ClCompile>
     <ClCompile Include="base\GraphicsPipelineManager.cpp">
-      <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
-    </ClCompile>
-    <ClCompile Include="FbxModel.cpp">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+      <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClCompile>
     <ClCompile Include="3d\FbxmManager.cpp">
+      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\FbxModel.cpp">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClCompile>
   </ItemGroup>
@@ -407,25 +407,25 @@
       <Filter>エンジンシステム\Audio</Filter>
     </ClInclude>
     <ClInclude Include="base\ComputeShaderManager.h">
-      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
+      <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClInclude>
     <ClInclude Include="base\Csv.h">
       <Filter>エンジンシステム\CSV</Filter>
     </ClInclude>
     <ClInclude Include="base\DirectXCommon.h">
-      <Filter>エンジンシステム\MainSystem\DirectXCommon</Filter>
+      <Filter>エンジンシステム\Base\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="base\MainEngine.h">
-      <Filter>エンジンシステム\MainSystem\MainEngine</Filter>
+      <Filter>エンジンシステム\Base\MainEngine</Filter>
     </ClInclude>
     <ClInclude Include="base\SafeDelete.h">
-      <Filter>エンジンシステム\MainSystem</Filter>
+      <Filter>エンジンシステム\Base</Filter>
     </ClInclude>
     <ClInclude Include="base\Singleton.h">
-      <Filter>エンジンシステム\MainSystem\Singleton</Filter>
+      <Filter>エンジンシステム\Base\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="base\WindowApp.h">
-      <Filter>エンジンシステム\MainSystem\WindowApp</Filter>
+      <Filter>エンジンシステム\Base\WindowApp</Filter>
     </ClInclude>
     <ClInclude Include="camera\Camera.h">
       <Filter>エンジンシステム\Camera</Filter>
@@ -434,10 +434,10 @@
       <Filter>ゲームシステム\Easing</Filter>
     </ClInclude>
     <ClInclude Include="input\DirectInput.h">
-      <Filter>エンジンシステム\MainSystem\Input\DirectInput</Filter>
+      <Filter>エンジンシステム\Base\Input\DirectInput</Filter>
     </ClInclude>
     <ClInclude Include="input\XInputManager.h">
-      <Filter>エンジンシステム\MainSystem\Input\XInputManager</Filter>
+      <Filter>エンジンシステム\Base\Input\XInputManager</Filter>
     </ClInclude>
     <ClInclude Include="light\SpotLight.h">
       <Filter>エンジンシステム\Light</Filter>
@@ -473,18 +473,18 @@
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
     <ClInclude Include="base\ShaderManager.h">
-      <Filter>エンジンシステム\MainSystem\ShaderManager</Filter>
+      <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClInclude>
     <ClInclude Include="base\FrameRateKeep.h">
-      <Filter>エンジンシステム\MainSystem\FrameRateKeep</Filter>
+      <Filter>エンジンシステム\Base\FrameRateKeep</Filter>
     </ClInclude>
     <ClInclude Include="base\GraphicsPipelineManager.h">
-      <Filter>エンジンシステム\MainSystem\GraphicsPipelineManager</Filter>
-    </ClInclude>
-    <ClInclude Include="FbxModel.h">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+      <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClInclude>
     <ClInclude Include="3d\FbxmManager.h">
+      <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\FbxModel.h">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClInclude>
   </ItemGroup>

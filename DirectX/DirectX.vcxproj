@@ -45,13 +45,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)external\FBX\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)external\imgui\lib\Debug;$(SolutionDir)external\FBX\lib\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)external\FBX\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)external\imgui\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -66,7 +66,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;imgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -86,7 +86,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;imgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -99,6 +99,7 @@
     <ClCompile Include="3d\CollisionPrimitive.cpp" />
     <ClCompile Include="3d\DrawLine3D.cpp" />
     <ClCompile Include="3d\FbxmManager.cpp" />
+    <ClCompile Include="3d\FbxModel.cpp" />
     <ClCompile Include="3d\Material.cpp" />
     <ClCompile Include="3d\Mesh.cpp" />
     <ClCompile Include="3d\MeshCollider.cpp" />
@@ -118,7 +119,6 @@
     <ClCompile Include="base\WindowApp.cpp" />
     <ClCompile Include="camera\Camera.cpp" />
     <ClCompile Include="easing\Easing.cpp" />
-    <ClCompile Include="FbxModel.cpp" />
     <ClCompile Include="input\DirectInput.cpp" />
     <ClCompile Include="input\XInputManager.cpp" />
     <ClCompile Include="light\LightGroup.cpp" />
@@ -267,6 +267,7 @@
     <ClInclude Include="3d\CollisionTypes.h" />
     <ClInclude Include="3d\DrawLine3D.h" />
     <ClInclude Include="3d\FbxmManager.h" />
+    <ClInclude Include="3d\FbxModel.h" />
     <ClInclude Include="3d\Material.h" />
     <ClInclude Include="3d\Mesh.h" />
     <ClInclude Include="3d\MeshCollider.h" />
@@ -289,7 +290,6 @@
     <ClInclude Include="base\WindowApp.h" />
     <ClInclude Include="camera\Camera.h" />
     <ClInclude Include="easing\Easing.h" />
-    <ClInclude Include="FbxModel.h" />
     <ClInclude Include="input\DirectInput.h" />
     <ClInclude Include="input\XInputManager.h" />
     <ClInclude Include="light\CircleShadow.h" />

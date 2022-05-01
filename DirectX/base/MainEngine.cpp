@@ -11,7 +11,6 @@
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
-#include <chrono>
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -90,13 +89,16 @@ void MainEngine::Draw()
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
 
 	//描画前設定
-	dXCommon->BeforeDraw();
+	dXCommon->PreDraw();
+
+	//imgui表示
+	scene->ImguiDraw();
 
 	//ポストエフェクト描画
 	postEffect->Draw(dXCommon->GetCmdList());
 
 	//コマンド実行
-	dXCommon->AfterDraw();
+	dXCommon->PostDraw();
 }
 
 void MainEngine::debugNum(float x, float y, float z)

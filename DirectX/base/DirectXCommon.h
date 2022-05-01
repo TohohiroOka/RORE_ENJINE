@@ -1,8 +1,11 @@
 #pragma once
+#include <Windows.h>
+#include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <d3dx12.h>
 #include <cstdlib>
+#include <imgui.h>
 
 class DirectXCommon
 {
@@ -16,6 +19,12 @@ private://メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
+	/// <summary>
+	/// imgui初期化
+	/// </summary>
+	/// <returns>成否</returns>
+	void InitImgui();
 
 public://静的メンバ関数
 
@@ -46,12 +55,12 @@ public://メンバ関数
 	/// <summary>
 	/// 描画前設定
 	/// </summary>
-	void BeforeDraw();
+	void PreDraw();
 
 	/// <summary>
 	/// 描画後設定
 	/// </summary>
-	void AfterDraw();
+	void PostDraw();
 
 	/// <summary>
 	/// デバイスのgetter
@@ -93,4 +102,7 @@ private://メンバ変数
 	ComPtr<ID3D12Fence> fence;
 	//コマンドリスト完了までのカウント
 	UINT64 fenceVal = 0;
+	//imgui用ヒープ
+	ComPtr<ID3D12DescriptorHeap> imguiHeap;
+
 };

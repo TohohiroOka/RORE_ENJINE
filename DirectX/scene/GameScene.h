@@ -72,6 +72,11 @@ public:// メンバ関数
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
+	/// imguiの表示
+	/// </summary>
+	void ImguiDraw();
+
+	/// <summary>
 	/// コンピュートシェーダーからの計算結果取得
 	/// </summary>
 	void GetConstbufferNum();
@@ -131,4 +136,6 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
+
+	float aaa[3] = { 0,0,0 };
 };
