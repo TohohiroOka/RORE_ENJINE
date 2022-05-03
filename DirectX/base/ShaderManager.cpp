@@ -77,59 +77,56 @@ void ShaderManager::LoadShader()
 	LPCSTR csModel = "cs_5_0";
 
 	//Objシェーダー
-	obj= std::make_unique<BLOB_OBJECT>();
-	obj->vs = CompileShader(L"ObjVS.hlsl", vsModel);
-	obj->ps = CompileShader(L"ObjPS.hlsl", psModel);
-
+	shaderObjectVS["OBJ"] = CompileShader(L"ObjVS.hlsl", vsModel);
+	shaderObjectPS["OBJ"] = CompileShader(L"ObjPS.hlsl", psModel);
 	//Fbxシェーダー
-	fbx = std::make_unique<BLOB_OBJECT>();
-	fbx->vs = CompileShader(L"FbxVS.hlsl", vsModel);
-	fbx->ps = CompileShader(L"FbxPS.hlsl", psModel);
-
+	shaderObjectVS["FBX"] = CompileShader(L"FbxVS.hlsl", vsModel);
+	shaderObjectPS["FBX"] = CompileShader(L"FbxPS.hlsl", psModel);
 	//DrawLine3dシェーダー
-	drawLine3d = std::make_unique<BLOB_OBJECT>();
-	drawLine3d->vs = CompileShader(L"DrawLine3DVS.hlsl", vsModel);
-	drawLine3d->ps = CompileShader(L"DrawLine3DPS.hlsl", psModel);
-
+	shaderObjectVS["DRAW_LINE_3D"] = CompileShader(L"DrawLine3DVS.hlsl", vsModel);
+	shaderObjectPS["DRAW_LINE_3D"] = CompileShader(L"DrawLine3DPS.hlsl", psModel);
 	//NormalMapシェーダー
-	normalMap = std::make_unique<BLOB_OBJECT>();
-	normalMap->vs = CompileShader(L"NormalMapVS.hlsl", vsModel);
-	normalMap->ps = CompileShader(L"NormalMapPS.hlsl", psModel);
-
+	shaderObjectVS["NORMAL_MAP"] = CompileShader(L"NormalMapVS.hlsl", vsModel);
+	shaderObjectPS["NORMAL_MAP"] = CompileShader(L"NormalMapPS.hlsl", psModel);
 	//Spriteシェーダー
-	sprite = std::make_unique<BLOB_OBJECT>();
-	sprite->vs = CompileShader(L"SpriteVS.hlsl", vsModel);
-	sprite->ps = CompileShader(L"SpritePS.hlsl", psModel);
-
+	shaderObjectVS["SPRITE"] = CompileShader(L"SpriteVS.hlsl", vsModel);
+	shaderObjectPS["SPRITE"] = CompileShader(L"SpritePS.hlsl", psModel);
 	//DrawLine2dシェーダー
-	drawLine2d = std::make_unique<BLOB_OBJECT>();
-	drawLine2d->vs = CompileShader(L"DrawLine2DVS.hlsl", vsModel);
-	drawLine2d->ps = CompileShader(L"DrawLine2DPS.hlsl", psModel);
-
+	shaderObjectVS["DRAW_LINE_2D"] = CompileShader(L"DrawLine2DVS.hlsl", vsModel);
+	shaderObjectPS["DRAW_LINE_2D"] = CompileShader(L"DrawLine2DPS.hlsl", psModel);
 	//PostEffectシェーダー
-	postEffect = std::make_unique<BLOB_OBJECT>();
-	postEffect->vs = CompileShader(L"PostEffectVS.hlsl", vsModel);
-	postEffect->ps = CompileShader(L"PostEffectPS.hlsl", psModel);
-
+	shaderObjectVS["POST_EFFECT"] = CompileShader(L"PostEffectVS.hlsl", vsModel);
+	shaderObjectPS["POST_EFFECT"] = CompileShader(L"PostEffectPS.hlsl", psModel);
 	//Particleシェーダー
-	particle = std::make_unique<BLOB_OBJECT>();
-	particle->vs = CompileShader(L"ParticleVS.hlsl", vsModel);
-	particle->ps = CompileShader(L"ParticlePS.hlsl", psModel);
-	particle->gs = CompileShader(L"ParticleGS.hlsl", gsModel);
-
-	//coシェーダー
-	Compute = std::make_unique<BLOB_OBJECT>();
-	Compute->cs = CompileShader(L"BasicCS.hlsl", csModel);
+	shaderObjectVS["PARTICLE"] = CompileShader(L"ParticleVS.hlsl", vsModel);
+	shaderObjectPS["PARTICLE"] = CompileShader(L"ParticlePS.hlsl", psModel);
+	shaderObjectGS["PARTICLE"] = CompileShader(L"ParticleGS.hlsl", gsModel);
 }
 
 void ShaderManager::Finalize()
 {
-	obj.reset();
-	sprite.reset();
-	fbx.reset();
-	drawLine2d.reset();
-	drawLine3d.reset();
-	postEffect.reset();
-	normalMap.reset();
-	particle.reset();
+	for (auto shader = shaderObjectVS.begin(); shader != shaderObjectVS.end(); shader++)
+	{
+		shader->second.Reset();
+	}
+	shaderObjectVS.clear();
+
+	for (auto shader = shaderObjectPS.begin(); shader != shaderObjectPS.end(); shader++)
+	{
+		shader->second.Reset();
+	}
+	shaderObjectPS.clear();
+
+	for (auto shader = shaderObjectGS.begin(); shader != shaderObjectGS.end(); shader++)
+	{
+		shader->second.Reset();
+	}
+	shaderObjectGS.clear();
+
+	for (auto shader = shaderObjectCS.begin(); shader != shaderObjectCS.end(); shader++)
+	{
+		shader->second.Reset();
+	}
+	shaderObjectCS.clear();
+
 }

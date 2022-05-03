@@ -47,6 +47,8 @@ bool Player::Initialize()
 	SetOutlineWidth(0.002f);
 	SetOutlineColor({ 1,1,1,1 });
 
+	SetPosition({ 0,0,-100 });
+
 	//SetToon(true);
 	SetScale({ 2,2,2 });
 
@@ -57,29 +59,31 @@ void Player::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	// A,Dで旋回
+	//player移動
+	float Pspeed = 2.0f;
+
+	//ラジアン変換
+	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
+	float radiusUD = XMConvertToRadians(cameraAngle);
+
+	//右入力
 	if (input->PushKey(DIK_A)) {
-		rotation.y -= 2.0f;
+		position.x += Pspeed * cosf(radiusLR);
+		position.z += Pspeed * sinf(radiusLR);
 	}
-	else if (input->PushKey(DIK_D)) {
-		rotation.y += 2.0f;
+	//左入力
+	if (input->PushKey(DIK_D)) {
+		position.x -= Pspeed * cosf(radiusLR);
+		position.z -= Pspeed * sinf(radiusLR);
 	}
-
-	// 移動ベクトルをY軸周りの角度で回転
-	XMVECTOR move = { 0,0,0.5f,0 };
-	XMMATRIX matRot = XMMatrixRotationY(XMConvertToRadians(rotation.y));
-	move = XMVector3TransformNormal(move, matRot);
-
-	// 向いている方向に移動
+	if (input->PushKey(DIK_W)) {
+		position.x += Pspeed * cosf(radiusUD);
+		position.z += Pspeed * sinf(radiusUD);
+	}
+	//左入力
 	if (input->PushKey(DIK_S)) {
-		position.x -= move.m128_f32[0];
-		position.y -= move.m128_f32[1];
-		position.z -= move.m128_f32[2];
-	}
-	else if (input->PushKey(DIK_W)) {
-		position.x += move.m128_f32[0];
-		position.y += move.m128_f32[1];
-		position.z += move.m128_f32[2];
+		position.x -= Pspeed * cosf(radiusUD);
+		position.z -= Pspeed * sinf(radiusUD);
 	}
 
 	// ワールド行列更新

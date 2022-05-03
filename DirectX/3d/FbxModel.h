@@ -16,6 +16,7 @@ private: // エイリアス
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
+	using XMVECTOR = DirectX::XMVECTOR;
 
 public://固定値
 
@@ -44,15 +45,15 @@ private://構造体宣言
 		//名前
 		std::string name;
 		//ローカルスケール
-		DirectX::XMVECTOR scaling = { 1.0f,1.0f,1.0f,0.0f };
+		XMVECTOR scaling = { 1.0f,1.0f,1.0f,0.0f };
 		//ローカル回転
-		DirectX::XMVECTOR rotation = { 0.0f,0.0f,0.0f,0.0f };
+		XMVECTOR rotation = { 0.0f,0.0f,0.0f,0.0f };
 		//ローカル移動
-		DirectX::XMVECTOR translation = { 0.0f,0.0f,0.0f,1.0f };
+		XMVECTOR translation = { 0.0f,0.0f,0.0f,1.0f };
 		//ローカル変形行列
-		DirectX::XMMATRIX transform;
+		XMMATRIX transform = {};
 		//グローバル変形行列
-		DirectX::XMMATRIX globalTransform;
+		XMMATRIX globalTransform = {};
 		//親ノード
 		Node* parent = nullptr;
 	};
@@ -80,31 +81,28 @@ private://構造体宣言
 	struct Material
 	{
 		std::string name;//マテリアル名
-		XMFLOAT3 ambient;//アンビエント影響度
-		XMFLOAT3 diffuse;//ディフューズ影響度
-		XMFLOAT3 emissive;// エミッシブ
-		XMFLOAT3 bump;// バンプ
-		XMFLOAT3 specular;//スペキュラ影響度
-		float alpha;//アルファ
-		std::string textureFilename;//テクスチャファイル名
-		//コンストラクタ
-		Material() {
-			ambient = { 0.3f,0.3f,0.3f };
-			diffuse = { 0.3f,0.3f,0.3f };
-			specular = { 0.3f,0.3f,0.3f };
-			alpha = 1.0f;
-		}
+		XMFLOAT3 ambient = {};//アンビエント影響度
+		XMFLOAT3 diffuse = {};//ディフューズ影響度
+		float alpha = 0;//アルファ
+		XMFLOAT3 baseColor = { 1,1,1 };//ベースカラ―
+		float metalness = 0.0f;//金属度(0 or 1)
+		float specular = 0.5f;//鏡面反射度
+		float roughness = 0.0f;//粗さ
 	};
 
 	// 定数バッファ用データ構造体B1
 	struct ConstBufferDataB1
 	{
-		XMFLOAT3 ambient; // アンビエント係数
+		XMFLOAT3 baseColor;//ベースカラ―
 		float pad1; // パディング
-		XMFLOAT3 diffuse; // ディフューズ係数
+		XMFLOAT3 ambient; // アンビエント係数
 		float pad2; // パディング
-		XMFLOAT3 specular; // スペキュラー係数
+		XMFLOAT3 diffuse; // ディフューズ係数
+		float metalness; // 金属度(0 or 1)
+		float specular; // 鏡面反射度
+		float roughness; // 粗さ
 		float alpha;	// アルファ
+		//float pad[3];//パディング
 	};
 
 	//スキン用定数バッファデータ
@@ -117,10 +115,10 @@ private://構造体宣言
 	struct FbxUpdate
 	{
 		bool isAnimation = false;//アニメーション可能か
-		FbxScene* fbxScene;
-		FbxTime startTime;//フレームのスタート
-		FbxTime stopTime;;//フレームの最後
-		FbxTime nowTime;//現在の進行フレーム
+		FbxScene* fbxScene = nullptr;
+		FbxTime startTime = {};//フレームのスタート
+		FbxTime stopTime = {};//フレームの最後
+		FbxTime nowTime = {};//現在の進行フレーム
 	};
 
 	//Fbxデータ
@@ -267,13 +265,13 @@ private://静的メンバ変数
 	static ComPtr<ID3D12DescriptorHeap>descHeap;
 	//テクスチャリソース(テクスチャバッファ)の配列
 	static ComPtr<ID3D12Resource>texBuffer[textureNum];
+	//Fbxのデータ
+	std::unique_ptr<Data> data = nullptr;
 
 public://メンバ変数
 
 	//モデル名
 	std::string name;
-	//Fbxのデータ
-	std::unique_ptr<Data> data = nullptr;
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
 	//定数バッファ
@@ -286,7 +284,54 @@ public://メンバ変数
 	ComPtr<ID3D12Resource> indexBuff = nullptr;
 	//インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView;
-	//アニメーションするか
-	bool isAnimation = true;
-};
+	//アニメーション可能か
+	bool isAnimation = false;
+	//スキニングを行うか
+	bool isSkinning = true;
 
+public:
+
+	/// <summary>
+	/// ベースカラー取得
+	/// </summary>
+	/// <returns>ベースカラー</returns>
+	const XMFLOAT3& GetBaseColor() { return data->material.baseColor; }
+
+	/// <summary>
+	/// 金属度取得
+	/// </summary>
+	/// <returns>金属度</returns>
+	float GetMetalness() { return data->material.metalness; }
+
+	/// <summary>
+	/// 鏡面反射度取得
+	/// </summary>
+	/// <returns>金属度</returns>
+	float GetSpecular() { return data->material.specular; }
+
+	/// <summary>
+	/// 金属度取得
+	/// </summary>
+	/// <returns>金属度</returns>
+	float GetRoughness() { return data->material.roughness; }
+
+	/// <summary>
+	/// ベースカラーセット
+	/// </summary>
+	void SetBaseColor(const XMFLOAT3& baseColor) { data->material.baseColor = baseColor; }
+
+	/// <summary>
+	/// 金属度セット
+	/// </summary>
+	void SetMetalness(float metalness) { data->material.metalness = metalness; }
+
+	/// <summary>
+	/// 鏡面反射度セット
+	/// </summary>
+	void SetSpecular(float specular) { data->material.specular = specular; }
+
+	/// <summary>
+	/// 金属度セット
+	/// </summary>
+	void SetRoughness(float roughness) { data->material.roughness = roughness; }
+};

@@ -96,18 +96,22 @@ public: // メンバ関数
 	inline const XMFLOAT3& GetUp() { return up; }
 
 	/// <summary>
-	/// 追従オブジェクトの座標セット
+	/// 視点座標セット
 	/// </summary>
-	/// <param name="position">追従オブジェクトの座標</param>
-	void SetPosition(XMFLOAT3 position) { this->position = position; }
+	/// <param name="eye">視点座標</param>
+	void SetEye(XMFLOAT3 eye) { this->eye = eye; }
+
+	/// <summary>
+	/// 注視点座標セット
+	/// </summary>
+	/// <param name="position">注視点座標</param>
+	void SetTarget(XMFLOAT3 target) { this->target = target; }
 
 protected: // メンバ変数
 	// ビュー行列
 	XMMATRIX matView = DirectX::XMMatrixIdentity();
 	// 射影行列
 	XMMATRIX matProjection = DirectX::XMMatrixIdentity();
-	//追従オブジェクト座標
-	XMFLOAT3 position = {};
 	// 視点座標
 	XMFLOAT3 eye = { 0, 0, -20 };
 	// 注視点座標

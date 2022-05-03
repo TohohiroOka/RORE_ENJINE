@@ -47,6 +47,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)external\imgui\lib\Debug;$(SolutionDir)external\FBX\lib\Debug;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

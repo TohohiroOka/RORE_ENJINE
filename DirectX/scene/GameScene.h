@@ -83,6 +83,11 @@ public:// メンバ関数
 
 private:// メンバ変数
 
+	//カメラの回転
+	float cameraAngle = 100;
+	//カメラの高さ
+	float cameraY = 50.0f;
+
 	//音
 	std::unique_ptr<Audio> audio = nullptr;
 
@@ -116,6 +121,8 @@ private:// メンバ変数
 
 	//FbxModel
 	std::unique_ptr<FbxModel> danceModel = nullptr;
+	std::unique_ptr<FbxModel> SpherePBRModel = nullptr;
+	std::unique_ptr<FbxModel> SpiralPBRModel = nullptr;
 
 	//Fbx
 	std::unique_ptr<FbxmManager> anm = nullptr;
@@ -136,6 +143,4 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
-
-	float aaa[3] = { 0,0,0 };
 };

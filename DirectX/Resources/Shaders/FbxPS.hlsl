@@ -3,6 +3,10 @@
 Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
+static const float PI = 3.141592654f;
+//反射点の法線ベクトル
+static float3 N;
+
 /// <summary>
 /// ブルームのセット
 /// </summary>
@@ -14,9 +18,39 @@ float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color);
 float4 SetToon(float4 shadecolor);
 
 /// <summary>
-/// アウトラインのセット
+/// 双方向反射分布関数
 /// </summary>
-float4 SetOutline(float2 uv, float outlineWidth);
+float3 BRDF(float3 L, float3 V);
+
+/// <summary>
+/// フルネルの近似値(float)
+/// </summary>
+float SchlickFresnel(float f0, float f90, float cosine);
+
+/// <summary>
+/// 鏡面反射の計算
+/// </summary>
+float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH);
+
+/// <summary>
+/// D項
+/// </summary>
+float DistributionGGX(float alpha, float NdotH);
+
+/// <summary>
+/// フルネルの近似値(float3)
+/// </summary>
+float3 SchlickFresnel3(float3 f0, float3 f90, float cosine);
+
+/// <summary>
+/// ディズニーのフルネル計算
+/// </summary>
+float3 DisneyFresnel(float LdotH);
+
+/// <summary>
+/// UE4のSmithモデル
+/// </summary>
+float GeometricSmith(float cosine);
 
 PSOutput main(VSOutput input)
 {
@@ -37,6 +71,11 @@ PSOutput main(VSOutput input)
 	// シェーディングによる色
 	float4 shadecolor = float4(ambientColor * ambient, m_alpha);
 
+	N = input.normal;
+	//出力色
+	float3 finalRGB = float3(0, 0, 0);
+
+
 	//平行光源
 	for (int i = 0; i < DIRLIGHT_NUM; i++)
 	{
@@ -54,6 +93,8 @@ PSOutput main(VSOutput input)
 
 			// 全て加算する
 			shadecolor.rgb += (diffuse + specular) * dirLights[i].lightcolor;
+
+			finalRGB += BRDF(dirLights[i].lightv, eyedir) * dirLights[i].lightcolor;
 		}
 	}
 
@@ -165,7 +206,7 @@ PSOutput main(VSOutput input)
 
 	// シェーディングによる色で描画
 	float4 mainColor = shadecolor * texcolor * color;
-	output.target0 = float4(mainColor.rgb, color.w);
+	output.target0 = float4(finalRGB.rgb, color.w);
 	output.target1 = bloom;
 	output.target2 = texcolor * color * isOutline;
 	return output;
@@ -208,4 +249,107 @@ float4 SetToon(float4 shadecolor)
 
 	//現在の色
 	return float4(bright + dark + intermediate, 1);
+}
+
+float3 BRDF(float3 L, float3 V)
+{
+	//法線とライト方向の内積
+	float NdotL = dot(N, L);
+	//法線とカメラ方向の内積
+	float NdotV = dot(N, V);
+	//どちらかが90°以上なら黒を返す
+	if (NdotL < 0 || NdotV < 0) { return float3(0, 0, 0); }
+
+	//ライト方向とカメラ方向の中間
+	float3 H = normalize(L + V);
+	//法線とハーフベクトルの内積
+	float NdotH = dot(N, H);
+	//ライトとハーフベクトルの内積
+	float LdotH = dot(L, H);
+
+	//拡散反射率
+	float diffuseReflectance = 1.0f / PI;
+
+	//90度の場合のラフネス減衰処理
+	float energyBias = 0.5f * m_roughness;
+	//入射角が90度の場合の拡散反射率
+	float Fd90 = energyBias + 2.0f * LdotH * LdotH * m_roughness;
+	//入っていく時の拡散反射率
+	float FL = SchlickFresnel(1.0f, Fd90, NdotL);
+	//出ていく時の拡散反射率
+	float FV = SchlickFresnel(1.0f, Fd90, NdotV);
+	//最終的な反射率にラフネスによる減衰を追加
+	float energyFactor = lerp(1.0f, 1.0f / 1.51f, m_roughness);
+	//入って出ていくまでの拡散反射率
+	float Fd = FL * FV * energyFactor;
+
+	//拡散反射光
+	float3 diffuseColor = diffuseReflectance * Fd * m_baseColor * (1 - m_metalness);
+
+	//鏡面反射項
+	float specularColor = CookTorranceSpecular(NdotL, NdotV, NdotH, LdotH);
+
+	return diffuseColor + specularColor;
+}
+
+float SchlickFresnel(float f0, float f90, float cosine)
+{
+	float m = saturate(1 - cosine);
+	float m2 = m * m;
+	float m5 = m2 * m2 * m;
+	return lerp(f0, f90, m5);
+}
+
+float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
+{
+	//D項
+	float Ds = DistributionGGX(m_roughness * m_roughness, NdotH);
+	//F項(分布 : Distribution)
+	float3 Fs = DisneyFresnel(LdotH);
+	//G項(幾何減数 : Geometry attenuation)
+	float Gs = GeometricSmith(NdotL) * GeometricSmith(NdotV);
+	//m項(分母)
+	float m = 4.0f * NdotL * NdotV;
+
+	//合成して鏡面反射の色を返す
+	return Ds * Fs * Gs / m;
+}
+
+float DistributionGGX(float alpha, float NdotH)
+{
+	float alpha2 = alpha * alpha;
+	float t = NdotH * NdotH * (alpha2 - 1.0f) + 1.0f;
+	return alpha2 / (PI * t * t);
+}
+
+float3 SchlickFresnel3(float3 f0, float3 f90, float cosine)
+{
+	float m = saturate(1 - cosine);
+	float m2 = m * m;
+	float m5 = m2 * m2 * m;
+	return lerp(f0, f90, m5);
+}
+
+float3 DisneyFresnel(float LdotH)
+{
+	//F項(フルネル : Fresnel)
+	//輝度
+	float liminance = 0.3f * m_baseColor.r + 0.6f * m_baseColor.g + 0.1f * m_baseColor.b;
+	//色合い
+	float3 tintColor = m_baseColor / liminance;
+	//非金属の鏡面反射色の計算
+	float3 nonMetarlColor = m_specular * 0.08f * tintColor;
+	//metalnessによる色補間 金属の場合はベースカラー
+	float3 specularColor = lerp(nonMetarlColor, m_baseColor, m_metalness);
+
+	//NdptHの割合でSchlickFresnel補間
+	return SchlickFresnel3(specularColor, float3(1, 1, 1), LdotH);
+}
+
+float GeometricSmith(float cosine)
+{
+	float k = (m_roughness + 1.0f);
+	k = k * k / 8.0f;
+
+	return cosine / (cosine * (1.0f - k) + k);
 }

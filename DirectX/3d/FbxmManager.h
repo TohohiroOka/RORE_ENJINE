@@ -25,6 +25,7 @@ private://構造体宣言
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
+		unsigned int isSkinning;//スキニングを行うか
 		unsigned int isBloom;//ブルームの有無
 		unsigned int isToon;//トゥーンの有無
 		unsigned int isOutline;//アウトラインの有無
@@ -172,6 +173,12 @@ public:
 	/// </summary>
 	/// <returns>大きさ</returns>
 	const XMFLOAT3& GetScale() { return scale; }
+
+	/// <summary>
+	/// モデルのセット
+	/// </summary>
+	/// <param name="model">モデル</param>
+	FbxModel* GetModel() { return model; }
 
 	/// <summary>
 	/// ワールド行列の取得

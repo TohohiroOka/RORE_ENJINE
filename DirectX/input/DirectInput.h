@@ -119,7 +119,7 @@ private: //メンバ変数
 	//前回の全キーの状態
 	BYTE keyPre[256] = {};
 	//マウスのデバイス
-	ComPtr<IDirectInputDevice8> devmouse;
+	ComPtr<IDirectInputDevice8> devMouse;
 	//マウスの状態
 	DIMOUSESTATE mouse;
 	//前回のマウスの状態

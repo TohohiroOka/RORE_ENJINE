@@ -22,9 +22,17 @@ public:
 	/// </summary>
 	void Update() override;
 
+	/// <summary>
+	/// カメラの角度セット
+	/// </summary>
+	/// <param name="cameraAngle"></param>
+	void SetCameraAngle(float cameraAngle) { this->cameraAngle = cameraAngle; }
+
 private:
 	bool onGround = true;
 	// 落下ベクトル
 	DirectX::XMVECTOR fallV;
+	//カメラ角度
+	float cameraAngle;
 };
 

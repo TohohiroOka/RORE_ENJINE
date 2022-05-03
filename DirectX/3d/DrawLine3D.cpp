@@ -38,7 +38,7 @@ void DrawLine3D::CreateGraphicsPipeline()
 	};
 
 	pipeline = GraphicsPipelineManager::Create("DrawLine3d",
-		GraphicsPipelineManager::OBJECT_KINDS::DRAW_LAIN_3D, inputLayout, _countof(inputLayout));
+		GraphicsPipelineManager::OBJECT_KINDS::DRAW_LINE_3D, inputLayout, _countof(inputLayout));
 }
 
 std::unique_ptr<DrawLine3D> DrawLine3D::Create(UINT LineNum)

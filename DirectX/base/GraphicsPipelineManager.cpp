@@ -135,8 +135,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	//Obj
 	if (objectKind == OBJECT_KINDS::OBJ)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->obj->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->obj->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["OBJ"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["OBJ"].Get());
 
 		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
 		gpipeline.BlendState.RenderTarget[1] = blenddesc;
@@ -149,8 +149,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	//Fbx
 	else if (objectKind == OBJECT_KINDS::FBX)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->fbx->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->fbx->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["FBX"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["FBX"].Get());
 
 		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
 		gpipeline.BlendState.RenderTarget[1] = blenddesc;
@@ -161,22 +161,22 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
 	}
 	//DrawLine3d
-	else if (objectKind == OBJECT_KINDS::DRAW_LAIN_3D)
+	else if (objectKind == OBJECT_KINDS::DRAW_LINE_3D)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->drawLine3d->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->drawLine3d->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["DRAW_LINE_3D"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["DRAW_LINE_3D"].Get());
 	}
 	//NormalMap
 	else if (objectKind == OBJECT_KINDS::NORMAL_MAP)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->normalMap->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->normalMap->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["NORMAL_MAP"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["NORMAL_MAP"].Get());
 	}
 	//Sprite
 	else if (objectKind == OBJECT_KINDS::SPRITE)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->sprite->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->sprite->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["SPRITE"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["SPRITE"].Get());
 
 		//常に三角形描画
 		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -188,10 +188,10 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		gpipeline.BlendState.RenderTarget[0] = blenddesc;
 	}
 	//DrawLine2d
-	else if (objectKind == OBJECT_KINDS::DRAW_LAIN_2D)
+	else if (objectKind == OBJECT_KINDS::DRAW_LINE_2D)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->drawLine2d->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->drawLine2d->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["DRAW_LINE_3D"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["DRAW_LINE_3D"].Get());
 
 		//常に三角形描画
 		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -205,8 +205,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	//PostEffect
 	else if (objectKind == OBJECT_KINDS::POST_EFFECT)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->postEffect->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->postEffect->ps.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["POST_EFFECT"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["POST_EFFECT"].Get());
 
 		//常に三角形描画
 		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -220,9 +220,9 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	//Particle
 	else if (objectKind == OBJECT_KINDS::PARTICLE)
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->particle->vs.Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->particle->ps.Get());
-		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shaderManager->particle->gs.Get());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["PARTICLE"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["PARTICLE"].Get());
+		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectGS["PARTICLE"].Get());
 
 		gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		// 加算ブレンディング
@@ -291,7 +291,7 @@ void GraphicsPipelineManager::CreateRootSignature()
 		rootparams[4].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
 	}
 	//DrawLine3d
-	else if (objectKind == OBJECT_KINDS::DRAW_LAIN_3D)
+	else if (objectKind == OBJECT_KINDS::DRAW_LINE_3D)
 	{
 		// ルートパラメータ
 		rootparams.resize(2);
@@ -333,7 +333,7 @@ void GraphicsPipelineManager::CreateRootSignature()
 		samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
 	}
 	//DrawLine2d
-	else if (objectKind == OBJECT_KINDS::DRAW_LAIN_2D)
+	else if (objectKind == OBJECT_KINDS::DRAW_LINE_2D)
 	{
 		// ルートパラメータ
 		rootparams.resize(2);

@@ -4,9 +4,9 @@
 #include "XInputManager.h"
 #include "DebugText.h"
 #include "Camera.h"
+
 #include <imgui.h>
 #include <iomanip>
-
 #include <cassert>
 #include <sstream>
 #include <iomanip>
@@ -32,11 +32,15 @@ void GameScene::Initialize()
 
 	//ライト
 	light = LightGroup::Create();
-	//light->DefaultLightSetting();
-	light->SetPointLightActive(0, true);
-	light->SetPointLightPos(0, { -100,0,-100 });
-	light->SetPointLightColor(0, { 1,1,1 });
-	light->SetPointLightAtten(0, { 0.001f,0.00023f,0.000001f });
+	//light->SetDirLightActive(0, true);
+	//light->SetDirLightColor(0, { 1,1,1 });
+	//light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
+	light->DefaultLightSetting();
+	//light->SetPointLightActive(0, true);
+	//light->SetPointLightPos(0, { -100,0,-100 });
+	//light->SetPointLightColor(0, { 1,1,1 });
+	//light->SetPointLightAtten(0, { 0.001f,0.00023f,0.000001f });
+
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());
 
@@ -63,7 +67,7 @@ void GameScene::Initialize()
 	BLOCK = std::move(Tobject3d);
 
 	//NormalMapテクスチャの読み込み
-	tex[0] = NormalMap::LoadTexture(L"Resources/white1x1.png");
+	tex[0] = NormalMap::LoadTexture(L"Resources/SubTexture/white1x1.png");
 	tex[1] = NormalMap::LoadTexture(L"Resources/wN1.jpg");
 	tex[2] = NormalMap::LoadTexture(L"Resources/pN2.png");
 
@@ -77,13 +81,15 @@ void GameScene::Initialize()
 
 	//Fbxモデルの読み込み
 	danceModel = FbxModel::Create("uma");
+	SpherePBRModel = FbxModel::Create("SpherePBR");
+	SpiralPBRModel = FbxModel::Create("SpiralPBR");
 
 	//Fbxモデルオブジェクトの生成
-	anm = FbxmManager::Create(danceModel.get());
-	anm->SetScale({ 10,10,10 });
-	anm->SetAnimation(true);
-	anm->SetOutline(true);
-	anm->SetToon(true);
+	anm = FbxmManager::Create(SpiralPBRModel.get());
+	anm->SetPosition({ 0,30,0 });
+	anm->SetScale({ 15,15,15 });
+	//anm->SetOutline(true);
+	//anm->SetToon(true);
 
 	//パーティクル用テクスチャの読み込み
 	ParticleManager::LoadTexture(0, L"Resources/particle/effect1.png");
@@ -111,6 +117,11 @@ void GameScene::Update(Camera* camera)
 	DirectInput* input = DirectInput::GetInstance();
 	XInputManager* xinput = XInputManager::GetInstance();
 
+	if (input->PushKey(DIK_LEFT)) { cameraAngle++; }
+	if (input->PushKey(DIK_RIGHT)) { cameraAngle--; }
+	if (input->PushKey(DIK_UP)) { cameraY++; }
+	if (input->PushKey(DIK_DOWN)) { cameraY--; }
+
 	//カメラのセット
 	Object3d::SetCamera(camera);
 	NormalMap::SetCamera(camera);
@@ -119,6 +130,7 @@ void GameScene::Update(Camera* camera)
 	ParticleManager::SetCamera(camera);
 
 	//Obj
+	PLAYER->SetCameraAngle(cameraAngle);
 	PLAYER->Update();
 	GROUND->Update();
 	BLOCK->Update();
@@ -140,7 +152,7 @@ void GameScene::Update(Camera* camera)
 	anm->Update();
 
 	//パーティクル
-	emit->InEmitter(50, 30, { (float)(rand() % 5)-20,0,(float)(rand() % 5) }, { 0,2,0 },
+	emit->InEmitter(50, 30, { (float)(rand() % 5)-100,0,(float)(rand() % 5) }, { 0,2,0 },
 		{ 0,0,0 }, 50, 1, { 1,1,1,1 }, { 0,0,0,1 });
 
 	//ライト
@@ -170,8 +182,12 @@ void GameScene::Update(Camera* camera)
 	//line3d->Update();
 
 	//カメラ更新
-	camera->SetPosition(PLAYER->GetPosition());
-	camera->TpsCamera({ 0,50,-100 });
+	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
+	const int range = 50.0f;
+	XMFLOAT3 cameraPos = PLAYER->GetPosition();
+	cameraPos.y += 40.0f;
+	camera->SetEye(cameraPos);
+	camera->SetTarget({ cosf(cameraRadius) * range + cameraPos.x,cameraY,sinf(cameraRadius) * range + cameraPos.z });
 	camera->Update();
 
 	input = nullptr;
@@ -224,11 +240,31 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 
 void GameScene::ImguiDraw()
 {
-	ImGui::Begin("Light");
+	float baseColor[3];//ベースカラ―
+	float metalness;//金属度(0 or 1)
+	float specular;//鏡面反射度
+	float roughness;//粗さ
+
+	baseColor[0]= anm->GetModel()->GetBaseColor().x;
+	baseColor[1] = anm->GetModel()->GetBaseColor().y;
+	baseColor[2] = anm->GetModel()->GetBaseColor().z;
+	metalness = anm->GetModel()->GetMetalness();
+	specular = anm->GetModel()->GetSpecular();
+	roughness = anm->GetModel()->GetRoughness();
+
+	ImGui::Begin("Material");
 	ImGui::SetWindowPos(ImVec2(0, 0));
-	ImGui::SetWindowSize(ImVec2(500, 200));
-	ImGui::InputFloat("aaa", aaa);
+	ImGui::SetWindowSize(ImVec2(300, 130));
+	ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
+	ImGui::SliderFloat("metalness", &metalness, 0, 1);
+	ImGui::SliderFloat("specular", &specular, 0, 1);
+	ImGui::SliderFloat("roughness", &roughness, 0, 1);
 	ImGui::End();
+
+	anm->GetModel()->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
+	anm->GetModel()->SetMetalness(metalness);
+	anm->GetModel()->SetSpecular(specular);
+	anm->GetModel()->SetRoughness(roughness);
 }
 
 void GameScene::GetConstbufferNum()

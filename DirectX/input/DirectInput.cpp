@@ -19,27 +19,53 @@ void DirectInput::Initialize()
 	//DirectInputのインスタンス生成
 	result = DirectInput8Create(
 		WindowApp::GetWinInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dinput, nullptr);
+	if (FAILED(result)) {
+		assert(0);
+	}
 
 	///-----------------キー入力初期化-----------------///
 
 	//キーボードデバイスの設定
 	result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
+	if (FAILED(result)) {
+		assert(0);
+	}
+
 	//入力データ形式のセット
 	result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);	//標準形式
+	if (FAILED(result)) {
+		assert(0);
+	}
+
 	//排他制御レベルのセット
 	result = devkeyboard->SetCooperativeLevel(
 		WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	if (FAILED(result)) {
+		assert(0);
+	}
 
 
 	///----------------マウス入力初期化----------------///
 
 	//マウスデバイスの設定
-	result = dinput->CreateDevice(GUID_SysMouse, &devmouse, NULL);
+	result = dinput->CreateDevice(GUID_SysMouse, &devMouse, NULL);
+	if (FAILED(result)) {
+		assert(0);
+	}
+
 	//入力データ形式のセット
-	result = devmouse->SetDataFormat(&c_dfDIMouse);	//標準形式
+	result = devMouse->SetDataFormat(&c_dfDIMouse);	//標準形式
+	if (FAILED(result)) {
+		assert(0);
+	}
+
 	//排他制御レベルのセット
-	result = devmouse->SetCooperativeLevel(
-		WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	result = devMouse->SetCooperativeLevel(
+		WindowApp::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	if (FAILED(result)) {
+		assert(0);
+	}
+
 }
 
 void DirectInput::Update()
@@ -47,22 +73,22 @@ void DirectInput::Update()
 	HRESULT result;
 
 	///-----------------キー入力更新-----------------///
-
-	//前回のキー入力を保存
-	memcpy(keyPre, key, sizeof(key));
+	
 	//キーボード情報の取得開始
 	result = devkeyboard->Acquire();
+	//前回のキー入力を保存
+	memcpy(keyPre, key, sizeof(key));
 	//全キーの入力状態を取得する
 	result = devkeyboard->GetDeviceState(sizeof(key), key);
 
 	///----------------マウス入力更新----------------///
 
+	//マウス情報の取得開始
+	result = devMouse->Acquire();
 	//前回のマウス入力を保存
 	mousePre = mouse;
-	//マウス情報の取得開始
-	result = devmouse->Acquire();
 	//マウスの入力状態を取得する
-	result = devmouse->GetDeviceState(sizeof(mouse), &mouse);
+	result = devMouse->GetDeviceState(sizeof(mouse), &mouse);
 	//マウス座標を取得する
 	GetCursorPos(&mousePoint);
 	//スクリーン座標をクライアント座標に変換する

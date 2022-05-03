@@ -55,15 +55,31 @@ SkinOutput ComputeSkin(VSInput input)
 
 VSOutput main(VSInput input)
 {
-	//スキニング計算
-	SkinOutput skinned = ComputeSkin(input);
-	// 法線にワールド行列によるスケーリング・回転を適用
-	float4 wnormal = normalize(mul(world, float4(skinned.normal, 0)));
-
 	// ピクセルシェーダーに渡す値
 	VSOutput output;
-	output.svpos = mul(mul(viewproj, world), skinned.pos);
-	output.worldpos = mul(world, skinned.pos);
+	float4 wnormal = float4(0, 0, 0, 0);
+
+	if (isSkinning)
+	{
+		// スキニング計算
+		SkinOutput skinned = ComputeSkin(input);
+		// 法線にワールド行列によるスケーリング・回転を適用
+		wnormal = normalize(mul(world, float4(skinned.normal, 0)));
+		// システム座標
+		output.svpos = mul(mul(viewproj, world), skinned.pos);
+		// ライト用座標
+		output.worldpos = mul(world, skinned.pos);
+	}
+	else
+	{
+		// 法線にワールド行列によるスケーリング・回転を適用
+		wnormal = normalize(mul(world, float4(input.normal, 0)));
+		// システム座標
+		output.svpos = mul(mul(viewproj, world), input.pos);
+		// ライト用座標
+		output.worldpos = mul(world, input.pos);
+	}
+
 	output.normal = wnormal.xyz;
 	output.uv = input.uv;
 

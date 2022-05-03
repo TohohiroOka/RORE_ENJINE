@@ -62,7 +62,7 @@ void DrawLine::CreateGraphicsPipeline()
 	};
 
 	pipeline = GraphicsPipelineManager::Create("DrawLine2d",
-		GraphicsPipelineManager::OBJECT_KINDS::DRAW_LAIN_2D, inputLayout, _countof(inputLayout));
+		GraphicsPipelineManager::OBJECT_KINDS::DRAW_LINE_2D, inputLayout, _countof(inputLayout));
 }
 
 void DrawLine::PreDraw(ID3D12GraphicsCommandList* cmdList)

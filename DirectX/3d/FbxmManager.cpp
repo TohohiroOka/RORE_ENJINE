@@ -134,6 +134,7 @@ void FbxmManager::Update()
 	constMap->viewproj = matViewProjection;
 	constMap->world = matWorld;
 	constMap->cameraPos = cameraPos;
+	constMap->isSkinning = model->isSkinning;
 	constMap->isBloom = isBloom;
 	constMap->isToon = isToon;
 	constMap->isOutline = isOutline;

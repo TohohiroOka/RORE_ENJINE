@@ -12,7 +12,7 @@ FbxImporter* FbxModel::fbxImporter = nullptr;
 ComPtr<ID3D12DescriptorHeap> FbxModel::descHeap;
 ComPtr<ID3D12Resource> FbxModel::texBuffer[textureNum];
 FbxTime FbxModel::frameTime;
-const std::string FbxModel::defaultTexture = "Resources/subTexture/white1x1.png";
+const std::string FbxModel::defaultTexture = "Resources/SubTexture/white1x1.png";
 const std::string FbxModel::baseDirectory = "Resources/Fbx/";
 
 FbxModel::~FbxModel()
@@ -52,9 +52,6 @@ void FbxModel::LoadMaterial(FbxNode* fbxNode)
 {
 	HRESULT result = S_FALSE;
 
-	//テクスチャの有無確認
-	bool textureLoaded = false;
-
 	//マテリアルの個数確認
 	const int materialCount = fbxNode->GetMaterialCount();
 
@@ -63,8 +60,51 @@ void FbxModel::LoadMaterial(FbxNode* fbxNode)
 		//先頭のマテリアルを取得
 		FbxSurfaceMaterial* material = fbxNode->GetMaterial(0);
 
+		//テクスチャの有無確認
+		bool textureLoaded = false;
+
 		if (material)
 		{
+			//マテリアル名
+			data->material.name = material->GetName();
+
+			//ベースカラー
+			const FbxProperty propBaseColor = FbxSurfaceMaterialUtils::GetProperty("baseColor", material);
+			if (propBaseColor.IsValid())
+			{
+				//プロパティ値読み取り
+				FbxDouble3 baseColor = propBaseColor.Get<FbxDouble3>();
+				//書き込み
+				data->material.baseColor.x = (float)baseColor.Buffer()[0];
+				data->material.baseColor.y = (float)baseColor.Buffer()[1];
+				data->material.baseColor.z = (float)baseColor.Buffer()[2];
+			}
+
+			//金属度
+			const FbxProperty propMetalness = FbxSurfaceMaterialUtils::GetProperty("metalness", material);
+			if (propMetalness.IsValid())
+			{
+				//書き込み
+				data->material.metalness = propMetalness.Get<float>();
+			}
+
+			//鏡面反射度
+			const FbxProperty propSpecular = FbxSurfaceMaterialUtils::GetProperty("specular", material);
+			if (propSpecular.IsValid())
+			{
+				//書き込み
+				data->material.specular = propSpecular.Get<float>();
+			}
+
+			//粗さ
+			const FbxProperty propRoughness = FbxSurfaceMaterialUtils::GetProperty("roughness", material);
+			if (propRoughness.IsValid())
+			{
+				//書き込み
+				data->material.roughness = propRoughness.Get<float>();
+			}
+
+			//マテリアルデータ
 			if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
 			{
 				FbxSurfaceLambert* lambert = static_cast<FbxSurfaceLambert*>(material);
@@ -315,6 +355,7 @@ void FbxModel::CollectSkin(FbxMesh* fbxMesh)
 	//スキニング情報が無ければ終了
 	if (fbxSkin == nullptr)
 	{
+		isSkinning = false;
 		return;
 	}
 
@@ -644,7 +685,7 @@ void FbxModel::Update()
 	HRESULT result;
 
 	//アニメーション
-	if (isAnimation)
+	if (data->fbxUpdate.isAnimation && isAnimation)
 	{
 		data->fbxUpdate.nowTime += frameTime;
 		//最後まで行ったら先頭に戻す
@@ -657,10 +698,14 @@ void FbxModel::Update()
 	// 定数バッファへデータ転送
 	ConstBufferDataB1* constMap = nullptr;
 	result = constBuffB1->Map(0, nullptr, (void**)&constMap);
-	if (SUCCEEDED(result)) {
+	if (SUCCEEDED(result))
+	{
+		constMap->baseColor = data->material.baseColor;
 		constMap->ambient = data->material.ambient;
 		constMap->diffuse = data->material.diffuse;
+		constMap->metalness = data->material.metalness;
 		constMap->specular = data->material.specular;
+		constMap->roughness = data->material.roughness;
 		constMap->alpha = data->material.alpha;
 		constBuffB1->Unmap(0, nullptr);
 	}
@@ -671,17 +716,25 @@ void FbxModel::Update()
 	// 定数バッファSkinへデータ転送
 	ConstBufferDataSkin* constMapSkin = nullptr;
 	result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
-	for (int i = 0; i < bones.size(); i++)
+	if (isSkinning)
 	{
-		//今の姿勢行列
-		XMMATRIX matCurrentPose;
-		//現在の姿勢を取得
-		FbxAMatrix fbxCurrentPose =
-			bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(data->fbxUpdate.nowTime);
-		//XMMATRIXに変換
-		ConvertMatrixFormFbx(&matCurrentPose, fbxCurrentPose);
-		//合成してスキニング行列に保存
-		constMapSkin->bones[i] = bones[i].invInitialPose * matCurrentPose;
+		for (int i = 0; i < bones.size(); i++)
+		{
+			//今の姿勢行列
+			XMMATRIX matCurrentPose;
+			//現在の姿勢を取得
+			FbxAMatrix fbxCurrentPose =
+				bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(data->fbxUpdate.nowTime);
+			//XMMATRIXに変換
+			ConvertMatrixFormFbx(&matCurrentPose, fbxCurrentPose);
+			//合成してスキニング行列に保存
+			constMapSkin->bones[i] = bones[i].invInitialPose * matCurrentPose;
+		}
+	}
+	//スキニングをしない場合初期化値を送る
+	else
+	{
+		constMapSkin->bones[0] = XMMatrixIdentity();
 	}
 	constBuffSkin->Unmap(0, nullptr);
 }

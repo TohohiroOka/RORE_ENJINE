@@ -19,8 +19,8 @@ public://メンバenum
 		OBJ,
 		SPRITE,
 		FBX,
-		DRAW_LAIN_2D,
-		DRAW_LAIN_3D,
+		DRAW_LINE_2D,
+		DRAW_LINE_3D,
 		PARTICLE,
 		NORMAL_MAP,
 		POST_EFFECT,
@@ -97,7 +97,6 @@ private://メンバ変数
 	static D3D12_GRAPHICS_PIPELINE_STATE_DESC defaultGpipeline;
 	//ブレンド設定の基盤
 	static D3D12_RENDER_TARGET_BLEND_DESC blenddesc;
-
 
 public://メンバ変数
 
