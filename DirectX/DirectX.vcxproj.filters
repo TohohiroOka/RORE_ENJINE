@@ -178,9 +178,6 @@
     <ClCompile Include="3d\Mesh.cpp">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClCompile>
-    <ClCompile Include="3d\MeshCollider.cpp">
-      <Filter>エンジンシステム\Object\3d\OBJ</Filter>
-    </ClCompile>
     <ClCompile Include="3d\Model.cpp">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClCompile>
@@ -238,9 +235,6 @@
     <ClCompile Include="particle\ParticleManager.cpp">
       <Filter>エンジンシステム\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="scene\GameScene.cpp">
-      <Filter>ゲームシステム\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="base\ShaderManager.cpp">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClCompile>
@@ -250,10 +244,22 @@
     <ClCompile Include="base\GraphicsPipelineManager.cpp">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClCompile>
-    <ClCompile Include="3d\FbxmManager.cpp">
+    <ClCompile Include="3d\FbxModel.cpp">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClCompile>
-    <ClCompile Include="3d\FbxModel.cpp">
+    <ClCompile Include="3d\MeshCollider.cpp">
+      <Filter>エンジンシステム\Object\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\SceneManager.cpp">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\TestField.cpp">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\BrowsingCircle.cpp">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\Fbx.cpp">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClCompile>
   </ItemGroup>
@@ -394,9 +400,6 @@
     <ClInclude Include="3d\Mesh.h">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClInclude>
-    <ClInclude Include="3d\MeshCollider.h">
-      <Filter>エンジンシステム\Object\3d\OBJ</Filter>
-    </ClInclude>
     <ClInclude Include="3d\Model.h">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClInclude>
@@ -469,9 +472,6 @@
     <ClInclude Include="particle\Emitter.h">
       <Filter>エンジンシステム\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="scene\GameScene.h">
-      <Filter>ゲームシステム\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="base\ShaderManager.h">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClInclude>
@@ -481,10 +481,25 @@
     <ClInclude Include="base\GraphicsPipelineManager.h">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClInclude>
-    <ClInclude Include="3d\FbxmManager.h">
+    <ClInclude Include="3d\FbxModel.h">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClInclude>
-    <ClInclude Include="3d\FbxModel.h">
+    <ClInclude Include="3d\MeshCollider.h">
+      <Filter>エンジンシステム\Object\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\SceneManager.h">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\TestField.h">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\InterfaceScene.h">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\BrowsingCircle.h">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\Fbx.h">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClInclude>
   </ItemGroup>

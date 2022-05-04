@@ -1,12 +1,11 @@
 #include "MainEngine.h"
-#include "GameScene.h"
 #include "DrawLine.h"
 #include "DrawLine3D.h"
 #include "Object3d.h"
 #include "Sprite.h"
 #include "DebugText.h"
 #include "Emitter.h"
-#include "FbxmManager.h"
+#include "Fbx.h"
 #include "NormalMap.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
@@ -23,10 +22,11 @@ MainEngine::~MainEngine()
 	DrawLine3D::Finalize();
 	DrawLine::Finalize();
 	Sprite::Finalize();
-	FbxmManager::Finalize();
+	Fbx::Finalize();
 	ParticleManager::Finalize();
 	NormalMap::Finalize();
 	postEffect->Finalize();
+	ComputeShaderManager::Finalize();
 }
 
 void MainEngine::Initialize()
@@ -42,9 +42,6 @@ void MainEngine::Initialize()
 	Xinput = XInputManager::GetInstance();
 	Xinput->Initialize();
 
-	//ƒJƒƒ‰‚Ì‰Šú‰»
-	camera = Camera::Create();
-
 	//ObjectŒn‚Ì‰Šú‰»
 	GraphicsPipelineManager::StaticInitialize(dXCommon->GetDevice());
 	Object3d::StaticInitialize(dXCommon->GetDevice());
@@ -53,14 +50,14 @@ void MainEngine::Initialize()
 	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
 	ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
-	FbxmManager::StaticInitialize(dXCommon->GetDevice());
+	Fbx::StaticInitialize(dXCommon->GetDevice());
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 
 	DebugText::GetInstance()->Initialize(0);
 
-	scene = GameScene::Create();
+	scene = SceneManager::Create();
 
 	postEffect = PostEffect::Create();
 
@@ -76,7 +73,7 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//XV
-	scene->Update(camera.get());
+	scene->Update();
 
 	return false;
 }

@@ -90,21 +90,6 @@ private://構造体宣言
 		float roughness = 0.0f;//粗さ
 	};
 
-	// 定数バッファ用データ構造体B1
-	struct ConstBufferDataB1
-	{
-		XMFLOAT3 baseColor;//ベースカラ―
-		float pad1; // パディング
-		XMFLOAT3 ambient; // アンビエント係数
-		float pad2; // パディング
-		XMFLOAT3 diffuse; // ディフューズ係数
-		float metalness; // 金属度(0 or 1)
-		float specular; // 鏡面反射度
-		float roughness; // 粗さ
-		float alpha;	// アルファ
-		//float pad[3];//パディング
-	};
-
 	//スキン用定数バッファデータ
 	struct ConstBufferDataSkin
 	{
@@ -272,8 +257,6 @@ public://メンバ変数
 
 	//モデル名
 	std::string name;
-	// 定数バッファ
-	ComPtr<ID3D12Resource> constBuffB1;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffSkin = nullptr;
 	//頂点バッファ
@@ -292,46 +275,44 @@ public://メンバ変数
 public:
 
 	/// <summary>
-	/// ベースカラー取得
+	/// アンビエント影響度の取得
 	/// </summary>
-	/// <returns>ベースカラー</returns>
-	const XMFLOAT3& GetBaseColor() { return data->material.baseColor; }
+	/// <returns>アンビエント</returns>
+	XMFLOAT3& GetAmbient() { return data->material.ambient; }
 
 	/// <summary>
-	/// 金属度取得
+	/// ディフューズ影響度の取得
 	/// </summary>
-	/// <returns>金属度</returns>
-	float GetMetalness() { return data->material.metalness; }
+	/// <returns>ディフューズ</returns>
+	XMFLOAT3& GetDiffuse() { return data->material.diffuse; }
 
 	/// <summary>
-	/// 鏡面反射度取得
+	/// アルファの取得
 	/// </summary>
-	/// <returns>金属度</returns>
-	float GetSpecular() { return data->material.specular; }
+	/// <returns>アルファ</returns>
+	float& GetAlpha() { return data->material.alpha; }
 
 	/// <summary>
-	/// 金属度取得
+	/// ベースカラ―の取得
 	/// </summary>
-	/// <returns>金属度</returns>
-	float GetRoughness() { return data->material.roughness; }
+	/// <returns>ベースカラ―</returns>
+	XMFLOAT3& GetBaseColor() { return data->material.baseColor; }
 
 	/// <summary>
-	/// ベースカラーセット
+	/// 金属度の取得
 	/// </summary>
-	void SetBaseColor(const XMFLOAT3& baseColor) { data->material.baseColor = baseColor; }
+	/// <returns>金属度(0 or 1)</returns>
+	float& GetMetalness() { return data->material.metalness; }
 
 	/// <summary>
-	/// 金属度セット
+	/// 鏡面反射度の取得
 	/// </summary>
-	void SetMetalness(float metalness) { data->material.metalness = metalness; }
+	/// <returns>鏡面反射度</returns>
+	float& GetSpecular() { return data->material.specular; }
 
 	/// <summary>
-	/// 鏡面反射度セット
+	/// 粗さの取得
 	/// </summary>
-	void SetSpecular(float specular) { data->material.specular = specular; }
-
-	/// <summary>
-	/// 金属度セット
-	/// </summary>
-	void SetRoughness(float roughness) { data->material.roughness = roughness; }
+	/// <returns>粗さ</returns>
+	float& GetRoughness() { return data->material.roughness; }
 };

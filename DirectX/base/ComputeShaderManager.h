@@ -73,11 +73,6 @@ private:
 	/// </summary>
 	static void CreateDescriptor();
 
-	/// <summary>
-	/// 転送用データ生成
-	/// </summary>
-	void CreateBuffers();
-
 public://静的メンバ関数
 
 	/// <summary>
@@ -90,6 +85,11 @@ public://静的メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	static std::unique_ptr<ComputeShaderManager> Create();
+
+	/// <summary>
+	///	解放
+	/// </summary>
+	static void Finalize();
 
 public:
 

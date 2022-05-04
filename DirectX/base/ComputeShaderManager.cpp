@@ -26,10 +26,6 @@ std::vector<ComputeShaderManager::InputData>test(MAX, reset);
 ComputeShaderManager::~ComputeShaderManager()
 {
 	inputBuffer.Reset();
-	computeShader.Reset();
-	rootSignature.Reset();
-	pipelineState.Reset();
-	Heap.Reset();
 }
 
 void ComputeShaderManager::StaticInitialize(ID3D12Device* device)
@@ -228,4 +224,12 @@ void ComputeShaderManager::PreUpdate(ID3D12GraphicsCommandList* cmdList)
 void ComputeShaderManager::PostUpdate()
 {
 	ComputeShaderManager::cmdList = nullptr;
+}
+
+void ComputeShaderManager::Finalize()
+{
+	computeShader.Reset();
+	rootSignature.Reset();
+	pipelineState.Reset();
+	Heap.Reset();
 }

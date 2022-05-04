@@ -1,10 +1,9 @@
 #pragma once
 #include "DirectXCommon.h"
-#include "GameScene.h"
+#include "SceneManager.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "PostEffect.h"
-#include "Camera.h"
 #include "FrameRateKeep.h"
 
 #include <sstream>
@@ -59,10 +58,8 @@ private:
 	DirectInput* input = nullptr;
 	//XInputManager
 	XInputManager* Xinput = nullptr;
-	//Cameraのインスタンス
-	std::unique_ptr<Camera> camera = nullptr;
 	//GameSceneのインスタンス
-	std::unique_ptr<GameScene> scene = nullptr;
+	std::unique_ptr<SceneManager> scene = nullptr;
 	//ポストエフェクトのインスタンス
 	std::unique_ptr<PostEffect> postEffect = nullptr;
 	//Fps固定用クラスのインスタンス

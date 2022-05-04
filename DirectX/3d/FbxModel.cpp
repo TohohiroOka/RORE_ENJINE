@@ -647,16 +647,6 @@ void FbxModel::Initialize()
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuffB1));
-	assert(SUCCEEDED(result));
-
-	//定数バッファSkinの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
-		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
@@ -693,21 +683,6 @@ void FbxModel::Update()
 		{
 			data->fbxUpdate.nowTime = data->fbxUpdate.startTime;
 		}
-	}
-
-	// 定数バッファへデータ転送
-	ConstBufferDataB1* constMap = nullptr;
-	result = constBuffB1->Map(0, nullptr, (void**)&constMap);
-	if (SUCCEEDED(result))
-	{
-		constMap->baseColor = data->material.baseColor;
-		constMap->ambient = data->material.ambient;
-		constMap->diffuse = data->material.diffuse;
-		constMap->metalness = data->material.metalness;
-		constMap->specular = data->material.specular;
-		constMap->roughness = data->material.roughness;
-		constMap->alpha = data->material.alpha;
-		constBuffB1->Unmap(0, nullptr);
 	}
 
 	//ボーン配列取得
@@ -756,7 +731,6 @@ void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
 	//定数バッファをセット
-	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootConstantBufferView(4, constBuffSkin->GetGPUVirtualAddress());
 
 	//シェーダーリソースビューをセット

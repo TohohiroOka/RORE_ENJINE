@@ -1,95 +1,49 @@
 #pragma once
-#include <DirectXMath.h>
-#include <memory>
-
-#include "Audio.h"
-#include "Object3d.h"
-#include "Sprite.h"
-#include "Emitter.h"
-#include "LightGroup.h"
-#include "FbxmManager.h"
-#include "Easing.h"
-#include "NormalMap.h"
-#include "DrawLine.h"
-#include "DrawLine3D.h"
-#include "ComputeShaderManager.h"
-
+#include "InterfaceScene.h"
 #include "Player.h"
 #include "Ground.h"
 #include "TouchableObject.h"
 
-class DirectInput;
-class XInputManager;
-class Audio;
-class Camera;
-
-class GameScene
+class TestField : public InterfaceScene
 {
-private:// エイリアス
-	// Microsoft::WRL::を省略
-	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DirectX::を省略
-	using XMFLOAT2 = DirectX::XMFLOAT2;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMVECTOR = DirectX::XMVECTOR;
-	using XMMATRIX = DirectX::XMMATRIX;
-
-public://静的メンバ関数
-
-	/// <summary>
-	/// インスタンスの生成
-	/// </summary>
-	/// <returns></returns>
-	static std::unique_ptr<GameScene> Create();
-
-public:// メンバ関数
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	GameScene() {};
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~GameScene() {};
+public:
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize() override;
 
 	/// <summary>
-	/// 毎フレーム処理
+	///	更新
 	/// </summary>
-	/// <param name="camera">Cameraのインスタンス</param>
-	void Update(Camera* camera);
+	void Update() override;
 
 	/// <summary>
-	/// 描画
+	///	描画
 	/// </summary>
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	void Draw() override;
+
+	/// <summary>
+	///	解放
+	/// </summary>
+	void Finalize() override;
 
 	/// <summary>
 	/// imguiの表示
 	/// </summary>
-	void ImguiDraw();
+	void ImguiDraw() override;
 
 	/// <summary>
 	/// コンピュートシェーダーからの計算結果取得
 	/// </summary>
-	void GetConstbufferNum();
+	void GetConstbufferNum() override;
 
-private:// メンバ変数
+private:
 
 	//カメラの回転
 	float cameraAngle = 100;
 	//カメラの高さ
 	float cameraY = 50.0f;
-
-	//音
-	std::unique_ptr<Audio> audio = nullptr;
 
 	//スプライト
 	std::unique_ptr<Sprite> sprite = nullptr;
@@ -116,16 +70,13 @@ private:// メンバ変数
 	float lightPos = 0;
 	float uvPos = 0;
 
-	//ライト
-	std::unique_ptr<LightGroup> light = nullptr;
-
 	//FbxModel
 	std::unique_ptr<FbxModel> danceModel = nullptr;
 	std::unique_ptr<FbxModel> SpherePBRModel = nullptr;
 	std::unique_ptr<FbxModel> SpiralPBRModel = nullptr;
 
 	//Fbx
-	std::unique_ptr<FbxmManager> anm = nullptr;
+	std::unique_ptr<Fbx> anm = nullptr;
 
 	//カメラ座標
 	XMFLOAT3 cameraPosition = { 0,0,50 };
@@ -143,4 +94,6 @@ private:// メンバ変数
 	XMFLOAT3 endPosition[max];//終了座標
 	XMFLOAT3 nowPosition[max];//現在座標
 	float time[max];//時間
+
 };
+

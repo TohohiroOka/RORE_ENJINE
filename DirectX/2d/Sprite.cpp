@@ -15,7 +15,6 @@ ComPtr<ID3D12Resource> Sprite::texBuff[srvCount];
 
 Sprite::~Sprite()
 {
-	descHeap.Reset();
 	vertBuff.Reset();
 	constBuff.Reset();
 }
@@ -352,4 +351,5 @@ void Sprite::Finalize()
 		texBuff[i].Reset();
 	}
 	pipeline.reset();
+	descHeap.Reset();
 }

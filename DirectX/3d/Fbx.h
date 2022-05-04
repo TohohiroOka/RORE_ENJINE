@@ -5,7 +5,7 @@
 class Camera;
 class LightGroup;
 
-class FbxmManager
+class Fbx
 {
 protected:// エイリアス
 	// Microsoft::WRL::を省略
@@ -31,6 +31,21 @@ private://構造体宣言
 		unsigned int isOutline;//アウトラインの有無
 	};
 
+	// 定数バッファ用データ構造体B1
+	struct ConstBufferDataB1
+	{
+		XMFLOAT3 baseColor;//ベースカラ―
+		float pad1; // パディング
+		XMFLOAT3 ambient; // アンビエント係数
+		float pad2; // パディング
+		XMFLOAT3 diffuse; // ディフューズ係数
+		float metalness; // 金属度(0 or 1)
+		float specular; // 鏡面反射度
+		float roughness; // 粗さ
+		float alpha;	// アルファ
+		//float pad[3];//パディング
+	};
+
 private://静的メンバ関数関数
 
 	/// <summary>
@@ -44,12 +59,12 @@ public://静的メンバ関数
 	/// コンストラクタ
 	/// </summary>
 	/// <returns></returns>
-	FbxmManager() {};
+	Fbx() {};
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~FbxmManager();
+	~Fbx();
 
 	/// <summary>
 	/// 初期化
@@ -61,19 +76,19 @@ public://静的メンバ関数
 	/// インスタンスの生成
 	/// </summary>
 	/// <param name="model">モデル</param
-	static std::unique_ptr<FbxmManager> Create(FbxModel* model = nullptr);
+	static std::unique_ptr<Fbx> Create(FbxModel* model = nullptr);
 
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) { FbxmManager::camera = camera; }
+	static void SetCamera(Camera* camera) { Fbx::camera = camera; }
 
 	/// <summary>
 	/// ライトグループのセット
 	/// </summary>
 	/// <param name="lightGroup">ライトグループ</param>
-	static void SetLightGroup(LightGroup* lightGroup) { FbxmManager::lightGroup = lightGroup; }
+	static void SetLightGroup(LightGroup* lightGroup) { Fbx::lightGroup = lightGroup; }
 
 	/// <summary>
 	/// 描画前処理
@@ -108,6 +123,11 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// マテリアル情報を定数バッファに送る
+	/// </summary>
+	void TransferMaterial();
+
 private://静的メンバ変数
 
 	//デバイス
@@ -131,6 +151,8 @@ private://メンバ変数
 	FbxModel* model = nullptr;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB0;
+	// 定数バッファ
+	ComPtr<ID3D12Resource> constBuffB1;
 	//座標
 	XMFLOAT3 position = {};
 	// 回転角
@@ -141,6 +163,16 @@ private://メンバ変数
 	XMFLOAT4 color = { 1,1,1,1 };
 	// ローカルワールド変換行列
 	XMMATRIX matWorld = {};
+	//マテリアルが変化したか
+	bool isTransferMaterial = false;
+	//ベースカラ―
+	XMFLOAT3 baseColor = { 1,1,1 };
+	//金属度(0 or 1)
+	float metalness = 0.0f;
+	//鏡面反射度
+	float specular = 0.5f;
+	//粗さ
+	float roughness = 0.0f;
 	//ブルームの有無
 	bool isBloom = false;
 	//トゥーンの有無
@@ -185,6 +217,30 @@ public:
 	/// </summary>
 	/// <returns>ワールド行列</returns>
 	const XMMATRIX& GetMatWorld() { return matWorld; }
+
+	/// <summary>
+	/// ベースカラー取得
+	/// </summary>
+	/// <returns>ベースカラー</returns>
+	const XMFLOAT3& GetBaseColor() { return baseColor; }
+
+	/// <summary>
+	/// 金属度取得
+	/// </summary>
+	/// <returns>金属度</returns>
+	float GetMetalness() { return metalness; }
+
+	/// <summary>
+	/// 鏡面反射度取得
+	/// </summary>
+	/// <returns>金属度</returns>
+	float GetSpecular() { return specular; }
+
+	/// <summary>
+	/// 金属度取得
+	/// </summary>
+	/// <returns>金属度</returns>
+	float GetRoughness() { return roughness; }
 
 	/// <summary>
 	/// 座標の設定
@@ -232,13 +288,13 @@ public:
 	/// アウトラインの色セット
 	/// </summary>
 	/// <param name="outlineColor">幅</param>
-	static void SetOutlineColor(XMFLOAT4 outlineColor) { FbxmManager::outlineColor = outlineColor; }
+	static void SetOutlineColor(XMFLOAT4 outlineColor) { Fbx::outlineColor = outlineColor; }
 
 	/// <summary>
 	/// アウトラインの幅セット
 	/// </summary>
 	/// <param name="outlineWidth">幅</param>
-	static void SetOutlineWidth(float outlineWidth) { FbxmManager::outlineWidth = outlineWidth; }
+	static void SetOutlineWidth(float outlineWidth) { Fbx::outlineWidth = outlineWidth; }
 
 	/// <summary>
 	/// モデルのセット
@@ -251,4 +307,36 @@ public:
 	/// </summary>
 	/// <param name="position">スケール</param>
 	void SetAnimation(bool isAnimation) { model->isAnimation = isAnimation; }
+
+	/// <summary>
+	/// ベースカラーセット
+	/// </summary>
+	void SetBaseColor(const XMFLOAT3& baseColor) { 
+		this->baseColor = baseColor;
+		isTransferMaterial = true;
+	}
+
+	/// <summary>
+	/// 金属度セット
+	/// </summary>
+	void SetMetalness(float metalness) { 
+		this->metalness = metalness;
+		isTransferMaterial = true;
+	}
+
+	/// <summary>
+	/// 鏡面反射度セット
+	/// </summary>
+	void SetSpecular(float specular) { 
+		this->specular = specular;
+		isTransferMaterial = true;
+	}
+
+	/// <summary>
+	/// 金属度セット
+	/// </summary>
+	void SetRoughness(float roughness) { 
+		this->roughness = roughness;
+		isTransferMaterial = true;
+	}
 };

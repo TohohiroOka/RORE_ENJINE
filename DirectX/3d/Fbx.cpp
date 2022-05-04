@@ -1,4 +1,4 @@
-#include "FbxmManager.h"
+#include "Fbx.h"
 #include "Camera.h"
 #include "BaseCollider.h"
 #include "SafeDelete.h"
@@ -12,18 +12,18 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 using namespace std;
 
-ID3D12Device* FbxmManager::device = nullptr;
-Camera* FbxmManager::camera = nullptr;
-LightGroup* FbxmManager::lightGroup = nullptr;
-ID3D12GraphicsCommandList* FbxmManager::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> FbxmManager::pipeline = nullptr;
+ID3D12Device* Fbx::device = nullptr;
+Camera* Fbx::camera = nullptr;
+LightGroup* Fbx::lightGroup = nullptr;
+ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;
+std::unique_ptr<GraphicsPipelineManager> Fbx::pipeline = nullptr;
 
-FbxmManager::~FbxmManager()
+Fbx::~Fbx()
 {
 	constBuffB0.Reset();
 }
 
-void FbxmManager::CreateGraphicsPipeline()
+void Fbx::CreateGraphicsPipeline()
 {
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
@@ -58,24 +58,24 @@ void FbxmManager::CreateGraphicsPipeline()
 		GraphicsPipelineManager::OBJECT_KINDS::FBX, inputLayout, _countof(inputLayout));
 }
 
-void FbxmManager::StaticInitialize(ID3D12Device* device)
+void Fbx::StaticInitialize(ID3D12Device* device)
 {
 	HRESULT result = S_FALSE;
 
 	// 再初期化チェック
-	assert(!FbxmManager::device);
+	assert(!Fbx::device);
 
 	// nullptrチェック
 	assert(device);
 
-	FbxmManager::device = device;
+	Fbx::device = device;
 
 	CreateGraphicsPipeline();
 
 	FbxModel::StaticInitialize(device);
 }
 
-void FbxmManager::Initialize()
+void Fbx::Initialize()
 {
 	HRESULT result = S_FALSE;
 	// 定数バッファ1の生成
@@ -87,12 +87,22 @@ void FbxmManager::Initialize()
 		nullptr,
 		IID_PPV_ARGS(&constBuffB0));
 	assert(SUCCEEDED(result));
+
+	//定数バッファSkinの生成
+	result = device->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffB1));
+	assert(SUCCEEDED(result));
 }
 
-std::unique_ptr<FbxmManager> FbxmManager::Create(FbxModel* model)
+std::unique_ptr<Fbx> Fbx::Create(FbxModel* model)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	FbxmManager* instance = new FbxmManager();
+	Fbx* instance = new Fbx();
 
 	//初期化
 	instance->Initialize();
@@ -102,10 +112,18 @@ std::unique_ptr<FbxmManager> FbxmManager::Create(FbxModel* model)
 		instance->SetModel(model);
 	}
 
-	return std::unique_ptr<FbxmManager>(instance);
+	//マテリアル情報の取得
+	instance->baseColor = model->GetBaseColor();
+	instance->metalness = model->GetMetalness();
+	instance->specular = model->GetSpecular();
+	instance->roughness = model->GetRoughness();
+
+	instance->TransferMaterial();
+
+	return std::unique_ptr<Fbx>(instance);
 }
 
-void FbxmManager::Update()
+void Fbx::Update()
 {
 	HRESULT result;
 	XMMATRIX matScale, matRot, matTrans;
@@ -140,12 +158,18 @@ void FbxmManager::Update()
 	constMap->isOutline = isOutline;
 	constBuffB0->Unmap(0, nullptr);
 
+	if (isTransferMaterial)
+	{
+		TransferMaterial();
+		isTransferMaterial = false;
+	}
+
 	model->Update();
 }
 
-void FbxmManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void Fbx::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
-	FbxmManager::cmdList = cmdList;
+	Fbx::cmdList = cmdList;
 
 	//パイプラインステートの設定
 	cmdList->SetPipelineState(pipeline->pipelineState.Get());
@@ -159,17 +183,17 @@ void FbxmManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	FbxModel::PreDraw(cmdList);
 }
 
-void FbxmManager::PostDraw()
+void Fbx::PostDraw()
 {
 	// コマンドリストを解除
-	FbxmManager::cmdList = nullptr;
+	Fbx::cmdList = nullptr;
 }
 
-void FbxmManager::Draw()
+void Fbx::Draw()
 {
 	// nullptrチェック
 	assert(device);
-	assert(FbxmManager::cmdList);
+	assert(Fbx::cmdList);
 
 	// モデルの割り当てがなければ描画しない
 	if (model == nullptr) {
@@ -178,6 +202,7 @@ void FbxmManager::Draw()
 
 	//定数バッファをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
 
 	// ライトの描画
 	lightGroup->Draw(cmdList, 3);
@@ -186,7 +211,25 @@ void FbxmManager::Draw()
 	model->Draw(cmdList);
 }
 
-void FbxmManager::Finalize()
+void Fbx::TransferMaterial()
+{
+	// 定数バッファへデータ転送
+	ConstBufferDataB1* constMap = nullptr;
+	HRESULT result = constBuffB1->Map(0, nullptr, (void**)&constMap);
+	if (SUCCEEDED(result))
+	{
+		constMap->baseColor = baseColor;
+		constMap->ambient = model->GetAmbient();
+		constMap->diffuse = model->GetDiffuse();
+		constMap->metalness = metalness;
+		constMap->specular = specular;
+		constMap->roughness = roughness;
+		constMap->alpha = model->GetAlpha();
+		constBuffB1->Unmap(0, nullptr);
+	}
+}
+
+void Fbx::Finalize()
 {
 	FbxModel::Finalize();
 	pipeline.reset();

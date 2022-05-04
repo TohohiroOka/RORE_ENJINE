@@ -1,49 +1,19 @@
-#include "GameScene.h"
-#include "MainEngine.h"
+#include "TestField.h"
+#include "SceneManager.h"
+#include "BrowsingCircle.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "DebugText.h"
-#include "Camera.h"
 
 #include <imgui.h>
 #include <iomanip>
 #include <cassert>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 
-std::unique_ptr<GameScene> GameScene::Create()
+void TestField::Initialize()
 {
-	// 3Dオブジェクトのインスタンスを生成
-	GameScene* instance = new GameScene();
-	if (instance == nullptr) {
-		return nullptr;
-	}
-
-	// 初期化
-	instance->Initialize();
-
-	return std::unique_ptr<GameScene>(instance);
-}
-
-void GameScene::Initialize()
-{
-	//サウンド用
-	audio = std::make_unique<Audio>();
-
-	//ライト
-	light = LightGroup::Create();
-	//light->SetDirLightActive(0, true);
-	//light->SetDirLightColor(0, { 1,1,1 });
-	//light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
-	light->DefaultLightSetting();
-	//light->SetPointLightActive(0, true);
-	//light->SetPointLightPos(0, { -100,0,-100 });
-	//light->SetPointLightColor(0, { 1,1,1 });
-	//light->SetPointLightAtten(0, { 0.001f,0.00023f,0.000001f });
-
-	// 3Dオブエクトにライトをセット
-	Object3d::SetLightGroup(light.get());
-
 	//スプライト
 	Sprite::LoadTexture(1, L"Resources/amm.jpg");
 
@@ -56,10 +26,10 @@ void GameScene::Initialize()
 
 	//プレイヤー生成
 	PLAYER = Player::Create(uma.get());
-	
+
 	//地面生成
 	GROUND = Ground::Create(ground.get());
-	
+
 	//触れられるオブジェクト生成
 	std::unique_ptr<TouchableObject> Tobject3d = TouchableObject::Create(block.get());
 	Tobject3d->SetScale(10.0f);
@@ -72,7 +42,7 @@ void GameScene::Initialize()
 	tex[2] = NormalMap::LoadTexture(L"Resources/pN2.png");
 
 	//水オブジェクト生成
-	water= NormalMap::Create();
+	water = NormalMap::Create();
 	water->SetPosition({ 100,5,100 });
 	water->SetScale({ 2,2,2 });
 	water->SetMainTexColor({ 1.0f,1.0f,1.0f,1.0f });
@@ -85,8 +55,8 @@ void GameScene::Initialize()
 	SpiralPBRModel = FbxModel::Create("SpiralPBR");
 
 	//Fbxモデルオブジェクトの生成
-	anm = FbxmManager::Create(SpiralPBRModel.get());
-	anm->SetPosition({ 0,30,0 });
+	anm = Fbx::Create(SpiralPBRModel.get());
+	anm->SetPosition({ 100,100,0 });
 	anm->SetScale({ 15,15,15 });
 	//anm->SetOutline(true);
 	//anm->SetToon(true);
@@ -112,22 +82,23 @@ void GameScene::Initialize()
 	}
 }
 
-void GameScene::Update(Camera* camera)
+void TestField::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 	XInputManager* xinput = XInputManager::GetInstance();
+
+	//シーンの移行
+	if (input->TriggerKey(DIK_0))
+	{
+		BrowsingCircle* nextScene = new BrowsingCircle();
+		nextScene->Initialize();
+		SceneManager::SetNextScene(nextScene);
+	}
 
 	if (input->PushKey(DIK_LEFT)) { cameraAngle++; }
 	if (input->PushKey(DIK_RIGHT)) { cameraAngle--; }
 	if (input->PushKey(DIK_UP)) { cameraY++; }
 	if (input->PushKey(DIK_DOWN)) { cameraY--; }
-
-	//カメラのセット
-	Object3d::SetCamera(camera);
-	NormalMap::SetCamera(camera);
-	FbxmManager::SetCamera(camera);
-	DrawLine3D::SetCamera(camera);
-	ParticleManager::SetCamera(camera);
 
 	//Obj
 	PLAYER->SetCameraAngle(cameraAngle);
@@ -152,14 +123,8 @@ void GameScene::Update(Camera* camera)
 	anm->Update();
 
 	//パーティクル
-	emit->InEmitter(50, 30, { (float)(rand() % 5)-100,0,(float)(rand() % 5) }, { 0,2,0 },
+	emit->InEmitter(50, 30, { (float)(rand() % 5) - 100,0,(float)(rand() % 5) }, { 0,2,0 },
 		{ 0,0,0 }, 50, 1, { 1,1,1,1 }, { 0,0,0,1 });
-
-	//ライト
-	light->Update();
-	// 3Dオブエクトにライトをセット
-	Object3d::SetLightGroup(light.get());
-	FbxmManager::SetLightGroup(light.get());
 
 	//スプライト
 	sprite->Update();
@@ -183,19 +148,20 @@ void GameScene::Update(Camera* camera)
 
 	//カメラ更新
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
-	const int range = 50.0f;
+	const float range = 50.0f;
 	XMFLOAT3 cameraPos = PLAYER->GetPosition();
 	cameraPos.y += 40.0f;
 	camera->SetEye(cameraPos);
 	camera->SetTarget({ cosf(cameraRadius) * range + cameraPos.x,cameraY,sinf(cameraRadius) * range + cameraPos.z });
-	camera->Update();
 
 	input = nullptr;
 	xinput = nullptr;
 }
 
-void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
+void TestField::Draw()
 {
+	assert(cmdList);
+
 	NormalMap::PreDraw(cmdList);
 	water->Draw(tex[0], tex[1], tex[2]);
 	NormalMap::PostDraw();
@@ -206,9 +172,9 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	BLOCK->Draw();
 	Object3d::PostDraw();
 
-	FbxmManager::PreDraw(cmdList);
+	Fbx::PreDraw(cmdList);
 	anm->Draw();
-	FbxmManager::PostDraw();
+	Fbx::PostDraw();
 
 	//スプライト描画
 	Sprite::PreDraw(cmdList);
@@ -221,7 +187,7 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	line->Draw();
 	line_t->Draw();
 	DrawLine::PostDraw();
-	
+
 	//線3d
 	DrawLine3D::PreDraw(cmdList);
 	line3d->Draw();
@@ -238,19 +204,23 @@ void GameScene::Draw(ID3D12GraphicsCommandList* cmdList)
 	compute->PostUpdate();
 }
 
-void GameScene::ImguiDraw()
+void TestField::Finalize()
+{
+}
+
+void TestField::ImguiDraw()
 {
 	float baseColor[3];//ベースカラ―
 	float metalness;//金属度(0 or 1)
 	float specular;//鏡面反射度
 	float roughness;//粗さ
 
-	baseColor[0]= anm->GetModel()->GetBaseColor().x;
-	baseColor[1] = anm->GetModel()->GetBaseColor().y;
-	baseColor[2] = anm->GetModel()->GetBaseColor().z;
-	metalness = anm->GetModel()->GetMetalness();
-	specular = anm->GetModel()->GetSpecular();
-	roughness = anm->GetModel()->GetRoughness();
+	baseColor[0] = anm->GetBaseColor().x;
+	baseColor[1] = anm->GetBaseColor().y;
+	baseColor[2] = anm->GetBaseColor().z;
+	metalness = anm->GetMetalness();
+	specular = anm->GetSpecular();
+	roughness = anm->GetRoughness();
 
 	ImGui::Begin("Material");
 	ImGui::SetWindowPos(ImVec2(0, 0));
@@ -261,13 +231,13 @@ void GameScene::ImguiDraw()
 	ImGui::SliderFloat("roughness", &roughness, 0, 1);
 	ImGui::End();
 
-	anm->GetModel()->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
-	anm->GetModel()->SetMetalness(metalness);
-	anm->GetModel()->SetSpecular(specular);
-	anm->GetModel()->SetRoughness(roughness);
+	anm->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
+	anm->SetMetalness(metalness);
+	anm->SetSpecular(specular);
+	anm->SetRoughness(roughness);
 }
 
-void GameScene::GetConstbufferNum()
+void TestField::GetConstbufferNum()
 {
 	XMFLOAT3* inPos = new XMFLOAT3[max];
 	inPos = compute->GetConstBufferNum();
