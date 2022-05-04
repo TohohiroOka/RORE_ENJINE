@@ -222,6 +222,11 @@ void TestField::ImguiDraw()
 	specular = anm->GetSpecular();
 	roughness = anm->GetRoughness();
 
+	//ƒ‰ƒCƒgon/off
+	static bool lightAct1 = false;
+	static bool lightAct2 = false;
+	static bool lightAct3 = false;
+
 	ImGui::Begin("Material");
 	ImGui::SetWindowPos(ImVec2(0, 0));
 	ImGui::SetWindowSize(ImVec2(300, 130));
@@ -229,12 +234,19 @@ void TestField::ImguiDraw()
 	ImGui::SliderFloat("metalness", &metalness, 0, 1);
 	ImGui::SliderFloat("specular", &specular, 0, 1);
 	ImGui::SliderFloat("roughness", &roughness, 0, 1);
+	ImGui::Checkbox("Light1", &lightAct1);
+	ImGui::Checkbox("Light2", &lightAct2);
+	ImGui::Checkbox("Light3", &lightAct3);
 	ImGui::End();
 
 	anm->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
 	anm->SetMetalness(metalness);
 	anm->SetSpecular(specular);
 	anm->SetRoughness(roughness);
+
+	light->SetDirLightActive(0, lightAct1);
+	light->SetDirLightActive(1, lightAct2);
+	light->SetDirLightActive(2, lightAct3);
 }
 
 void TestField::GetConstbufferNum()

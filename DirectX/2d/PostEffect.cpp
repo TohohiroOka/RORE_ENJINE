@@ -6,7 +6,11 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-const float PostEffect::clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };
+const float PostEffect::clearColor[texBuffNum][4] = {
+	{ 0.1f,0.1f,0.7f,0.0f },
+	{ 0.0f,0.0f,0.0f,0.0f },
+	{ 0.0f,0.0f,0.0f,0.0f }
+};
 ComPtr<ID3D12Resource> PostEffect::texBuff[texBuffNum];
 std::unique_ptr<GraphicsPipelineManager> PostEffect::pipeline;
 
@@ -117,7 +121,7 @@ void PostEffect::Initialize()
 			D3D12_HEAP_FLAG_NONE,
 			&texresDesc,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // テクスチャ用指定
-			&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor),
+			&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor[i]),
 			IID_PPV_ARGS(&texBuff[i]));
 		assert(SUCCEEDED(result));
 
@@ -324,7 +328,7 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 	for (int i = 0; i < texBuffNum; i++)
 	{
 		//全画面クリア
-		cmdList->ClearRenderTargetView(rtvHs[i], clearColor, 0, nullptr);
+		cmdList->ClearRenderTargetView(rtvHs[i], clearColor[i], 0, nullptr);
 	}
 	//深度バッファのクリア
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);

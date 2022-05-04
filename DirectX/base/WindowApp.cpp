@@ -27,7 +27,6 @@ void WindowApp::Initialize(const int window_Width, const int window_height,const
 	windowWidth = window_Width;
 	windowHeight = window_height;
 
-
 	winClass.cbSize = sizeof(WNDCLASSEX);
 	winClass.lpfnWndProc = (WNDPROC)WindowProcdure;// ウィンドウプロシージャを設定
 	winClass.lpszClassName = gameName;// ウィンドウクラス名
@@ -55,7 +54,7 @@ void WindowApp::Initialize(const int window_Width, const int window_height,const
 		nullptr);// オプション
 
 	// ウィンドウ表示
-	ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+	ShowWindow(hwnd, SW_SHOW);
 }
 
 bool WindowApp::Update()

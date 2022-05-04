@@ -70,13 +70,21 @@ public:
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
-	/// <param name="inCamera">カメラクラスのインスタンス</param>
-	void SetCamera(Camera* inCamera) { camera = inCamera; }
+	/// <param name="camera">カメラクラスのインスタンス</param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
+
+	/// <summary>
+	/// ライトのセット
+	/// </summary>
+	/// <param name="light">ライトクラスのインスタンス</param>
+	void SetLight(LightGroup* light) { this->light = light; }
 
 protected:
 
 	//コマンドリスト
-	ID3D12GraphicsCommandList* cmdList;
+	ID3D12GraphicsCommandList* cmdList = nullptr;
 	//カメラ
 	Camera* camera = nullptr;
+	//ライト
+	LightGroup* light = nullptr;
 };

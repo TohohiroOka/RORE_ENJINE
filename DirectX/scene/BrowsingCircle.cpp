@@ -83,19 +83,31 @@ void BrowsingCircle::ImguiDraw()
 	specular = circle[0]->GetSpecular();
 	roughness = circle[0]->GetRoughness();
 
+	//ƒ‰ƒCƒgon/off
+	static bool lightAct1 = false;
+	static bool lightAct2 = false;
+	static bool lightAct3 = false;
+
 	ImGui::Begin("Material");
 	ImGui::SetWindowPos(ImVec2(0, 0));
-	ImGui::SetWindowSize(ImVec2(300, 130));
+	ImGui::SetWindowSize(ImVec2(300, 200));
 	ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
 	ImGui::SliderFloat("metalness", &metalness, 0, 1);
 	ImGui::SliderFloat("specular", &specular, 0, 1);
 	ImGui::SliderFloat("roughness", &roughness, 0, 1);
+	ImGui::Checkbox("Light1", &lightAct1);
+	ImGui::Checkbox("Light2", &lightAct2);
+	ImGui::Checkbox("Light3", &lightAct3);
 	ImGui::End();
 
 	circle[0]->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
 	circle[0]->SetMetalness(metalness);
 	circle[0]->SetSpecular(specular);
 	circle[0]->SetRoughness(roughness);
+
+	light->SetDirLightActive(0, lightAct1);
+	light->SetDirLightActive(1, lightAct2);
+	light->SetDirLightActive(2, lightAct3);
 }
 
 void BrowsingCircle::GetConstbufferNum()

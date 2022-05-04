@@ -74,6 +74,7 @@ void SceneManager::Update()
 
 	//ライト
 	light->Update();
+	scene->SetLight(light.get());
 
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());

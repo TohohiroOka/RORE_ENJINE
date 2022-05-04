@@ -167,6 +167,7 @@ void LightGroup::SetDirLightActive(int index, bool active)
 	assert(0 <= index && index < DirLightNum);
 
 	dirLights[index].SetActive(active);
+	dirty = true;
 }
 
 void LightGroup::SetDirLightDir(int index, const XMVECTOR& lightdir)
