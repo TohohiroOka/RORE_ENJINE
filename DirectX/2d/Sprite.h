@@ -55,10 +55,9 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="texnumber">テクスチャ番号</param>
 	/// <param name="filename">画像ファイル名</param>
-	/// <returns>成否</returns>
-	static bool LoadTexture(UINT texnumber, const wchar_t* filename);
+	/// <returns>テクスチャ番号</returns>
+	static int LoadTexture(const wchar_t* filename);
 
 	/// <summary>
 	/// 描画前処理

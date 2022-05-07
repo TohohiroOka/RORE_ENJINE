@@ -13,11 +13,6 @@ float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color);
 /// </summary>
 float4 SetToon(float4 shadecolor);
 
-/// <summary>
-/// アウトラインのセット
-/// </summary>
-float4 SetOutline(float2 uv, float outlineWidth);
-
 PSOutput main(VSOutput input)
 {
 	PSOutput output;

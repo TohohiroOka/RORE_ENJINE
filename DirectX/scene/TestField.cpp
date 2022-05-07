@@ -15,7 +15,7 @@
 void TestField::Initialize()
 {
 	//スプライト
-	Sprite::LoadTexture(1, L"Resources/amm.jpg");
+	Sprite::LoadTexture(L"Resources/amm.jpg");
 
 	sprite = Sprite::Create(1);
 

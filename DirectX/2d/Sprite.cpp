@@ -51,7 +51,7 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 		return false;
 	}
 
-	Sprite::LoadTexture(0, L"Resources/LetterResources/debugfont.png");
+	Sprite::LoadTexture(L"Resources/LetterResources/debugfont.png");
 
 	return true;
 }
@@ -76,10 +76,13 @@ void Sprite::CreateGraphicsPipeline()
 		GraphicsPipelineManager::OBJECT_KINDS::SPRITE, inputLayout, _countof(inputLayout));
 }
 
-bool Sprite::LoadTexture(UINT texnumber, const wchar_t* filename)
+int Sprite::LoadTexture(const wchar_t* filename)
 {
 	// nullptrチェック
 	assert(device);
+
+	static int texnum = -1;
+	texnum++;
 
 	HRESULT result;
 	// WICテクスチャのロード
@@ -112,14 +115,14 @@ bool Sprite::LoadTexture(UINT texnumber, const wchar_t* filename)
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
 		nullptr,
-		IID_PPV_ARGS(&texBuff[texnumber]));
+		IID_PPV_ARGS(&texBuff[texnum]));
 	if (FAILED(result)) {
 		assert(0);
 		return false;
 	}
 
 	// テクスチャバッファにデータ転送
-	result = texBuff[texnumber]->WriteToSubresource(
+	result = texBuff[texnum]->WriteToSubresource(
 		0,
 		nullptr, // 全領域へコピー
 		img->pixels,    // 元データアドレス
@@ -133,22 +136,22 @@ bool Sprite::LoadTexture(UINT texnumber, const wchar_t* filename)
 
 	// シェーダリソースビュー作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; // 設定構造体
-	D3D12_RESOURCE_DESC resDesc = texBuff[texnumber]->GetDesc();
+	D3D12_RESOURCE_DESC resDesc = texBuff[texnum]->GetDesc();
 
 	srvDesc.Format = resDesc.Format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;
 
-	device->CreateShaderResourceView(texBuff[texnumber].Get(), //ビューと関連付けるバッファ
+	device->CreateShaderResourceView(texBuff[texnum].Get(), //ビューと関連付けるバッファ
 		&srvDesc, //テクスチャ設定情報
 		CD3DX12_CPU_DESCRIPTOR_HANDLE(
 			descHeap->GetCPUDescriptorHandleForHeapStart(),
-			texnumber,
+			texnum,
 			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV))
 	);
 
-	return true;
+	return texnum;
 }
 
 void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
