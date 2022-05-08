@@ -1,6 +1,5 @@
 #include "NormalMap.h"
 #include "Camera.h"
-#include <d3dcompiler.h>
 #include <DirectXTex.h>
 #include"Camera.h"
 
@@ -8,8 +7,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#pragma comment(lib, "d3dcompiler.lib")
 
 using namespace DirectX;
 using namespace Microsoft::WRL;

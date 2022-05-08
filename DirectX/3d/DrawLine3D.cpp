@@ -43,9 +43,7 @@ void DrawLine3D::CreateGraphicsPipeline()
 
 std::unique_ptr<DrawLine3D> DrawLine3D::Create(UINT LineNum)
 {
-	HRESULT result = S_FALSE;
-
-	DrawLine3D* instance = new DrawLine3D();;
+	DrawLine3D* instance = new DrawLine3D();
 	if (instance == nullptr) {
 		return nullptr;
 	}

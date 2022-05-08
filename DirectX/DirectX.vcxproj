@@ -45,14 +45,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\imgui\lib\Debug;$(SolutionDir)external\FBX\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)external\FBX_SDK\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)external\FBX_SDK\lib\Debug;$(SolutionDir)external\imgui\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)external\FBX\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\imgui\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)external\FBX_SDK\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)external\FBX_SDK\lib\Release;$(SolutionDir)external\imgui\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -132,6 +132,7 @@
     <ClCompile Include="object\TouchableObject.cpp" />
     <ClCompile Include="particle\Emitter.cpp" />
     <ClCompile Include="particle\ParticleManager.cpp" />
+    <ClCompile Include="RaytracingManager.cpp" />
     <ClCompile Include="scene\BrowsingCircle.cpp" />
     <ClCompile Include="scene\SceneManager.cpp" />
     <ClCompile Include="scene\TestField.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="object\TouchableObject.h" />
     <ClInclude Include="particle\Emitter.h" />
     <ClInclude Include="particle\ParticleManager.h" />
+    <ClInclude Include="RaytracingManager.h" />
     <ClInclude Include="scene\BrowsingCircle.h" />
     <ClInclude Include="scene\InterfaceScene.h" />
     <ClInclude Include="scene\SceneManager.h" />

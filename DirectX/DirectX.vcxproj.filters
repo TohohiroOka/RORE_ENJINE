@@ -262,6 +262,9 @@
     <ClCompile Include="3d\Fbx.cpp">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClCompile>
+    <ClCompile Include="RaytracingManager.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -501,6 +504,9 @@
     </ClInclude>
     <ClInclude Include="3d\Fbx.h">
       <Filter>エンジンシステム\Object\3d\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="RaytracingManager.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
