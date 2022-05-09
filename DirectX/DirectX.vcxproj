@@ -45,7 +45,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)external\FBX_SDK\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)external\FBX_SDK\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\imgui\include;$(SolutionDir)external\Raytracing;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)external\FBX_SDK\lib\Debug;$(SolutionDir)external\imgui\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>

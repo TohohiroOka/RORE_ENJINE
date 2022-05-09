@@ -10,6 +10,7 @@
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
+#include "RaytracingManager.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -27,6 +28,7 @@ MainEngine::~MainEngine()
 	NormalMap::Finalize();
 	postEffect->Finalize();
 	ComputeShaderManager::Finalize();
+	//RaytracingManager::Finalize();
 }
 
 void MainEngine::Initialize()
@@ -54,6 +56,7 @@ void MainEngine::Initialize()
 	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
+	//RaytracingManager::StaticInitialize(dXCommon->GetDevice(), dXCommon->GetCmdList());
 
 	DebugText::GetInstance()->Initialize(0);
 
