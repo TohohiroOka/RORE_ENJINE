@@ -23,35 +23,35 @@ int NormalMap::alltextureNum = 0;
 //頂点データ
 NormalMap::Vertex NormalMap::vertices[24] = {
 	//前
-	{{ -edge, -edge, -edge },{},{0.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左下0
-	{{ -edge, edge, -edge },{},{0.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左上1
-	{{ edge, -edge, -edge },{}, { 1.0f,1.0f },{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右下2
-	{{ edge, edge, -edge },{}, {1.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右上3
+	{{ -edge, -edge, -edge },{},{0.0f,1.0f}}, // 左下0
+	{{ -edge, edge, -edge },{},{0.0f,0.0f}}, // 左上1
+	{{ edge, -edge, -edge },{}, { 1.0f,1.0f }}, // 右下2
+	{{ edge, edge, -edge },{}, {1.0f,0.0f}}, // 右上3
 	//後
-	{{ -edge, edge, edge },{}, {0.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左上4
-	{{ -edge, -edge, edge },{}, {0.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左下5
-	{{ edge, edge, edge },{}, {1.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右上6
-	{{ edge, -edge, edge },{}, {1.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右下7
+	{{ -edge, edge, edge },{}, {0.0f,0.0f}}, // 左上4
+	{{ -edge, -edge, edge },{}, {0.0f,1.0f}}, // 左下5
+	{{ edge, edge, edge },{}, {1.0f,0.0f}}, // 右上6
+	{{ edge, -edge, edge },{}, {1.0f,1.0f}}, // 右下7
 	//左
-	{{ -edge, -edge, -edge },{}, {0.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左下8
-	{{ -edge, -edge, edge },{}, {0.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左上9
-	{{ -edge, edge, -edge },{}, {1.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右下10
-	{{ -edge, edge, edge },{}, {1.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右上11
+	{{ -edge, -edge, -edge },{}, {0.0f,1.0f}}, // 左下8
+	{{ -edge, -edge, edge },{}, {0.0f,0.0f}}, // 左上9
+	{{ -edge, edge, -edge },{}, {1.0f,1.0f}}, // 右下10
+	{{ -edge, edge, edge },{}, {1.0f,0.0f}}, // 右上11
 	//右
-	{{ edge, -edge, edge },{}, {0.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左下12
-	{{ edge, -edge, -edge },{}, {0.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左上13
-	{{ edge, edge, edge },{}, {1.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右下14
-	{{ edge, edge, -edge },{}, {1.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右上15
+	{{ edge, -edge, edge },{}, {0.0f,1.0f}}, // 左下12
+	{{ edge, -edge, -edge },{}, {0.0f,0.0f}}, // 左上13
+	{{ edge, edge, edge },{}, {1.0f,1.0f}}, // 右下14
+	{{ edge, edge, -edge },{}, {1.0f,0.0f}}, // 右上15
 	//上
-	{{ -edge, edge, -edge },{}, {0.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左下16
-	{{ -edge, edge, edge },{}, {0.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左上17
-	{{ edge, edge, -edge },{}, {1.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右下18
-	{{ edge, edge, edge },{}, {1.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右上19
+	{{ -edge, edge, -edge },{}, {0.0f,1.0f}}, // 左下16
+	{{ -edge, edge, edge },{}, {0.0f,0.0f}}, // 左上17
+	{{ edge, edge, -edge },{}, {1.0f,1.0f}}, // 右下18
+	{{ edge, edge, edge },{}, {1.0f,0.0f}}, // 右上19
 	//下
-	{{ -edge, -edge, edge },{}, {0.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左上20
-	{{ -edge, -edge, -edge },{}, {0.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 左下21
-	{{ edge, -edge, edge },{}, {1.0f,0.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右上22
-	{{ edge, -edge, -edge },{}, {1.0f,1.0f},{1.0f, 0.0f, 0.0f},{0.0f, -1.0f, 0.0f}}, // 右下23
+	{{ -edge, -edge, edge },{}, {0.0f,0.0f}}, // 左上20
+	{{ -edge, -edge, -edge },{}, {0.0f,1.0f}}, // 左下21
+	{{ edge, -edge, edge },{}, {1.0f,0.0f}}, // 右上22
+	{{ edge, -edge, -edge },{}, {1.0f,1.0f}}, // 右下23
 };
 //インデックスデータ
 const unsigned short NormalMap::indices[36] = {
@@ -92,16 +92,6 @@ void NormalMap::CreateGraphicsPipeline()
 		 },
 		{
 			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,
-			0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{
-			"TANGENT", 0,DXGI_FORMAT_R32G32B32_FLOAT,
-			0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		 },
-		{
-			"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT,
 			0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},

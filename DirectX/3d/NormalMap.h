@@ -37,8 +37,6 @@ public://構造体宣言
 		XMFLOAT3 pos;
 		XMFLOAT3 normal;
 		XMFLOAT2 uv;
-		XMFLOAT3 tangent;
-		XMFLOAT3 binormal;
 	};
 
 private://静的メンバ関数
@@ -92,7 +90,6 @@ public://静的メンバ関数
 	static void SetCamera(Camera* camera) {
 		NormalMap::camera = camera;
 	}
-
 
 	/// <summary>
 	/// 描画前処理

@@ -51,6 +51,5 @@ private:
 
 	//îwåi
 	std::unique_ptr<Sprite> back = nullptr;
-
 };
 

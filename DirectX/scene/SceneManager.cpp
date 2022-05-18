@@ -71,7 +71,7 @@ void SceneManager::Update()
 	DrawLine3D::SetCamera(camera.get());
 	ParticleManager::SetCamera(camera.get());
 	scene->SetCamera(camera.get());
-
+	CubeMap::SetCamera(camera.get());
 	//ƒ‰ƒCƒg
 	light->Update();
 	scene->SetLight(light.get());

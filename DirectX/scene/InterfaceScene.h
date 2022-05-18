@@ -13,6 +13,7 @@
 #include "NormalMap.h"
 #include "DrawLine.h"
 #include "DrawLine3D.h"
+#include "CubeMap.h"
 
 //計算シェーダー
 #include "ComputeShaderManager.h"

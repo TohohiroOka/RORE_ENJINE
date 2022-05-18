@@ -240,6 +240,12 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		// ブレンドステートの再設定
 		gpipeline.BlendState.RenderTarget[0] = blenddesc;
 	}
+	//CubeBox
+	else if (objectKind == OBJECT_KINDS::CUBE_BOX)
+	{
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["CUBE_BOX"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["CUBE_BOX"].Get());
+	}
 
 	// 頂点レイアウトの設定
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -370,6 +376,16 @@ void GraphicsPipelineManager::CreateRootSignature()
 	}
 	//Particle
 	else if (objectKind == OBJECT_KINDS::PARTICLE)
+	{
+		// ルートパラメータ
+		rootparams.resize(2);
+		// CBV（座標変換行列用）
+		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+		// SRV（テクスチャ1）
+		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+	}
+	//CubeBox
+	else if (objectKind == OBJECT_KINDS::CUBE_BOX)
 	{
 		// ルートパラメータ
 		rootparams.resize(2);

@@ -34,7 +34,6 @@ void PostEffect::Finalize()
 	depthBuff.Reset();
 	descHeapRTV.Reset();
 	descHeapDSV.Reset();
-
 }
 
 void PostEffect::CreateGraphicsPipeline()

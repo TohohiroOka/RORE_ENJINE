@@ -162,7 +162,8 @@ PSOutput main(VSOutput input)
 	float4 mainColor = shadecolor * texcolor * color;
 	output.target0 = float4(mainColor.rgb, color.w);
 	output.target1 = bloom;
-	output.target2 = texcolor * color * isOutline;
+	output.target2 = float4(0.5, 0.5, 0.5, 1.0) * isOutline;
+
 	return output;
 }
 

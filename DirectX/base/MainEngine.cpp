@@ -62,6 +62,8 @@ void MainEngine::Initialize()
 	postEffect = PostEffect::Create();
 
 	fps = FrameRateKeep::Create();
+
+	dXCommon->CreateCubeMap();
 }
 
 bool MainEngine::Update()
@@ -82,6 +84,7 @@ void MainEngine::Draw()
 {
 	//•`‰æ
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
+	dXCommon->CubeDraw();
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
 

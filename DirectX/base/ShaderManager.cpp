@@ -101,6 +101,10 @@ void ShaderManager::LoadShader()
 	shaderObjectVS["PARTICLE"] = CompileShader(L"ParticleVS.hlsl", vsModel);
 	shaderObjectPS["PARTICLE"] = CompileShader(L"ParticlePS.hlsl", psModel);
 	shaderObjectGS["PARTICLE"] = CompileShader(L"ParticleGS.hlsl", gsModel);
+	//CubeBoxシェーダー
+	shaderObjectVS["CUBE_BOX"] = CompileShader(L"CubeBoxVS.hlsl", vsModel);
+	shaderObjectPS["CUBE_BOX"] = CompileShader(L"CubeBoxPS.hlsl", psModel);
+
 }
 
 void ShaderManager::Finalize()

@@ -151,6 +151,10 @@ void TestField::Update()
 	const float range = 50.0f;
 	XMFLOAT3 cameraPos = PLAYER->GetPosition();
 	cameraPos.y += 40.0f;
+	if (input->PushKey(DIK_Z))
+	{
+		cameraPos.z -= 50;
+	}
 	camera->SetEye(cameraPos);
 	camera->SetTarget({ cosf(cameraRadius) * range + cameraPos.x,cameraY,sinf(cameraRadius) * range + cameraPos.z });
 

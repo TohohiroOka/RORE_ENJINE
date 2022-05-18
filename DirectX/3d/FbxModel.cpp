@@ -202,24 +202,6 @@ void FbxModel::LoadTexture(const std::string fname)
 		(UINT)img->slicePitch//1枚サイズ
 	);
 
-	//テクスチャバッファ生成
-	result = device->CreateCommittedResource(//GPUリソースの生成
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
-		D3D12_HEAP_FLAG_NONE,
-		&texresDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,//テクスチャ用指定
-		nullptr,
-		IID_PPV_ARGS(&texBuffer[texBuffNum]));
-
-	//テクスチャバッファにデータ転送
-	result = texBuffer[texBuffNum]->WriteToSubresource(
-		0,
-		nullptr,//全領域へコピー
-		img->pixels,//元データアドレス
-		(UINT)img->rowPitch,//１ラインサイズ
-		(UINT)img->slicePitch//1枚サイズ
-	);
-
 	//シェーダーリソースビュー設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};//設定構造体
 	srvDesc.Format = metadata.format;

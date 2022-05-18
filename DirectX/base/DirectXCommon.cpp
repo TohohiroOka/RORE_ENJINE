@@ -4,6 +4,7 @@
 #include <cassert>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
+#include "SafeDelete.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -18,6 +19,10 @@ DirectXCommon::~DirectXCommon()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 	imguiHeap.Reset();
+
+	//cubeMap解放
+	cubemap->Finalize();
+	cubemap.reset();
 
 	//directX系の解放
 	dxgiFactory.Reset();
@@ -206,7 +211,6 @@ void DirectXCommon::Initialize()
 	backBuffers[1]->SetName(L"DXbackBuffers1");
 	rtvHeaps->SetName(L"DXrtvHeaps");
 	fence->SetName(L"DXfence");
-
 }
 
 void DirectXCommon::CreateDepth()
@@ -244,6 +248,23 @@ void DirectXCommon::CreateDepth()
 		depthBuffer.Get(),
 		&dsvDesc,
 		dsvHeap->GetCPUDescriptorHandleForHeapStart());
+}
+
+void DirectXCommon::CreateCubeMap()
+{
+	//キューブマップ初期化
+	CubeMap::StaticInitialize(device.Get(), cmdList.Get());
+	cubemap = CubeMap::Create();
+}
+
+void DirectXCommon::CubeDraw()
+{
+	cubemap->Update();
+
+	CubeMap::PreDraw(cmdList.Get());
+	cubemap->Draw();
+	CubeMap::PostDraw();
+
 }
 
 void DirectXCommon::InitImgui()
