@@ -128,6 +128,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="object\FrictionObject.cpp" />
     <ClCompile Include="object\Ground.cpp" />
     <ClCompile Include="object\Player.cpp" />
     <ClCompile Include="object\TouchableObject.cpp" />
@@ -315,6 +316,7 @@
     <ClInclude Include="light\LightGroup.h" />
     <ClInclude Include="light\PointLight.h" />
     <ClInclude Include="light\SpotLight.h" />
+    <ClInclude Include="object\FrictionObject.h" />
     <ClInclude Include="object\Ground.h" />
     <ClInclude Include="object\Player.h" />
     <ClInclude Include="object\TouchableObject.h" />

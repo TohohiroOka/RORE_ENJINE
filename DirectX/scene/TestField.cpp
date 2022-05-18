@@ -12,6 +12,22 @@
 #include <iomanip>
 #include <memory>
 
+bool judgeCubeToCube(DirectX::XMFLOAT3 posA, DirectX::XMFLOAT3 posB)
+{
+	float R = 5.0f;
+
+	bool judge = false;
+
+	if (posA.x - R > posB.x + R && posA.x + R < posB.x - R &&
+		posA.y - R> posB.y + R && posA.y + R < posB.y - R &&
+		posA.z - R> posB.z + R && posA.z + R < posB.z - R)
+	{
+		judge = true;
+	}
+
+	return judge;
+}
+
 void TestField::Initialize()
 {
 	//スプライト
@@ -29,6 +45,13 @@ void TestField::Initialize()
 
 	//地面生成
 	GROUND = Ground::Create(ground.get());
+
+	frictObj_A = FrictionObject::Create(block.get());
+	frictObj_A->SetPosition({ 100,0,-100 });
+	frictObj_A->SetPower(-1);
+	frictObj_B = FrictionObject::Create(block.get());
+	frictObj_B->SetPosition({ -100,0,-100 });
+	frictObj_B->SetPower(1);
 
 	//触れられるオブジェクト生成
 	std::unique_ptr<TouchableObject> Tobject3d = TouchableObject::Create(block.get());
@@ -100,11 +123,25 @@ void TestField::Update()
 	if (input->PushKey(DIK_UP)) { cameraY++; }
 	if (input->PushKey(DIK_DOWN)) { cameraY--; }
 
+	if (input->TriggerKey(DIK_SPACE))
+	{
+		frictObj_A->SetPosition({100,0,-100});
+		frictObj_B->SetPosition({ -100,0,-100 });
+	}
+
+	if (judgeCubeToCube(frictObj_A->GetPosition(), frictObj_B->GetPosition()))
+	{
+		frictObj_A->SetInversionPower();
+		frictObj_B->SetInversionPower();
+	}
+
 	//Obj
 	PLAYER->SetCameraAngle(cameraAngle);
 	PLAYER->Update();
 	GROUND->Update();
 	BLOCK->Update();
+	frictObj_A->Update();
+	frictObj_B->Update();
 
 	//NormalMap
 	XMFLOAT4 normal = { 1.0f,1.0f,1.0f,1.0f };
@@ -173,7 +210,9 @@ void TestField::Draw()
 	Object3d::PreDraw(cmdList);
 	PLAYER->Draw();
 	GROUND->Draw();
-	BLOCK->Draw();
+	//BLOCK->Draw();
+	frictObj_A->Draw();
+	frictObj_B->Draw();
 	Object3d::PostDraw();
 
 	Fbx::PreDraw(cmdList);

@@ -268,6 +268,9 @@
     <ClCompile Include="3d\CubeMap.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
+    <ClCompile Include="object\FrictionObject.cpp">
+      <Filter>ゲームシステム</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -519,6 +522,9 @@
     </ClInclude>
     <ClInclude Include="3d\CubeMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="object\FrictionObject.h">
+      <Filter>ゲームシステム</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

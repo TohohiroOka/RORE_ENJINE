@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Ground.h"
 #include "TouchableObject.h"
+#include "FrictionObject.h"
 
 class TestField : public InterfaceScene
 {
@@ -59,6 +60,8 @@ private:
 	//é©çÏÉNÉâÉX
 	std::unique_ptr<Player> PLAYER = nullptr;
 	std::unique_ptr<Ground> GROUND = nullptr;
+	std::unique_ptr<FrictionObject> frictObj_A = nullptr;
+	std::unique_ptr<FrictionObject> frictObj_B = nullptr;
 
 	//Obj
 	std::unique_ptr<Object3d> BLOCK = nullptr;
