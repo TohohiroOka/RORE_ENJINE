@@ -172,7 +172,7 @@ void TestField::Draw()
 
 	Object3d::PreDraw(cmdList);
 	PLAYER->Draw();
-	GROUND->Draw();
+	//GROUND->Draw();
 	BLOCK->Draw();
 	Object3d::PostDraw();
 

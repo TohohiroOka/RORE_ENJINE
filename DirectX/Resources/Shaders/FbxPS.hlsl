@@ -59,6 +59,7 @@ PSOutput main(VSOutput input)
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 
+
 	// 光沢度
 	const float shininess = 4.0f;
 

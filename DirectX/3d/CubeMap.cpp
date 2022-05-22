@@ -123,36 +123,36 @@ void CubeMap::Initialize()
 	float edge = 1.0f;
 	const int vertNum = 24;
 	Vertex vertices[vertNum] = {
-		//前
-		{{ -edge, -edge, -edge },{0.0f,1.0f}}, // 左下0
-		{{ -edge, edge, -edge },{0.0f,0.0f}}, // 左上1
-		{{ edge, -edge, -edge }, { 1.0f,1.0f }}, // 右下2
-		{{ edge, edge, -edge }, {1.0f,0.0f}}, // 右上3
-		//後
-		{{ -edge, edge, edge }, {0.0f,0.0f}}, // 左上4
-		{{ -edge, -edge, edge}, {0.0f,1.0f}}, // 左下5
-		{{ edge, edge, edge }, {1.0f,0.0f}}, // 右上6
-		{{ edge, -edge, edge }, {1.0f,1.0f}}, // 右下7
-		//左
-		{{ -edge, -edge, -edge }, {0.0f,1.0f}}, // 左下8
-		{{ -edge, -edge, edge }, {0.0f,0.0f}}, // 左上9
-		{{ -edge, edge, -edge }, {1.0f,1.0f}}, // 右下10
-		{{ -edge, edge, edge }, {1.0f,0.0f}}, // 右上11
-		//右
-		{{ edge, -edge, edge }, {0.0f,1.0f}}, // 左下12
-		{{ edge, -edge, -edge }, {0.0f,0.0f}}, // 左上13
-		{{ edge, edge, edge }, {1.0f,1.0f}}, // 右下14
-		{{ edge, edge, -edge }, {1.0f,0.0f}}, // 右上15
-		//上
-		{{ -edge, edge, -edge }, {0.0f,1.0f}}, // 左下16
-		{{ -edge, edge, edge }, {0.0f,0.0f}}, // 左上17
-		{{ edge, edge, -edge }, {1.0f,1.0f}}, // 右下18
-		{{ edge, edge, edge }, {1.0f,0.0f}}, // 右上19
-		//下
-		{{ -edge, -edge, edge }, {0.0f,0.0f}}, // 左上20
-		{{ -edge, -edge, -edge }, {0.0f,1.0f}}, // 左下21
-		{{ edge, -edge, edge }, {1.0f,0.0f}}, // 右上22
-		{{ edge, -edge, -edge }, {1.0f,1.0f}}, // 右下23
+		//face1
+		{{ -edge, -edge, -edge }, { -1.0f, -1.0f, -1.0f}}, // 左下 / 頂点1
+		{{ -edge,  edge, -edge }, { -1.0f,  1.0f, -1.0f}}, // 左上 / 頂点2
+		{{  edge, -edge, -edge }, { -1.0f, -1.0f,  1.0f}}, // 右下 / 頂点3
+		{{  edge,  edge, -edge }, { -1.0f,  1.0f,  1.0f}}, // 右上 / 頂点4
+		//face0
+		{{  edge, -edge,  edge }, {  1.0f, -1.0f,  1.0f}}, // 左下 / 頂点5
+		{{  edge,  edge,  edge }, {  1.0f,  1.0f,  1.0f}}, // 左上 / 頂点6
+		{{ -edge, -edge,  edge }, {  1.0f, -1.0f, -1.0f}}, // 右下 / 頂点7
+		{{ -edge,  edge,  edge }, {  1.0f,  1.0f, -1.0f}}, // 右上 / 頂点8
+		//face4
+		{{  edge, -edge, -edge }, { -1.0f, -1.0f,  1.0f}}, // 左下 / 頂点3
+		{{  edge,  edge, -edge }, { -1.0f,  1.0f,  1.0f}}, // 左上 / 頂点4
+		{{  edge, -edge,  edge }, {  1.0f, -1.0f,  1.0f}}, // 右下 / 頂点5
+		{{  edge,  edge,  edge }, {  1.0f,  1.0f,  1.0f}}, // 右上 / 頂点6
+		//face5
+		{{ -edge, -edge,  edge }, {  1.0f, -1.0f, -1.0f}}, // 左下 / 頂点3
+		{{ -edge,  edge,  edge }, {  1.0f,  1.0f, -1.0f}}, // 左上 / 頂点4
+		{{ -edge, -edge, -edge }, { -1.0f, -1.0f, -1.0f}}, // 右下 / 頂点1
+		{{ -edge,  edge, -edge }, { -1.0f,  1.0f, -1.0f}}, // 右上 / 頂点2
+		//face2
+		{{  edge,  edge, -edge }, { -1.0f,  1.0f,  1.0f}}, // 左下 / 頂点4
+		{{ -edge,  edge, -edge }, { -1.0f,  1.0f, -1.0f}}, // 左上 / 頂点2
+		{{  edge,  edge,  edge }, {  1.0f,  1.0f,  1.0f}}, // 右下 / 頂点6
+		{{ -edge,  edge,  edge }, {  1.0f,  1.0f, -1.0f}}, // 右上 / 頂点8
+		//face3
+		{{ -edge, -edge, -edge }, { -1.0f, -1.0f, -1.0f}}, // 左下 / 頂点1
+		{{  edge, -edge, -edge }, { -1.0f, -1.0f,  1.0f}}, // 左上 / 頂点3
+		{{ -edge, -edge,  edge }, {  1.0f, -1.0f, -1.0f}}, // 右下 / 頂点7
+		{{  edge, -edge,  edge }, {  1.0f, -1.0f,  1.0f}}, // 右上 / 頂点5
 	};
 
 	//頂点バッファ生成
@@ -315,12 +315,18 @@ void CubeMap::Draw()
 	//頂点バッファをセット
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
-	cmdList->SetGraphicsRootDescriptorTable(1,
+	//テクスチャバッファ転送
+	TransferTextureBubber(cmdList, 1);
+
+	//描画コマンド
+	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
+}
+
+void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* cmdList,UINT RootParameterIndex)
+{
+	cmdList->SetGraphicsRootDescriptorTable(RootParameterIndex,
 		CD3DX12_GPU_DESCRIPTOR_HANDLE(
 			descHeap->GetGPUDescriptorHandleForHeapStart(),
 			0,
 			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
-
-	//描画コマンド
-	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }

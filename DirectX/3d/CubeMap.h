@@ -21,7 +21,7 @@ private: // エイリアス
 	//頂点データ3D
 	struct Vertex {
 		XMFLOAT3 pos;
-		XMFLOAT2 uv;
+		XMFLOAT3 uv;
 	};
 
 	//定数バッファの構造体
@@ -107,6 +107,13 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// キューブマップの転送
+	/// </summary>
+	/// <param name="cmdList">描画コマンドリスト</param>
+	/// <param name="RootParameterIndex"></param>
+	void TransferTextureBubber(ID3D12GraphicsCommandList* cmdList,UINT RootParameterIndex);
 
 private:
 

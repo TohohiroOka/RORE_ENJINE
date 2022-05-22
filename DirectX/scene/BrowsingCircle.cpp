@@ -10,16 +10,6 @@ using namespace DirectX;
 
 void BrowsingCircle::Initialize()
 {
-	//”wŒi‰æ‘œ
-	Sprite::LoadTexture(L"Resources/pokemon.jpg");
-
-	//”wŒi‰Šú‰»
-	back = Sprite::Create(2);
-	back->SetSize({ (float)WindowApp::GetWindowWidth(), (float)WindowApp::GetWindowHeight()});
-	back->SetAnchorpoint({ 0,0 });
-	back->SetTexLeftTop({ 1,1 });
-	back->SetTexSize({ 1109,624 });
-	back->Update();
 	//‰~ƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
 	SpherePBRModel = FbxModel::Create("SpherePBR");
 
@@ -70,11 +60,6 @@ void BrowsingCircle::Update()
 
 void BrowsingCircle::Draw()
 {
-	//ƒXƒvƒ‰ƒCƒg•`‰æ
-	Sprite::PreDraw(cmdList);
-	back->Draw();
-	Sprite::PostDraw();
-
 	Fbx::PreDraw(cmdList);
 	for (int i = 0; i < circle.size(); i++)
 	{

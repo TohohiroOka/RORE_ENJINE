@@ -48,8 +48,5 @@ private:
 
 	//â~
 	std::array<std::unique_ptr<Fbx>, 25> circle;
-
-	//îwåi
-	std::unique_ptr<Sprite> back = nullptr;
 };
 

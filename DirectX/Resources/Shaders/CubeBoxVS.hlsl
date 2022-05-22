@@ -1,6 +1,6 @@
 #include "CubeBox.hlsli"
 
-VSOutput main(float4 pos:POSITION, float2 uv : TEXCOORD)
+VSOutput main(float4 pos:POSITION, float3 uv : TEXCOORD)
 {
 	// ピクセルシェーダーに渡す値
 	VSOutput output;

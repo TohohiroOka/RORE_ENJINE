@@ -1,6 +1,6 @@
 #include "Fbx.h"
 #include "Camera.h"
-#include "BaseCollider.h"
+#include "LightGroup.h"
 #include "SafeDelete.h"
 
 #include <fstream>

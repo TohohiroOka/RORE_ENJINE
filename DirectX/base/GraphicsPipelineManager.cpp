@@ -270,7 +270,7 @@ void GraphicsPipelineManager::CreateRootSignature()
 	if (objectKind == OBJECT_KINDS::OBJ)
 	{
 		// ルートパラメータ
-		rootparams.resize(4);
+		rootparams.resize(5);
 		// CBV（座標変換行列用）
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// CBV（マテリアルデータ用）
@@ -284,7 +284,7 @@ void GraphicsPipelineManager::CreateRootSignature()
 	else if (objectKind == OBJECT_KINDS::FBX)
 	{
 		// ルートパラメータ
-		rootparams.resize(5);
+		rootparams.resize(6);
 		// CBV（座標変換行列用）
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// CBV（マテリアルデータ用）

@@ -1,7 +1,10 @@
 #pragma once
 #include "Sprite.h"
 
-class DebugText : public Sprite
+/// <summary>
+/// デバッグ用文字表示
+/// </summary>
+class DebugText
 {
 public:
 	// デバッグテキスト用のテクスチャ番号を指定
@@ -15,6 +18,7 @@ private://静的メンバ変数
 
 	// スプライトデータの配列
 	static std::unique_ptr<Sprite> spriteDatas[maxCharCount];
+
 
 public:// 静的メンバ関数
 
@@ -37,29 +41,33 @@ public:// メンバ関数
 	/// </summary>
 	/// <param name="x">x軸</param>
 	/// <param name="y">y軸</param>
-	inline void SetPos(XMFLOAT2 pos) {this->pos = pos;}
+	inline void SetPos(float x, float y) {
+		posX = x;
+		posY = y;
+	}
 
 	/// <summary>
-	/// 大きさのセット
+	/// サイズ変更
 	/// </summary>
 	/// <param name="size"></param>
 	inline void SetSize(float size) { this->size = size; }
 
 	/// <summary>
+	/// 色変更
+	/// </summary>
+	/// <param name="size"></param>
+	inline void SetColor(float red, float green, float blue) {
+		this->size = size;
+	}
+
+	/// <summary>
 	/// 出力する文字の設定
 	/// </summary>
 	/// <param name="text">文字</param>
-	/// <param name="pos">座標</param>
+	/// <param name="x">x軸の位置</param>
+	/// <param name="y">y軸の位置</param>
 	/// <param name="size">大きさ</param>
-	void Print(const std::string& text, XMFLOAT2 pos, float size = 1.0f);
-
-	/// <summary>
-	/// 数値の文字出力
-	/// </summary>
-	/// <param name="num">数値</param>
-	/// <param name="pos">座標</param>
-	/// <param name="size">大きさ</param>
-	void PrintNum(const float& num, XMFLOAT2 pos, float size = 1.0f);
+	void Print(const std::string& text, float x, float y, float size = 1.0f);
 
 	/// <summary>
 	/// 
@@ -89,8 +97,13 @@ private:
 	// スプライトデータ配列の添え字番号
 	int spriteIndex = 0;
 
-	XMFLOAT2 pos = {};
+	float posX = 0.0f;
+	float posY = 0.0f;
 	float size = 1.0f;
+	float red = 1.0f;
+	float green = 1.0f;
+	float blue = 1.0f;
+
 
 	char buffer[bufferSize];
 };
