@@ -57,5 +57,9 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Resource> texBuffer = nullptr;
 	//テクスチャのデスクリプタ
 	std::unique_ptr<DescriptorHeapManager> descriptor = nullptr;
+	//ddsのみに使用する
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+	Microsoft::WRL::ComPtr<ID3D12Resource> texConstBuffer;
+
 };
 

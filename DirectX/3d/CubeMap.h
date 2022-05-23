@@ -4,6 +4,7 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 #include "GraphicsPipelineManager.h"
+#include "Texture.h"
 
 class Camera;
 
@@ -43,13 +44,13 @@ public://メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList);
+	static void StaticInitialize(ID3D12Device* device);
 
 	/// <summary>
 	/// directXCommon生成
 	/// </summary>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<CubeMap> Create();
+	static std::unique_ptr<CubeMap> Create(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
 	/// カメラのセット
@@ -58,12 +59,6 @@ public://メンバ関数
 	static void SetCamera(Camera* camera) {
 		CubeMap::camera = camera;
 	}
-
-	/// <summary>
-	/// リソースバリアにキューブマップを読み込ませる
-	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	static void SetCubeMap(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
 	/// 描画前処理
@@ -87,11 +82,6 @@ private://メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
-
-	/// <summary>
-	/// キューブマップのテクスチャ読み込み
-	/// </summary>
-	void LoadCubeTexture();
 
 public:
 
@@ -123,10 +113,6 @@ private:
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
-	//テクスチャバッファ
-	static ComPtr<ID3D12Resource> texBuffer;
-	//テクスチャ用デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap>descHeap;
 	//カメラ
 	static Camera* camera;
 	//インデックス数
@@ -134,6 +120,8 @@ private:
 
 private:
 
+	//テクスチャ情報
+	std::unique_ptr<Texture> texture = nullptr;
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//頂点バッファビュー

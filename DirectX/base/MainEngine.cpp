@@ -54,6 +54,7 @@ void MainEngine::Initialize()
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 	DebugText::GetInstance()->Initialize();
+	CubeMap::StaticInitialize(dXCommon->GetDevice());
 
 	scene = SceneManager::Create();
 
@@ -61,7 +62,7 @@ void MainEngine::Initialize()
 
 	fps = FrameRateKeep::Create();
 
-	dXCommon->CreateCubeMap();
+	cubemap = CubeMap::Create(dXCommon->GetCmdList());
 }
 
 bool MainEngine::Update()
@@ -74,6 +75,7 @@ bool MainEngine::Update()
 
 	//XV
 	scene->Update();
+	cubemap->Update();
 
 	return false;
 }
@@ -82,7 +84,11 @@ void MainEngine::Draw()
 {
 	//•`‰æ
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
-	dXCommon->CubeDraw();
+
+	CubeMap::PreDraw(dXCommon->GetCmdList());
+	cubemap->Draw();
+	CubeMap::PostDraw();
+
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
 

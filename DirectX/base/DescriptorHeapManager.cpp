@@ -22,6 +22,7 @@ void DescriptorHeapManager::StaticInitialize(ID3D12Device* device)
 
 void DescriptorHeapManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
+	assert(descHeap);
 	//デスクリプタヒープをセット
 	ID3D12DescriptorHeap* ppHeaps[] = { descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);

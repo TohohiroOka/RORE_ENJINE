@@ -118,7 +118,6 @@ void Texture::LoadTextureFromDDSFile(const std::string fileName, ID3D12GraphicsC
 	assert(SUCCEEDED(result));
 
 	//リソース配列
-	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	result = PrepareUpload(device, image.GetImages(), image.GetImageCount(), metadata, subresources);
 	assert(SUCCEEDED(result));
 
@@ -126,7 +125,6 @@ void Texture::LoadTextureFromDDSFile(const std::string fileName, ID3D12GraphicsC
 	UINT totalBytes = (UINT)GetRequiredIntermediateSize(texBuffer.Get(), 0, UINT(subresources.size()));
 
 	//テクスチャ転送用バッファ生成
-	Microsoft::WRL::ComPtr<ID3D12Resource> texConstBuffer;
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
 		D3D12_HEAP_FLAG_NONE,

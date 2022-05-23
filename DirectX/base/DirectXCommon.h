@@ -7,8 +7,6 @@
 #include <cstdlib>
 #include <imgui.h>
 
-#include "CubeMap.h"
-
 class DirectXCommon
 {
 private:
@@ -53,16 +51,6 @@ public://メンバ関数
 	/// 深度バッファ生成
 	/// </summary>
 	void CreateDepth();
-
-	/// <summary>
-	/// キューブマップの作成
-	/// </summary>
-	void CreateCubeMap();
-
-	/// <summary>
-	/// キューブマップの描画
-	/// </summary>
-	void CubeDraw();
 
 	/// <summary>
 	/// 描画前設定
@@ -116,7 +104,4 @@ private://メンバ変数
 	UINT64 fenceVal = 0;
 	//imgui用ヒープ
 	ComPtr<ID3D12DescriptorHeap> imguiHeap;
-	//キューブマップ
-	std::unique_ptr<CubeMap> cubemap;
-
 };
