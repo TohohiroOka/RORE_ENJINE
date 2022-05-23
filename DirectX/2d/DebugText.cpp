@@ -9,13 +9,13 @@ DebugText* DebugText::GetInstance()
 	return &instance;
 }
 
-void DebugText::Initialize(UINT texnumber)
+void DebugText::Initialize()
 {
 	// 全てのスプライトデータについて
 	for (int i = 0; i < _countof(spriteDatas); i++)
 	{
 		// スプライトを生成する
-		spriteDatas[i] = Sprite::Create(texnumber);
+		spriteDatas[i] = Sprite::Create("debugfont");
 		spriteDatas[i]->SetAnchorpoint({ 0, 0 });
 	}
 }

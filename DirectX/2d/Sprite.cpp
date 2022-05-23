@@ -8,10 +8,9 @@ using namespace Microsoft::WRL;
 
 ID3D12Device* Sprite::device = nullptr;
 ID3D12GraphicsCommandList* Sprite::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> Sprite::pipeline;
+std::unique_ptr<GraphicsPipelineManager> Sprite::pipeline = nullptr;
+std::map<std::string, std::unique_ptr<Texture>> Sprite::texture;
 XMMATRIX Sprite::matProjection;
-ComPtr<ID3D12DescriptorHeap> Sprite::descHeap;
-ComPtr<ID3D12Resource> Sprite::texBuff[srvCount];
 
 Sprite::~Sprite()
 {
@@ -21,8 +20,6 @@ Sprite::~Sprite()
 
 bool Sprite::StaticInitialize(ID3D12Device* device)
 {
-	HRESULT result;
-
 	// 初期化チェック
 	assert(!Sprite::device);
 
@@ -40,18 +37,7 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 		(float)WindowApp::GetWindowHeight(), 0.0f,
 		0.0f, 1.0f);
 
-	// デスクリプタヒープを生成	
-	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
-	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
-	descHeapDesc.NumDescriptors = srvCount;
-	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
-	if (FAILED(result)) {
-		assert(0);
-		return false;
-	}
-
-	Sprite::LoadTexture(L"Resources/LetterResources/debugfont.png");
+	Sprite::LoadTexture("debugfont", "Resources/LetterResources/debugfont.png");
 
 	return true;
 }
@@ -76,82 +62,16 @@ void Sprite::CreateGraphicsPipeline()
 		GraphicsPipelineManager::OBJECT_KINDS::SPRITE, inputLayout, _countof(inputLayout));
 }
 
-int Sprite::LoadTexture(const wchar_t* filename)
+void Sprite::LoadTexture(const std::string keepName, const std::string filename)
 {
 	// nullptrチェック
 	assert(device);
 
-	static int texnum = -1;
-	texnum++;
+	//同じキーがあればエラーを出力
+	assert(!texture.count(keepName));
 
-	HRESULT result;
-	// WICテクスチャのロード
-	TexMetadata metadata{};
-	ScratchImage scratchImg{};
-
-	result = LoadFromWICFile(
-		filename, WIC_FLAGS_NONE,
-		&metadata, scratchImg);
-	if (FAILED(result)) {
-		assert(0);
-		return false;
-	}
-
-	const Image* img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
-
-	// リソース設定
-	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-		metadata.format,
-		metadata.width,
-		(UINT)metadata.height,
-		(UINT16)metadata.arraySize,
-		(UINT16)metadata.mipLevels
-	);
-
-	// テクスチャ用バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
-		D3D12_HEAP_FLAG_NONE,
-		&texresDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
-		nullptr,
-		IID_PPV_ARGS(&texBuff[texnum]));
-	if (FAILED(result)) {
-		assert(0);
-		return false;
-	}
-
-	// テクスチャバッファにデータ転送
-	result = texBuff[texnum]->WriteToSubresource(
-		0,
-		nullptr, // 全領域へコピー
-		img->pixels,    // 元データアドレス
-		(UINT)img->rowPitch,  // 1ラインサイズ
-		(UINT)img->slicePitch // 1枚サイズ
-	);
-	if (FAILED(result)) {
-		assert(0);
-		return false;
-	}
-
-	// シェーダリソースビュー作成
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; // 設定構造体
-	D3D12_RESOURCE_DESC resDesc = texBuff[texnum]->GetDesc();
-
-	srvDesc.Format = resDesc.Format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = 1;
-
-	device->CreateShaderResourceView(texBuff[texnum].Get(), //ビューと関連付けるバッファ
-		&srvDesc, //テクスチャ設定情報
-		CD3DX12_CPU_DESCRIPTOR_HANDLE(
-			descHeap->GetCPUDescriptorHandleForHeapStart(),
-			texnum,
-			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV))
-	);
-
-	return texnum;
+	//テクスチャ読み込み
+	texture[keepName] = Texture::Create(filename);
 }
 
 void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
@@ -167,9 +87,8 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
 	// プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	// デスクリプタヒープをセット
-	ID3D12DescriptorHeap* ppHeaps[] = { descHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+	DescriptorHeapManager::PreDraw(cmdList);
 }
 
 void Sprite::PostDraw()
@@ -178,7 +97,7 @@ void Sprite::PostDraw()
 	Sprite::cmdList = nullptr;
 }
 
-std::unique_ptr<Sprite> Sprite::Create(UINT texNumber)
+std::unique_ptr<Sprite> Sprite::Create(const std::string name)
 {
 	// Spriteのインスタンスを生成
 	Sprite* instance = new Sprite();
@@ -187,7 +106,7 @@ std::unique_ptr<Sprite> Sprite::Create(UINT texNumber)
 	}
 
 	// 初期化
-	if (!instance->Initialize(texNumber, { 0.5f,0.5f }, false, false)) {
+	if (!instance->Initialize(name, { 0.5f,0.5f })) {
 		delete instance;
 		assert(0);
 		return nullptr;
@@ -199,9 +118,9 @@ std::unique_ptr<Sprite> Sprite::Create(UINT texNumber)
 	return std::unique_ptr<Sprite>(instance);
 }
 
-bool Sprite::Initialize(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
+bool Sprite::Initialize(const std::string name,const XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
 {
-	this->texNumber = texNumber;
+	this->name = name;
 	this->anchorpoint = anchorpoint;
 	this->isFlipX = isFlipX;
 	this->isFlipY = isFlipY;
@@ -281,11 +200,7 @@ void Sprite::Draw()
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 	// シェーダリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(1,
-		CD3DX12_GPU_DESCRIPTOR_HANDLE(
-			descHeap->GetGPUDescriptorHandleForHeapStart(),
-			this->texNumber,
-			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+	cmdList->SetGraphicsRootDescriptorTable(1, texture[name]->descriptor->gpu);
 
 	// 描画コマンド
 	cmdList->DrawInstanced(4, 1, 0, 0);
@@ -323,9 +238,9 @@ void Sprite::TransferVertices()
 	vertices[RT].pos = { right,	top,	0.0f }; // 右上
 
 	// テクスチャ情報取得
-	if (texBuff[texNumber])
+	if (texture[name]->texBuffer)
 	{
-		D3D12_RESOURCE_DESC resDesc = texBuff[texNumber]->GetDesc();
+		D3D12_RESOURCE_DESC resDesc = texture[name]->texBuffer->GetDesc();
 
 		float tex_left = texLeftTop.x / resDesc.Width;
 		float tex_right = (texLeftTop.x + texSize.x) / resDesc.Width;
@@ -349,10 +264,9 @@ void Sprite::TransferVertices()
 
 void Sprite::Finalize()
 {
-	for (int i = 0; i < srvCount; i++)
-	{
-		texBuff[i].Reset();
-	}
 	pipeline.reset();
-	descHeap.Reset();
+	for (auto itr = texture.begin(); itr != texture.end(); ++itr) {
+		(*itr).second.reset();
+	}
+	texture.clear();
 }

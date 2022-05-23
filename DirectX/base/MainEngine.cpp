@@ -42,6 +42,7 @@ void MainEngine::Initialize()
 	Xinput->Initialize();
 
 	//ObjectŒn‚Ì‰Šú‰»
+	Texture::StaticInitialize(dXCommon->GetDevice());
 	GraphicsPipelineManager::StaticInitialize(dXCommon->GetDevice());
 	Object3d::StaticInitialize(dXCommon->GetDevice());
 	Sprite::StaticInitialize(dXCommon->GetDevice());
@@ -52,8 +53,7 @@ void MainEngine::Initialize()
 	Fbx::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
-	Texture::StaticInitialize(dXCommon->GetDevice());
-	DebugText::GetInstance()->Initialize(0);
+	DebugText::GetInstance()->Initialize();
 
 	scene = SceneManager::Create();
 

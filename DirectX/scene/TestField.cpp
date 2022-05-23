@@ -15,9 +15,9 @@
 void TestField::Initialize()
 {
 	//スプライト
-	Sprite::LoadTexture(L"Resources/amm.jpg");
+	Sprite::LoadTexture("amm", "Resources/amm.jpg");
 
-	sprite = Sprite::Create(1);
+	sprite = Sprite::Create("amm");
 
 	//モデル読み込み
 	uma = Model::CreateFromOBJ("uma");

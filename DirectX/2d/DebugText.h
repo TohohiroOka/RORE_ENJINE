@@ -33,8 +33,7 @@ public:// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="texnumber">使うテクスチャの番号</param>
-	void Initialize(UINT texnumber);
+	void Initialize();
 
 	/// <summary>
 	/// 位置のセット

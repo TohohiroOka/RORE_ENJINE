@@ -5,6 +5,7 @@
 #include <DirectXMath.h>
 
 #include "GraphicsPipelineManager.h"
+#include "Texture.h"
 
 class Sprite
 {
@@ -55,9 +56,10 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
+	/// <param name="keepName">保存名</param>
 	/// <param name="filename">画像ファイル名</param>
 	/// <returns>テクスチャ番号</returns>
-	static int LoadTexture(const wchar_t* filename);
+	static void LoadTexture(const std::string keepName, const std::string filename);
 
 	/// <summary>
 	/// 描画前処理
@@ -73,9 +75,9 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// スプライト生成
 	/// </summary>
-	/// <param name="texNumber">テクスチャ番号</param>
+	/// <param name="name">テクスチャ保存名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Sprite> Create(UINT texNumber);
+	static std::unique_ptr<Sprite> Create(const std::string name);
 
 	/// <summary>
 	/// 解放処理
@@ -84,8 +86,6 @@ public: // 静的メンバ関数
 
 protected: // 静的メンバ変数
 
-	// テクスチャの最大枚数
-	static const int srvCount = 512;
 	// 頂点数
 	static const int vertNum = 4;
 	// デバイス
@@ -94,12 +94,10 @@ protected: // 静的メンバ変数
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	//テクスチャ情報
+	static std::map<std::string, std::unique_ptr<Texture>> texture;
 	// 射影行列
 	static XMMATRIX matProjection;
-	// デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap> descHeap;
-	// テクスチャバッファ
-	static ComPtr<ID3D12Resource> texBuff[srvCount];
 
 public: // メンバ関数
 
@@ -116,12 +114,12 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="texNumber">テクスチャ番号</param>
+	/// <param name="name">テクスチャ保存名</param>
 	/// <param name="anchorpoint">アンカーポイント</param>
 	/// <param name="isFlipX">左右反転するか</param>
 	/// <param name="isFlipY">上下反転するか</param>
 	/// <returns>成否</returns>
-	bool Initialize(UINT texNumber, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
+	bool Initialize(const std::string name, const XMFLOAT2 anchorpoint, bool isFlipX = false, bool isFlipY = false);
 
 	/// <summary>
 	/// 更新
@@ -134,14 +132,15 @@ public: // メンバ関数
 	void Draw();
 
 protected: // メンバ変数
+
+	//テクスチャ名
+	std::string name;
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
-	// テクスチャ番号
-	UINT texNumber = 0;
 	// Z軸回りの回転角
 	float rotation = 0.0f;
 	// 座標
@@ -164,6 +163,7 @@ protected: // メンバ変数
 	XMFLOAT2 texSize = { 500.0f, 500.0f };
 
 protected: // メンバ関数
+
 	/// <summary>
 	/// 頂点データ転送
 	/// </summary>
@@ -226,9 +226,9 @@ public:
 	const bool GetIsFlipY() { return isFlipY; }
 
 	/// <summary>
-	/// テクスチャ番号の入力
+	/// テクスチャのセット
 	/// </summary>
-	void SetTexNumber(UINT texNumber) { this->texNumber = texNumber; };
+	void SetTexNumber(std::string name) { this->name = name; };
 
 	/// <summary>
 	/// 座標の入力
