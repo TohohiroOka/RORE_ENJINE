@@ -36,19 +36,6 @@ void TestField::Initialize()
 	Tobject3d->SetPosition({ -100,0,-100 });
 	BLOCK = std::move(Tobject3d);
 
-	//NormalMapテクスチャの読み込み
-	tex[0] = NormalMap::LoadTexture(L"Resources/SubTexture/white1x1.png");
-	tex[1] = NormalMap::LoadTexture(L"Resources/wN1.jpg");
-	tex[2] = NormalMap::LoadTexture(L"Resources/pN2.png");
-
-	//水オブジェクト生成
-	water = NormalMap::Create();
-	water->SetPosition({ 100,5,100 });
-	water->SetScale({ 2,2,2 });
-	water->SetMainTexColor({ 1.0f,1.0f,1.0f,1.0f });
-	water->SetSubTexColor1({ 0.1f, 0.7f, 1.0f, 0.5f });
-	water->SetSubTexColor2({ 1.0f, 1.0f, 1.0f, 0.5f });
-
 	//Fbxモデルの読み込み
 	danceModel = FbxModel::Create("uma");
 	SpherePBRModel = FbxModel::Create("SpherePBR");
@@ -106,19 +93,6 @@ void TestField::Update()
 	GROUND->Update();
 	BLOCK->Update();
 
-	//NormalMap
-	XMFLOAT4 normal = { 1.0f,1.0f,1.0f,1.0f };
-	//法線マップの移動処理
-	if (lightF) { lightPos -= 0.5f; } else if (lightF == false) { lightPos += 0.5f; }
-
-	if (lightPos > 30) { lightF = true; }
-	if (lightPos < -30) { lightF = false; }
-
-	uvPos += 0.2f;
-	water->SetUvPosition(uvPos);
-	water->SetLightPosition(lightPos);
-	water->Update();
-
 	//Fbx
 	anm->Update();
 
@@ -165,10 +139,6 @@ void TestField::Update()
 void TestField::Draw()
 {
 	assert(cmdList);
-
-	NormalMap::PreDraw(cmdList);
-	water->Draw(tex[0], tex[1], tex[2]);
-	NormalMap::PostDraw();
 
 	Object3d::PreDraw(cmdList);
 	PLAYER->Draw();

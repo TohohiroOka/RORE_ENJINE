@@ -10,7 +10,6 @@
 #include "LightGroup.h"
 #include "Fbx.h"
 #include "Easing.h"
-#include "NormalMap.h"
 #include "DrawLine.h"
 #include "DrawLine3D.h"
 #include "CubeMap.h"

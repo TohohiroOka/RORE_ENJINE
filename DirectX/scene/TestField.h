@@ -63,13 +63,6 @@ private:
 	//Obj
 	std::unique_ptr<Object3d> BLOCK = nullptr;
 
-	//NormalMap
-	std::unique_ptr<NormalMap> water = nullptr;
-	int tex[3];
-	bool lightF = false;
-	float lightPos = 0;
-	float uvPos = 0;
-
 	//FbxModel
 	std::unique_ptr<FbxModel> danceModel = nullptr;
 	std::unique_ptr<FbxModel> SpherePBRModel = nullptr;

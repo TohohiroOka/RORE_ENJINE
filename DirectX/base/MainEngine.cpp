@@ -6,10 +6,10 @@
 #include "DebugText.h"
 #include "Emitter.h"
 #include "Fbx.h"
-#include "NormalMap.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
+#include "Texture.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -24,7 +24,6 @@ MainEngine::~MainEngine()
 	Sprite::Finalize();
 	Fbx::Finalize();
 	ParticleManager::Finalize();
-	NormalMap::Finalize();
 	postEffect->Finalize();
 	ComputeShaderManager::Finalize();
 }
@@ -51,10 +50,9 @@ void MainEngine::Initialize()
 	ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	Fbx::StaticInitialize(dXCommon->GetDevice());
-	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
-
+	Texture::StaticInitialize(dXCommon->GetDevice());
 	DebugText::GetInstance()->Initialize(0);
 
 	scene = SceneManager::Create();

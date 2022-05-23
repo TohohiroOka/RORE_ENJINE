@@ -9,8 +9,6 @@ using namespace DirectX;
 ID3D12Device* FbxModel::device = nullptr;
 FbxManager* FbxModel::fbxManager = nullptr;
 FbxImporter* FbxModel::fbxImporter = nullptr;
-ComPtr<ID3D12DescriptorHeap> FbxModel::descHeap;
-ComPtr<ID3D12Resource> FbxModel::texBuffer[textureNum];
 FbxTime FbxModel::frameTime;
 const std::string FbxModel::defaultTexture = "Resources/SubTexture/white1x1.png";
 const std::string FbxModel::baseDirectory = "Resources/Fbx/";
@@ -33,13 +31,6 @@ void FbxModel::StaticInitialize(ID3D12Device* device)
 	assert(device);
 
 	FbxModel::device = device;
-
-	//デスクリプタヒープの生成
-	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
-	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	descHeapDesc.NumDescriptors = textureNum;
-	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
 
 	fbxManager = FbxManager::Create();
 	fbxImporter = FbxImporter::Create(fbxManager, "imp");
@@ -126,18 +117,18 @@ void FbxModel::LoadMaterial(FbxNode* fbxNode)
 			const FbxProperty diffuseProperty = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
 			if (diffuseProperty.IsValid())
 			{
-				const FbxFileTexture* texture = diffuseProperty.GetSrcObject<FbxFileTexture>();
+				const FbxFileTexture* textureFile = diffuseProperty.GetSrcObject<FbxFileTexture>();
 
-				if (texture)
+				if (textureFile)
 				{
-					const char* filePath = texture->GetFileName();
+					const char* filePath = textureFile->GetFileName();
 
 					//ファイルパスからファイル名取得
 					std::string path_str(filePath);
 					std::string fileName = ExtractFileName(path_str);
 
 					//テクスチャ読み込み
-					LoadTexture(baseDirectory + name + '/' + fileName);
+					texture = Texture::Create(baseDirectory + name + '/' + fileName);
 					textureLoaded = true;
 				}
 			}
@@ -146,77 +137,9 @@ void FbxModel::LoadMaterial(FbxNode* fbxNode)
 		//textureが無い場合白にする
 		if (!textureLoaded)
 		{
-			LoadTexture(defaultTexture);
+			texture = Texture::Create(defaultTexture);
 		}
 	}
-}
-
-void FbxModel::LoadTexture(const std::string fname)
-{
-	HRESULT result;
-
-	//テクスチャバッファ番号
-	static int texBuffNum = 0;
-
-	////WICテクスチャのロード
-	TexMetadata metadata{};
-	ScratchImage scratchImage{};
-
-	//ユニコードに変換
-	wchar_t wfilePath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0,
-		fname.c_str(), -1, wfilePath, _countof(wfilePath));
-
-	result = LoadFromWICFile(
-		wfilePath,
-		WIC_FLAGS_NONE,
-		&metadata, scratchImage);
-	assert(SUCCEEDED(result));
-
-	const Image* img = scratchImage.GetImage(0, 0, 0);
-
-	//テクスチャバッファの生成
-	//リソース設定
-	D3D12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-		metadata.format,
-		metadata.width,
-		(UINT)metadata.height,
-		(UINT16)metadata.arraySize,
-		(UINT16)metadata.mipLevels);
-
-	//テクスチャバッファ生成
-	result = device->CreateCommittedResource(//GPUリソースの生成
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
-		D3D12_HEAP_FLAG_NONE,
-		&texresDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,//テクスチャ用指定
-		nullptr,
-		IID_PPV_ARGS(&texBuffer[texBuffNum]));
-
-	//テクスチャバッファにデータ転送
-	result = texBuffer[texBuffNum]->WriteToSubresource(
-		0,
-		nullptr,//全領域へコピー
-		img->pixels,//元データアドレス
-		(UINT)img->rowPitch,//１ラインサイズ
-		(UINT)img->slicePitch//1枚サイズ
-	);
-
-	//シェーダーリソースビュー設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};//設定構造体
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = 1;
-
-	//ヒープのtexnumber番目にシェーダーリソースビューを作成
-	device->CreateShaderResourceView(
-		texBuffer[texBuffNum].Get(),
-		&srvDesc,
-		CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), 0,
-			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
-
-	texBuffNum++;
 }
 
 void FbxModel::CollectMesh(FbxNode* fbxNode)
@@ -698,10 +621,7 @@ void FbxModel::Update()
 
 void FbxModel::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
-	//デスクリプタヒープをセット
-	ID3D12DescriptorHeap* ppHeaps[] = { descHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-
+	DescriptorHeapManager::PreDraw(cmdList);
 }
 
 void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
@@ -716,11 +636,7 @@ void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRootConstantBufferView(4, constBuffSkin->GetGPUVirtualAddress());
 
 	//シェーダーリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(2,
-		CD3DX12_GPU_DESCRIPTOR_HANDLE(
-			descHeap->GetGPUDescriptorHandleForHeapStart(),
-			0,
-			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+	cmdList->SetGraphicsRootDescriptorTable(2, texture->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced((UINT)data->indices.size(), 1, 0, 0, 0);
@@ -728,12 +644,6 @@ void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
 
 void FbxModel::Finalize()
 {
-	descHeap.Reset();
-	for (int i = 0; i < textureNum; i++)
-	{
-		texBuffer[i].Reset();
-	}
-
 	fbxImporter->Destroy();
 	fbxManager->Destroy();
 }
