@@ -16,9 +16,9 @@ public://静的メンバ関数
 	/// <summary>
 	/// インスタンスの生成
 	/// </summary>
-	/// <param name="texNumber">テクスチャ番号</param>
+	/// <param name="name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Emitter> Create(int texNumber);
+	static std::unique_ptr<Emitter> Create(const std::string name);
 
 public://メンバ関数
 

@@ -49,9 +49,9 @@ void TestField::Initialize()
 	//anm->SetToon(true);
 
 	//パーティクル用テクスチャの読み込み
-	ParticleManager::LoadTexture(0, L"Resources/particle/effect1.png");
+	ParticleManager::LoadTexture("effect1", "Resources/particle/effect1.png");
 
-	emit = Emitter::Create(0);
+	emit = Emitter::Create("effect1");
 
 	//線
 	line = DrawLine::Create();

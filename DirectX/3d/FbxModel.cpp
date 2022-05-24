@@ -619,11 +619,6 @@ void FbxModel::Update()
 	constBuffSkin->Unmap(0, nullptr);
 }
 
-void FbxModel::PreDraw(ID3D12GraphicsCommandList* cmdList)
-{
-	DescriptorHeapManager::PreDraw(cmdList);
-}
-
 void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	//頂点バッファの設定

@@ -160,8 +160,6 @@ void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList)
 
 	// プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	DescriptorHeapManager::PreDraw(cmdList);
 }
 
 void Object3d::PostDraw()

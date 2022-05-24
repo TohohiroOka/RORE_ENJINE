@@ -87,8 +87,6 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
 	// プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-	DescriptorHeapManager::PreDraw(cmdList);
 }
 
 void Sprite::PostDraw()

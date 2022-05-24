@@ -73,8 +73,6 @@ void CubeMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	DescriptorHeapManager::PreDraw(cmdList);
 }
 
 void CubeMap::PostDraw()

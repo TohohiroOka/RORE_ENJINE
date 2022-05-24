@@ -84,7 +84,7 @@ void MainEngine::Draw()
 {
 	//•`‰æ
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
-
+	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
 	CubeMap::PreDraw(dXCommon->GetCmdList());
 	cubemap->Draw();
 	CubeMap::PostDraw();
