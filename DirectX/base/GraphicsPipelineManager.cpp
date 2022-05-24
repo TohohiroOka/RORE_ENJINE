@@ -264,7 +264,7 @@ void GraphicsPipelineManager::CreateRootSignature()
 	// ルートパラメータ
 	std::vector<CD3DX12_ROOT_PARAMETER> rootparams;
 	// スタティックサンプラー
-	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
+	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR);
 
 	//Obj
 	if (objectKind == OBJECT_KINDS::OBJ)

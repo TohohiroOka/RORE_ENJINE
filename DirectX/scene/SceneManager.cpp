@@ -66,7 +66,6 @@ void SceneManager::Update()
 
 	//カメラのセット
 	Object3d::SetCamera(camera.get());
-	NormalMap::SetCamera(camera.get());
 	Fbx::SetCamera(camera.get());
 	DrawLine3D::SetCamera(camera.get());
 	ParticleManager::SetCamera(camera.get());

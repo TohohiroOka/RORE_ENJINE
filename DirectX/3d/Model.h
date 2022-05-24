@@ -24,8 +24,6 @@ private:
 private: // 静的メンバ変数
 	// デバイス
 	static ID3D12Device* device;
-	// デスクリプタサイズ
-	static UINT descriptorHandleIncrementSize;
 
 public: // 静的メンバ関数
 
@@ -77,8 +75,6 @@ private: // メンバ変数
 	std::unordered_map<std::string, Material*> materials;
 	// デフォルトマテリアル
 	Material* defaultMaterial = nullptr;
-	// デスクリプタヒープ
-	ComPtr<ID3D12DescriptorHeap> descHeap;
 
 private: // メンバ関数
 
@@ -98,11 +94,6 @@ private: // メンバ関数
 	/// マテリアル登録
 	/// </summary>
 	void AddMaterial(Material* material);
-
-	/// <summary>
-	/// デスクリプタヒープの生成
-	/// </summary>
-	void CreateDescriptorHeap();
 
 	/// <summary>
 	/// テクスチャ読み込み

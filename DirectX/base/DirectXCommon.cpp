@@ -20,10 +20,6 @@ DirectXCommon::~DirectXCommon()
 	ImGui::DestroyContext();
 	imguiHeap.Reset();
 
-	//cubeMap解放
-	cubemap->Finalize();
-	cubemap.reset();
-
 	//directX系の解放
 	dxgiFactory.Reset();
 	cmdList.Reset();
@@ -248,23 +244,6 @@ void DirectXCommon::CreateDepth()
 		depthBuffer.Get(),
 		&dsvDesc,
 		dsvHeap->GetCPUDescriptorHandleForHeapStart());
-}
-
-void DirectXCommon::CreateCubeMap()
-{
-	//キューブマップ初期化
-	CubeMap::StaticInitialize(device.Get(), cmdList.Get());
-	cubemap = CubeMap::Create();
-}
-
-void DirectXCommon::CubeDraw()
-{
-	cubemap->Update();
-
-	CubeMap::PreDraw(cmdList.Get());
-	cubemap->Draw();
-	CubeMap::PostDraw();
-
 }
 
 void DirectXCommon::InitImgui()

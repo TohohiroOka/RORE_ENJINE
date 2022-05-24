@@ -8,10 +8,8 @@ using namespace Microsoft::WRL;
 ID3D12Device* ParticleManager::device = nullptr;
 ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
 Camera* ParticleManager::camera = nullptr;
-UINT ParticleManager::descriptorHandleIncrementSize = 0;
 std::unique_ptr<GraphicsPipelineManager> ParticleManager::pipeline;
-ComPtr<ID3D12DescriptorHeap> ParticleManager::descHeap;
-ComPtr<ID3D12Resource> ParticleManager::texBuffer[textureNum];
+std::map<std::string, std::unique_ptr<Texture>> ParticleManager::texture;
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
@@ -57,17 +55,6 @@ void ParticleManager::CreateGraphicsPipeline()
 		GraphicsPipelineManager::OBJECT_KINDS::PARTICLE, inputLayout, _countof(inputLayout));
 }
 
-void ParticleManager::CommonCreate() {
-	HRESULT result = S_FALSE;
-
-	//デスクリプタヒープの生成
-	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
-	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	descHeapDesc.NumDescriptors = textureNum;
-	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
-}
-
 void ParticleManager::StaticInitialize(ID3D12Device* device)
 {
 	// 初期化チェック
@@ -78,71 +65,20 @@ void ParticleManager::StaticInitialize(ID3D12Device* device)
 
 	ParticleManager::device = device;
 
-	//共通データ生成
-	CommonCreate();
-
 	//パイプライン設定
 	CreateGraphicsPipeline();
 }
 
-void ParticleManager::LoadTexture(UINT texNum, const wchar_t* filename)
+void ParticleManager::LoadTexture(const std::string keepName, const std::string filename)
 {
-	HRESULT result;
+	// nullptrチェック
+	assert(device);
 
-	//異常な番号の指定
-	assert(texNum <= textureNum - 1);
+	//同じキーがあればエラーを出力
+	assert(!texture.count(keepName));
 
-	////WICテクスチャのロード
-	TexMetadata metadata{};
-	ScratchImage scratchImage{};
-
-	result = LoadFromWICFile(
-		filename,
-		WIC_FLAGS_NONE,
-		&metadata, scratchImage);
-
-	const Image* img = scratchImage.GetImage(0, 0, 0);
-
-	//テクスチャバッファの生成
-	//リソース設定
-	D3D12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-		metadata.format,
-		metadata.width,
-		(UINT)metadata.height,
-		(UINT16)metadata.arraySize,
-		(UINT16)metadata.mipLevels);
-
-	//テクスチャバッファ生成
-	result = device->CreateCommittedResource(//GPUリソースの生成
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
-		D3D12_HEAP_FLAG_NONE,
-		&texresDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,//テクスチャ用指定
-		nullptr,
-		IID_PPV_ARGS(&texBuffer[texNum]));
-
-	//テクスチャバッファにデータ転送
-	result = texBuffer[texNum]->WriteToSubresource(
-		0,
-		nullptr,//全領域へコピー
-		img->pixels,//元データアドレス
-		(UINT)img->rowPitch,//１ラインサイズ
-		(UINT)img->slicePitch//1枚サイズ
-	);
-
-	//シェーダーリソースビュー設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};//設定構造体
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = 1;
-
-	//ヒープのtexnumber番目にシェーダーリソースビューを作成
-	device->CreateShaderResourceView(
-		texBuffer[texNum].Get(),
-		&srvDesc,
-		CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), texNum,
-			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+	//テクスチャ読み込み
+	texture[keepName] = Texture::Create(filename);
 }
 
 void ParticleManager::Initialize()
@@ -183,12 +119,12 @@ void ParticleManager::Initialize()
 	assert(SUCCEEDED(result));
 }
 
-std::unique_ptr<ParticleManager> ParticleManager::Create(UINT texNumber)
+std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string name)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	ParticleManager* instance = new ParticleManager();
 
-	instance->texNumber = texNumber;
+	instance->name = name;
 
 	// 初期化
 	instance->Initialize();
@@ -390,19 +326,11 @@ void ParticleManager::Draw()
 	//頂点バッファをセット
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
-	//デスクリプタヒープをセット
-	ID3D12DescriptorHeap* ppHeaps[] = { descHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-
 	//定数バッファをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 
 	//シェーダーリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(1,
-		CD3DX12_GPU_DESCRIPTOR_HANDLE(
-			descHeap->GetGPUDescriptorHandleForHeapStart(),
-			texNumber,
-			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+	cmdList->SetGraphicsRootDescriptorTable(1, texture[name]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawInstanced((UINT)std::distance(particle.begin(), particle.end()), 1, 0, 0);
@@ -415,10 +343,9 @@ void ParticleManager::ParticlAllDelete()
 
 void ParticleManager::Finalize()
 {
-	for (int i = 0; i < textureNum; i++)
-	{
-		texBuffer[i].Reset();
+	for (auto itr = texture.begin(); itr != texture.end(); ++itr) {
+		(*itr).second.reset();
 	}
-	descHeap.Reset();
+	texture.clear();
 	pipeline.reset();
 }

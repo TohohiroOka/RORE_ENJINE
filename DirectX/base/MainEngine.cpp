@@ -6,10 +6,10 @@
 #include "DebugText.h"
 #include "Emitter.h"
 #include "Fbx.h"
-#include "NormalMap.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
+#include "Texture.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -24,7 +24,6 @@ MainEngine::~MainEngine()
 	Sprite::Finalize();
 	Fbx::Finalize();
 	ParticleManager::Finalize();
-	NormalMap::Finalize();
 	postEffect->Finalize();
 	ComputeShaderManager::Finalize();
 }
@@ -43,6 +42,7 @@ void MainEngine::Initialize()
 	Xinput->Initialize();
 
 	//ObjectŒn‚Ì‰Šú‰»
+	Texture::StaticInitialize(dXCommon->GetDevice());
 	GraphicsPipelineManager::StaticInitialize(dXCommon->GetDevice());
 	Object3d::StaticInitialize(dXCommon->GetDevice());
 	Sprite::StaticInitialize(dXCommon->GetDevice());
@@ -51,11 +51,10 @@ void MainEngine::Initialize()
 	ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	Fbx::StaticInitialize(dXCommon->GetDevice());
-	NormalMap::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
-
-	DebugText::GetInstance()->Initialize(0);
+	DebugText::GetInstance()->Initialize();
+	CubeMap::StaticInitialize(dXCommon->GetDevice());
 
 	scene = SceneManager::Create();
 
@@ -63,7 +62,7 @@ void MainEngine::Initialize()
 
 	fps = FrameRateKeep::Create();
 
-	dXCommon->CreateCubeMap();
+	cubemap = CubeMap::Create(dXCommon->GetCmdList());
 }
 
 bool MainEngine::Update()
@@ -76,6 +75,7 @@ bool MainEngine::Update()
 
 	//XV
 	scene->Update();
+	cubemap->Update();
 
 	return false;
 }
@@ -84,7 +84,11 @@ void MainEngine::Draw()
 {
 	//•`‰æ
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
-	dXCommon->CubeDraw();
+	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
+	CubeMap::PreDraw(dXCommon->GetCmdList());
+	cubemap->Draw();
+	CubeMap::PostDraw();
+
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
 

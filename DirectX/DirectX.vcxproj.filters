@@ -71,9 +71,6 @@
     <Filter Include="エンジンシステム\Object\3d\FBX">
       <UniqueIdentifier>{d7680875-1fb9-4320-9ca0-a948969a5f47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Object\3d\NormalMap">
-      <UniqueIdentifier>{33098a72-0ba7-4f18-abcc-d65a91016ae6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="エンジンシステム\Object\2d\PostEffect">
       <UniqueIdentifier>{0395157f-cfe5-4ae8-b61c-ca939ad99a27}</UniqueIdentifier>
     </Filter>
@@ -168,9 +165,6 @@
     </ClCompile>
     <ClCompile Include="3d\DrawLine3D.cpp">
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\NormalMap.cpp">
-      <Filter>エンジンシステム\Object\3d\NormalMap</Filter>
     </ClCompile>
     <ClCompile Include="3d\SphereCollider.cpp">
       <Filter>エンジンシステム\Object\collider</Filter>
@@ -267,6 +261,12 @@
     </ClCompile>
     <ClCompile Include="3d\CubeMap.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="base\DescriptorHeapManager.cpp">
+      <Filter>エンジンシステム\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Texture.cpp">
+      <Filter>エンジンシステム\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -397,9 +397,6 @@
     <ClInclude Include="3d\DrawLine3D.h">
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
     </ClInclude>
-    <ClInclude Include="3d\NormalMap.h">
-      <Filter>エンジンシステム\Object\3d\NormalMap</Filter>
-    </ClInclude>
     <ClInclude Include="3d\QueryCallback.h">
       <Filter>エンジンシステム\Object\collider</Filter>
     </ClInclude>
@@ -519,6 +516,12 @@
     </ClInclude>
     <ClInclude Include="3d\CubeMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="base\DescriptorHeapManager.h">
+      <Filter>エンジンシステム\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Texture.h">
+      <Filter>エンジンシステム\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

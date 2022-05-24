@@ -179,8 +179,6 @@ void Fbx::PreDraw(ID3D12GraphicsCommandList* cmdList)
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	FbxModel::PreDraw(cmdList);
 }
 
 void Fbx::PostDraw()

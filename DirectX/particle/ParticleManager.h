@@ -6,6 +6,8 @@
 #include<forward_list>
 
 #include "GraphicsPipelineManager.h"
+#include "Texture.h"
+
 class Camera;
 
 class ParticleManager
@@ -66,6 +68,7 @@ public: // サブクラス
 	};
 
 private: // 定数
+
 	static const int vertexCount = 512;// 頂点数
 	std::forward_list<Particle>particle;
 
@@ -75,11 +78,6 @@ private: // 静的メンバ関数
 	/// パイプライン生成
 	/// </summary>
 	static void CreateGraphicsPipeline();
-
-	/// <summary>
-	/// テクスチャデスクリプタの生成
-	/// </summary>
-	static void CommonCreate();
 
 public: // 静的メンバ関数
 
@@ -92,16 +90,16 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="texNum">テクスチャ番号</param>
+	/// <param name="keepName">保存名</param>
 	/// <param name="filename">ファイル名</param>
-	static void LoadTexture(UINT texNum, const wchar_t* filename);
+	static void LoadTexture(const std::string keepName, const std::string filename);
 
 	/// <summary>
 	/// インスタンス生成
 	/// </summary>
-	/// <param name="texNumber">テクスチャ番号</param>
+	/// <param name="name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<ParticleManager> Create(UINT texNumber);
+	static std::unique_ptr<ParticleManager> Create(const std::string name);
 
 	/// <summary>
 	/// カメラのセット
@@ -122,18 +120,12 @@ private: // 静的メンバ変数
 	static ID3D12Device* device;
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
-	//
+	//カメラ
 	static Camera* camera;
-	// デスクリプタサイズ
-	static UINT descriptorHandleIncrementSize;
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
-	// デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap> descHeap;
-	//テクスチャ読み込み最大値
-	static const int textureNum = 50;
-	// テクスチャバッファ
-	static ComPtr<ID3D12Resource> texBuffer[textureNum];
+	//テクスチャ情報
+	static std::map<std::string, std::unique_ptr<Texture>> texture;
 	//ビルボード行列
 	static XMMATRIX matBillboard;
 	//Y軸回りのビルボード行列
@@ -200,6 +192,8 @@ public: // メンバ関数
 
 private: // メンバ変数
 
+	//テクスチャ名
+	std::string name;
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff = {};
 	// 頂点バッファビュー

@@ -5,12 +5,12 @@ Emitter::~Emitter()
 {
 }
 
-std::unique_ptr<Emitter> Emitter::Create(int texNumber)
+std::unique_ptr<Emitter> Emitter::Create(const std::string name)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Emitter* instance = new Emitter();
 
-	instance->particleManager = ParticleManager::Create(texNumber);
+	instance->particleManager = ParticleManager::Create(name);
 
 	return std::unique_ptr<Emitter>(instance);
 }

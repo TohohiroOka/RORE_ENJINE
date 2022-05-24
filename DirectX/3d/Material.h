@@ -1,9 +1,9 @@
 ﻿#pragma once
-
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <DirectXMath.h>
 #include <wrl.h>
+#include "Texture.h"
 
 /// <summary>
 /// マテリアル
@@ -73,27 +73,22 @@ public:
 	/// テクスチャ読み込み
 	/// </summary>
 	/// <param name="directoryPath">読み込みディレクトリパス</param>
-	/// <param name="cpuHandle">CPUデスクリプタハンドル</param>
-	/// <param name="gpuHandle">GPUデスクリプタハンドル</param>
-	void LoadTexture(const std::string& directoryPath, CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle, CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle);
+	void LoadTexture(const std::string& directoryPath);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
 
-	const CD3DX12_CPU_DESCRIPTOR_HANDLE& GetCpuHandle() { return cpuDescHandleSRV; }
-	const CD3DX12_GPU_DESCRIPTOR_HANDLE& GetGpuHandle() { return gpuDescHandleSRV; }
+	const CD3DX12_CPU_DESCRIPTOR_HANDLE& GetCpuHandle() { return texture->descriptor->cpu; }
+	const CD3DX12_GPU_DESCRIPTOR_HANDLE& GetGpuHandle() { return texture->descriptor->gpu; }
 
 private:
-	// テクスチャバッファ
-	ComPtr<ID3D12Resource> texbuff;
+
+	//テクスチャ情報
+	std::unique_ptr<Texture> texture = nullptr;
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
-	// シェーダリソースビューのハンドル(CPU)
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
-	// シェーダリソースビューのハンドル(CPU)
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
 
 private:
 	// コンストラクタ

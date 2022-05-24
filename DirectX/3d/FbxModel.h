@@ -5,6 +5,7 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 #include <map>
+#include "Texture.h"
 
 class FbxModel
 {
@@ -155,13 +156,6 @@ private://メンバ関数
 	void LoadMaterial(FbxNode* fbxNode);
 
 	/// <summary>
-	/// テクスチャ読み込み
-	/// </summary>
-	/// <param name="dataNumber">格納する配列番号</param>
-	/// <param name="fileName">ファイル名</param>
-	void LoadTexture(const std::string fileName);
-
-	/// <summary>
 	/// アニメーション読み込み
 	/// </summary>
 	void LoadAnimation(FbxScene* fbxScene);
@@ -207,12 +201,6 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="fileName">ファイル名</param>
 	static std::unique_ptr<FbxModel> Create(const std::string fileName);
-
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
 	
 	/// <summary>
 	/// 解放処理
@@ -246,10 +234,6 @@ private://静的メンバ変数
 	static const std::string defaultTexture;
 	//ファイルパス
 	static const std::string baseDirectory;
-	//テクスチャ用デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap>descHeap;
-	//テクスチャリソース(テクスチャバッファ)の配列
-	static ComPtr<ID3D12Resource>texBuffer[textureNum];
 	//Fbxのデータ
 	std::unique_ptr<Data> data = nullptr;
 
@@ -257,6 +241,8 @@ public://メンバ変数
 
 	//モデル名
 	std::string name;
+	//テクスチャ情報
+	std::unique_ptr<Texture> texture = nullptr;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffSkin = nullptr;
 	//頂点バッファ
