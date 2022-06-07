@@ -105,6 +105,12 @@ public:
 	/// <param name="RootParameterIndex"></param>
 	void TransferTextureBubber(ID3D12GraphicsCommandList* cmdList,UINT RootParameterIndex);
 
+	/// <summary>
+	/// キューブマップのセット
+	/// </summary>
+	/// <returns></returns>
+	Texture* SetTexture() { return texture.get(); }
+
 private:
 
 	//デバイス

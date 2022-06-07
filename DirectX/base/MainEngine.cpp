@@ -74,6 +74,7 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//XV
+	Fbx::SetCubeTex(cubemap->SetTexture());
 	scene->Update();
 	cubemap->Update();
 

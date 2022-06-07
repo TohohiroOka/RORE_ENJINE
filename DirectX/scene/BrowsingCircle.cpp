@@ -13,36 +13,52 @@ void BrowsingCircle::Initialize()
 	//円モデル読み込み
 	SpherePBRModel = FbxModel::Create("SpherePBR");
 
-	int x = 0;
-	int y = 0;
-
-	//左上座標
-	XMFLOAT3 leftUp = { -40,-40,0 };
-	float wide = 20.0f;
-
-	for (int i = 0; i < circle.size(); i++)
-	{
-		circle[i] = Fbx::Create(SpherePBRModel.get());
-		circle[i]->SetPosition({ leftUp.x + x * wide,leftUp.y - y * wide,leftUp.z });
-		circle[i]->SetScale({ 5,5,5 });
-		float meta = Easing::Lerp(0.0f, 1.0f, (float)i / 25);
-		circle[i]->SetMetalness(meta);
-		x++;
-		if (x == 5)
-		{
-			x = 0;
-			y--;
-		}
-	}
+	circle = Fbx::Create(SpherePBRModel.get());
+	circle->SetPosition({ 0,0,0 });
+	circle->SetScale({ 5,5,5 });
 }
 
 void BrowsingCircle::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	//カメラ初期化
-	camera->SetEye({ 0,0,-90 });
+	if (input->PushKey(DIK_LEFT))
+	{
+		cameraAngle++;
+	}
+	else if (input->PushKey(DIK_RIGHT))
+	{
+		cameraAngle--;
+	}
+
+	float UP_DOWN_MAX = 50.0f;
+	if (input->PushKey(DIK_UP))
+	{
+		cameraY++;
+		if (cameraY > UP_DOWN_MAX)
+		{
+			cameraY = UP_DOWN_MAX;
+		}
+	}
+	else if (input->PushKey(DIK_DOWN))
+	{
+		cameraY--;
+		if (cameraY < -UP_DOWN_MAX)
+		{
+			cameraY = -UP_DOWN_MAX;
+		}
+	}
+
 	camera->SetTarget({ 0,0,0 });
+
+	float radian = XMConvertToRadians(cameraAngle);
+	XMFLOAT3 eye = {};
+	eye.x = cosf(radian) * 30.0f;
+	eye.y = cameraY;
+	eye.z = sinf(radian) * 30.0f;
+
+	//カメラ初期化
+	camera->SetEye(eye);
 
 	//シーンの移行
 	if (input->TriggerKey(DIK_0))
@@ -52,19 +68,13 @@ void BrowsingCircle::Update()
 		SceneManager::SetNextScene(nextScene);
 	}
 
-	for (int i = 0; i < circle.size(); i++)
-	{
-		circle[i]->Update();
-	}
+	circle->Update();
 }
 
 void BrowsingCircle::Draw()
 {
 	Fbx::PreDraw(cmdList);
-	for (int i = 0; i < circle.size(); i++)
-	{
-		circle[i]->Draw();
-	}
+	circle->Draw();
 	Fbx::PostDraw();
 }
 
@@ -79,12 +89,12 @@ void BrowsingCircle::ImguiDraw()
 	float specular;//鏡面反射度
 	float roughness;//粗さ
 
-	baseColor[0] = circle[0]->GetBaseColor().x;
-	baseColor[1] = circle[0]->GetBaseColor().y;
-	baseColor[2] = circle[0]->GetBaseColor().z;
-	metalness = circle[0]->GetMetalness();
-	specular = circle[0]->GetSpecular();
-	roughness = circle[0]->GetRoughness();
+	baseColor[0] = circle->GetBaseColor().x;
+	baseColor[1] = circle->GetBaseColor().y;
+	baseColor[2] = circle->GetBaseColor().z;
+	metalness = circle->GetMetalness();
+	specular = circle->GetSpecular();
+	roughness = circle->GetRoughness();
 
 	//ライトon/off
 	static bool lightAct1 = false;
@@ -103,10 +113,10 @@ void BrowsingCircle::ImguiDraw()
 	ImGui::Checkbox("Light3", &lightAct3);
 	ImGui::End();
 
-	circle[0]->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
-	circle[0]->SetMetalness(metalness);
-	circle[0]->SetSpecular(specular);
-	circle[0]->SetRoughness(roughness);
+	circle->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
+	circle->SetMetalness(metalness);
+	circle->SetSpecular(specular);
+	circle->SetRoughness(roughness);
 
 	light->SetDirLightActive(0, lightAct1);
 	light->SetDirLightActive(1, lightAct2);

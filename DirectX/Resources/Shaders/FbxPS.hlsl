@@ -1,55 +1,23 @@
 #include "Fbx.hlsli"
 
 Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
+TextureCube cubeTex:register(t1);//1番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
+//πの定義
 static const float PI = 3.141592654f;
 //反射点の法線ベクトル
 static float3 N;
 
-/// <summary>
-/// ブルームのセット
-/// </summary>
+//関数定義
 float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color);
-
-/// <summary>
-/// トゥーンのセット
-/// </summary>
 float4 SetToon(float4 shadecolor);
-
-/// <summary>
-/// 双方向反射分布関数
-/// </summary>
-float3 BRDF(float3 L, float3 V);
-
-/// <summary>
-/// フルネルの近似値(float)
-/// </summary>
+float3 BRDF(float3 L, float3 V, float3 color);
 float SchlickFresnel(float f0, float f90, float cosine);
-
-/// <summary>
-/// 鏡面反射の計算
-/// </summary>
 float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH);
-
-/// <summary>
-/// D項
-/// </summary>
 float DistributionGGX(float alpha, float NdotH);
-
-/// <summary>
-/// フルネルの近似値(float3)
-/// </summary>
 float3 SchlickFresnel3(float3 f0, float3 f90, float cosine);
-
-/// <summary>
-/// ディズニーのフルネル計算
-/// </summary>
 float3 DisneyFresnel(float LdotH);
-
-/// <summary>
-/// UE4のSmithモデル
-/// </summary>
 float GeometricSmith(float cosine);
 
 PSOutput main(VSOutput input)
@@ -59,6 +27,8 @@ PSOutput main(VSOutput input)
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 
+	//キューブマップ
+	float4 cubeColor = cubeTex.Sample(smp, input.normal);
 
 	// 光沢度
 	const float shininess = 4.0f;
@@ -82,20 +52,20 @@ PSOutput main(VSOutput input)
 	{
 		if (dirLights[i].active)
 		{
-			// ライトに向かうベクトルと法線の内積
-			float3 dotlightnormal = dot(dirLights[i].lightv, input.normal);
+			//// ライトに向かうベクトルと法線の内積
+			//float3 dotlightnormal = dot(dirLights[i].lightv, input.normal);
 
-			// 反射光ベクトル
-			float3 reflect = normalize(-dirLights[i].lightv + 2 * dotlightnormal * input.normal);
-			// 拡散反射光
-			float3 diffuse = dotlightnormal * m_diffuse;
-			// 鏡面反射光
-			float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
+			//// 反射光ベクトル
+			//float3 reflect = normalize(-dirLights[i].lightv + 2 * dotlightnormal * input.normal);
+			//// 拡散反射光
+			//float3 diffuse = dotlightnormal * m_diffuse;
+			//// 鏡面反射光
+			//float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 
-			// 全て加算する
-			shadecolor.rgb += (diffuse + specular) * dirLights[i].lightcolor;
+			//// 全て加算する
+			//shadecolor.rgb += (diffuse + specular) * dirLights[i].lightcolor;
 
-			finalRGB += BRDF(dirLights[i].lightv, eyedir) * dirLights[i].lightcolor;
+			finalRGB += BRDF(dirLights[i].lightv, eyedir, cubeColor.rgb) * dirLights[i].lightcolor;
 		}
 	}
 
@@ -206,13 +176,15 @@ PSOutput main(VSOutput input)
 	}
 
 	// シェーディングによる色で描画
-	float4 mainColor = shadecolor * texcolor * color;
 	output.target0 = float4(finalRGB.rgb, color.w);
 	output.target1 = bloom;
 	output.target2 = texcolor * color * isOutline;
 	return output;
 }
 
+/// <summary>
+/// ブルームのセット
+/// </summary>
 float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color)
 {
 	//光度値の抽出
@@ -224,6 +196,9 @@ float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color)
 	return bloomColor;
 }
 
+/// <summary>
+/// トゥーンのセット
+/// </summary>
 float4 SetToon(float4 shadecolor)
 {
 	//トゥーンの色範囲
@@ -233,26 +208,23 @@ float4 SetToon(float4 shadecolor)
 
 	//明るい
 	float3 bright;
-	bright.r = step(toonLighrRange, shadecolor.r);
-	bright.g = step(toonLighrRange, shadecolor.g);
-	bright.b = step(toonLighrRange, shadecolor.b);
+	bright.r = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.r);
+	bright.g = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.g);
+	bright.b = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.b);
 	//暗い
 	float3 dark;
-	dark.r = (1 - step(toonLighrRange, shadecolor.r));
-	dark.g = (1 - step(toonLighrRange, shadecolor.g));
-	dark.b = (1 - step(toonLighrRange, shadecolor.b));
-
-	//中間
-	float3 intermediate;
-	intermediate.r = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.r);
-	intermediate.g = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.g);
-	intermediate.b = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.b);
+	dark.r = (1 - smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.r));
+	dark.g = (1 - smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.g));
+	dark.b = (1 - smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.b));
 
 	//現在の色
-	return float4(bright + dark + intermediate, 1);
+	return float4(bright + dark, 1);
 }
 
-float3 BRDF(float3 L, float3 V)
+/// <summary>
+/// 双方向反射分布関数
+/// </summary>
+float3 BRDF(float3 L, float3 V,float3 color)
 {
 	//法線とライト方向の内積
 	float NdotL = dot(N, L);
@@ -288,11 +260,14 @@ float3 BRDF(float3 L, float3 V)
 	float3 diffuseColor = diffuseReflectance * Fd * m_baseColor * (1 - m_metalness);
 
 	//鏡面反射項
-	float specularColor = CookTorranceSpecular(NdotL, NdotV, NdotH, LdotH);
+	float3 specularColor = CookTorranceSpecular(NdotL, NdotV, NdotH, LdotH);
 
-	return diffuseColor + specularColor;
+	return color;
 }
 
+/// <summary>
+/// フルネルの近似値(float)
+/// </summary>
 float SchlickFresnel(float f0, float f90, float cosine)
 {
 	float m = saturate(1 - cosine);
@@ -301,6 +276,9 @@ float SchlickFresnel(float f0, float f90, float cosine)
 	return lerp(f0, f90, m5);
 }
 
+/// <summary>
+/// 鏡面反射の計算
+/// </summary>
 float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 {
 	//D項
@@ -316,6 +294,9 @@ float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 	return Ds * Fs * Gs / m;
 }
 
+/// <summary>
+/// D項
+/// </summary
 float DistributionGGX(float alpha, float NdotH)
 {
 	float alpha2 = alpha * alpha;
@@ -323,6 +304,9 @@ float DistributionGGX(float alpha, float NdotH)
 	return alpha2 / (PI * t * t);
 }
 
+/// <summary>
+/// フルネルの近似値(float3)
+/// </summary
 float3 SchlickFresnel3(float3 f0, float3 f90, float cosine)
 {
 	float m = saturate(1 - cosine);
@@ -331,6 +315,9 @@ float3 SchlickFresnel3(float3 f0, float3 f90, float cosine)
 	return lerp(f0, f90, m5);
 }
 
+/// <summary>
+/// ディズニーのフルネル計算
+/// </summary
 float3 DisneyFresnel(float LdotH)
 {
 	//F項(フルネル : Fresnel)
@@ -347,6 +334,9 @@ float3 DisneyFresnel(float LdotH)
 	return SchlickFresnel3(specularColor, float3(1, 1, 1), LdotH);
 }
 
+/// <summary>
+/// UE4のSmithモデル
+/// </summary
 float GeometricSmith(float cosine)
 {
 	float k = (m_roughness + 1.0f);

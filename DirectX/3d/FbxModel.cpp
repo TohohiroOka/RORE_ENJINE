@@ -1,5 +1,4 @@
 #include "FbxModel.h"
-
 #include <DirectXTex.h>
 #include <string>
 
