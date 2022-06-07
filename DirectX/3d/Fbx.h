@@ -1,6 +1,7 @@
 #pragma once
 #include "FbxModel.h"
 #include "GraphicsPipelineManager.h"
+#include "Texture.h"
 
 class Camera;
 class LightGroup;
@@ -91,6 +92,12 @@ public://静的メンバ関数
 	static void SetLightGroup(LightGroup* lightGroup) { Fbx::lightGroup = lightGroup; }
 
 	/// <summary>
+	/// ライトグループのセット
+	/// </summary>
+	/// <param name="cubeTex">キューブマップ</param>
+	static void SetCubeTex(Texture* cubetex) { Fbx::cubetex = cubetex; }
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
@@ -144,6 +151,8 @@ private://静的メンバ変数
 	static XMFLOAT4 outlineColor;
 	//アウトラインの幅
 	static float outlineWidth;
+	//キューブマップ
+	static Texture* cubetex;
 
 private://メンバ変数
 

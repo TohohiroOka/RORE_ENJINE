@@ -283,8 +283,14 @@ void GraphicsPipelineManager::CreateRootSignature()
 	//Fbx
 	else if (objectKind == OBJECT_KINDS::FBX)
 	{
+		// デスクリプタレンジ
+		CD3DX12_DESCRIPTOR_RANGE descRangeSRV_t1;
+		descRangeSRV_t1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1); // t1 レジスタ
+		CD3DX12_DESCRIPTOR_RANGE descRangeSRV_t2;
+		descRangeSRV_t2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2); // t2 レジスタ
+
 		// ルートパラメータ
-		rootparams.resize(6);
+		rootparams.resize(7);
 		// CBV（座標変換行列用）
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// CBV（マテリアルデータ用）
@@ -295,6 +301,10 @@ void GraphicsPipelineManager::CreateRootSignature()
 		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// CBV (スキニング用)
 		rootparams[4].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
+		// SRV（キューブマップテクスチャ）
+		rootparams[5].InitAsDescriptorTable(1, &descRangeSRV_t1, D3D12_SHADER_VISIBILITY_ALL);
+		// SRV（キューブマップテクスチャ）
+		rootparams[6].InitAsDescriptorTable(1, &descRangeSRV_t2, D3D12_SHADER_VISIBILITY_ALL);
 	}
 	//DrawLine3d
 	else if (objectKind == OBJECT_KINDS::DRAW_LINE_3D)

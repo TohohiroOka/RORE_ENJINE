@@ -87,6 +87,4 @@ private:
 	XMFLOAT3 endPosition[max];//I—¹À•W
 	XMFLOAT3 nowPosition[max];//Œ»İÀ•W
 	float time[max];//ŠÔ
-
 };
-

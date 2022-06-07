@@ -17,6 +17,7 @@ Camera* Fbx::camera = nullptr;
 LightGroup* Fbx::lightGroup = nullptr;
 ID3D12GraphicsCommandList* Fbx::cmdList = nullptr;
 std::unique_ptr<GraphicsPipelineManager> Fbx::pipeline = nullptr;
+Texture* Fbx::cubetex = nullptr;
 
 Fbx::~Fbx()
 {
@@ -201,6 +202,9 @@ void Fbx::Draw()
 	//定数バッファをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
+
+	//キューブマップ描画
+	cmdList->SetGraphicsRootDescriptorTable(5, cubetex->descriptor->gpu);
 
 	// ライトの描画
 	lightGroup->Draw(cmdList, 3);
