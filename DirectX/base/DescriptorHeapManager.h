@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <DirectXMath.h>
+#include <array>
 
 class DescriptorHeapManager
 {
@@ -20,6 +21,11 @@ public:
 	/// <param name="cmdList">コマンドリスト</param>
 	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
 
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	static void Finalize();
+
 public:
 
 	/// <summary>
@@ -30,7 +36,7 @@ public:
 	/// <summary>
 	/// デストラクタ。
 	/// </summary>
-	~DescriptorHeapManager() {};
+	~DescriptorHeapManager();
 
 	/// <summary>
 	/// シェーダーリソースビューの作成
@@ -45,10 +51,14 @@ private:
 	static ID3D12Device* device;
 	//デスクリプタヒープ
 	static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descHeap;
+	//デスクリプタの大きさ
+	static const int DescriptorsSize = 512;
+	//デスクリプタテーブルの制御
+	static std::array<bool, DescriptorsSize> TableManager;
 
 public:
 
+	int heapNumber = 0;
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpu;
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpu;
 };
-

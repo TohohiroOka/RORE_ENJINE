@@ -9,7 +9,7 @@ ID3D12Device* ParticleManager::device = nullptr;
 ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
 Camera* ParticleManager::camera = nullptr;
 std::unique_ptr<GraphicsPipelineManager> ParticleManager::pipeline;
-std::map<std::string, std::unique_ptr<Texture>> ParticleManager::texture;
+std::map<std::string, ParticleManager::Information> ParticleManager::texture;
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
@@ -69,7 +69,7 @@ void ParticleManager::StaticInitialize(ID3D12Device* device)
 	CreateGraphicsPipeline();
 }
 
-void ParticleManager::LoadTexture(const std::string keepName, const std::string filename)
+void ParticleManager::LoadTexture(const std::string keepName, const std::string filename, const bool isDelete)
 {
 	// nullptrチェック
 	assert(device);
@@ -78,7 +78,8 @@ void ParticleManager::LoadTexture(const std::string keepName, const std::string 
 	assert(!texture.count(keepName));
 
 	//テクスチャ読み込み
-	texture[keepName] = Texture::Create(filename);
+	texture[keepName].instance = Texture::Create(filename);
+	texture[keepName].isDelete = isDelete;
 }
 
 void ParticleManager::Initialize()
@@ -330,7 +331,7 @@ void ParticleManager::Draw()
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 
 	//シェーダーリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(1, texture[name]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(1, texture[name].instance->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawInstanced((UINT)std::distance(particle.begin(), particle.end()), 1, 0, 0);
@@ -341,10 +342,25 @@ void ParticleManager::ParticlAllDelete()
 	particle.clear();
 }
 
-void ParticleManager::Finalize()
+void ParticleManager::SceneFinalize()
 {
 	for (auto itr = texture.begin(); itr != texture.end(); ++itr) {
-		(*itr).second.reset();
+		if ((*itr).second.isDelete)
+		{
+			(*itr).second.instance.reset();
+			auto deleteItr = itr;
+			itr--;
+			texture.erase(deleteItr);
+			if (itr == texture.end()) { break; }
+		}
+	}
+}
+
+void ParticleManager::Finalize()
+{
+	for (auto itr = texture.begin(); itr != texture.end(); ++itr)
+	{
+		(*itr).second.instance.reset();
 	}
 	texture.clear();
 	pipeline.reset();

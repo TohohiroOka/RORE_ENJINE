@@ -188,6 +188,10 @@ void CubeMap::Initialize()
 
 CubeMap::~CubeMap()
 {
+	vertBuff.Reset();
+	indexBuff.Reset();
+	texConstBuffer.Reset();
+	constBuff.Reset();
 	texture.reset();
 }
 

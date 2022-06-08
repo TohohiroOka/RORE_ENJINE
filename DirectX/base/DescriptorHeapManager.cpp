@@ -2,6 +2,7 @@
 
 ID3D12Device* DescriptorHeapManager::device = nullptr;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DescriptorHeapManager::descHeap = nullptr;
+std::array<bool, DescriptorHeapManager::DescriptorsSize> DescriptorHeapManager::TableManager = {};
 
 void DescriptorHeapManager::StaticInitialize(ID3D12Device* device)
 {
@@ -16,7 +17,7 @@ void DescriptorHeapManager::StaticInitialize(ID3D12Device* device)
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	descHeapDesc.NumDescriptors = 512;
+	descHeapDesc.NumDescriptors = DescriptorsSize;
 	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
 }
 
@@ -28,10 +29,27 @@ void DescriptorHeapManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 }
 
+void DescriptorHeapManager::Finalize()
+{
+	descHeap.Reset();
+}
+
+DescriptorHeapManager::~DescriptorHeapManager()
+{
+	TableManager[heapNumber] = false;
+}
+
 void DescriptorHeapManager::CreateSRV(
 	Microsoft::WRL::ComPtr<ID3D12Resource> texBuffer, D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc)
 {
-	static int heapNumber = 0;
+	for (; heapNumber < DescriptorsSize; heapNumber++)
+	{
+		if (!TableManager[heapNumber])
+		{
+			TableManager[heapNumber] = true;
+			break;
+		}
+	}
 
 	cpu = CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), heapNumber,
 		device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
@@ -43,6 +61,4 @@ void DescriptorHeapManager::CreateSRV(
 		texBuffer.Get(),
 		&srvDesc,
 		cpu);
-
-	heapNumber++;
 }

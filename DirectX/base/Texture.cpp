@@ -35,6 +35,7 @@ std::unique_ptr<Texture> Texture::Create(const std::string fileName, ID3D12Graph
 Texture::~Texture()
 {
 	texBuffer.Reset();
+	texConstBuffer.Reset();
 }
 
 void Texture::LoadTexture(const std::string fileName)

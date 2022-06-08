@@ -23,9 +23,11 @@ MainEngine::~MainEngine()
 	DrawLine::Finalize();
 	Sprite::Finalize();
 	Fbx::Finalize();
+	CubeMap::Finalize();
 	ParticleManager::Finalize();
 	postEffect->Finalize();
 	ComputeShaderManager::Finalize();
+	DescriptorHeapManager::Finalize();
 }
 
 void MainEngine::Initialize()

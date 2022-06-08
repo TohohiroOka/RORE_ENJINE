@@ -52,6 +52,7 @@ public: // サブクラス
 	};
 
 public: // 静的メンバ関数
+
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
@@ -65,10 +66,15 @@ public: // 静的メンバ関数
 	static std::unique_ptr<LightGroup> Create();
 
 private: // 静的メンバ変数
+
 	// デバイス
 	static ID3D12Device* device;
 
 public: // メンバ関数
+
+	LightGroup() {};
+	~LightGroup();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>

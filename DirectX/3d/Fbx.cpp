@@ -22,6 +22,7 @@ Texture* Fbx::cubetex = nullptr;
 Fbx::~Fbx()
 {
 	constBuffB0.Reset();
+	constBuffB1.Reset();
 }
 
 void Fbx::CreateGraphicsPipeline()

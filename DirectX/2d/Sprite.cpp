@@ -9,7 +9,7 @@ using namespace Microsoft::WRL;
 ID3D12Device* Sprite::device = nullptr;
 ID3D12GraphicsCommandList* Sprite::cmdList = nullptr;
 std::unique_ptr<GraphicsPipelineManager> Sprite::pipeline = nullptr;
-std::map<std::string, std::unique_ptr<Texture>> Sprite::texture;
+std::map<std::string, Sprite::Information> Sprite::texture;
 XMMATRIX Sprite::matProjection;
 
 Sprite::~Sprite()
@@ -37,7 +37,7 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 		(float)WindowApp::GetWindowHeight(), 0.0f,
 		0.0f, 1.0f);
 
-	Sprite::LoadTexture("debugfont", "Resources/LetterResources/debugfont.png");
+	Sprite::LoadTexture("debugfont", "Resources/LetterResources/debugfont.png", false);
 
 	return true;
 }
@@ -62,7 +62,7 @@ void Sprite::CreateGraphicsPipeline()
 		GraphicsPipelineManager::OBJECT_KINDS::SPRITE, inputLayout, _countof(inputLayout));
 }
 
-void Sprite::LoadTexture(const std::string keepName, const std::string filename)
+void Sprite::LoadTexture(const std::string keepName, const std::string filename, const bool isDelete)
 {
 	// nullptrチェック
 	assert(device);
@@ -71,7 +71,8 @@ void Sprite::LoadTexture(const std::string keepName, const std::string filename)
 	assert(!texture.count(keepName));
 
 	//テクスチャ読み込み
-	texture[keepName] = Texture::Create(filename);
+	texture[keepName].instance = Texture::Create(filename);
+	texture[keepName].isDelete = isDelete;
 }
 
 void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
@@ -198,7 +199,7 @@ void Sprite::Draw()
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 	// シェーダリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(1, texture[name]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(1, texture[name].instance->descriptor->gpu);
 
 	// 描画コマンド
 	cmdList->DrawInstanced(4, 1, 0, 0);
@@ -236,9 +237,9 @@ void Sprite::TransferVertices()
 	vertices[RT].pos = { right,	top,	0.0f }; // 右上
 
 	// テクスチャ情報取得
-	if (texture[name]->texBuffer)
+	if (texture[name].instance->texBuffer)
 	{
-		D3D12_RESOURCE_DESC resDesc = texture[name]->texBuffer->GetDesc();
+		D3D12_RESOURCE_DESC resDesc = texture[name].instance->texBuffer->GetDesc();
 
 		float tex_left = texLeftTop.x / resDesc.Width;
 		float tex_right = (texLeftTop.x + texSize.x) / resDesc.Width;
@@ -260,11 +261,26 @@ void Sprite::TransferVertices()
 	}
 }
 
+void Sprite::SceneFinalize()
+{
+	for (auto itr = texture.begin(); itr != texture.end(); ++itr) {
+		if ((*itr).second.isDelete)
+		{
+			(*itr).second.instance.reset();
+			auto deleteItr = itr;
+			itr--;
+			texture.erase(deleteItr);
+			if (itr == texture.end()) { break; }
+		}
+	}
+}
+
 void Sprite::Finalize()
 {
-	pipeline.reset();
-	for (auto itr = texture.begin(); itr != texture.end(); ++itr) {
-		(*itr).second.reset();
+	for (auto itr = texture.begin(); itr != texture.end(); ++itr)
+	{
+		(*itr).second.instance.reset();
 	}
 	texture.clear();
+	pipeline.reset();
 }

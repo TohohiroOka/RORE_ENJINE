@@ -54,6 +54,8 @@ void SceneManager::Update()
 		if (scene)
 		{
 			scene.reset();
+			Sprite::SceneFinalize();
+			ParticleManager::SceneFinalize();
 		}
 
 		//ƒV[ƒ“Ø‚è‘Ö‚¦

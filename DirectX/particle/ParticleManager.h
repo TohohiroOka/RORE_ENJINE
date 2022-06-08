@@ -67,6 +67,12 @@ public: // サブクラス
 		XMFLOAT4 e_color = { 0,0,0,0 };
 	};
 
+	struct Information
+	{
+		bool isDelete = false; //シーン遷移で削除を行うか
+		std::unique_ptr<Texture> instance = nullptr;
+	};
+
 private: // 定数
 
 	static const int vertexCount = 512;// 頂点数
@@ -92,7 +98,8 @@ public: // 静的メンバ関数
 	/// </summary>
 	/// <param name="keepName">保存名</param>
 	/// <param name="filename">ファイル名</param>
-	static void LoadTexture(const std::string keepName, const std::string filename);
+	/// <param name="isDelete">シーン遷移で削除を行うか</param>
+	static void LoadTexture(const std::string keepName, const std::string filename, const bool isDelete = true);
 
 	/// <summary>
 	/// インスタンス生成
@@ -110,6 +117,11 @@ public: // 静的メンバ関数
 	}
 
 	/// <summary>
+	/// シーンごとの解放処理
+	/// </summary>
+	static void SceneFinalize();
+
+	/// <summary>
 	/// 解放処理
 	/// </summary>
 	static void Finalize();
@@ -125,7 +137,7 @@ private: // 静的メンバ変数
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 	//テクスチャ情報
-	static std::map<std::string, std::unique_ptr<Texture>> texture;
+	static std::map<std::string, Information> texture;
 	//ビルボード行列
 	static XMMATRIX matBillboard;
 	//Y軸回りのビルボード行列
