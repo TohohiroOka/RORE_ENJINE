@@ -28,7 +28,6 @@ void XInputManager::Update()
 {
 	g_Controllers.lastState = g_Controllers.state;
 	g_Controllers.dwResult = XInputGetState(0, &g_Controllers.state);
-	if (g_Controllers.state.Gamepad.bLeftTrigger < -STICK_MAX) { g_Controllers.state.Gamepad.bLeftTrigger = -STICK_MAX; }
 }
 
 bool XInputManager::PushButton(XInputManager::PUD_BUTTON button)

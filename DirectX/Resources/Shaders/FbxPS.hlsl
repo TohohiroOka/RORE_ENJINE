@@ -262,7 +262,7 @@ float3 BRDF(float3 L, float3 V,float3 color)
 	//‹¾–Ê”½Ë€
 	float3 specularColor = CookTorranceSpecular(NdotL, NdotV, NdotH, LdotH);
 
-	return color;
+	return diffuseColor + specularColor * color;
 }
 
 /// <summary>
@@ -288,7 +288,7 @@ float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 	//G€(Šô‰½Œ¸” : Geometry attenuation)
 	float Gs = GeometricSmith(NdotL) * GeometricSmith(NdotV);
 	//m€(•ª•ê)
-	float m = 4.0f * NdotL * NdotV;
+	float m = 1.0f * NdotL * NdotV;
 
 	//‡¬‚µ‚Ä‹¾–Ê”½Ë‚ÌF‚ğ•Ô‚·
 	return Ds * Fs * Gs / m;

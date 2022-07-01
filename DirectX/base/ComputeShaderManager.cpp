@@ -165,7 +165,7 @@ void ComputeShaderManager::ShaderUpdate(UINT max, XMFLOAT3* startPosition, XMFLO
 	HRESULT result;
 	size = max;
 	InputData* inData = new InputData[max];
-	for (int i = 0; i < max; i++)
+	for (int i = 0; i < size; i++)
 	{
 		inData[i].startPosition = startPosition[i];
 		inData[i].endPosition = endPosition[i];
