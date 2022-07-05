@@ -135,6 +135,7 @@
     <ClCompile Include="external\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="external\Imgui\imgui_tables.cpp" />
     <ClCompile Include="external\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="input\DirectInput.cpp" />
     <ClCompile Include="input\XInputManager.cpp" />
     <ClCompile Include="light\LightGroup.cpp" />
@@ -165,6 +166,18 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\CubeBoxVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\HeightMapPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\HeightMapVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -275,6 +288,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\CubeBox.hlsli" />
+    <None Include="Resources\Shaders\HeightMap.hlsli" />
     <None Include="Resources\Shaders\NormalMap.hlsli" />
     <None Include="Resources\Shaders\DrawLine2D.hlsli" />
     <None Include="Resources\Shaders\DrawLine3D.hlsli" />
@@ -331,6 +345,7 @@
     <ClInclude Include="external\Imgui\imstb_rectpack.h" />
     <ClInclude Include="external\Imgui\imstb_textedit.h" />
     <ClInclude Include="external\Imgui\imstb_truetype.h" />
+    <ClInclude Include="HeightMap.h" />
     <ClInclude Include="input\DirectInput.h" />
     <ClInclude Include="input\XInputManager.h" />
     <ClInclude Include="light\CircleShadow.h" />

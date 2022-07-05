@@ -104,7 +104,9 @@ void ShaderManager::LoadShader()
 	//CubeBoxシェーダー
 	shaderObjectVS["CUBE_BOX"] = CompileShader(L"CubeBoxVS.hlsl", vsModel);
 	shaderObjectPS["CUBE_BOX"] = CompileShader(L"CubeBoxPS.hlsl", psModel);
-
+	//HeightMapシェーダー
+	shaderObjectVS["HEIGHT_MAP"] = CompileShader(L"HeightMapVS.hlsl", vsModel);
+	shaderObjectPS["HEIGHT_MAP"] = CompileShader(L"HeightMapPS.hlsl", psModel);
 }
 
 void ShaderManager::Finalize()

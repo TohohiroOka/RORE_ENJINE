@@ -25,6 +25,7 @@ public://ƒƒ“ƒoenum
 		NORMAL_MAP,
 		POST_EFFECT,
 		CUBE_BOX,
+		HEIGHT_MAP,
 	};
 
 private://ƒƒ“ƒoŠÖ”

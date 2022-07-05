@@ -14,59 +14,7 @@
 
 void TestField::Initialize()
 {
-	//スプライト
-	Sprite::LoadTexture("amm", "Resources/amm.jpg");
-
-	sprite = Sprite::Create("amm");
-
-	//モデル読み込み
-	uma = Model::CreateFromOBJ("uma");
-	ground = Model::CreateFromOBJ("wall");
-	block = Model::CreateFromOBJ("Square");
-
-	//プレイヤー生成
-	PLAYER = Player::Create(uma.get());
-
-	//地面生成
-	GROUND = Ground::Create(ground.get());
-
-	//触れられるオブジェクト生成
-	std::unique_ptr<TouchableObject> Tobject3d = TouchableObject::Create(block.get());
-	Tobject3d->SetScale(10.0f);
-	Tobject3d->SetPosition({ -100,0,-100 });
-	BLOCK = std::move(Tobject3d);
-
-	//Fbxモデルの読み込み
-	danceModel = FbxModel::Create("uma");
-	SpherePBRModel = FbxModel::Create("SpherePBR");
-	SpiralPBRModel = FbxModel::Create("SpiralPBR");
-
-	//Fbxモデルオブジェクトの生成
-	anm = Fbx::Create(SpiralPBRModel.get());
-	anm->SetPosition({ 100,100,0 });
-	anm->SetScale({ 15,15,15 });
-	//anm->SetOutline(true);
-	//anm->SetToon(true);
-
-	//パーティクル用テクスチャの読み込み
-	ParticleManager::LoadTexture("effect1", "Resources/particle/effect1.png");
-
-	emit = Emitter::Create("effect1");
-
-	//線
-	line = DrawLine::Create();
-	line_t = DrawLine::Create();
-	line3d = DrawLine3D::Create(10);
-
-	//コンピュートシェーダー生成
-	compute = ComputeShaderManager::Create();
-	for (int i = 0; i < max; i++)
-	{
-		startPosition[i] = { (float)10 * i,(float)10,(float)10 };//初期座標
-		endPosition[i] = { (float)10,(float)10,(float)10 * i };//終了座標
-		nowPosition[i] = startPosition[i];//現在座標
-		time[i] = 0;
-	}
+	heightmap = HeightMap::Create("heightmap01.bmp");
 }
 
 void TestField::Update()
@@ -82,53 +30,51 @@ void TestField::Update()
 		SceneManager::SetNextScene(nextScene);
 	}
 
-	if (input->PushKey(DIK_LEFT)) { cameraAngle++; }
-	if (input->PushKey(DIK_RIGHT)) { cameraAngle--; }
-	if (input->PushKey(DIK_UP)) { cameraY++; }
-	if (input->PushKey(DIK_DOWN)) { cameraY--; }
+	if (input->PushKey(DIK_LEFT)) { cameraAngle+=3.0f; }
+	if (input->PushKey(DIK_RIGHT)) { cameraAngle-= 3.0f; }
+	if (input->PushKey(DIK_UP)) { cameraY+= 3.0f; }
+	if (input->PushKey(DIK_DOWN)) { cameraY-= 3.0f; }
 
-	//Obj
-	PLAYER->SetCameraAngle(cameraAngle);
-	PLAYER->Update();
-	GROUND->Update();
-	BLOCK->Update();
+	//ラジアン変換
+	float radiusLR = DirectX::XMConvertToRadians(cameraAngle + 90.0f);
+	float radiusUD = DirectX::XMConvertToRadians(cameraAngle);
 
-	//Fbx
-	anm->Update();
+	//player移動
+	float Pspeed = 5.0f;
 
-	//パーティクル
-	emit->InEmitter(50, 30, { (float)(rand() % 5) - 100,0,(float)(rand() % 5) }, { 0,2,0 },
-		{ 0,0,0 }, 50, 1, { 1,1,1,1 }, { 0,0,0,1 });
+	//右入力
+	if (input->PushKey(DIK_A)) {
+		cameraPos.x += Pspeed * cosf(radiusLR);
+		cameraPos.z += Pspeed * sinf(radiusLR);
+	}
+	//左入力
+	if (input->PushKey(DIK_D)) {
+		cameraPos.x -= Pspeed * cosf(radiusLR);
+		cameraPos.z -= Pspeed * sinf(radiusLR);
+	}
+	if (input->PushKey(DIK_W)) {
+		cameraPos.x += Pspeed * cosf(radiusUD);
+		cameraPos.z += Pspeed * sinf(radiusUD);
+	}
+	//左入力
+	if (input->PushKey(DIK_S)) {
+		cameraPos.x -= Pspeed * cosf(radiusUD);
+		cameraPos.z -= Pspeed * sinf(radiusUD);
+	}
 
-	//スプライト
-	sprite->Update();
-	emit->Update();
+	if (input->PushKey(DIK_Z)) {
+		cameraPos.y += 3.0f;
+	}
+	//左入力
+	if (input->PushKey(DIK_X)) {
+		cameraPos.y -= 3.0f;
+	}
 
-	////線
-	//line->SetLine({ 300,300 }, { 700,700 }, { 1,1,1,1 }, 50);
-	//line->Update();
-	//line_t->SetLine({ 20,500 }, { 500,400 }, { 1,1,1,1 }, 50);
-	//line_t->Update();
-	//XMFLOAT3 S_pos[10];
-	//XMFLOAT3 E_pos[10];
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	S_pos[i] = { 0,(float)20 * i,(float)i * 10 };
-	//	E_pos[i] = { 0,(float)20 * i,(float)-i * 10 };
-	//}
-	//line3d->SetLine(S_pos, E_pos, 50);
-	//line3d->SetColor({ 1,1,1,1 });
-	//line3d->Update();
+	heightmap->Update();
 
 	//カメラ更新
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
 	const float range = 50.0f;
-	XMFLOAT3 cameraPos = PLAYER->GetPosition();
-	cameraPos.y += 40.0f;
-	if (input->PushKey(DIK_Z))
-	{
-		cameraPos.z -= 50;
-	}
 	camera->SetEye(cameraPos);
 	camera->SetTarget({ cosf(cameraRadius) * range + cameraPos.x,cameraY,sinf(cameraRadius) * range + cameraPos.z });
 
@@ -140,42 +86,9 @@ void TestField::Draw()
 {
 	assert(cmdList);
 
-	Object3d::PreDraw(cmdList);
-	PLAYER->Draw();
-	//GROUND->Draw();
-	BLOCK->Draw();
-	Object3d::PostDraw();
-
-	Fbx::PreDraw(cmdList);
-	anm->Draw();
-	Fbx::PostDraw();
-
-	//スプライト描画
-	Sprite::PreDraw(cmdList);
-	sprite->Draw();
-	DebugText::GetInstance()->DrawAll(cmdList);
-	Sprite::PostDraw();
-
-	//線
-	DrawLine::PreDraw(cmdList);
-	line->Draw();
-	line_t->Draw();
-	DrawLine::PostDraw();
-
-	//線3d
-	DrawLine3D::PreDraw(cmdList);
-	line3d->Draw();
-	DrawLine3D::PostDraw();
-
-	ParticleManager::PreDraw(cmdList);
-	//パーティクル
-	emit->Draw();
-	ParticleManager::PostDraw();
-
-	//コンピュートシェーダー
-	compute->PreUpdate(cmdList);
-	compute->ShaderUpdate(max, startPosition, endPosition, nowPosition, time);
-	compute->PostUpdate();
+	HeightMap::PreDraw(cmdList);
+	heightmap->Draw();
+	HeightMap::PostDraw();
 }
 
 void TestField::Finalize()
@@ -184,51 +97,51 @@ void TestField::Finalize()
 
 void TestField::ImguiDraw()
 {
-	float baseColor[3];//ベースカラ―
-	float metalness;//金属度(0 or 1)
-	float specular;//鏡面反射度
-	float roughness;//粗さ
+	//float baseColor[3];//ベースカラ―
+	//float metalness;//金属度(0 or 1)
+	//float specular;//鏡面反射度
+	//float roughness;//粗さ
 
-	baseColor[0] = anm->GetBaseColor().x;
-	baseColor[1] = anm->GetBaseColor().y;
-	baseColor[2] = anm->GetBaseColor().z;
-	metalness = anm->GetMetalness();
-	specular = anm->GetSpecular();
-	roughness = anm->GetRoughness();
+	//baseColor[0] = anm->GetBaseColor().x;
+	//baseColor[1] = anm->GetBaseColor().y;
+	//baseColor[2] = anm->GetBaseColor().z;
+	//metalness = anm->GetMetalness();
+	//specular = anm->GetSpecular();
+	//roughness = anm->GetRoughness();
 
-	//ライトon/off
-	static bool lightAct1 = false;
-	static bool lightAct2 = false;
-	static bool lightAct3 = false;
+	////ライトon/off
+	//static bool lightAct1 = false;
+	//static bool lightAct2 = false;
+	//static bool lightAct3 = false;
 
-	ImGui::Begin("Material");
-	ImGui::SetWindowPos(ImVec2(0, 0));
-	ImGui::SetWindowSize(ImVec2(300, 130));
-	ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
-	ImGui::SliderFloat("metalness", &metalness, 0, 1);
-	ImGui::SliderFloat("specular", &specular, 0, 1);
-	ImGui::SliderFloat("roughness", &roughness, 0, 1);
-	ImGui::Checkbox("Light1", &lightAct1);
-	ImGui::Checkbox("Light2", &lightAct2);
-	ImGui::Checkbox("Light3", &lightAct3);
-	ImGui::End();
+	//ImGui::Begin("Material");
+	//ImGui::SetWindowPos(ImVec2(0, 0));
+	//ImGui::SetWindowSize(ImVec2(300, 130));
+	//ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
+	//ImGui::SliderFloat("metalness", &metalness, 0, 1);
+	//ImGui::SliderFloat("specular", &specular, 0, 1);
+	//ImGui::SliderFloat("roughness", &roughness, 0, 1);
+	//ImGui::Checkbox("Light1", &lightAct1);
+	//ImGui::Checkbox("Light2", &lightAct2);
+	//ImGui::Checkbox("Light3", &lightAct3);
+	//ImGui::End();
 
-	anm->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
-	anm->SetMetalness(metalness);
-	anm->SetSpecular(specular);
-	anm->SetRoughness(roughness);
+	//anm->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
+	//anm->SetMetalness(metalness);
+	//anm->SetSpecular(specular);
+	//anm->SetRoughness(roughness);
 
-	light->SetDirLightActive(0, lightAct1);
-	light->SetDirLightActive(1, lightAct2);
-	light->SetDirLightActive(2, lightAct3);
+	//light->SetDirLightActive(0, lightAct1);
+	//light->SetDirLightActive(1, lightAct2);
+	//light->SetDirLightActive(2, lightAct3);
 }
 
 void TestField::GetConstbufferNum()
 {
-	XMFLOAT3* inPos = new XMFLOAT3[max];
-	inPos = compute->GetConstBufferNum();
-	for (int i = 0; i < max; i++)
-	{
-		nowPosition[i] = inPos[i];
-	}
+	//XMFLOAT3* inPos = new XMFLOAT3[max];
+	//inPos = compute->GetConstBufferNum();
+	//for (int i = 0; i < max; i++)
+	//{
+	//	nowPosition[i] = inPos[i];
+	//}
 }

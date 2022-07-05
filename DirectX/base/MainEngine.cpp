@@ -10,6 +10,7 @@
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
 #include "Texture.h"
+#include "HeightMap.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -57,6 +58,7 @@ void MainEngine::Initialize()
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 	DebugText::GetInstance()->Initialize();
 	CubeMap::StaticInitialize(dXCommon->GetDevice());
+	HeightMap::StaticInitialize(dXCommon->GetDevice());
 
 	scene = SceneManager::Create();
 
@@ -64,7 +66,7 @@ void MainEngine::Initialize()
 
 	fps = FrameRateKeep::Create();
 
-	cubemap = CubeMap::Create(dXCommon->GetCmdList());
+	//cubemap = CubeMap::Create(dXCommon->GetCmdList());
 }
 
 bool MainEngine::Update()
@@ -76,9 +78,9 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//XV
-	Fbx::SetCubeTex(cubemap->SetTexture());
+	//Fbx::SetCubeTex(cubemap->SetTexture());
 	scene->Update();
-	cubemap->Update();
+	//cubemap->Update();
 
 	return false;
 }
@@ -88,9 +90,9 @@ void MainEngine::Draw()
 	//•`‰æ
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
-	CubeMap::PreDraw(dXCommon->GetCmdList());
-	cubemap->Draw();
-	CubeMap::PostDraw();
+	//CubeMap::PreDraw(dXCommon->GetCmdList());
+	//cubemap->Draw();
+	//CubeMap::PostDraw();
 
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene(dXCommon->GetCmdList());

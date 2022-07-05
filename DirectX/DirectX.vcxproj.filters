@@ -292,6 +292,9 @@
     <ClCompile Include="external\Imgui\imgui_impl_win32.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="HeightMap.cpp">
+      <Filter>エンジンシステム\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -354,6 +357,12 @@
     <FxCompile Include="Resources\Shaders\CubeBoxVS.hlsl">
       <Filter>シェーダーファイル\CubeBox</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\HeightMapPS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\HeightMapVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite.hlsli">
@@ -382,6 +391,9 @@
     </None>
     <None Include="Resources\Shaders\CubeBox.hlsli">
       <Filter>シェーダーファイル\CubeBox</Filter>
+    </None>
+    <None Include="Resources\Shaders\HeightMap.hlsli">
+      <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -570,6 +582,9 @@
     </ClInclude>
     <ClInclude Include="external\Imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMap.h">
+      <Filter>エンジンシステム\Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

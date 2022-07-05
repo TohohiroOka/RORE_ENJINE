@@ -73,6 +73,8 @@ void SceneManager::Update()
 	ParticleManager::SetCamera(camera.get());
 	scene->SetCamera(camera.get());
 	CubeMap::SetCamera(camera.get());
+	HeightMap::SetCamera(camera.get());
+
 	//ライト
 	light->Update();
 	scene->SetLight(light.get());
@@ -80,6 +82,7 @@ void SceneManager::Update()
 	// 3Dオブエクトにライトをセット
 	Object3d::SetLightGroup(light.get());
 	Fbx::SetLightGroup(light.get());
+	HeightMap::SetLightGroup(light.get());
 
 	camera->Update();
 	scene->Update();

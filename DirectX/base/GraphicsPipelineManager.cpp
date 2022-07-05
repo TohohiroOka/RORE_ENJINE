@@ -246,6 +246,15 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["CUBE_BOX"].Get());
 		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["CUBE_BOX"].Get());
 	}
+	//HeightMap
+	else if (objectKind == OBJECT_KINDS::HEIGHT_MAP)
+	{
+	//常に三角形描画
+	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["HEIGHT_MAP"].Get());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["HEIGHT_MAP"].Get());
+	}
 
 	// 頂点レイアウトの設定
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -403,6 +412,20 @@ void GraphicsPipelineManager::CreateRootSignature()
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ1）
 		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+	}
+	//HeightMap
+	else if (objectKind == OBJECT_KINDS::HEIGHT_MAP)
+	{
+		// ルートパラメータ
+		rootparams.resize(4);
+		// CBV（座標変換行列用）
+		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+		// SRV（HeightMap用テクスチャ）
+		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		// SRV（テクスチャ）
+		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		// CBV (ライト)
+		rootparams[2].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 	}
 
 	// ルートシグネチャの設定
