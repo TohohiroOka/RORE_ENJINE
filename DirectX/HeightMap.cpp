@@ -231,11 +231,12 @@ void HeightMap::Initialize()
 	std::vector<unsigned long> indices;
 	indices.resize(indexNum);
 
-	//unsigned long basicsIndices[6] = { 0 ,2 ,1 ,2 ,3 ,1 };
-	unsigned long basicsIndices[6] = { 1,3,2,1,2,0 };
+	unsigned long basicsIndices[6] = { 0 ,2 ,1 ,2 ,3 ,1 };
+
 	//挿入インデックス番号
 	unsigned long index = 0;
 
+	//頂点保存
 	for (int j = 0; j < heightSize; ++j)
 	{
 		for (int i = 0; i < windthSize; ++i)
@@ -271,21 +272,22 @@ void HeightMap::Initialize()
 		}
 	}
 
+	//インデックス保存
 	for (int i = 0; i < surfaceNum; i++)
 	{
-		int num = 0;
+		int vertexNum = i * 4;
 		index = i * 6;
-		indices[index + num] = basicsIndices[num] + index;
-		num++;
-		indices[index + num] = basicsIndices[num] + index;
-		num++;
-		indices[index + num] = basicsIndices[num] + index;
-		num++;
-		indices[index + num] = basicsIndices[num] + index;
-		num++;
-		indices[index + num] = basicsIndices[num] + index;
-		num++;
-		indices[index + num] = basicsIndices[num] + index;
+		indices[index] = basicsIndices[0] + vertexNum;
+		index++;
+		indices[index] = basicsIndices[1] + vertexNum;
+		index++;
+		indices[index] = basicsIndices[2] + vertexNum;
+		index++;
+		indices[index] = basicsIndices[3] + vertexNum;
+		index++;
+		indices[index] = basicsIndices[4] + vertexNum;
+		index++;
+		indices[index] = basicsIndices[5] + vertexNum;
 	}
 
 	//頂点バッファ生成
