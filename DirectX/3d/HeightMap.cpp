@@ -28,7 +28,6 @@ void HeightMap::CreateGraphicsPipeline()
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-
 	};
 
 	pipeline = GraphicsPipelineManager::Create("HeightMap",

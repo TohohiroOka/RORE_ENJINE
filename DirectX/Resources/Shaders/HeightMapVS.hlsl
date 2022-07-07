@@ -7,6 +7,6 @@ VSOutput main(float4 pos : POSITION,float2 uv : TEXCOORD)
 	output.svpos = mul(mul(viewproj, world), pos);
 	output.worldpos = mul(world, pos);
 	output.uv = uv;
-	//output.color = float4(output.worldpos.y / 1000, output.worldpos.y / 1000, output.worldpos.y / 1000, 1.0);
+
 	return output;
 }
