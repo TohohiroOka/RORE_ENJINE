@@ -22,7 +22,13 @@ void HeightMap::CreateGraphicsPipeline()
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		}
+		},
+		{ // uv座標
+			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
+
 	};
 
 	pipeline = GraphicsPipelineManager::Create("HeightMap",
@@ -90,22 +96,7 @@ bool HeightMap::HeightMapLoad(const std::string filename)
 	//名前結合
 	std::string fname = baseDirectory + filename;
 
-	//////WICテクスチャのロード
-	//DirectX::TexMetadata metadata{};
-	//DirectX::ScratchImage scratchImage{};
-
-	////ユニコードに変換
-	//wchar_t wfilePath[128];
-	//int iBufferSize = MultiByteToWideChar(CP_ACP, 0,
-	//	fname.c_str(), -1, wfilePath, _countof(wfilePath));
-
-	//result = LoadFromWICFile(
-	//	wfilePath,
-	//	DirectX::WIC_FLAGS_NONE,
-	//	&metadata, scratchImage);
-	//assert(SUCCEEDED(result));
-
-	//const DirectX::Image* img = scratchImage.GetImage(0, 0, 0);
+	texture[HeightMapTex] = Texture::Create(fname);
 
 	//height mapを開く
 	FILE* filePtr;
@@ -182,7 +173,7 @@ bool HeightMap::HeightMapLoad(const std::string filename)
 			int index = (hmInfo.terrainHeight * j) + i;
 
 			hmInfo.heightMap[index].x = (float)i;
-			hmInfo.heightMap[index].y = (float)height;
+			hmInfo.heightMap[index].y = (float)height / 10.0f;
 			hmInfo.heightMap[index].z = (float)j;
 
 			k += 3;
@@ -208,7 +199,7 @@ void HeightMap::LoadTexture(const std::string filename)
 		filepath = baseDirectory + filename;
 	}
 
-	texture = Texture::Create(filepath);
+	texture[GraphicTex] = Texture::Create(filepath);
 }
 
 void HeightMap::Initialize()
@@ -247,27 +238,23 @@ void HeightMap::Initialize()
 			int index4 = (hmInfo.terrainHeight * (j + 1)) + (i + 1);// Upper right.
 
 			// Bottom left.
-			vertices[index].pos.x = hmInfo.heightMap[index1].x;
-			vertices[index].pos.y = hmInfo.heightMap[index1].y;
-			vertices[index].pos.z = hmInfo.heightMap[index1].z;
+			vertices[index].pos = hmInfo.heightMap[index1];
+			vertices[index].uv = XMFLOAT2(0.0f, 1.0f);
 			index++;
 
 			// Upper left.
-			vertices[index].pos.x = hmInfo.heightMap[index3].x;
-			vertices[index].pos.y = hmInfo.heightMap[index3].y;
-			vertices[index].pos.z = hmInfo.heightMap[index3].z;
+			vertices[index].pos = hmInfo.heightMap[index3];
+			vertices[index].uv = XMFLOAT2(0.0f, 0.0f);
 			index++;
 
 			// Bottom right.
-			vertices[index].pos.x = hmInfo.heightMap[index2].x;
-			vertices[index].pos.y = hmInfo.heightMap[index2].y;
-			vertices[index].pos.z = hmInfo.heightMap[index2].z;
+			vertices[index].pos = hmInfo.heightMap[index2];
+			vertices[index].uv = XMFLOAT2(1.0f, 1.0f);
 			index++;
 
 			// Upper right.
-			vertices[index].pos.x = hmInfo.heightMap[index4].x;
-			vertices[index].pos.y = hmInfo.heightMap[index4].y;
-			vertices[index].pos.z = hmInfo.heightMap[index4].z;
+			vertices[index].pos = hmInfo.heightMap[index4];
+			vertices[index].uv = XMFLOAT2(1.0f, 0.0f);
 			index++;
 		}
 	}
@@ -347,7 +334,10 @@ HeightMap::~HeightMap()
 	vertBuff.Reset();
 	indexBuff.Reset();
 	constBuff.Reset();
-	texture.reset();
+	for (int i = 0; i < TEXTURE::Size; i++)
+	{
+		texture[i].reset();
+	}
 }
 
 void HeightMap::Update()
@@ -393,10 +383,11 @@ void HeightMap::Draw()
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
 	// ライトの描画
-	lightGroup->Draw(cmdList, 2);
+	lightGroup->Draw(cmdList, 3);
 
-	//テクスチャバッファ転送
-	cmdList->SetGraphicsRootDescriptorTable(1, texture->descriptor->gpu);
+	//テクスチャ転送
+	cmdList->SetGraphicsRootDescriptorTable(1, texture[HeightMapTex]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(2, texture[GraphicTex]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);

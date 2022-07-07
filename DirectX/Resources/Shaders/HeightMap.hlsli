@@ -67,5 +67,5 @@ struct VSOutput
 	float4 pos : POSITION0; // システム用頂点座標
 	float4 svpos : SV_POSITION; // システム用頂点座標
 	float4 worldpos : POSITION1; // ワールド
-	float4 color : COLOR;//色
+	float2 uv : TEXCOORD;//uv
 };

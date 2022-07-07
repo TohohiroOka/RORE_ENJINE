@@ -14,7 +14,7 @@
 
 void TestField::Initialize()
 {
-	heightmap = HeightMap::Create("heightmap01.bmp");
+	heightmap = HeightMap::Create("heightmap01.bmp", "Dirt.jpg");
 }
 
 void TestField::Update()

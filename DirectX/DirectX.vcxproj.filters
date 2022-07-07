@@ -292,7 +292,7 @@
     <ClCompile Include="external\Imgui\imgui_impl_win32.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="HeightMap.cpp">
+    <ClCompile Include="3d\HeightMap.cpp">
       <Filter>エンジンシステム\Object</Filter>
     </ClCompile>
   </ItemGroup>
@@ -583,7 +583,7 @@
     <ClInclude Include="external\Imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="HeightMap.h">
+    <ClInclude Include="3d\HeightMap.h">
       <Filter>エンジンシステム\Object</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,18 +1,19 @@
 #include "HeightMap.hlsli"
 
-Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
+Texture2D<float4> heightTex : register(t0);  // 0番スロットに設定されたテクスチャ
+Texture2D<float4> tex : register(t1);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
 float4 main(VSOutput input) : SV_TARGET
 {
-	float4 color = input.color;
-
 	float3 m_ambient = float3(0.5, 0.5, 0.5);
 	float3 m_diffuse = float3(0.5, 0.5, 0.5);
 	float3 m_specular = float3(0.5, 0.5, 0.5);
 	float m_alpha = 1.0f;
 
-	float3 normal = input.svpos.xyz;
+	float3 normal = heightTex.Sample(smp, input.uv).rgb;
+
+	float4 color = tex.Sample(smp, input.uv);
 
 	// 光沢度
 	const float shininess = 4.0f;
@@ -139,6 +140,6 @@ float4 main(VSOutput input) : SV_TARGET
 
 	float4 mainColor = shadecolor * color;
 
-	return color;
+	return mainColor;
 	//return float4(1, 1, 1, 1);
 }

@@ -416,6 +416,10 @@ void GraphicsPipelineManager::CreateRootSignature()
 	//HeightMap
 	else if (objectKind == OBJECT_KINDS::HEIGHT_MAP)
 	{
+		//追加のデスクリプタレンジ
+		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV1;
+		addDescRangeSRV1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);//t1レジスタ
+
 		// ルートパラメータ
 		rootparams.resize(4);
 		// CBV（座標変換行列用）
@@ -423,9 +427,9 @@ void GraphicsPipelineManager::CreateRootSignature()
 		// SRV（HeightMap用テクスチャ）
 		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ）
-		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		rootparams[2].InitAsDescriptorTable(1, &addDescRangeSRV1, D3D12_SHADER_VISIBILITY_ALL);
 		// CBV (ライト)
-		rootparams[2].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
+		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 	}
 
 	// ルートシグネチャの設定

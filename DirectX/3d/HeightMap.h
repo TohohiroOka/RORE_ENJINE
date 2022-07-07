@@ -6,7 +6,7 @@
 #include "GraphicsPipelineManager.h"
 #include "Texture.h"
 #include "LightGroup.h"
-
+#include <array>
 class Camera;
 
 class HeightMap
@@ -23,6 +23,7 @@ private: // エイリアス
 	//頂点データ3D
 	struct Vertex {
 		XMFLOAT3 pos; // xyz座標
+		XMFLOAT2 uv;//uv座標
 	};
 
 	//定数バッファの構造体
@@ -36,6 +37,12 @@ private: // エイリアス
 		int terrainWidth;		// Width of heightmap
 		int terrainHeight;		// Height (Length) of heightmap
 		std::vector<XMFLOAT3> heightMap;	// Array to store terrain's vertex positions
+	};
+
+	enum TEXTURE {
+		HeightMapTex,
+		GraphicTex,
+		Size,
 	};
 
 private:
@@ -143,9 +150,9 @@ private:
 	static const std::string baseDirectory;
 
 private:
-
+	
 	//テクスチャ情報
-	std::unique_ptr<Texture> texture = nullptr;
+	std::array<std::unique_ptr<Texture>,2> texture;
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//頂点バッファビュー
@@ -157,7 +164,7 @@ private:
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
 	//大きさ
-	XMFLOAT3 scale = { 10,10,10 };
+	XMFLOAT3 scale = { 25,25,25 };
 	//インデックスの大きさ
 	int indexNum = 0;
 	//頂点数
