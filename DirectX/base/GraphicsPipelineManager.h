@@ -4,6 +4,7 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 #include "ShaderManager.h"
+#include "PipelineHelpar.h"
 
 class GraphicsPipelineManager
 {
@@ -34,6 +35,13 @@ private://メンバ関数
 	/// グラフィックスパイプラインの基盤の生成
 	/// </summary>
 	static void CreateDefaultGpipeline();
+
+	/// <summary>
+	/// ブレンドモードの設定
+	/// </summary>
+	/// <param name="mode">ブレンドの種類</param>
+	/// <returns>ブレンド設定</returns>
+	static D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(BLEND_MODE mode);
 
 	/// <summary>
 	/// パイプラインデスクの生成
@@ -96,9 +104,7 @@ private://メンバ変数
 	//生成オブジェクトの種類
 	unsigned char objectKind = OBJECT_KINDS::NONE;
 	//グラフィックスパイプラインの基盤
-	static D3D12_GRAPHICS_PIPELINE_STATE_DESC defaultGpipeline;
-	//ブレンド設定の基盤
-	static D3D12_RENDER_TARGET_BLEND_DESC blenddesc;
+	static D3D12_GRAPHICS_PIPELINE_STATE_DESC defaultPipeline;
 
 public://メンバ変数
 

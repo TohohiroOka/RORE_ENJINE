@@ -4,14 +4,17 @@ Texture2D<float4> heightTex : register(t0);  // 0”ÔƒXƒƒbƒg‚Éİ’è‚³‚ê‚½ƒeƒNƒXƒ`ƒ
 Texture2D<float4> tex : register(t1);  // 0”ÔƒXƒƒbƒg‚Éİ’è‚³‚ê‚½ƒeƒNƒXƒ`ƒƒ
 SamplerState smp : register(s0);      // 0”ÔƒXƒƒbƒg‚Éİ’è‚³‚ê‚½ƒTƒ“ƒvƒ‰[
 
+/// <summary>
+/// –@üæ“¾
+/// </summary>
+float3 GetNormal(float2 uv);
+
 float4 main(VSOutput input) : SV_TARGET
 {
 	float3 m_ambient = float3(0.5, 0.5, 0.5);
 	float3 m_diffuse = float3(0.5, 0.5, 0.5);
 	float3 m_specular = float3(0.5, 0.5, 0.5);
 	float m_alpha = 1.0f;
-
-	float3 normal = heightTex.Sample(smp, input.uv).rgb;
 
 	float4 color = tex.Sample(smp, input.uv);
 
@@ -33,10 +36,10 @@ float4 main(VSOutput input) : SV_TARGET
 		if (dirLights[i].active)
 		{
 			// ƒ‰ƒCƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Æ–@ü‚Ì“àÏ
-			float3 dotlightnormal = dot(dirLights[i].lightv, normal);
+			float3 dotlightnormal = dot(dirLights[i].lightv, input.normal);
 
 			// ”½ËŒõƒxƒNƒgƒ‹
-			float3 reflect = normalize(-dirLights[i].lightv + 2 * dotlightnormal * normal);
+			float3 reflect = normalize(-dirLights[i].lightv + 2 * dotlightnormal * input.normal);
 			// ŠgU”½ËŒõ
 			float3 diffuse = dotlightnormal * m_diffuse;
 			// ‹¾–Ê”½ËŒõ
@@ -61,9 +64,9 @@ float4 main(VSOutput input) : SV_TARGET
 			//‹——£Œ¸ŠŒW”
 			float atten = 1.0f / (pointLights[i].lightatten.x + pointLights[i].lightatten.y * d + pointLights[i].lightatten.z * d * d);
 			//ƒ‰ƒCƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Æ–@ü‚Ì“àÏ
-			float3 dotlightnormal = dot(lightv, normal);
+			float3 dotlightnormal = dot(lightv, input.normal);
 			//”½ËŒõƒxƒNƒgƒ‹
-			float3 reflect = normalize(-lightv + 2 * dotlightnormal * normal);
+			float3 reflect = normalize(-lightv + 2 * dotlightnormal * input.normal);
 			// ŠgU”½ËŒõ
 			float3 diffuse = dotlightnormal * m_diffuse;
 			// ‹¾–Ê”½ËŒõ
@@ -95,9 +98,9 @@ float4 main(VSOutput input) : SV_TARGET
 			// Šp“xŒ¸Š‚ğæZ
 			atten *= angleatten;
 			// ƒ‰ƒCƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Æ–@ü‚Ì“àÏ
-			float3 dotlightnormal = dot(lightv, normal);
+			float3 dotlightnormal = dot(lightv, input.normal);
 			// ”½ËŒõƒxƒNƒgƒ‹
-			float3 reflect = normalize(-lightv + 2 * dotlightnormal * normal);
+			float3 reflect = normalize(-lightv + 2 * dotlightnormal * input.normal);
 			// ŠgU”½ËŒõ
 			float3 diffuse = dotlightnormal * m_diffuse;
 			// ‹¾–Ê”½ËŒõ

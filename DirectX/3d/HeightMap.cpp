@@ -23,6 +23,11 @@ void HeightMap::CreateGraphicsPipeline()
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
+		{ // 法線ベクトル
+			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
 		{ // uv座標
 			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
@@ -76,7 +81,7 @@ void HeightMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void HeightMap::PostDraw()
@@ -172,7 +177,7 @@ bool HeightMap::HeightMapLoad(const std::string filename)
 			int index = (hmInfo.terrainHeight * j) + i;
 
 			hmInfo.heightMap[index].x = (float)i;
-			hmInfo.heightMap[index].y = (float)height / 10.0f;
+			hmInfo.heightMap[index].y = (float)height / 5.0f;
 			hmInfo.heightMap[index].z = (float)j;
 
 			k += 3;
@@ -276,6 +281,31 @@ void HeightMap::Initialize()
 		indices[index] = basicsIndices[5] + vertexNum;
 	}
 
+	int normalNum = static_cast<int>(indices.size() / 3);
+	for (int i = 0; i < normalNum; i++)
+	{
+		index = i * 3;
+		unsigned long index1 = indices[index];
+		index++;
+		unsigned long index2 = indices[index];
+		index++;
+		unsigned long index3 = indices[index];
+
+		XMVECTOR p0 = XMLoadFloat3(&vertices[index1].pos);
+		XMVECTOR p1 = XMLoadFloat3(&vertices[index2].pos);
+		XMVECTOR p2 = XMLoadFloat3(&vertices[index3].pos);
+
+		XMVECTOR v1 = XMVectorSubtract(p1, p0);
+		XMVECTOR v2 = XMVectorSubtract(p2, p0);
+
+		XMVECTOR normal = XMVector3Cross(v1, v2);
+		normal = XMVector3Normalize(normal);
+
+		XMStoreFloat3(&vertices[index1].normal, normal);
+		XMStoreFloat3(&vertices[index2].normal, normal);
+		XMStoreFloat3(&vertices[index3].normal, normal);
+	}
+
 	//頂点バッファ生成
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
@@ -370,8 +400,17 @@ void HeightMap::Update()
 	constBuff->Unmap(0, nullptr);
 }
 
-void HeightMap::Draw()
+void HeightMap::Draw(UINT topology)
 {
+	//プリミティブ形状の設定コマンド
+	if (topology == 0)
+	{
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+	else if (topology == 1)
+	{
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	}
 	//定数バッファをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 

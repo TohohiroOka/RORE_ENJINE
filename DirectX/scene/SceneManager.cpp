@@ -31,14 +31,9 @@ void SceneManager::Initialize()
 	audio = std::make_unique<Audio>();
 	//ライト
 	light = LightGroup::Create();
-	//light->SetDirLightActive(0, true);
-	//light->SetDirLightColor(0, { 1,1,1 });
-	//light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
-	light->DefaultLightSetting();
-	//light->SetPointLightActive(0, true);
-	//light->SetPointLightPos(0, { -100,0,-100 });
-	//light->SetPointLightColor(0, { 1,1,1 });
-	//light->SetPointLightAtten(0, { 0.001f,0.00023f,0.000001f });
+	light->SetDirLightActive(0, true);
+	light->SetDirLightColor(0, { 1,1,1 });
+	light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
 
 	//最初のシーン設定
 	TestField* firstScene = new TestField();

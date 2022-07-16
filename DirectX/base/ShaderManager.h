@@ -37,9 +37,8 @@ public:
 	std::map<std::string, ComPtr<ID3DBlob>> shaderObjectVS;
 	//ピクセルシェーダーのオブジェクト
 	std::map<std::string, ComPtr<ID3DBlob>> shaderObjectPS;
-	//ジオメトリシェーダシェーダーのオブジェクト
+	//ジオメトリシェーダーのオブジェクト
 	std::map<std::string, ComPtr<ID3DBlob>> shaderObjectGS;
 	//コンピュートシェーダーのオブジェクト
 	std::map<std::string, ComPtr<ID3DBlob>> shaderObjectCS;
 };
-

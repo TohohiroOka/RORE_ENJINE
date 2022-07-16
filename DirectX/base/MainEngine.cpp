@@ -88,8 +88,8 @@ bool MainEngine::Update()
 void MainEngine::Draw()
 {
 	//•`‰æ
-	postEffect->PreDrawScene(dXCommon->GetCmdList());
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
+	postEffect->PreDrawScene(dXCommon->GetCmdList());
 	//CubeMap::PreDraw(dXCommon->GetCmdList());
 	//cubemap->Draw();
 	//CubeMap::PostDraw();

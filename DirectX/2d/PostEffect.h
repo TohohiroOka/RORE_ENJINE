@@ -77,19 +77,17 @@ private://静的メンバ変数
 	static const int texBuffNum = 3;
 	//画面クリアカラー
 	static const float clearColor[texBuffNum][4];
-	//テクスチャバッファ
-	static ComPtr<ID3D12Resource> texBuff[texBuffNum];
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 
 private://メンバ変数
 
-	//SRV用デスクリプタヒープ
-	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
-	//テクスチャバッファ
-	ComPtr<ID3D12Resource> depthBuff;
+	//テクスチャ情報
+	std::array<std::unique_ptr<Texture>, texBuffNum> texture;
 	//RTV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
+	//深度バッファ
+	ComPtr<ID3D12Resource> depthBuff;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
 };

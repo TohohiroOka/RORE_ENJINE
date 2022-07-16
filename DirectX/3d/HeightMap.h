@@ -23,7 +23,8 @@ private: // エイリアス
 	//頂点データ3D
 	struct Vertex {
 		XMFLOAT3 pos; // xyz座標
-		XMFLOAT2 uv;//uv座標
+		XMFLOAT3 normal; // 法線ベクトル
+		XMFLOAT2 uv;  // uv座標
 	};
 
 	//定数バッファの構造体
@@ -132,7 +133,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(UINT topology);
 
 private:
 

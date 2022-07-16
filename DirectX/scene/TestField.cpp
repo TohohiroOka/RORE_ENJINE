@@ -72,6 +72,11 @@ void TestField::Update()
 
 	heightmap->Update();
 
+	if (input->TriggerKey(DIK_P)) {
+		topolo++;
+		topolo = topolo % 2;
+	}
+
 	//ƒJƒƒ‰XV
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
 	const float range = 50.0f;
@@ -87,7 +92,7 @@ void TestField::Draw()
 	assert(cmdList);
 
 	HeightMap::PreDraw(cmdList);
-	heightmap->Draw();
+	heightmap->Draw(topolo);
 	HeightMap::PostDraw();
 }
 

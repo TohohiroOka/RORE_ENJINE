@@ -140,6 +140,9 @@
     <Filter Include="Imgui">
       <UniqueIdentifier>{23249f82-5888-449d-8f3a-edc0bb3f0345}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダーファイル\HeightMap">
+      <UniqueIdentifier>{3a93725c-abc3-4024-816d-8a3a69153d13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -358,13 +361,10 @@
       <Filter>シェーダーファイル\CubeBox</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\HeightMapPS.hlsl">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダーファイル\HeightMap</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\HeightMapVS.hlsl">
-      <Filter>シェーダーファイル</Filter>
-    </FxCompile>
-    <FxCompile Include="HeightMapHS.hlsl">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダーファイル\HeightMap</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -396,7 +396,7 @@
       <Filter>シェーダーファイル\CubeBox</Filter>
     </None>
     <None Include="Resources\Shaders\HeightMap.hlsli">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダーファイル\HeightMap</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -588,6 +588,9 @@
     </ClInclude>
     <ClInclude Include="3d\HeightMap.h">
       <Filter>エンジンシステム\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="base\PipelineHelpar.h">
+      <Filter>エンジンシステム\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

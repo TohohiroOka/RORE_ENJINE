@@ -46,4 +46,5 @@ private:
 
 	std::unique_ptr<HeightMap> heightmap = nullptr;
 	
+	int topolo = 0;
 };

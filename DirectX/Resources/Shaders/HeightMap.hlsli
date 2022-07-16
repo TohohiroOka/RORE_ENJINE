@@ -64,8 +64,8 @@ cbuffer cbuff2 : register(b2)
 // 頂点シェーダーからピクセルシェーダーへのやり取りに使用する構造体
 struct VSOutput
 {
-	float4 pos : POSITION0; // システム用頂点座標
 	float4 svpos : SV_POSITION; // システム用頂点座標
 	float4 worldpos : POSITION1; // ワールド
+	float3 normal :NORMAL; // 法線
 	float2 uv : TEXCOORD;//uv
 };

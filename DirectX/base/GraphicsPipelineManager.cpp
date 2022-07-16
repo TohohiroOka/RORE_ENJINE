@@ -7,8 +7,7 @@ using namespace Microsoft::WRL;
 
 ID3D12Device* GraphicsPipelineManager::device = nullptr;
 std::unique_ptr<ShaderManager> GraphicsPipelineManager::shaderManager = nullptr;
-D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::defaultGpipeline{};
-D3D12_RENDER_TARGET_BLEND_DESC GraphicsPipelineManager::blenddesc{};
+D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::defaultPipeline{};
 
 //名前を結合する
 LPCWSTR GetName(std::string className, std::string setName)
@@ -53,35 +52,25 @@ void GraphicsPipelineManager::StaticInitialize(ID3D12Device* device)
 void GraphicsPipelineManager::CreateDefaultGpipeline()
 {
 	// サンプルマスク
-	defaultGpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
+	defaultPipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	// ラスタライザステート
-	defaultGpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	defaultPipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	// デプスステンシルステート
-	defaultGpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	defaultPipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 
 	// レンダーターゲットのブレンド設定
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;// RBGA全てのチャンネルを描画
-	blenddesc.BlendEnable = true;
-	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	// ブレンドステートの設定
-	defaultGpipeline.BlendState.RenderTarget[0] = blenddesc;
+	D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
+	defaultPipeline.BlendState.RenderTarget[0] = blenddesc;
 
 	// 深度バッファのフォーマット
-	defaultGpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	defaultPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	// 図形の形状設定（三角形）
-	defaultGpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	defaultPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
-	defaultGpipeline.NumRenderTargets = 1;    // 描画対象は1つ
-	defaultGpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	defaultGpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
+	defaultPipeline.NumRenderTargets = 1;    // 描画対象は1つ
+	defaultPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	defaultPipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 }
 
 std::unique_ptr<GraphicsPipelineManager> GraphicsPipelineManager::Create(const std::string name, const unsigned char objectKind,
@@ -130,7 +119,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	const D3D12_INPUT_ELEMENT_DESC* inputLayout, const UINT inputLayoutSize)
 {
 	// グラフィックスパイプラインの流れを設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = defaultGpipeline;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = defaultPipeline;
 
 	//Obj
 	if (objectKind == OBJECT_KINDS::OBJ)
@@ -139,6 +128,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["OBJ"].Get());
 
 		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
+		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
 		gpipeline.BlendState.RenderTarget[1] = blenddesc;
 		gpipeline.BlendState.RenderTarget[2] = blenddesc;
 
@@ -153,6 +143,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["FBX"].Get());
 
 		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
+		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
 		gpipeline.BlendState.RenderTarget[1] = blenddesc;
 		gpipeline.BlendState.RenderTarget[2] = blenddesc;
 
@@ -183,9 +174,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		//常に上書きルール
 		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 		gpipeline.DepthStencilState.DepthEnable = false;
-
-		// ブレンドステートの再設定
-		gpipeline.BlendState.RenderTarget[0] = blenddesc;
 	}
 	//DrawLine2d
 	else if (objectKind == OBJECT_KINDS::DRAW_LINE_2D)
@@ -198,9 +186,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		//常に上書きルール
 		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 		gpipeline.DepthStencilState.DepthEnable = false;
-
-		// ブレンドステートの再設定
-		gpipeline.BlendState.RenderTarget[0] = blenddesc;
 	}
 	//PostEffect
 	else if (objectKind == OBJECT_KINDS::POST_EFFECT)
@@ -213,9 +198,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		//常に上書きルール
 		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 		gpipeline.DepthStencilState.DepthEnable = false;
-
-		// ブレンドステートの再設定
-		gpipeline.BlendState.RenderTarget[0] = blenddesc;
 	}
 	//Particle
 	else if (objectKind == OBJECT_KINDS::PARTICLE)
@@ -225,20 +207,13 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectGS["PARTICLE"].Get());
 
 		gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		// 加算ブレンディング
-		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-		blenddesc.SrcBlend = D3D12_BLEND_ONE;
-		blenddesc.DestBlend = D3D12_BLEND_ONE;
-
-		blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-		blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
 
 		// 図形の形状設定（三角形）
 		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
 		// ブレンドステートの再設定
-		gpipeline.BlendState.RenderTarget[0] = blenddesc;
+		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
+		gpipeline.BlendState.RenderTarget[1] = blenddesc;
 	}
 	//CubeBox
 	else if (objectKind == OBJECT_KINDS::CUBE_BOX)
@@ -249,8 +224,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 	//HeightMap
 	else if (objectKind == OBJECT_KINDS::HEIGHT_MAP)
 	{
-	//常に三角形描画
-	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		//常に三角形描画
+		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
 		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["HEIGHT_MAP"].Get());
 		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["HEIGHT_MAP"].Get());
@@ -453,4 +428,51 @@ void GraphicsPipelineManager::CreateRootSignature()
 void GraphicsPipelineManager::Finalize()
 {
 	shaderManager.reset();
+}
+
+D3D12_RENDER_TARGET_BLEND_DESC GraphicsPipelineManager::CreateBlendDesc(BLEND_MODE mode)
+{
+	D3D12_RENDER_TARGET_BLEND_DESC blenddesc;
+	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;// RBGA全てのチャンネルを描画
+	if (mode == BLEND_MODE::NOBLEND)
+	{
+		blenddesc.BlendEnable = false;
+		return blenddesc;
+	}
+
+	blenddesc.BlendEnable = true;
+	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	if (mode == BLEND_MODE::ALPHA)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+	} else if (mode == BLEND_MODE::ADD)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_ONE;
+		blenddesc.DestBlend = D3D12_BLEND_ONE;
+	} else if (mode == BLEND_MODE::SUB)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_SUBTRACT;
+		blenddesc.SrcBlend = D3D12_BLEND_ONE;
+		blenddesc.DestBlend = D3D12_BLEND_ONE;
+	} else if (mode == BLEND_MODE::MULA)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_ZERO;
+		blenddesc.DestBlend = D3D12_BLEND_INV_DEST_COLOR;
+	} else if (mode == BLEND_MODE::INVSRC)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+		blenddesc.DestBlend = D3D12_BLEND_ONE;
+	}
+	blenddesc.LogicOpEnable = false;
+
+	return blenddesc;
 }

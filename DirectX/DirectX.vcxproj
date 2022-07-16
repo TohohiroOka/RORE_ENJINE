@@ -153,12 +153,6 @@
     <ClCompile Include="scene\TestField.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HeightMapHS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Hull</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Hull</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -336,6 +330,7 @@
     <ClInclude Include="base\DirectXCommon.h" />
     <ClInclude Include="base\FrameRateKeep.h" />
     <ClInclude Include="base\GraphicsPipelineManager.h" />
+    <ClInclude Include="base\PipelineHelpar.h" />
     <ClInclude Include="base\MainEngine.h" />
     <ClInclude Include="base\SafeDelete.h" />
     <ClInclude Include="base\ShaderManager.h" />

@@ -111,28 +111,27 @@ void ShaderManager::LoadShader()
 
 void ShaderManager::Finalize()
 {
-	for (auto shader = shaderObjectVS.begin(); shader != shaderObjectVS.end(); shader++)
+	for (auto shader : shaderObjectVS)
 	{
-		shader->second.Reset();
+		shader.second.Reset();
 	}
 	shaderObjectVS.clear();
 
-	for (auto shader = shaderObjectPS.begin(); shader != shaderObjectPS.end(); shader++)
+	for (auto shader : shaderObjectPS)
 	{
-		shader->second.Reset();
+		shader.second.Reset();
 	}
 	shaderObjectPS.clear();
 
-	for (auto shader = shaderObjectGS.begin(); shader != shaderObjectGS.end(); shader++)
+	for (auto shader : shaderObjectGS)
 	{
-		shader->second.Reset();
+		shader.second.Reset();
 	}
 	shaderObjectGS.clear();
 
-	for (auto shader = shaderObjectCS.begin(); shader != shaderObjectCS.end(); shader++)
+	for (auto shader : shaderObjectCS)
 	{
-		shader->second.Reset();
+		shader.second.Reset();
 	}
 	shaderObjectCS.clear();
-
 }
