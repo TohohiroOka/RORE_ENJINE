@@ -76,35 +76,35 @@ void ShaderManager::LoadShader()
 	//コンピュートシェーダーモデル
 	LPCSTR csModel = "cs_5_0";
 
-	//Objシェーダー
+	//Obj
 	shaderObjectVS["OBJ"] = CompileShader(L"ObjVS.hlsl", vsModel);
 	shaderObjectPS["OBJ"] = CompileShader(L"ObjPS.hlsl", psModel);
-	//Fbxシェーダー
+	//Fbx
 	shaderObjectVS["FBX"] = CompileShader(L"FbxVS.hlsl", vsModel);
 	shaderObjectPS["FBX"] = CompileShader(L"FbxPS.hlsl", psModel);
-	//DrawLine3dシェーダー
+	//DrawLine3d
 	shaderObjectVS["DRAW_LINE_3D"] = CompileShader(L"DrawLine3DVS.hlsl", vsModel);
 	shaderObjectPS["DRAW_LINE_3D"] = CompileShader(L"DrawLine3DPS.hlsl", psModel);
-	//NormalMapシェーダー
+	//NormalMap
 	shaderObjectVS["NORMAL_MAP"] = CompileShader(L"NormalMapVS.hlsl", vsModel);
 	shaderObjectPS["NORMAL_MAP"] = CompileShader(L"NormalMapPS.hlsl", psModel);
-	//Spriteシェーダー
+	//Sprite
 	shaderObjectVS["SPRITE"] = CompileShader(L"SpriteVS.hlsl", vsModel);
 	shaderObjectPS["SPRITE"] = CompileShader(L"SpritePS.hlsl", psModel);
-	//DrawLine2dシェーダー
+	//DrawLine2d
 	shaderObjectVS["DRAW_LINE_2D"] = CompileShader(L"DrawLine2DVS.hlsl", vsModel);
 	shaderObjectPS["DRAW_LINE_2D"] = CompileShader(L"DrawLine2DPS.hlsl", psModel);
-	//PostEffectシェーダー
+	//PostEffect
 	shaderObjectVS["POST_EFFECT"] = CompileShader(L"PostEffectVS.hlsl", vsModel);
 	shaderObjectPS["POST_EFFECT"] = CompileShader(L"PostEffectPS.hlsl", psModel);
-	//Particleシェーダー
+	//Particle
 	shaderObjectVS["PARTICLE"] = CompileShader(L"ParticleVS.hlsl", vsModel);
 	shaderObjectPS["PARTICLE"] = CompileShader(L"ParticlePS.hlsl", psModel);
 	shaderObjectGS["PARTICLE"] = CompileShader(L"ParticleGS.hlsl", gsModel);
-	//CubeBoxシェーダー
+	//CubeBox
 	shaderObjectVS["CUBE_BOX"] = CompileShader(L"CubeBoxVS.hlsl", vsModel);
 	shaderObjectPS["CUBE_BOX"] = CompileShader(L"CubeBoxPS.hlsl", psModel);
-	//HeightMapシェーダー
+	//HeightMap
 	shaderObjectVS["HEIGHT_MAP"] = CompileShader(L"HeightMapVS.hlsl", vsModel);
 	shaderObjectPS["HEIGHT_MAP"] = CompileShader(L"HeightMapPS.hlsl", psModel);
 }

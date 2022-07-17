@@ -73,6 +73,53 @@ void GraphicsPipelineManager::CreateDefaultGpipeline()
 	defaultPipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 }
 
+D3D12_RENDER_TARGET_BLEND_DESC GraphicsPipelineManager::CreateBlendDesc(BLEND_MODE mode)
+{
+	D3D12_RENDER_TARGET_BLEND_DESC blenddesc;
+	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;// RBGA全てのチャンネルを描画
+	if (mode == BLEND_MODE::NOBLEND)
+	{
+		blenddesc.BlendEnable = false;
+		return blenddesc;
+	}
+
+	blenddesc.BlendEnable = true;
+	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	if (mode == BLEND_MODE::ALPHA)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+	} else if (mode == BLEND_MODE::ADD)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_ONE;
+		blenddesc.DestBlend = D3D12_BLEND_ONE;
+	} else if (mode == BLEND_MODE::SUB)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_SUBTRACT;
+		blenddesc.SrcBlend = D3D12_BLEND_ONE;
+		blenddesc.DestBlend = D3D12_BLEND_ONE;
+	} else if (mode == BLEND_MODE::MULA)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_ZERO;
+		blenddesc.DestBlend = D3D12_BLEND_INV_DEST_COLOR;
+	} else if (mode == BLEND_MODE::INVSRC)
+	{
+		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
+		blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+		blenddesc.DestBlend = D3D12_BLEND_ONE;
+	}
+	blenddesc.LogicOpEnable = false;
+
+	return blenddesc;
+}
+
 std::unique_ptr<GraphicsPipelineManager> GraphicsPipelineManager::Create(const std::string name, const unsigned char objectKind,
 	const D3D12_INPUT_ELEMENT_DESC* inputLayout, const UINT inputLayoutSize)
 {
@@ -358,7 +405,7 @@ void GraphicsPipelineManager::CreateRootSignature()
 		rootparams.resize(4);
 		// CBV（座標変換行列用）
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ1）
+		// SRV（通常テクスチャ）
 		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ2）
 		rootparams[2].InitAsDescriptorTable(1, &addDescRangeSRV1, D3D12_SHADER_VISIBILITY_ALL);
@@ -428,51 +475,4 @@ void GraphicsPipelineManager::CreateRootSignature()
 void GraphicsPipelineManager::Finalize()
 {
 	shaderManager.reset();
-}
-
-D3D12_RENDER_TARGET_BLEND_DESC GraphicsPipelineManager::CreateBlendDesc(BLEND_MODE mode)
-{
-	D3D12_RENDER_TARGET_BLEND_DESC blenddesc;
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;// RBGA全てのチャンネルを描画
-	if (mode == BLEND_MODE::NOBLEND)
-	{
-		blenddesc.BlendEnable = false;
-		return blenddesc;
-	}
-
-	blenddesc.BlendEnable = true;
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	if (mode == BLEND_MODE::ALPHA)
-	{
-		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-		blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	} else if (mode == BLEND_MODE::ADD)
-	{
-		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-		blenddesc.SrcBlend = D3D12_BLEND_ONE;
-		blenddesc.DestBlend = D3D12_BLEND_ONE;
-	} else if (mode == BLEND_MODE::SUB)
-	{
-		blenddesc.BlendOp = D3D12_BLEND_OP_SUBTRACT;
-		blenddesc.SrcBlend = D3D12_BLEND_ONE;
-		blenddesc.DestBlend = D3D12_BLEND_ONE;
-	} else if (mode == BLEND_MODE::MULA)
-	{
-		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-		blenddesc.SrcBlend = D3D12_BLEND_ZERO;
-		blenddesc.DestBlend = D3D12_BLEND_INV_DEST_COLOR;
-	} else if (mode == BLEND_MODE::INVSRC)
-	{
-		blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-		blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
-		blenddesc.DestBlend = D3D12_BLEND_ONE;
-	}
-	blenddesc.LogicOpEnable = false;
-
-	return blenddesc;
 }
