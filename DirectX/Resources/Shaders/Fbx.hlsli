@@ -103,11 +103,3 @@ struct VSOutput
 	float3 normal :NORMAL; // 法線
 	float2 uv  :TEXCOORD; // uv値
 };
-
-//ピクセルシェーダーから実行処理へのやり取りに使用する構造体
-struct PSOutput
-{
-	float4 target0 : SV_TARGET0;
-	float4 target1 : SV_TARGET1;
-	float4 target2 : SV_TARGET2;
-};

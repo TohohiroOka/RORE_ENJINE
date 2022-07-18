@@ -178,10 +178,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
 		gpipeline.BlendState.RenderTarget[1] = blenddesc;
 		gpipeline.BlendState.RenderTarget[2] = blenddesc;
-
-		gpipeline.NumRenderTargets = 3;    // 描画対象は1つ
-		gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
 	}
 	//Fbx
 	else if (objectKind == OBJECT_KINDS::FBX)
@@ -193,10 +189,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
 		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
 		gpipeline.BlendState.RenderTarget[1] = blenddesc;
 		gpipeline.BlendState.RenderTarget[2] = blenddesc;
-
-		gpipeline.NumRenderTargets = 3;    // 描画対象は1つ
-		gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
 	}
 	//DrawLine3d
 	else if (objectKind == OBJECT_KINDS::DRAW_LINE_3D)
@@ -398,19 +390,15 @@ void GraphicsPipelineManager::CreateRootSignature()
 		//追加のデスクリプタレンジ
 		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV1;
 		addDescRangeSRV1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);//t1レジスタ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV2;
-		addDescRangeSRV2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);//t2レジスタ
 
 		// ルートパラメータ
-		rootparams.resize(4);
+		rootparams.resize(3);
 		// CBV（座標変換行列用）
 		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（通常テクスチャ）
 		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 		// SRV（テクスチャ2）
 		rootparams[2].InitAsDescriptorTable(1, &addDescRangeSRV1, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ3）
-		rootparams[3].InitAsDescriptorTable(1, &addDescRangeSRV2, D3D12_SHADER_VISIBILITY_ALL);
 
 		// スタティックサンプラーのs0レジスタ
 		samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);

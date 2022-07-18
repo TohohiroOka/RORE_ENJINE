@@ -19,6 +19,12 @@ public: // サブクラス
 		float outlineWidth;//アウトラインの太さ
 	};
 
+	enum TEX_TYPE
+	{
+		NORMAL,
+		DEPTH
+	};
+
 public://メンバ関数
 
 	/// <summary>
@@ -54,6 +60,11 @@ public://メンバ関数
 	void Initialize();
 
 	/// <summary>
+	/// 深度バッファ生成
+	/// </summary>
+	void CreateDepthBuffer();
+
+	/// <summary>
 	/// 描画コマンドの発行
 	/// </summary>
 	/// <param name="cmdList">コマンドリスト</param>
@@ -73,10 +84,10 @@ public://メンバ関数
 
 private://静的メンバ変数
 	
-	//テクスチャバッファの数
-	static const int texBuffNum = 3;
+	//通常テクスチャ数
+	static const int texBuffNum = 2;
 	//画面クリアカラー
-	static const float clearColor[texBuffNum][4];
+	static const float clearColor[4];
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
 
@@ -86,8 +97,6 @@ private://メンバ変数
 	std::array<std::unique_ptr<Texture>, texBuffNum> texture;
 	//RTV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
-	//深度バッファ
-	ComPtr<ID3D12Resource> depthBuff;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
 };

@@ -20,10 +20,8 @@ float3 SchlickFresnel3(float3 f0, float3 f90, float cosine);
 float3 DisneyFresnel(float LdotH);
 float GeometricSmith(float cosine);
 
-PSOutput main(VSOutput input)
+float4 main(VSOutput input) : SV_TARGET
 {
-	PSOutput output;
-
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 
@@ -176,9 +174,7 @@ PSOutput main(VSOutput input)
 	}
 
 	// シェーディングによる色で描画
-	output.target0 = float4(finalRGB.rgb, color.w);
-	output.target1 = bloom;
-	output.target2 = texcolor * color * isOutline;
+	float4 output = float4(finalRGB.rgb, color.w);
 	return output;
 }
 

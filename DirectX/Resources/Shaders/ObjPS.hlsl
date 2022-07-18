@@ -13,10 +13,8 @@ float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color);
 /// </summary>
 float4 SetToon(float4 shadecolor);
 
-PSOutput main(VSOutput input)
+float4 main(VSOutput input) : SV_TARGET
 {
-	PSOutput output;
-
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 
@@ -160,10 +158,7 @@ PSOutput main(VSOutput input)
 
 	// シェーディングによる色で描画
 	float4 mainColor = shadecolor * texcolor * color;
-	output.target0 = float4(mainColor.rgb, color.w);
-	output.target1 = bloom;
-	output.target2 = float4(0.5, 0.5, 0.5, 1.0) * isOutline;
-
+	float4 output = float4(mainColor.rgb, color.w);
 	return output;
 }
 
