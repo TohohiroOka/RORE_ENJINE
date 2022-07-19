@@ -1,11 +1,11 @@
 #include "MainEngine.h"
-#include "DrawLine.h"
-#include "DrawLine3D.h"
+//#include "DrawLine.h"
+//#include "DrawLine3D.h"
 #include "Object3d.h"
-#include "Sprite.h"
-#include "DebugText.h"
-#include "Emitter.h"
-#include "Fbx.h"
+//#include "Sprite.h"
+//#include "DebugText.h"
+//#include "Emitter.h"
+//#include "Fbx.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
@@ -17,15 +17,15 @@ using namespace Microsoft::WRL;
 
 MainEngine::~MainEngine()
 {
-	DebugText::Finalize();
+	//DebugText::Finalize();
 	scene.reset();
 	Object3d::Finalize();
-	DrawLine3D::Finalize();
-	DrawLine::Finalize();
+	//DrawLine3D::Finalize();
+	//DrawLine::Finalize();
 	Sprite::Finalize();
-	Fbx::Finalize();
+	//Fbx::Finalize();
 	CubeMap::Finalize();
-	ParticleManager::Finalize();
+	//ParticleManager::Finalize();
 	postEffect->Finalize();
 	ComputeShaderManager::Finalize();
 	DescriptorHeapManager::Finalize();
@@ -46,17 +46,17 @@ void MainEngine::Initialize()
 
 	//ObjectŒn‚Ì‰Šú‰»
 	Texture::StaticInitialize(dXCommon->GetDevice());
-	GraphicsPipelineManager::StaticInitialize(dXCommon->GetDevice());
+	GraphicsPipelineManager::SetDevice(dXCommon->GetDevice());
 	Object3d::StaticInitialize(dXCommon->GetDevice());
 	Sprite::StaticInitialize(dXCommon->GetDevice());
-	DrawLine::StaticInitialize(dXCommon->GetDevice());
-	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
-	ParticleManager::StaticInitialize(dXCommon->GetDevice());
+	//DrawLine::StaticInitialize(dXCommon->GetDevice());
+	//DrawLine3D::StaticInitialize(dXCommon->GetDevice());
+	//ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
-	Fbx::StaticInitialize(dXCommon->GetDevice());
+	//Fbx::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
-	DebugText::GetInstance()->Initialize();
+	//DebugText::GetInstance()->Initialize();
 	CubeMap::StaticInitialize(dXCommon->GetDevice());
 	HeightMap::StaticInitialize(dXCommon->GetDevice());
 

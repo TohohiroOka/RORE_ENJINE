@@ -16,7 +16,7 @@ ID3D12Device* Object3d::device = nullptr;
 ID3D12GraphicsCommandList* Object3d::cmdList = nullptr;
 Camera* Object3d::camera = nullptr;
 LightGroup* Object3d::lightGroup = nullptr;
-std::unique_ptr<GraphicsPipelineManager> Object3d::pipeline;
+GraphicsPipelineManager::GRAPHICS_PIPELINE Object3d::pipeline;
 XMFLOAT4 Object3d::outlineColor = {};
 float Object3d::outlineWidth = 0.0f;
 
@@ -30,36 +30,8 @@ void Object3d::StaticInitialize(ID3D12Device* device)
 
 	Object3d::device = device;
 
-	// グラフィックパイプラインの生成
-	CreateGraphicsPipeline();
-
 	// モデルの静的初期化
 	Model::StaticInitialize(device);
-}
-
-void Object3d::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xyz座標
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("Object3d",
-		GraphicsPipelineManager::OBJECT_KINDS::OBJ, inputLayout, _countof(inputLayout));
 }
 
 std::unique_ptr<Object3d> Object3d::Create(Model* model)
@@ -153,10 +125,10 @@ void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	Object3d::cmdList = cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	// プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -237,5 +209,5 @@ XMFLOAT3 Object3d::GetWorldPosition()
 
 void Object3d::Finalize()
 {
-	pipeline.reset();
+	//pipeline.
 }

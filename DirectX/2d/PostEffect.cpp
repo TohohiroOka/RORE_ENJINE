@@ -7,7 +7,7 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 const float PostEffect::clearColor[4] = { 0.1f,0.1f,0.7f,0.0f };
-std::unique_ptr<GraphicsPipelineManager> PostEffect::pipeline;
+GraphicsPipelineManager::GRAPHICS_PIPELINE PostEffect::pipeline;
 
 PostEffect::PostEffect()
 	:Sprite()
@@ -20,34 +20,13 @@ PostEffect::~PostEffect()
 
 void PostEffect::Finalize()
 {
-	pipeline.reset();
+	//pipeline.reset();
 	descHeapRTV.Reset();
 	descHeapDSV.Reset();
 }
 
-void PostEffect::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標(1行で書いたほうが見やすい)
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("PostEffect",
-		GraphicsPipelineManager::OBJECT_KINDS::POST_EFFECT, inputLayout, _countof(inputLayout));
-}
-
 void PostEffect::StaticInitialize()
 {
-	CreateGraphicsPipeline();
 }
 
 void PostEffect::Initialize()
@@ -236,10 +215,10 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 	constBuff->Unmap(0, nullptr);
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

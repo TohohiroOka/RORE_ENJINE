@@ -10,12 +10,12 @@ using namespace DirectX;
 
 void BrowsingCircle::Initialize()
 {
-	//円モデル読み込み
-	SpherePBRModel = FbxModel::Create("SpherePBR");
+	////円モデル読み込み
+	//SpherePBRModel = FbxModel::Create("SpherePBR");
 
-	circle = Fbx::Create(SpherePBRModel.get());
-	circle->SetPosition({ 0,0,0 });
-	circle->SetScale({ 5,5,5 });
+	//circle = Fbx::Create(SpherePBRModel.get());
+	//circle->SetPosition({ 0,0,0 });
+	//circle->SetScale({ 5,5,5 });
 }
 
 void BrowsingCircle::Update()
@@ -68,14 +68,14 @@ void BrowsingCircle::Update()
 		SceneManager::SetNextScene(nextScene);
 	}
 
-	circle->Update();
+	//circle->Update();
 }
 
 void BrowsingCircle::Draw()
 {
-	Fbx::PreDraw(cmdList);
-	circle->Draw();
-	Fbx::PostDraw();
+	//Fbx::PreDraw(cmdList);
+	//circle->Draw();
+	//Fbx::PostDraw();
 }
 
 void BrowsingCircle::Finalize()
@@ -84,43 +84,43 @@ void BrowsingCircle::Finalize()
 
 void BrowsingCircle::ImguiDraw()
 {
-	float baseColor[3];//ベースカラ―
-	float metalness;//金属度(0 or 1)
-	float specular;//鏡面反射度
-	float roughness;//粗さ
+	//float baseColor[3];//ベースカラ―
+	//float metalness;//金属度(0 or 1)
+	//float specular;//鏡面反射度
+	//float roughness;//粗さ
 
-	baseColor[0] = circle->GetBaseColor().x;
-	baseColor[1] = circle->GetBaseColor().y;
-	baseColor[2] = circle->GetBaseColor().z;
-	metalness = circle->GetMetalness();
-	specular = circle->GetSpecular();
-	roughness = circle->GetRoughness();
+	//baseColor[0] = circle->GetBaseColor().x;
+	//baseColor[1] = circle->GetBaseColor().y;
+	//baseColor[2] = circle->GetBaseColor().z;
+	//metalness = circle->GetMetalness();
+	//specular = circle->GetSpecular();
+	//roughness = circle->GetRoughness();
 
-	//ライトon/off
-	static bool lightAct1 = false;
-	static bool lightAct2 = false;
-	static bool lightAct3 = false;
+	////ライトon/off
+	//static bool lightAct1 = false;
+	//static bool lightAct2 = false;
+	//static bool lightAct3 = false;
 
-	ImGui::Begin("Material");
-	ImGui::SetWindowPos(ImVec2(0, 0));
-	ImGui::SetWindowSize(ImVec2(300, 200));
-	ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
-	ImGui::SliderFloat("metalness", &metalness, 0, 1);
-	ImGui::SliderFloat("specular", &specular, 0, 1);
-	ImGui::SliderFloat("roughness", &roughness, 0, 1);
-	ImGui::Checkbox("Light1", &lightAct1);
-	ImGui::Checkbox("Light2", &lightAct2);
-	ImGui::Checkbox("Light3", &lightAct3);
-	ImGui::End();
+	//ImGui::Begin("Material");
+	//ImGui::SetWindowPos(ImVec2(0, 0));
+	//ImGui::SetWindowSize(ImVec2(300, 200));
+	//ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
+	//ImGui::SliderFloat("metalness", &metalness, 0, 1);
+	//ImGui::SliderFloat("specular", &specular, 0, 1);
+	//ImGui::SliderFloat("roughness", &roughness, 0, 1);
+	//ImGui::Checkbox("Light1", &lightAct1);
+	//ImGui::Checkbox("Light2", &lightAct2);
+	//ImGui::Checkbox("Light3", &lightAct3);
+	//ImGui::End();
 
-	circle->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
-	circle->SetMetalness(metalness);
-	circle->SetSpecular(specular);
-	circle->SetRoughness(roughness);
+	//circle->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
+	//circle->SetMetalness(metalness);
+	//circle->SetSpecular(specular);
+	//circle->SetRoughness(roughness);
 
-	light->SetDirLightActive(0, lightAct1);
-	light->SetDirLightActive(1, lightAct2);
-	light->SetDirLightActive(2, lightAct3);
+	//light->SetDirLightActive(0, lightAct1);
+	//light->SetDirLightActive(1, lightAct2);
+	//light->SetDirLightActive(2, lightAct3);
 }
 
 void BrowsingCircle::GetConstbufferNum()

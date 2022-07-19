@@ -9,35 +9,10 @@ using namespace DirectX;
 
 ID3D12Device* HeightMap::device = nullptr;
 ID3D12GraphicsCommandList* HeightMap::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> HeightMap::pipeline = nullptr;
+GraphicsPipelineManager::GRAPHICS_PIPELINE HeightMap::pipeline;
 Camera* HeightMap::camera = nullptr;
 LightGroup* HeightMap::lightGroup = nullptr;
 const std::string HeightMap::baseDirectory = "Resources/HeightMap/";
-
-void HeightMap::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xyz座標
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("HeightMap",
-		GraphicsPipelineManager::OBJECT_KINDS::HEIGHT_MAP, inputLayout, _countof(inputLayout));
-}
 
 void HeightMap::StaticInitialize(ID3D12Device* device)
 {
@@ -45,8 +20,6 @@ void HeightMap::StaticInitialize(ID3D12Device* device)
 	assert(!HeightMap::device);
 	assert(device);
 	HeightMap::device = device;
-
-	CreateGraphicsPipeline();
 }
 
 std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename, const std::string filename)
@@ -75,13 +48,13 @@ void HeightMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	HeightMap::cmdList = cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
-	//cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void HeightMap::PostDraw()
@@ -92,7 +65,7 @@ void HeightMap::PostDraw()
 
 void HeightMap::Finalize()
 {
-	pipeline.reset();
+	//pipeline.reset();
 }
 
 bool HeightMap::HeightMapLoad(const std::string filename)
@@ -356,6 +329,17 @@ void HeightMap::Initialize()
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
 	assert(SUCCEEDED(result));
+
+	// 定数バッファの生成
+	result = device->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffB1));
+	assert(SUCCEEDED(result));
+
 }
 
 HeightMap::~HeightMap()
@@ -398,21 +382,22 @@ void HeightMap::Update()
 	constMap->world = matWorld;
 	constMap->cameraPos = cameraPos;
 	constBuff->Unmap(0, nullptr);
+
+	ConstBufferDataB1* constMapB1 = nullptr;
+	result = constBuffB1->Map(0, nullptr, (void**)&constMapB1);//マッピング
+	assert(SUCCEEDED(result));
+	constMapB1->ambient = { 0.5f,0.5f,0.5f };
+	constMapB1->diffuse = { 0.5f,0.5f,0.5f };
+	constMapB1->specular = { 0.5f,0.5f,0.5f };
+	constMapB1->alpha = 1.0f;
+	constBuffB1->Unmap(0, nullptr);
 }
 
 void HeightMap::Draw(UINT topology)
 {
-	//プリミティブ形状の設定コマンド
-	if (topology == 0)
-	{
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
-	else if (topology == 1)
-	{
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	}
 	//定数バッファをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
 
 	//頂点バッファの設定
 	cmdList->IASetIndexBuffer(&ibView);
@@ -421,11 +406,11 @@ void HeightMap::Draw(UINT topology)
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
 	// ライトの描画
-	lightGroup->Draw(cmdList, 3);
+	lightGroup->Draw(cmdList, 2);
 
 	//テクスチャ転送
-	cmdList->SetGraphicsRootDescriptorTable(1, texture[HeightMapTex]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(2, texture[GraphicTex]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(3, texture[HeightMapTex]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(4, texture[GraphicTex]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);

@@ -3,13 +3,6 @@
 
 class PostEffect : public Sprite
 {
-private://静的メンバ関数
-
-	/// <summary>
-	/// グラフィックスパイプラインの生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public: // サブクラス
 
 	// 定数バッファ用データ構造体B0
@@ -82,6 +75,8 @@ public://メンバ関数
 	/// <param name="cmdList">描画コマンドリスト</param>
 	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
 
+	static void SetPipe(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 private://静的メンバ変数
 	
 	//通常テクスチャ数
@@ -89,7 +84,7 @@ private://静的メンバ変数
 	//画面クリアカラー
 	static const float clearColor[4];
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 
 private://メンバ変数
 

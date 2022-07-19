@@ -37,13 +37,6 @@ public: // サブクラス
 		unsigned int isOutline;//アウトラインの有無
 	};
 
-private: // 静的メンバ関数
-
-	/// <summary>
-	/// グラフィックパイプラインの生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public: // 静的メンバ関数
 
 	/// <summary>
@@ -56,17 +49,13 @@ public: // 静的メンバ関数
 	/// カメラのセット
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) {
-		Object3d::camera = camera;
-	}
+	static void SetCamera(Camera* camera) { Object3d::camera = camera; }
 
 	/// <summary>
 	/// ライトグループのセット
 	/// </summary>
 	/// <param name="lightGroup">ライトグループ</param>
-	static void SetLightGroup(LightGroup* lightGroup) {
-		Object3d::lightGroup = lightGroup;
-	}
+	static void SetLightGroup(LightGroup* lightGroup) { Object3d::lightGroup = lightGroup; }
 
 	/// <summary>
 	/// 描画前処理
@@ -90,6 +79,8 @@ public: // 静的メンバ関数
 	/// </summary>
 	static void Finalize();
 
+	static void SetPipe(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 private: // 静的メンバ変数
 
 	// デバイス
@@ -97,7 +88,7 @@ private: // 静的メンバ変数
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	// カメラ
 	static Camera* camera;
 	// ライト

@@ -22,6 +22,11 @@ public://メンバ関数
 	void Initialize();
 
 	/// <summary>
+	/// パイプラインの生成
+	/// </summary>
+	void CreatePipeline();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
@@ -60,4 +65,6 @@ private://メンバ変数
 	std::unique_ptr<Audio> audio = nullptr;
 	//ライト
 	std::unique_ptr<LightGroup> light = nullptr;
+	//パイプライン
+	std::unique_ptr<GraphicsPipelineManager> graphicsPipeline = nullptr;
 };

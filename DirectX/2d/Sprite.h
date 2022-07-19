@@ -44,13 +44,6 @@ public: // サブクラス
 		std::unique_ptr<Texture> instance = nullptr;
 	};
 
-private: // 静的メンバ関数
-
-	/// <summary>
-	/// グラフィックパイプラインの生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public: // 静的メンバ関数
 
 	/// <summary>
@@ -96,6 +89,8 @@ public: // 静的メンバ関数
 	/// </summary>
 	static void Finalize();
 
+	static void SetPipe(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 protected: // 静的メンバ変数
 
 	// 頂点数
@@ -105,7 +100,7 @@ protected: // 静的メンバ変数
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//テクスチャ情報
 	static std::map<std::string, Information> texture;
 	// 射影行列

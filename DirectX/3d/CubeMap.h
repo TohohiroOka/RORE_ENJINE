@@ -32,13 +32,6 @@ private: // エイリアス
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
 	};
 
-private:
-
-	/// <summary>
-	/// パイプライン生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public://メンバ関数
 
 	/// <summary>
@@ -111,6 +104,8 @@ public:
 	/// <returns></returns>
 	Texture* SetTexture() { return texture.get(); }
 
+	static void SetPipe(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 private:
 
 	//デバイス
@@ -118,7 +113,7 @@ private:
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//カメラ
 	static Camera* camera;
 	//インデックス数

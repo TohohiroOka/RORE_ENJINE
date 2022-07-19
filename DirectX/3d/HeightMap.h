@@ -34,6 +34,17 @@ private: // エイリアス
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
 	};
 
+	// 定数バッファ用データ構造体B1
+	struct ConstBufferDataB1
+	{
+		XMFLOAT3 ambient; // アンビエント係数
+		float pad1; // パディング
+		XMFLOAT3 diffuse; // ディフューズ係数
+		float pad2; // パディング
+		XMFLOAT3 specular; // スペキュラー係数
+		float alpha;	// アルファ
+	};
+
 	struct HeightMapInfo {		// Heightmap structure
 		int terrainWidth;		// Width of heightmap
 		int terrainHeight;		// Height (Length) of heightmap
@@ -45,13 +56,6 @@ private: // エイリアス
 		GraphicTex,
 		Size,
 	};
-
-private:
-
-	/// <summary>
-	/// パイプライン生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
 
 public://メンバ関数
 
@@ -135,6 +139,8 @@ public:
 	/// </summary>
 	void Draw(UINT topology);
 
+	static void SetPipe(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 private:
 
 	//デバイス
@@ -142,7 +148,7 @@ private:
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//カメラ
 	static Camera* camera;
 	// ライト
@@ -164,6 +170,8 @@ private:
 	D3D12_INDEX_BUFFER_VIEW ibView{};
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuffB1;
 	//大きさ
 	XMFLOAT3 scale = { 25,25,25 };
 	//インデックスの大きさ
