@@ -1,7 +1,7 @@
 #include "MainEngine.h"
 //#include "DrawLine.h"
-//#include "DrawLine3D.h"
-#include "Object3d.h"
+#include "DrawLine3D.h"
+#include "InterfaceObject3d.h"
 //#include "Sprite.h"
 //#include "DebugText.h"
 //#include "Emitter.h"
@@ -19,8 +19,6 @@ MainEngine::~MainEngine()
 {
 	//DebugText::Finalize();
 	scene.reset();
-	Object3d::Finalize();
-	//DrawLine3D::Finalize();
 	//DrawLine::Finalize();
 	Sprite::Finalize();
 	//Fbx::Finalize();
@@ -47,10 +45,9 @@ void MainEngine::Initialize()
 	//ObjectŒn‚Ì‰Šú‰»
 	Texture::StaticInitialize(dXCommon->GetDevice());
 	GraphicsPipelineManager::SetDevice(dXCommon->GetDevice());
-	Object3d::StaticInitialize(dXCommon->GetDevice());
+	InterfaceObject3d::StaticInitialize(dXCommon->GetDevice());
 	Sprite::StaticInitialize(dXCommon->GetDevice());
-	//DrawLine::StaticInitialize(dXCommon->GetDevice());
-	//DrawLine3D::StaticInitialize(dXCommon->GetDevice());
+	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
 	//ParticleManager::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
 	//Fbx::StaticInitialize(dXCommon->GetDevice());
@@ -58,7 +55,6 @@ void MainEngine::Initialize()
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 	//DebugText::GetInstance()->Initialize();
 	CubeMap::StaticInitialize(dXCommon->GetDevice());
-	HeightMap::StaticInitialize(dXCommon->GetDevice());
 
 	scene = SceneManager::Create();
 

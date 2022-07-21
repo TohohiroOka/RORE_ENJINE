@@ -36,11 +36,6 @@ public://構造体宣言
 private://静的メンバ関数
 
 	/// <summary>
-	/// パイプライン生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
-	/// <summary>
 	/// 角度を求める
 	/// </summary>
 	/// <param name="startPoint">始点</param>
@@ -93,9 +88,10 @@ public://静的メンバ関数
 	static void PostDraw();
 
 	/// <summary>
-	/// 静的終了処理
+	/// パイプラインの設定
 	/// </summary>
-	static void Finalize();
+	/// <param name="pipeline"></param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline) { DrawLine3D::pipeline = pipeline; }
 
 public://メンバ関数
 
@@ -147,7 +143,7 @@ private://静的メンバ変数
 	//カメラ
 	static Camera* camera;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 
 protected://メンバ変数
 

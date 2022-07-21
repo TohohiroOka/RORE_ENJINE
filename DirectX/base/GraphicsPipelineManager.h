@@ -5,6 +5,8 @@
 #include <DirectXMath.h>
 #include "ShaderManager.h"
 
+#include <unordered_map>
+
 class GraphicsPipelineManager
 {
 private: // エイリアス
@@ -73,6 +75,8 @@ public://メンバenum
 	{
 		//2D描画か
 		bool object2d = false;
+		//マテリアルデータの有無
+		bool materialData = true;
 		//テクスチャ数
 		int textureNum = 1;
 		//ライト有無
@@ -138,6 +142,6 @@ public://メンバ変数
 	//名前の保持
 	std::string name;
 	//パイプライン保存配列
-	std::map<std::string, GRAPHICS_PIPELINE> graphicsPipeline;
+	std::unordered_map<std::string, GRAPHICS_PIPELINE> graphicsPipeline;
 
 };

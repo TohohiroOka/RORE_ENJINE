@@ -103,6 +103,7 @@
     <ClCompile Include="3d\CollisionManager.cpp" />
     <ClCompile Include="3d\CollisionPrimitive.cpp" />
     <ClCompile Include="3d\CubeMap.cpp" />
+    <ClCompile Include="3d\DrawLine3D.cpp" />
     <ClCompile Include="3d\HeightMap.cpp" />
     <ClCompile Include="3d\Material.cpp" />
     <ClCompile Include="3d\Mesh.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="external\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="input\DirectInput.cpp" />
     <ClCompile Include="input\XInputManager.cpp" />
+    <ClCompile Include="InterfaceObject3d.cpp" />
     <ClCompile Include="light\LightGroup.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -302,7 +304,9 @@
     <ClInclude Include="3d\CollisionPrimitive.h" />
     <ClInclude Include="3d\CollisionTypes.h" />
     <ClInclude Include="3d\CubeMap.h" />
+    <ClInclude Include="3d\DrawLine3D.h" />
     <ClInclude Include="3d\HeightMap.h" />
+    <ClInclude Include="3d\InterfaceObject3d.h" />
     <ClInclude Include="3d\Material.h" />
     <ClInclude Include="3d\Mesh.h" />
     <ClInclude Include="3d\MeshCollider.h" />

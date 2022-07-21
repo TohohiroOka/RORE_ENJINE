@@ -66,6 +66,18 @@ public: // メンバ関数
 	/// <returns>メッシュコンテナ</returns>
 	inline const std::vector<Mesh*>& GetMeshes() { return meshes; }
 
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="cmdList">命令発行先コマンドリスト</param>
+	void VIDraw(ID3D12GraphicsCommandList* cmdList);
+
+	/// <summary>
+	/// メッシュコンテナを取得
+	/// </summary>
+	/// <returns>メッシュコンテナ</returns>
+	inline void SetMeshes(Mesh* meshes) { this->meshes.push_back(meshes); }
+
 private: // メンバ変数
 	// 名前
 	std::string name;

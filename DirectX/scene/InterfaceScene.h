@@ -4,14 +4,14 @@
 #include "Audio.h"
 
 //オブジェクト系
-#include "Object3d.h"
+#include "InterfaceObject3d.h"
 //#include "Sprite.h"
 //#include "Emitter.h"
 #include "LightGroup.h"
 //#include "Fbx.h"
 #include "Easing.h"
 //#include "DrawLine.h"
-//#include "DrawLine3D.h"
+#include "DrawLine3D.h"
 #include "CubeMap.h"
 #include "HeightMap.h"
 

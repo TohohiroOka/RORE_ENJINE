@@ -134,7 +134,7 @@ void SceneManager::CreatePipeline()
 		inPepeline.stateNum = 3;
 
 		graphicsPipeline->CreatePipeline("OBJ", &inPepeline, &inSignature);
-		Object3d::SetPipe(graphicsPipeline->graphicsPipeline["OBJ"]);
+		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
 	}
 	//CUBE_BOX
 	{
@@ -176,7 +176,31 @@ void SceneManager::CreatePipeline()
 		inSignature.light = true;
 
 		graphicsPipeline->CreatePipeline("HEIGHT_MAP", &inPepeline, &inSignature);
-		HeightMap::SetPipe(graphicsPipeline->graphicsPipeline["HEIGHT_MAP"]);
+		HeightMap::SetPipeline(graphicsPipeline->graphicsPipeline["HEIGHT_MAP"]);
+	}
+	//DRAW_LINE_3D
+	{
+		inPepeline.object2d = false;
+		inPepeline.vertShader = "DRAW_LINE_3D";
+		inPepeline.pixelShader = "DRAW_LINE_3D";
+		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
+			GraphicsPipelineManager::POSITION};
+		//配列サイズ
+		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
+
+		inPepeline.layoutNum = arrayNum;
+		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
+		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		inPepeline.inputLayout = inputLayout;
+		inPepeline.stateNum = 1;
+
+		inSignature.object2d = false;
+		inSignature.materialData = false;
+		inSignature.textureNum = 0;
+		inSignature.light = false;
+
+		graphicsPipeline->CreatePipeline("DRAW_LINE_3D", &inPepeline, &inSignature);
+		DrawLine3D::SetPipeline(graphicsPipeline->graphicsPipeline["DRAW_LINE_3D"]);
 	}
 	//SPRITE
 	{
@@ -247,9 +271,9 @@ void SceneManager::Update()
 	}
 
 	//カメラのセット
-	Object3d::SetCamera(camera.get());
+	InterfaceObject3d::SetCamera(camera.get());
 	//Fbx::SetCamera(camera.get());
-	//DrawLine3D::SetCamera(camera.get());
+	DrawLine3D::SetCamera(camera.get());
 	//ParticleManager::SetCamera(camera.get());
 	scene->SetCamera(camera.get());
 	CubeMap::SetCamera(camera.get());
@@ -260,7 +284,7 @@ void SceneManager::Update()
 	scene->SetLight(light.get());
 
 	// 3Dオブエクトにライトをセット
-	Object3d::SetLightGroup(light.get());
+	InterfaceObject3d::SetLightGroup(light.get());
 	//Fbx::SetLightGroup(light.get());
 	HeightMap::SetLightGroup(light.get());
 

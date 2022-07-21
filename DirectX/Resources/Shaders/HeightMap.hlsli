@@ -3,14 +3,21 @@ cbuffer cbuff0 : register(b0)
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
+	uint isSkinning;//スキニング
+	uint isBloom;//ブルームの有無
+	uint isToon;//トゥーンの有無
+	uint isOutline;//アウトラインの有無
 };
 
 cbuffer cbuff1 : register(b1)
 {
-	float3 m_ambient : packoffset(c0); //アンビエント係数
-	float3 m_diffuse : packoffset(c1); //ディフューズ係数
-	float3 m_specular : packoffset(c2); //スペキュラー係数
-	float m_alpha : packoffset(c2.w); //アルファ
+	float3 m_baseColor;//ベースカラー
+	float3 m_ambient; //アンビエント係数
+	float3 m_diffuse; //ディフューズ係数
+	float m_metalness; //金属度
+	float m_specular; //スペキュラー係数
+	float m_roughness; //粗さ
+	float m_alpha; //アルファ
 };
 
 // 平行光源の数

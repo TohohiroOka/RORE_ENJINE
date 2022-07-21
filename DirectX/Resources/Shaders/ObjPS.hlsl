@@ -18,6 +18,8 @@ float4 main(VSOutput input) : SV_TARGET
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 
+	float4 color = float4(m_baseColor.rgb, 1.0f);
+
 	// 光沢度
 	const float shininess = 4.0f;
 

@@ -1,7 +1,7 @@
 #include "PostEffect.h"
 #include "WindowApp.h"
 #include "DirectInput.h"
-#include "Object3d.h"
+#include "InterfaceObject3d.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -210,8 +210,8 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 	// 定数バッファへデータ転送
 	ConstBufferData* constMap = nullptr;
 	HRESULT result= constBuff->Map(0, nullptr, (void**)&constMap);
-	constMap->outlineColor = Object3d::GetOutlineColor();
-	constMap->outlineWidth = Object3d::GetOutlineWidth();
+	constMap->outlineColor = InterfaceObject3d::GetOutlineColor();
+	constMap->outlineWidth = InterfaceObject3d::GetOutlineWidth();
 	constBuff->Unmap(0, nullptr);
 
 	// パイプラインステートの設定

@@ -14,7 +14,14 @@
 
 void TestField::Initialize()
 {
-	heightmap = HeightMap::Create("heightmap01.bmp", "Dirt.jpg");
+	playerModel = Model::CreateFromOBJ("uma");	
+	groundModel = Model::CreateFromOBJ("wall");
+
+	player = Player::Create(playerModel.get());
+	ground = Ground::Create("heightmap01.bmp", "Dirt.jpg");
+
+	heightmap = TouchableObject::Create(groundModel.get());
+	heightmap->SetScale(100);
 }
 
 void TestField::Update()
@@ -71,17 +78,21 @@ void TestField::Update()
 	}
 
 	heightmap->Update();
-
-	if (input->TriggerKey(DIK_P)) {
-		topolo++;
-		topolo = topolo % 2;
-	}
+	player->Update();
+	ground->Update();
 
 	//ƒJƒƒ‰XV
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
-	const float range = 50.0f;
-	camera->SetEye(cameraPos);
-	camera->SetTarget({ cosf(cameraRadius) * range + cameraPos.x,cameraY,sinf(cameraRadius) * range + cameraPos.z });
+	const float range = 100.0f;
+	XMFLOAT3 playerPos= player->GetPos();
+	XMFLOAT3 cameraPos = playerPos;
+	cameraPos.y += 40.0f;
+	if (input->PushKey(DIK_Z))
+	{
+		cameraPos.z -= 100;
+	}
+	camera->SetEye({ cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z });
+	camera->SetTarget(playerPos);
 
 	input = nullptr;
 	xinput = nullptr;
@@ -91,9 +102,19 @@ void TestField::Draw()
 {
 	assert(cmdList);
 
-	HeightMap::PreDraw(cmdList);
-	heightmap->Draw(topolo);
-	HeightMap::PostDraw();
+	InterfaceObject3d::SetCmdList(cmdList);
+	Object3d::PreDraw();
+	player->Draw();
+	heightmap->Draw();
+
+	HeightMap::PreDraw();
+	ground->Draw();
+
+	InterfaceObject3d::ReleaseCmdList();
+
+	DrawLine3D::PreDraw(cmdList);
+	player->LINEDraw();
+	DrawLine3D::PostDraw();
 }
 
 void TestField::Finalize()

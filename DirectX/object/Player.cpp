@@ -17,42 +17,34 @@ std::unique_ptr<Player> Player::Create(Model * model)
 	}
 
 	// 初期化
-	if (!instance->Initialize()) {
-		delete instance;
-		assert(0);
-	}
+	instance->object = Object3d::Create(model);
+	instance->line = DrawLine3D::Create(1);
 
-	if (model) {
-		instance->SetModel(model);
-	}
+	instance->Initialize();
 
 	return std::unique_ptr<Player>(instance);
 }
 
-bool Player::Initialize()
+void Player::Initialize()
 {
-	if (!Object3d::Initialize())
-	{
-		return false;
-	}
+	object->Initialize();
+	line->SetColor({ 1,1,1,1 });
 
 	// コライダーの追加
-	float radius = 0.6f;
-	SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
-	collider->SetAttribute(COLLISION_ATTR_ALLIES);
+	float radius = 1.0f;
+	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
+	object->GetCollider()->SetAttribute(COLLISION_ATTR_ALLIES);
 
 	//SetBloom(true);
 
-	SetOutline(true);
-	SetOutlineWidth(0.002f);
-	SetOutlineColor({ 1,1,1,1 });
+	object->SetOutline(true);
+	object->SetOutlineWidth(0.002f);
+	object->SetOutlineColor({ 1,1,1,1 });
 
-	SetPosition({ 0,0,-100 });
+	object->SetPosition({ 0,0,-100 });
 
 	//SetToon(true);
-	SetScale({ 2,2,2 });
-
-	return true;
+	object->SetScale({ 2,2,2 });
 }
 
 void Player::Update()
@@ -86,9 +78,6 @@ void Player::Update()
 		position.z -= Pspeed * sinf(radiusUD);
 	}
 
-	// ワールド行列更新
-	UpdateWorldMatrix();
-	
 	// 落下処理
 	if (!onGround) {
 		// 下向き加速度
@@ -113,11 +102,7 @@ void Player::Update()
 		position.y += 1.0f;
 	}
 
-	// ワールド行列更新
-	UpdateWorldMatrix();
-	collider->Update();
-
-	SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(collider);
+	SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(object->GetCollider());
 	assert(sphereCollider);
 
 	// クエリーコールバッククラス
@@ -157,9 +142,6 @@ void Player::Update()
 	position.x += callback.move.m128_f32[0];
 	position.y += callback.move.m128_f32[1];
 	position.z += callback.move.m128_f32[2];
-	// ワールド行列更新
-	UpdateWorldMatrix();
-	collider->Update();
 
 	// 球の上端から球の下端までのレイキャスト
 	Ray ray;
@@ -167,6 +149,16 @@ void Player::Update()
 	ray.start.m128_f32[1] += sphereCollider->GetRadius();
 	ray.dir = { 0.0f,-0.1f,0.0f,0.0f };
 	RaycastHit raycastHit;
+
+	float aaaa = 100.0f;
+	XMFLOAT3 S_L = { ray.start.m128_f32[0] ,ray.start.m128_f32[1] ,ray.start.m128_f32[2] };
+	XMFLOAT3 E_L = { ray.start.m128_f32[0] + ray.dir.m128_f32[0] * aaaa ,
+		ray.start.m128_f32[1] + ray.dir.m128_f32[1] * aaaa ,ray.start.m128_f32[2] + ray.dir.m128_f32[2] * aaaa };
+	line->SetLine(&S_L, &E_L, 1.0f);
+	line->Update();
+
+	object->SetPosition(position);
+	object->Update();
 
 	// 接地状態
 	if (onGround) {
@@ -191,8 +183,19 @@ void Player::Update()
 			position.y -= (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
 		}
 	}
-	// 行列の更新など
-	Object3d::Update();
+
+	object->SetPosition(position);
+	object->Update();
 
 	input = nullptr;
+}
+
+void Player::Draw()
+{
+	object->Draw();
+}
+
+void Player::LINEDraw()
+{
+	line->Draw();
 }

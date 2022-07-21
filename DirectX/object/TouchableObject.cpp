@@ -21,10 +21,7 @@ std::unique_ptr<TouchableObject> TouchableObject::Create(Model * model)
 
 bool TouchableObject::Initialize(Model * model)
 {
-	if (!Object3d::Initialize())
-	{
-		return false;
-	}
+	Object3d::Initialize();
 
 	SetModel(model);
 

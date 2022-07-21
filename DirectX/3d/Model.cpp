@@ -212,7 +212,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 					index_stream.seekg(1, ios_base::cur); // スラッシュを飛ばす
 					index_stream >> indexNormal;
 					// 頂点データの追加
-					Mesh::VertexPosNormalUv vertex{};
+					Mesh::Vertex vertex{};
 					vertex.pos = positions[indexPosition - 1];
 					vertex.normal = normals[indexNormal - 1];
 					vertex.uv = texcoords[indexTexcoord - 1];
@@ -227,7 +227,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 					// スラッシュ2連続の場合、頂点番号のみ
 					if (c == '/') {
 						// 頂点データの追加
-						Mesh::VertexPosNormalUv vertex{};
+						Mesh::Vertex vertex{};
 						vertex.pos = positions[indexPosition - 1];
 						vertex.normal = { 0, 0, 1 };
 						vertex.uv = { 0, 0 };
@@ -238,7 +238,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 						index_stream.seekg(1, ios_base::cur); // スラッシュを飛ばす
 						index_stream >> indexNormal;
 						// 頂点データの追加
-						Mesh::VertexPosNormalUv vertex{};
+						Mesh::Vertex vertex{};
 						vertex.pos = positions[indexPosition - 1];
 						vertex.normal = normals[indexNormal - 1];
 						vertex.uv = { 0, 0 };
@@ -395,5 +395,13 @@ void Model::Draw(ID3D12GraphicsCommandList* cmdList)
 	// 全メッシュを描画
 	for (auto& mesh : meshes) {
 		mesh->Draw(cmdList);
+	}
+}
+
+void Model::VIDraw(ID3D12GraphicsCommandList* cmdList)
+{
+	// 全メッシュを描画
+	for (auto& mesh : meshes) {
+		mesh->VIDraw(cmdList);
 	}
 }

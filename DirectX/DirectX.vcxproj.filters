@@ -260,7 +260,13 @@
       <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="3d\HeightMap.cpp">
-      <Filter>エンジンシステム\Object</Filter>
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="InterfaceObject3d.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\DrawLine3D.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -529,11 +535,17 @@
     <ClInclude Include="external\Imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="3d\HeightMap.h">
-      <Filter>エンジンシステム\Object</Filter>
-    </ClInclude>
     <ClInclude Include="base\PipelineHelpar.h">
       <Filter>エンジンシステム\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\HeightMap.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\InterfaceObject3d.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\DrawLine3D.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

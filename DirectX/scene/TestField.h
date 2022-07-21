@@ -1,5 +1,8 @@
 #pragma once
 #include "InterfaceScene.h"
+#include "Player.h"
+#include "Ground.h"
+#include "TouchableObject.h"
 
 class TestField : public InterfaceScene
 {
@@ -44,7 +47,14 @@ private:
 	//ÉJÉÅÉâÇÃçÇÇ≥
 	float cameraY = 50.0f;
 
-	std::unique_ptr<HeightMap> heightmap = nullptr;
+
+	std::unique_ptr<Model> playerModel = nullptr;
+	std::unique_ptr<Model> groundModel = nullptr;
+
+	std::unique_ptr<Player> player = nullptr;
+	std::unique_ptr<Ground> ground = nullptr;
+
+	std::unique_ptr<TouchableObject> heightmap = nullptr;
 	
 	int topolo = 0;
 };

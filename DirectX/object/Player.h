@@ -1,8 +1,13 @@
 ﻿#pragma once
 #include "Object3d.h"
+#include "DrawLine3D.h"
 
-class Player : public Object3d
+class Player
 {
+private:
+
+	using XMFLOAT3 = DirectX::XMFLOAT3;
+
 public:
 	/// <summary>
 	/// 3Dオブジェクト生成
@@ -15,12 +20,19 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <returns>成否</returns>
-	bool Initialize() override;
+	void Initialize();
 
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update() override;
+	void Update();
+
+	/// <summary>
+	/// 毎フレーム処理
+	/// </summary>
+	void Draw();
+
+	void LINEDraw();
 
 	/// <summary>
 	/// カメラの角度セット
@@ -29,10 +41,20 @@ public:
 	void SetCameraAngle(float cameraAngle) { this->cameraAngle = cameraAngle; }
 
 private:
+
+	std::unique_ptr<Object3d> object = nullptr;
+	std::unique_ptr<DrawLine3D> line = nullptr;
+
+	XMFLOAT3 position = { 0,100,0 };
+
 	bool onGround = true;
 	// 落下ベクトル
 	DirectX::XMVECTOR fallV;
 	//カメラ角度
 	float cameraAngle;
+
+public:
+
+	XMFLOAT3 GetPos() { return position; }
 };
 

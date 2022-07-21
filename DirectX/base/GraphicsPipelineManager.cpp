@@ -141,7 +141,8 @@ void GraphicsPipelineManager::CreateRootSignature(SIGNATURE_DESC* signatureDescS
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc;
 
 	// ルートパラメータ
-	int rootparamNum = 1 + (2 - signatureDescSet->object2d * 2) + signatureDescSet->textureNum;
+	int rootparamNum = 1 + (signatureDescSet->materialData + signatureDescSet->light) + signatureDescSet->textureNum;
+
 	std::vector<CD3DX12_ROOT_PARAMETER> rootparams(rootparamNum);
 	// CBV（座標変換行列用）
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
@@ -170,13 +171,18 @@ void GraphicsPipelineManager::CreateRootSignature(SIGNATURE_DESC* signatureDescS
 	//3d描画
 	else
 	{
-		// CBV（マテリアルデータ用）
-		rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
-
+		int rootNum = 1;
+		if (signatureDescSet->materialData)
+		{
+			// CBV（マテリアルデータ用）
+			rootparams[rootNum].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
+			rootNum++;
+		}
 		if (signatureDescSet->light)
 		{
 			// CBV (ライト)
-			rootparams[2].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
+			rootparams[rootNum].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
+			rootNum++;
 		}
 
 		// デスクリプタレンジ
@@ -189,7 +195,7 @@ void GraphicsPipelineManager::CreateRootSignature(SIGNATURE_DESC* signatureDescS
 			descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i); // t0 レジスタ
 
 			// SRV（テクスチャ）
-			int paramNum = 3 + i;
+			int paramNum = rootNum + i;
 			rootparams[paramNum].InitAsDescriptorTable(1, &descRangeSRV[i], D3D12_SHADER_VISIBILITY_ALL);
 		}
 
@@ -219,7 +225,7 @@ GraphicsPipelineManager::GraphicsPipelineManager()
 
 GraphicsPipelineManager::~GraphicsPipelineManager()
 {
-	for (auto pipeline : graphicsPipeline)
+	for (auto& pipeline : graphicsPipeline)
 	{
 		pipeline.second.pipelineState.Reset();
 		pipeline.second.rootSignature.Reset();
@@ -234,6 +240,8 @@ void GraphicsPipelineManager::CreatePipeline(const std::string name,
 
 	//同じキーがあればエラーを出力
 	assert(!graphicsPipeline.count(name));
+	size_t size = graphicsPipeline.size() + 1;
+	graphicsPipeline.reserve(size);
 	this->name = name;
 
 	//グラフィックスパイプラインの設定

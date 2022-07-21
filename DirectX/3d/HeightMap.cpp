@@ -7,20 +7,8 @@
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
-ID3D12Device* HeightMap::device = nullptr;
-ID3D12GraphicsCommandList* HeightMap::cmdList = nullptr;
 GraphicsPipelineManager::GRAPHICS_PIPELINE HeightMap::pipeline;
-Camera* HeightMap::camera = nullptr;
-LightGroup* HeightMap::lightGroup = nullptr;
 const std::string HeightMap::baseDirectory = "Resources/HeightMap/";
-
-void HeightMap::StaticInitialize(ID3D12Device* device)
-{
-	// 再初期化チェック
-	assert(!HeightMap::device);
-	assert(device);
-	HeightMap::device = device;
-}
 
 std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename, const std::string filename)
 {
@@ -40,13 +28,8 @@ std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename
 	return std::unique_ptr<HeightMap>(instance);
 }
 
-void HeightMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void HeightMap::PreDraw()
 {
-	// PreDrawとPostDrawがペアで呼ばれていなければエラー
-	assert(HeightMap::cmdList == nullptr);
-
-	HeightMap::cmdList = cmdList;
-
 	// パイプラインステートの設定
 	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
@@ -55,17 +38,6 @@ void HeightMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void HeightMap::PostDraw()
-{
-	// コマンドリストを解除
-	HeightMap::cmdList = nullptr;
-}
-
-void HeightMap::Finalize()
-{
-	//pipeline.reset();
 }
 
 bool HeightMap::HeightMapLoad(const std::string filename)
@@ -181,6 +153,8 @@ void HeightMap::LoadTexture(const std::string filename)
 
 void HeightMap::Initialize()
 {
+	scale = { 25,25,25 };
+
 	HRESULT result = S_FALSE;
 
 	int windthSize = hmInfo.terrainWidth - 1;
@@ -190,12 +164,8 @@ void HeightMap::Initialize()
 	vertNum = surfaceNum * 4;
 	indexNum = surfaceNum * 6;
 
-	std::vector<Vertex> vertices;
+	std::vector<Mesh::Vertex> vertices;
 	vertices.resize(vertNum);
-	if (vertices.size() == 0)
-	{
-		assert(0);
-	}
 	std::vector<unsigned long> indices;
 	indices.resize(indexNum);
 
@@ -279,134 +249,41 @@ void HeightMap::Initialize()
 		XMStoreFloat3(&vertices[index3].normal, normal);
 	}
 
-	//頂点バッファ生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(Vertex) * vertNum),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertBuff));
-	assert(SUCCEEDED(result));
+	Mesh* mesh = new Mesh;
 
-	Vertex* vertMap = nullptr;
-	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
-	std::copy(vertices.begin(), vertices.end(), vertMap);
-	vertBuff->Unmap(0, nullptr);
+	//メッシュへ保存
+	for (int i = 0; i < vertNum; i++)
+	{
+		mesh->AddVertex(vertices[i]);
+	}
 
-	//頂点バッファビューの生成
-	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
-	vbView.SizeInBytes = sizeof(Vertex) * vertNum;
-	vbView.StrideInBytes = sizeof(Vertex);
+	//メッシュへ保存
+	for (int i = 0; i < indexNum; i++)
+	{
+		mesh->AddIndex(indices[i]);
+	}
 
-	//インデックスバッファ生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(unsigned long) * indexNum), // リソース設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&indexBuff));
-	assert(SUCCEEDED(result));
+	mesh->CreateBuffers();
 
-	//インデックスバッファへのデータ転送
-	unsigned long* indexMap = nullptr;
-	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
-	std::copy(indices.begin(), indices.end(), indexMap);
-	indexBuff->Unmap(0, nullptr);
+	model = new Model;
+	model->SetMeshes(mesh);
 
-	//インデックスバッファビューの作成
-	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
-	ibView.Format = DXGI_FORMAT_R32_UINT;
-	ibView.SizeInBytes = sizeof(unsigned long) * indexNum;
-
-	//定数バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuff));
-	assert(SUCCEEDED(result));
-
-	// 定数バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuffB1));
-	assert(SUCCEEDED(result));
-
+	InterfaceObject3d::Initialize();
 }
 
 HeightMap::~HeightMap()
 {
-	vertBuff.Reset();
-	indexBuff.Reset();
-	constBuff.Reset();
 	for (int i = 0; i < TEXTURE::Size; i++)
 	{
 		texture[i].reset();
 	}
 }
 
-void HeightMap::Update()
+void HeightMap::Draw()
 {
-	//ワールド行列変換
-	XMMATRIX matWorld = XMMatrixIdentity();
-	XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	matWorld *= matScale;
+	model->VIDraw(cmdList);
 
-	XMMATRIX matRot;//角度
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(0));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(0));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(0));
-	matWorld *= matRot;
-
-	XMMATRIX matTrans;//平行方向
-	matTrans = XMMatrixTranslation(0, 0, 0);
-	matWorld *= matTrans;
-
-	const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
-	const XMFLOAT3& cameraPos = camera->GetEye();
-
-	//定数バッファにデータを転送
-	ConstBufferData* constMap = nullptr;
-	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
-	assert(SUCCEEDED(result));
-	constMap->viewproj = matViewProjection;
-	constMap->world = matWorld;
-	constMap->cameraPos = cameraPos;
-	constBuff->Unmap(0, nullptr);
-
-	ConstBufferDataB1* constMapB1 = nullptr;
-	result = constBuffB1->Map(0, nullptr, (void**)&constMapB1);//マッピング
-	assert(SUCCEEDED(result));
-	constMapB1->ambient = { 0.5f,0.5f,0.5f };
-	constMapB1->diffuse = { 0.5f,0.5f,0.5f };
-	constMapB1->specular = { 0.5f,0.5f,0.5f };
-	constMapB1->alpha = 1.0f;
-	constBuffB1->Unmap(0, nullptr);
-}
-
-void HeightMap::Draw(UINT topology)
-{
-	//定数バッファをセット
-	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
-	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
-
-	//頂点バッファの設定
-	cmdList->IASetIndexBuffer(&ibView);
-
-	//頂点バッファをセット
-	cmdList->IASetVertexBuffers(0, 1, &vbView);
-
-	// ライトの描画
-	lightGroup->Draw(cmdList, 2);
+	InterfaceObject3d::Draw();
 
 	//テクスチャ転送
 	cmdList->SetGraphicsRootDescriptorTable(3, texture[HeightMapTex]->descriptor->gpu);

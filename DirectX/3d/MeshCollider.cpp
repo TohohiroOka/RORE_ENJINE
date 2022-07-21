@@ -14,8 +14,8 @@ void MeshCollider::ConstructTriangles(Model* model)
 	std::vector<Mesh*>::const_iterator it = meshes.cbegin();
 	for (; it != meshes.cend(); ++it) {
 		Mesh* mesh = *it;
-		const std::vector<Mesh::VertexPosNormalUv>& vertices = mesh->GetVertices();
-		const std::vector<unsigned short>& indices = mesh->GetIndices();
+		const std::vector<Mesh::Vertex>& vertices = mesh->GetVertices();
+		const std::vector<unsigned long>& indices = mesh->GetIndices();
 
 		size_t triangleNum = indices.size() / 3;
 

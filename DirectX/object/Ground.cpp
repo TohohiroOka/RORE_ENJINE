@@ -2,7 +2,7 @@
 #include "MeshCollider.h"
 #include "CollisionAttribute.h"
 
-std::unique_ptr<Ground> Ground::Create(Model * model)
+std::unique_ptr<Ground> Ground::Create(const std::string heightmapFilename, const std::string filename)
 {
 	// オブジェクトのインスタンスを生成
 	Ground* instance = new Ground();
@@ -11,31 +11,34 @@ std::unique_ptr<Ground> Ground::Create(Model * model)
 	}
 
 	// 初期化
-	if (!instance->Initialize(model)) {
+
+	if (!instance->Initialize()) {
 		delete instance;
 		assert(0);
 	}
 
-	instance->SetScale(100);
-	instance->SetPosition({ 1, -5, 0 });
-
 	return std::unique_ptr<Ground>(instance);
 }
 
-bool Ground::Initialize(Model * model)
+bool Ground::Initialize()
 {
-	if (!Object3d::Initialize())
-	{
-		return false;
-	}
-
-	SetModel(model);
+	object = HeightMap::Create("heightmap01.bmp", "Dirt.jpg");
 
 	// コライダーの追加
 	MeshCollider* collider = new MeshCollider;
-	SetCollider(collider);
-	collider->ConstructTriangles(model);
+	object->SetCollider(collider);
+	collider->ConstructTriangles(object->GetModel());
 	collider->SetAttribute(COLLISION_ATTR_LANDSHAPE);
 
 	return true;
+}
+
+void Ground::Update()
+{
+	object->Update();
+}
+
+void Ground::Draw()
+{
+	object->Draw();
 }
