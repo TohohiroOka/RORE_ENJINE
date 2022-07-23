@@ -14,7 +14,7 @@ void BrowsingCircle::Initialize()
 	SpherePBRModel = FbxModel::Create("SpherePBR");
 
 	circle = Fbx::Create(SpherePBRModel.get());
-	circle->SetPosition({ 0,0,0 });
+	circle->SetPosition({ 0,500,0 });
 	circle->SetScale({ 5,5,5 });
 }
 
@@ -49,16 +49,17 @@ void BrowsingCircle::Update()
 		}
 	}
 
-	camera->SetTarget({ 0,0,0 });
-
-	float radian = XMConvertToRadians(cameraAngle);
-	XMFLOAT3 eye = {};
-	eye.x = cosf(radian) * 30.0f;
-	eye.y = cameraY;
-	eye.z = sinf(radian) * 30.0f;
-
-	//カメラ初期化
-	camera->SetEye(eye);
+	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
+	const float range = 50.0f;
+	XMFLOAT3 pospos= circle->GetPosition();
+	XMFLOAT3 cameraPos = pospos;
+	cameraPos.y += 40.0f;
+	if (input->PushKey(DIK_Z))
+	{
+		cameraPos.z -= 50;
+	}
+	camera->SetEye({ cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z });
+	camera->SetTarget(pospos);
 
 	//シーンの移行
 	if (input->TriggerKey(DIK_0))
@@ -66,16 +67,19 @@ void BrowsingCircle::Update()
 		TestField* nextScene = new TestField();
 		nextScene->Initialize();
 		SceneManager::SetNextScene(nextScene);
+		return;
 	}
 
 	circle->Update();
 }
 
-void BrowsingCircle::Draw()
+bool BrowsingCircle::Draw()
 {
 	Fbx::PreDraw(cmdList);
 	circle->Draw();
 	Fbx::PostDraw();
+
+	return true;
 }
 
 void BrowsingCircle::Finalize()

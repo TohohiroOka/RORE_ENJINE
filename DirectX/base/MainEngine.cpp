@@ -66,7 +66,8 @@ void MainEngine::Initialize()
 
 	fps = FrameRateKeep::Create();
 
-	//cubemap = CubeMap::Create(dXCommon->GetCmdList());
+	cubemap = CubeMap::Create(dXCommon->GetCmdList());
+	Fbx::SetCubeTex(cubemap->SetTexture());
 }
 
 bool MainEngine::Update()
@@ -78,9 +79,8 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//XV
-	//Fbx::SetCubeTex(cubemap->SetTexture());
 	scene->Update();
-	//cubemap->Update();
+	cubemap->Update();
 
 	return false;
 }
@@ -90,11 +90,17 @@ void MainEngine::Draw()
 	//•`‰æ
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
-	//CubeMap::PreDraw(dXCommon->GetCmdList());
-	//cubemap->Draw();
-	//CubeMap::PostDraw();
 
-	scene->Draw(dXCommon->GetCmdList());
+	bool cubeDraw = false;
+	cubeDraw = scene->Draw(dXCommon->GetCmdList());
+
+	if (cubeDraw)
+	{
+		CubeMap::PreDraw(dXCommon->GetCmdList());
+		cubemap->Draw();
+		CubeMap::PostDraw();
+	}
+
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
 
 	//•`‰æ‘Oİ’è

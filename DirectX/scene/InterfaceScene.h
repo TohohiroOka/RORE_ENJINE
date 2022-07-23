@@ -45,7 +45,7 @@ public:
 	/// <summary>
 	/// •`‰æ
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual bool Draw() = 0;
 
 	/// <summary>
 	/// ‰ð•ú

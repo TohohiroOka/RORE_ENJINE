@@ -17,11 +17,16 @@ public: // サブクラス
 	{
 		XMFLOAT4 outlineColor;//アウトラインの色
 		float outlineWidth;//アウトラインの太さ
+		unsigned int isFog;//フォグの有無
+		unsigned int isGaussianBlur;//ガウスブラーの有無
+		float BlurStrength;//ブラー強度
 	};
 
 	enum TEX_TYPE
 	{
 		NORMAL,
+		BLOOM,
+		OUTLINE,
 		DEPTH
 	};
 
@@ -85,11 +90,14 @@ public://メンバ関数
 private://静的メンバ変数
 	
 	//通常テクスチャ数
-	static const int texBuffNum = 2;
+	static const int texBuffNum = 4;
+	static const int normalTexNum = 3;
 	//画面クリアカラー
-	static const float clearColor[4];
+	static const float clearColor[2][4];
 	//パイプライン
 	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	//フォグ
+	static bool isFog;
 
 private://メンバ変数
 
@@ -99,4 +107,9 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
+
+public:
+
+	static bool GetFog() { return PostEffect::isFog; }
+	static void SetFog(bool isFog) { PostEffect::isFog = isFog; }
 };

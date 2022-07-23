@@ -297,4 +297,18 @@ public:
 	/// <param name="outlineWidth">幅</param>
 	static float GetOutlineWidth() { return outlineWidth; }
 
+	/// <summary>
+	/// ブルーム取得
+	/// </summary>
+	bool GetBloom() { return isBloom; }
+
+	/// <summary>
+	/// トゥーン取得
+	/// </summary>
+	bool GetToon() { return isToon; }
+
+	/// <summary>
+	/// アウトライン取得
+	/// </summary>
+	bool GetOutline() { return isOutline; }
 };

@@ -59,6 +59,10 @@ void SceneManager::Update()
 
 		//初期化
 		scene->Initialize();
+
+		light->SetDirLightActive(0, true);
+		light->SetDirLightColor(0, { 1,1,1 });
+		light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
 	}
 
 	//カメラのセット
@@ -83,10 +87,13 @@ void SceneManager::Update()
 	scene->Update();
 }
 
-void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
+bool SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	scene->SetCmdList(cmdList);
-	scene->Draw();
+	bool cubeDraw = false;
+	cubeDraw = scene->Draw();
+
+	return cubeDraw;
 }
 
 void SceneManager::ImguiDraw()

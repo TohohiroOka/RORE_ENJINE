@@ -30,7 +30,7 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="cmdList">コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	bool Draw(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
 	/// imguiの表示

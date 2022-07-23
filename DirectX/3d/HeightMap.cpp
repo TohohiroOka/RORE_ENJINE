@@ -49,7 +49,8 @@ void HeightMap::StaticInitialize(ID3D12Device* device)
 	CreateGraphicsPipeline();
 }
 
-std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename, const std::string filename)
+std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename,
+	const std::string filename1, const std::string filename2)
 {
 	//インスタンスを生成
 	HeightMap* instance = new HeightMap();
@@ -59,7 +60,7 @@ std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename
 
 	instance->HeightMapLoad(heightmapFilename);
 
-	instance->LoadTexture(filename);
+	instance->LoadTexture(filename1, filename2);
 
 	//初期化
 	instance->Initialize();
@@ -81,7 +82,7 @@ void HeightMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
-	//cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void HeightMap::PostDraw()
@@ -191,19 +192,32 @@ bool HeightMap::HeightMapLoad(const std::string filename)
 	return true;
 }
 
-void HeightMap::LoadTexture(const std::string filename)
+void HeightMap::LoadTexture(const std::string filename1, const std::string filename2)
 {
-	// テクスチャなし
+	// テクスチャ無し
 	std::string filepath;
-	if (filename == "null") {
+	if (filename1 == "null") {
 		filepath = "Resources/SubTexture/white1x1.png";
 	}
+	//テクスチャ有し
 	else
 	{
-		filepath = baseDirectory + filename;
+		filepath = baseDirectory + filename1;
 	}
 
-	texture[GraphicTex] = Texture::Create(filepath);
+	texture[GraphicTex1] = Texture::Create(filepath);
+
+	// テクスチャ無し
+	if (filename2 == "null") {
+		filepath = "Resources/SubTexture/white1x1.png";
+	}
+	//テクスチャ有し
+	else
+	{
+		filepath = baseDirectory + filename2;
+	}
+
+	texture[GraphicTex2] = Texture::Create(filepath);
 }
 
 void HeightMap::Initialize()
@@ -421,11 +435,12 @@ void HeightMap::Draw(UINT topology)
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
 	// ライトの描画
-	lightGroup->Draw(cmdList, 3);
+	lightGroup->Draw(cmdList, 4);
 
 	//テクスチャ転送
 	cmdList->SetGraphicsRootDescriptorTable(1, texture[HeightMapTex]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(2, texture[GraphicTex]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(2, texture[GraphicTex1]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(3, texture[GraphicTex2]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);

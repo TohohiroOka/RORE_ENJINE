@@ -66,7 +66,7 @@ private:
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//キューブマップ
-	//std::unique_ptr<CubeMap> cubemap;
+	std::unique_ptr<CubeMap> cubemap;
 	//数字表示デバッグ用
 	wchar_t str[256] = {};
 };

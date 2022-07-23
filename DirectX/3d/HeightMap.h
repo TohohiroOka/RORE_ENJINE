@@ -42,7 +42,8 @@ private: // エイリアス
 
 	enum TEXTURE {
 		HeightMapTex,
-		GraphicTex,
+		GraphicTex1,
+		GraphicTex2,
 		Size,
 	};
 
@@ -66,7 +67,8 @@ public://メンバ関数
 	/// <param name="heightmapFilename">heightmap名</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<HeightMap> Create(const std::string heightmapFilename, const std::string filename = "null");
+	static std::unique_ptr<HeightMap> Create(const std::string heightmapFilename,
+		const std::string filename1 = "null", const std::string filename2 = "null");
 
 	/// <summary>
 	/// カメラのセット
@@ -112,8 +114,9 @@ private://メンバ関数
 	/// <summary
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="filename">ファイル名</param>
-	void LoadTexture(const std::string filename);
+	/// <param name="filename1">ファイル名</param>
+	/// <param name="filename2">ファイル名</param>
+	void LoadTexture(const std::string filename1, const std::string filename2);
 
 	/// <summary>
 	/// 初期化
@@ -153,7 +156,7 @@ private:
 private:
 	
 	//テクスチャ情報
-	std::array<std::unique_ptr<Texture>,2> texture;
+	std::array<std::unique_ptr<Texture>, TEXTURE::Size> texture;
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//頂点バッファビュー

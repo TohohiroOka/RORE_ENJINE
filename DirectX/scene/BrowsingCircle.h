@@ -19,7 +19,7 @@ public:
 	/// <summary>
 	///	•`‰æ
 	/// </summary>
-	void Draw() override;
+	bool Draw() override;
 
 	/// <summary>
 	///	‰ð•ú

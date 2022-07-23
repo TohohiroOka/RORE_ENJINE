@@ -2,12 +2,8 @@
 
 Texture2D<float4> heightTex : register(t0);  // 0番スロットに設定されたテクスチャ
 Texture2D<float4> tex : register(t1);  // 0番スロットに設定されたテクスチャ
+Texture2D<float4> tex2 : register(t2);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
-
-/// <summary>
-/// 法線取得
-/// </summary>
-float3 GetNormal(float2 uv);
 
 float4 main(VSOutput input) : SV_TARGET
 {
@@ -15,8 +11,6 @@ float4 main(VSOutput input) : SV_TARGET
 	float3 m_diffuse = float3(0.5, 0.5, 0.5);
 	float3 m_specular = float3(0.5, 0.5, 0.5);
 	float m_alpha = 1.0f;
-
-	float4 color = tex.Sample(smp, input.uv);
 
 	// 光沢度
 	const float shininess = 4.0f;
@@ -141,7 +135,14 @@ float4 main(VSOutput input) : SV_TARGET
 		}
 	}
 
-	float4 mainColor = shadecolor * color;
+	float4 color1 = tex.Sample(smp, input.uv);
+	float4 color2 = tex2.Sample(smp, input.uv);
+
+	float stepNum1 = 2.5;
+	float stepNum2 = 3.5;
+	float4 addColor = smoothstep(stepNum1, stepNum2, input.pos.y) * color1 + (1 - smoothstep(stepNum1, stepNum2, input.pos.y)) * color2;
+
+	float4 mainColor = shadecolor * addColor;
 
 	return mainColor;
 	//return float4(1, 1, 1, 1);

@@ -4,6 +4,7 @@
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "DebugText.h"
+#include "PostEffect.h"
 
 #include <imgui.h>
 #include <iomanip>
@@ -14,7 +15,9 @@
 
 void TestField::Initialize()
 {
-	heightmap = HeightMap::Create("heightmap01.bmp", "Dirt.jpg");
+	playerModel = Model::CreateFromOBJ("uma");
+	player = Player::Create(playerModel.get());
+	heightmap = HeightMap::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
 }
 
 void TestField::Update()
@@ -28,12 +31,18 @@ void TestField::Update()
 		BrowsingCircle* nextScene = new BrowsingCircle();
 		nextScene->Initialize();
 		SceneManager::SetNextScene(nextScene);
+		return;
 	}
 
 	if (input->PushKey(DIK_LEFT)) { cameraAngle+=3.0f; }
 	if (input->PushKey(DIK_RIGHT)) { cameraAngle-= 3.0f; }
-	if (input->PushKey(DIK_UP)) { cameraY+= 3.0f; }
-	if (input->PushKey(DIK_DOWN)) { cameraY-= 3.0f; }
+	if (input->PushKey(DIK_UP)) { cameraY-= 3.0f; }
+	if (input->PushKey(DIK_DOWN)) { cameraY+= 3.0f; }
+
+	if (cameraAngle > 360 || cameraAngle < -360)
+	{
+		cameraAngle = 0;
+	}
 
 	//ラジアン変換
 	float radiusLR = DirectX::XMConvertToRadians(cameraAngle + 90.0f);
@@ -70,30 +79,37 @@ void TestField::Update()
 		cameraPos.y -= 3.0f;
 	}
 
+	player->Update();
 	heightmap->Update();
 
-	if (input->TriggerKey(DIK_P)) {
-		topolo++;
-		topolo = topolo % 2;
-	}
-
-	//カメラ更新
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
-	const float range = 50.0f;
+	const float range = 100.0f;
 	camera->SetEye(cameraPos);
-	camera->SetTarget({ cosf(cameraRadius) * range + cameraPos.x,cameraY,sinf(cameraRadius) * range + cameraPos.z });
+	XMFLOAT3 cameraT = { cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z };
+	camera->SetTarget(cameraT);
+
+	player->SetPosition(cameraT);
 
 	input = nullptr;
 	xinput = nullptr;
 }
 
-void TestField::Draw()
+bool TestField::Draw()
 {
 	assert(cmdList);
 
+	if (drawPlayer)
+	{
+		Object3d::PreDraw(cmdList);
+		player->Draw();
+		Object3d::PostDraw();
+	}
+
 	HeightMap::PreDraw(cmdList);
-	heightmap->Draw(topolo);
+	heightmap->Draw(0);
 	HeightMap::PostDraw();
+
+	return false;
 }
 
 void TestField::Finalize()
@@ -102,43 +118,40 @@ void TestField::Finalize()
 
 void TestField::ImguiDraw()
 {
-	//float baseColor[3];//ベースカラ―
-	//float metalness;//金属度(0 or 1)
-	//float specular;//鏡面反射度
-	//float roughness;//粗さ
+	bool Fog;
+	bool Bloom;//ブルーム
+	bool Toon;//トゥーン
+	bool OutLine;//アウトライン
+	float OutlineWidth;//アウトラインの幅
+	float OutlineColor[3];//アウトラインの色
 
-	//baseColor[0] = anm->GetBaseColor().x;
-	//baseColor[1] = anm->GetBaseColor().y;
-	//baseColor[2] = anm->GetBaseColor().z;
-	//metalness = anm->GetMetalness();
-	//specular = anm->GetSpecular();
-	//roughness = anm->GetRoughness();
+	Fog = PostEffect::GetFog();
+	Bloom = player->GetBloom();
+	Toon = player->GetToon();
+	OutLine = player->GetOutline();
+	OutlineWidth = player->GetOutlineWidth();
+	OutlineColor[0] = player->GetOutlineColor().x;
+	OutlineColor[1] = player->GetOutlineColor().y;
+	OutlineColor[2] = player->GetOutlineColor().z;
 
-	////ライトon/off
-	//static bool lightAct1 = false;
-	//static bool lightAct2 = false;
-	//static bool lightAct3 = false;
+	ImGui::Begin("PostEffect");
+	ImGui::SetWindowPos(ImVec2(0, 0));
+	ImGui::SetWindowSize(ImVec2(300, 400));
+	ImGui::Checkbox("Fog", &Fog);
+	ImGui::Checkbox("drawUma", &drawPlayer);
+	ImGui::Checkbox("Bloom", &Bloom);
+	ImGui::Checkbox("Toon", &Toon);
+	ImGui::Checkbox("OutLine", &OutLine);
+	ImGui::SliderFloat("OutLineWidth", &OutlineWidth, 0, 0.005f);
+	ImGui::ColorEdit3("OutLinColor", OutlineColor, ImGuiColorEditFlags_Float);
+	ImGui::End();
 
-	//ImGui::Begin("Material");
-	//ImGui::SetWindowPos(ImVec2(0, 0));
-	//ImGui::SetWindowSize(ImVec2(300, 130));
-	//ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
-	//ImGui::SliderFloat("metalness", &metalness, 0, 1);
-	//ImGui::SliderFloat("specular", &specular, 0, 1);
-	//ImGui::SliderFloat("roughness", &roughness, 0, 1);
-	//ImGui::Checkbox("Light1", &lightAct1);
-	//ImGui::Checkbox("Light2", &lightAct2);
-	//ImGui::Checkbox("Light3", &lightAct3);
-	//ImGui::End();
-
-	//anm->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
-	//anm->SetMetalness(metalness);
-	//anm->SetSpecular(specular);
-	//anm->SetRoughness(roughness);
-
-	//light->SetDirLightActive(0, lightAct1);
-	//light->SetDirLightActive(1, lightAct2);
-	//light->SetDirLightActive(2, lightAct3);
+	PostEffect::SetFog(Fog);
+	player->SetBloom(Bloom);
+	player->SetToon(Toon);
+	player->SetOutline(OutLine);
+	player->SetOutlineWidth(OutlineWidth);
+	player->SetOutlineColor({ OutlineColor[0],OutlineColor[1],OutlineColor[2],1.0f });
 }
 
 void TestField::GetConstbufferNum()
