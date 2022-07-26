@@ -14,6 +14,7 @@
 #include "DrawLine3D.h"
 #include "CubeMap.h"
 #include "HeightMap.h"
+#include "PrimitiveObject3D.h"
 
 #include "GraphicsPipelineManager.h"
 

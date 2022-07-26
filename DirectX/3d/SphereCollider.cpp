@@ -11,3 +11,7 @@ void SphereCollider::Update()
 	Sphere::center = matWorld.r[3] + offset;
 	Sphere::radius = radius;
 }
+
+void SphereCollider::Draw()
+{
+}

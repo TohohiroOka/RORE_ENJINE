@@ -118,6 +118,11 @@ void InterfaceObject3d::Draw()
 	light->Draw(cmdList, 2);
 }
 
+void InterfaceObject3d::ColliderDraw()
+{
+	collider->Draw();
+}
+
 void InterfaceObject3d::UpdateWorldMatrix()
 {
 	XMMATRIX matScale, matRot, matTrans;

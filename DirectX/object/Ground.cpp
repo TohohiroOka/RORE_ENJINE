@@ -42,3 +42,8 @@ void Ground::Draw()
 {
 	object->Draw();
 }
+
+void Ground::CDraw()
+{
+	object->ColliderDraw();
+}

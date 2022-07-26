@@ -4,6 +4,7 @@
 #include "CollisionPrimitive.h"
 
 #include <DirectXMath.h>
+#include "PrimitiveObject3D.h"
 
 /// <summary>
 /// メッシュ衝突判定オブジェクト
@@ -29,6 +30,11 @@ public:
 	void Update() override;
 
 	/// <summary>
+	/// 更新
+	/// </summary>
+	void Draw() override;
+
+	/// <summary>
 	/// 球との当たり判定
 	/// </summary>
 	/// <param name="sphere">球</param>
@@ -50,5 +56,11 @@ private:
 	std::vector<Triangle> triangles;
 	// ワールド行列の逆行列
 	DirectX::XMMATRIX invMatWorld;
+	//オブジェクトの初期化フラグ
+	bool isInit = false;
+	//オブジェクトのbuffer生成フラグ
+	bool isCreateBuffer = false;
+	//コリジョンの視覚化用
+	std::unique_ptr<PrimitiveObject3D> object = nullptr;
 };
 

@@ -262,12 +262,13 @@
     <ClCompile Include="3d\HeightMap.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
-    <ClCompile Include="InterfaceObject3d.cpp">
-      <Filter>エンジンシステム\Object\3d</Filter>
-    </ClCompile>
     <ClCompile Include="3d\DrawLine3D.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
+    <ClCompile Include="3d\InterfaceObject3d.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="PrimitiveObject3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -541,11 +542,12 @@
     <ClInclude Include="3d\HeightMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\InterfaceObject3d.h">
-      <Filter>エンジンシステム\Object\3d</Filter>
-    </ClInclude>
     <ClInclude Include="3d\DrawLine3D.h">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
+    <ClInclude Include="3d\InterfaceObject3d.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimitiveObject3D.h" />
   </ItemGroup>
 </Project>

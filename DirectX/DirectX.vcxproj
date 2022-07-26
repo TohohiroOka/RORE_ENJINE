@@ -105,6 +105,7 @@
     <ClCompile Include="3d\CubeMap.cpp" />
     <ClCompile Include="3d\DrawLine3D.cpp" />
     <ClCompile Include="3d\HeightMap.cpp" />
+    <ClCompile Include="3d\InterfaceObject3d.cpp" />
     <ClCompile Include="3d\Material.cpp" />
     <ClCompile Include="3d\Mesh.cpp" />
     <ClCompile Include="3d\MeshCollider.cpp" />
@@ -134,7 +135,6 @@
     <ClCompile Include="external\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="input\DirectInput.cpp" />
     <ClCompile Include="input\XInputManager.cpp" />
-    <ClCompile Include="InterfaceObject3d.cpp" />
     <ClCompile Include="light\LightGroup.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -143,6 +143,7 @@
     <ClCompile Include="object\Ground.cpp" />
     <ClCompile Include="object\Player.cpp" />
     <ClCompile Include="object\TouchableObject.cpp" />
+    <ClCompile Include="PrimitiveObject3D.cpp" />
     <ClCompile Include="scene\BrowsingCircle.cpp" />
     <ClCompile Include="scene\SceneManager.cpp" />
     <ClCompile Include="scene\TestField.cpp" />
@@ -349,6 +350,7 @@
     <ClInclude Include="object\Ground.h" />
     <ClInclude Include="object\Player.h" />
     <ClInclude Include="object\TouchableObject.h" />
+    <ClInclude Include="PrimitiveObject3D.h" />
     <ClInclude Include="scene\BrowsingCircle.h" />
     <ClInclude Include="scene\InterfaceScene.h" />
     <ClInclude Include="scene\SceneManager.h" />

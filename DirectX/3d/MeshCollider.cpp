@@ -5,6 +5,12 @@ using namespace DirectX;
 
 void MeshCollider::ConstructTriangles(Model* model)
 {
+	if (!isInit)
+	{
+		object = std::make_unique<PrimitiveObject3D>();
+		isInit = true;
+	}
+
 	triangles.clear();
 	
 	const std::vector<Mesh*>& meshes = model->GetMeshes();
@@ -33,7 +39,6 @@ void MeshCollider::ConstructTriangles(Model* model)
 				vertices[idx0].pos.y,
 				vertices[idx0].pos.z,
 				1 };
-
 			tri.p1 = {
 				vertices[idx1].pos.x,
 				vertices[idx1].pos.y,
@@ -47,6 +52,10 @@ void MeshCollider::ConstructTriangles(Model* model)
 				1 };
 
 			tri.ComputeNormal();
+
+			object->SetVertex(vertices[idx0].pos);
+			object->SetVertex(vertices[idx1].pos);
+			object->SetVertex(vertices[idx2].pos);
 		}
 	}
 }
@@ -54,6 +63,17 @@ void MeshCollider::ConstructTriangles(Model* model)
 void MeshCollider::Update()
 {
 	invMatWorld = XMMatrixInverse(nullptr, GetObject3d()->GetMatWorld());
+	if (isInit && !isCreateBuffer)
+	{
+		object->Initialize();
+	}
+}
+
+void MeshCollider::Draw()
+{
+	object->SetMatWorld(GetObject3d()->GetMatWorld());
+	object->Update();
+	object->Draw();
 }
 
 bool MeshCollider::CheckCollisionSphere(const Sphere & sphere, DirectX::XMVECTOR * inter, DirectX::XMVECTOR * reject)

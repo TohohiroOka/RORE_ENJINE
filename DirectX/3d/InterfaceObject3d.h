@@ -111,6 +111,11 @@ public:
 	virtual void Draw() = 0;
 
 	/// <summary>
+	/// 当たり判定の描画
+	/// </summary>
+	virtual void ColliderDraw();
+
+	/// <summary>
 	/// 行列の更新
 	/// </summary>
 	void UpdateWorldMatrix();
@@ -266,6 +271,12 @@ public:
 	/// </summary>
 	/// <returns>ワールド行列</returns>
 	const XMMATRIX& GetMatWorld() { return matWorld; }
+
+	/// <summary>
+	/// 頂点のセット
+	/// </summary>
+	/// <param name="model">頂点</param>
+	void SetMatWorld(XMMATRIX matWorld) { this->matWorld = matWorld; }
 
 	/// <summary>
 	/// ワールド座標を取得

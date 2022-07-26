@@ -21,6 +21,8 @@ public:
 
 	void Draw();
 
+	void CDraw();
+
 private:
 
 	std::unique_ptr<HeightMap> object = nullptr;

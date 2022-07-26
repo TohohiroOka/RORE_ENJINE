@@ -202,6 +202,11 @@ void SceneManager::CreatePipeline()
 		graphicsPipeline->CreatePipeline("DRAW_LINE_3D", &inPepeline, &inSignature);
 		DrawLine3D::SetPipeline(graphicsPipeline->graphicsPipeline["DRAW_LINE_3D"]);
 	}
+	//PrimitiveObject3D
+	{
+		PrimitiveObject3D::SetPipeline(graphicsPipeline->graphicsPipeline["DRAW_LINE_3D"]);
+	}
+
 	//SPRITE
 	{
 		inPepeline.object2d = true;

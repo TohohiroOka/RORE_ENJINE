@@ -33,7 +33,7 @@ float4 main(VSOutput input) : SV_TARGET
 	//float4 outline = SetOutline(input.uv, outlineWidth, outlineColor);
 
 	//ポストエフェクトの合成
-	mainColor = mainColor + float4(depth, depth, depth, 1.0);
+	//mainColor = mainColor + float4(depth, depth, depth, 1.0);
 
 	return mainColor;
 }

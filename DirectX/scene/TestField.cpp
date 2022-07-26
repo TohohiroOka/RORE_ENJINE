@@ -104,11 +104,14 @@ void TestField::Draw()
 
 	InterfaceObject3d::SetCmdList(cmdList);
 	Object3d::PreDraw();
-	player->Draw();
-	heightmap->Draw();
-
+	//player->Draw();
+	//heightmap->Draw();
 	HeightMap::PreDraw();
-	ground->Draw();
+	//ground->Draw();
+
+	PrimitiveObject3D::PreDraw();
+	ground->CDraw();
+	heightmap->ColliderDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
 
