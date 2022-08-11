@@ -31,7 +31,7 @@ void Player::Initialize()
 	line->SetColor({ 1,1,1,1 });
 
 	// コライダーの追加
-	float radius = 1.0f;
+	float radius = 5.0f;
 	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	object->GetCollider()->SetAttribute(COLLISION_ATTR_ALLIES);
 
@@ -60,22 +60,22 @@ void Player::Update()
 
 	//右入力
 	if (input->PushKey(DIK_A)) {
-		position.x += Pspeed * cosf(radiusLR);
-		position.z += Pspeed * sinf(radiusLR);
-	}
-	//左入力
-	if (input->PushKey(DIK_D)) {
 		position.x -= Pspeed * cosf(radiusLR);
 		position.z -= Pspeed * sinf(radiusLR);
 	}
+	//左入力
+	if (input->PushKey(DIK_D)) {
+		position.x += Pspeed * cosf(radiusLR);
+		position.z += Pspeed * sinf(radiusLR);
+	}
 	if (input->PushKey(DIK_W)) {
-		position.x += Pspeed * cosf(radiusUD);
-		position.z += Pspeed * sinf(radiusUD);
+		position.x -= Pspeed * cosf(radiusUD);
+		position.z -= Pspeed * sinf(radiusUD);
 	}
 	//左入力
 	if (input->PushKey(DIK_S)) {
-		position.x -= Pspeed * cosf(radiusUD);
-		position.z -= Pspeed * sinf(radiusUD);
+		position.x += Pspeed * cosf(radiusUD);
+		position.z += Pspeed * sinf(radiusUD);
 	}
 
 	// 落下処理
@@ -120,7 +120,7 @@ void Player::Update()
 			float cos = XMVector3Dot(rejectDir, up).m128_f32[0];
 
 			// 地面判定しきい値
-			const float threshold = cosf(XMConvertToRadians(30.0f));
+			const float threshold = cosf(XMConvertToRadians(90.0f));
 
 			if (-threshold < cos && cos < threshold) {
 				sphere->center += info.reject;
@@ -147,27 +147,25 @@ void Player::Update()
 	Ray ray;
 	ray.start = sphereCollider->center;
 	ray.start.m128_f32[1] += sphereCollider->GetRadius();
-	ray.dir = { 0.0f,-0.1f,0.0f,0.0f };
+	ray.dir = { 0.0f,-1.0f,0.0f,0.0f };
 	RaycastHit raycastHit;
 
-	float aaaa = 100.0f;
+	float aaaa = 10.0f;
 	XMFLOAT3 S_L = { ray.start.m128_f32[0] ,ray.start.m128_f32[1] ,ray.start.m128_f32[2] };
 	XMFLOAT3 E_L = { ray.start.m128_f32[0] + ray.dir.m128_f32[0] * aaaa ,
 		ray.start.m128_f32[1] + ray.dir.m128_f32[1] * aaaa ,ray.start.m128_f32[2] + ray.dir.m128_f32[2] * aaaa };
 	line->SetLine(&S_L, &E_L, 1.0f);
 	line->Update();
 
-	object->SetPosition(position);
-	object->Update();
-
 	// 接地状態
 	if (onGround) {
 		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 0.2f;
+		const float adsDistance = 0.5f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance)) {
 			onGround = true;
-			position.y -= (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
+			float a= (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
+			position.y -= a;
 		}
 		// 地面がないので落下
 		else {

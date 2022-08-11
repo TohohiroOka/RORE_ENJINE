@@ -7,6 +7,14 @@ class LightGroup;
 
 class PrimitiveObject3D : public InterfaceObject3d
 {
+public://構造体宣言
+//定数バッファの構造体
+	struct ConstBufferData {
+		XMFLOAT4 color;//色
+		XMMATRIX matWorld;//3D変換行列
+		XMMATRIX viewproj;//3D変換行列
+	};
+
 public://静的メンバ関数
 
 	/// <summary>
@@ -52,7 +60,7 @@ protected://メンバ変数
 	// 頂点配列
 	std::vector<XMFLOAT3> vertices;
 	//インデックス配列
-	std::vector<unsigned short> indices;
+	std::vector<unsigned long> indices;
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//頂点バッファビュー
@@ -61,6 +69,8 @@ protected://メンバ変数
 	ComPtr<ID3D12Resource> indexBuff;
 	//インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView{};
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuff;
 
 public:
 

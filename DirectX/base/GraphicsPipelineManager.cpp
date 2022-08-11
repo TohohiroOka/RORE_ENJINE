@@ -117,8 +117,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(PEP
 	//カリング（現在は両面描画に設定）
 	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
-	// 図形の形状設定（三角形）
-	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	// 図形の形状設定
+	gpipeline.PrimitiveTopologyType = pepelineDescSet->topologyType;
 
 	//2D描画なら上書きモードに設定
 	if (pepelineDescSet->object2d)

@@ -53,6 +53,19 @@ void MeshCollider::ConstructTriangles(Model* model)
 
 			tri.ComputeNormal();
 
+			//XMFLOAT3 normalnormal =
+			//{
+			//	vertices[idx0].normal.x + vertices[idx1].normal.x + vertices[idx2].normal.x,
+			//	vertices[idx0].normal.y + vertices[idx1].normal.y + vertices[idx2].normal.y,
+			//	vertices[idx0].normal.z + vertices[idx1].normal.z + vertices[idx2].normal.z,
+			//};
+
+			//tri.normal = {
+			//	normalnormal.x / 3.0f,
+			//	normalnormal.y / 3.0f,
+			//	normalnormal.z / 3.0f,
+			//	1 };
+
 			object->SetVertex(vertices[idx0].pos);
 			object->SetVertex(vertices[idx1].pos);
 			object->SetVertex(vertices[idx2].pos);

@@ -1,9 +1,6 @@
 #include "DrawLine3D.h"
 #include "Camera.h"
-#include "SafeDelete.h"
 
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -247,11 +244,10 @@ void DrawLine3D::Update()
 	constMap->matWorld = matWorld;
 	if (camera != nullptr)
 	{
-		constMap->matView = camera->GetView();
-		constMap->maProjection = camera->GetProjection();
+		const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
+		constMap->viewproj = matViewProjection;
 	} else {
-		constMap->matView = XMMatrixIdentity();
-		constMap->maProjection = XMMatrixIdentity();
+		constMap->viewproj = XMMatrixIdentity();
 	}
 
 	constBuff->Unmap(0, nullptr);

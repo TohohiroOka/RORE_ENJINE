@@ -58,7 +58,7 @@ void PrimitiveObject3D::Initialize()
 	}
 
 	//頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-	const UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * indices.size());
+	const UINT sizeIB = static_cast<UINT>(sizeof(unsigned long) * indices.size());
 
 	//インデックスバッファ生成
 	result = device->CreateCommittedResource(
@@ -73,17 +73,25 @@ void PrimitiveObject3D::Initialize()
 	}
 
 	//インデックスバッファへのデータ転送
-	unsigned short* indexMap = nullptr;
+	unsigned long* indexMap = nullptr;
 	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
 	std::copy(indices.begin(), indices.end(), indexMap);
 	indexBuff->Unmap(0, nullptr);
 
 	//インデックスバッファビューの作成
 	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
-	ibView.Format = DXGI_FORMAT_R16_UINT;
+	ibView.Format = DXGI_FORMAT_R32_UINT;
 	ibView.SizeInBytes = sizeIB;
 
-	InterfaceObject3d::Initialize();
+	//定数バッファの生成
+	result = device->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuff));
+	assert(SUCCEEDED(result));
 }
 
 void PrimitiveObject3D::Update()
@@ -91,32 +99,20 @@ void PrimitiveObject3D::Update()
 	assert(camera);
 
 	const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
-	const XMFLOAT3& cameraPos = camera->GetEye();
 
 	//定数バッファにデータを転送
-	ConstBufferDataB0* constMap = nullptr;
-	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
-	assert(SUCCEEDED(result));
-	constMap->viewproj = matViewProjection;
-	constMap->world = matWorld;
-	constMap->cameraPos = cameraPos;
-	constMap->isSkinning = isSkinning;
-	constMap->isBloom = isBloom;
-	constMap->isToon = isToon;
-	constMap->isOutline = isOutline;
-	constBuffB0->Unmap(0, nullptr);
+	ConstBufferData* constMap = nullptr;
+	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
+	constMap->color = { 1,1,1,1 };
+	constMap->matWorld = matWorld;
+	if (camera != nullptr)
+	{
+		constMap->viewproj = matViewProjection;
+	} else {
+		constMap->viewproj = matViewProjection;
+	}
 
-	ConstBufferDataB1* constMapB1 = nullptr;
-	result = constBuffB1->Map(0, nullptr, (void**)&constMapB1);//マッピング
-	assert(SUCCEEDED(result));
-	constMapB1->baseColor = constBufferB1Num.baseColor;
-	constMapB1->ambient = constBufferB1Num.ambient;
-	constMapB1->diffuse = constBufferB1Num.diffuse;
-	constMapB1->metalness = constBufferB1Num.metalness;
-	constMapB1->specular = constBufferB1Num.specular;
-	constMapB1->roughness = constBufferB1Num.roughness;
-	constMapB1->alpha = constBufferB1Num.alpha;;
-	constBuffB1->Unmap(0, nullptr);
+	constBuff->Unmap(0, nullptr);
 }
 
 void PrimitiveObject3D::PreDraw()
@@ -128,7 +124,7 @@ void PrimitiveObject3D::PreDraw()
 	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 
 void PrimitiveObject3D::Draw()
@@ -139,8 +135,8 @@ void PrimitiveObject3D::Draw()
 	//頂点バッファをセット
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
-	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 
 	//描画コマンド
-	cmdList->DrawInstanced(static_cast<UINT>(indices.size()), 1, 0, 0);
+	cmdList->DrawIndexedInstanced(static_cast<UINT>(indices.size()), 1, 0, 0, 0);
 }

@@ -15,13 +15,13 @@
 void TestField::Initialize()
 {
 	playerModel = Model::CreateFromOBJ("uma");	
-	groundModel = Model::CreateFromOBJ("wall");
+	groundModel = Model::CreateFromOBJ("map");
 
 	player = Player::Create(playerModel.get());
 	ground = Ground::Create("heightmap01.bmp", "Dirt.jpg");
 
-	heightmap = TouchableObject::Create(groundModel.get());
-	heightmap->SetScale(100);
+	//heightmap = TouchableObject::Create(groundModel.get());
+	//heightmap->SetScale(100);
 }
 
 void TestField::Update()
@@ -42,55 +42,36 @@ void TestField::Update()
 	if (input->PushKey(DIK_UP)) { cameraY+= 3.0f; }
 	if (input->PushKey(DIK_DOWN)) { cameraY-= 3.0f; }
 
-	//ラジアン変換
-	float radiusLR = DirectX::XMConvertToRadians(cameraAngle + 90.0f);
-	float radiusUD = DirectX::XMConvertToRadians(cameraAngle);
-
-	//player移動
-	float Pspeed = 5.0f;
-
-	//右入力
-	if (input->PushKey(DIK_A)) {
-		cameraPos.x += Pspeed * cosf(radiusLR);
-		cameraPos.z += Pspeed * sinf(radiusLR);
-	}
-	//左入力
-	if (input->PushKey(DIK_D)) {
-		cameraPos.x -= Pspeed * cosf(radiusLR);
-		cameraPos.z -= Pspeed * sinf(radiusLR);
-	}
-	if (input->PushKey(DIK_W)) {
-		cameraPos.x += Pspeed * cosf(radiusUD);
-		cameraPos.z += Pspeed * sinf(radiusUD);
-	}
-	//左入力
-	if (input->PushKey(DIK_S)) {
-		cameraPos.x -= Pspeed * cosf(radiusUD);
-		cameraPos.z -= Pspeed * sinf(radiusUD);
-	}
+	player->SetCameraAngle(cameraAngle);
 
 	if (input->PushKey(DIK_Z)) {
-		cameraPos.y += 3.0f;
+		cameraY += 3.0f;
 	}
 	//左入力
 	if (input->PushKey(DIK_X)) {
-		cameraPos.y -= 3.0f;
+		cameraY -= 3.0f;
 	}
 
-	heightmap->Update();
+	//heightmap->Update();
 	player->Update();
 	ground->Update();
+
+	if (input->TriggerKey(DIK_L))
+	{
+		if (isDraw)
+		{
+			isDraw = false;
+		}
+		else {
+			isDraw = true;
+		}
+	}
 
 	//カメラ更新
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
 	const float range = 100.0f;
 	XMFLOAT3 playerPos= player->GetPos();
 	XMFLOAT3 cameraPos = playerPos;
-	cameraPos.y += 40.0f;
-	if (input->PushKey(DIK_Z))
-	{
-		cameraPos.z -= 100;
-	}
 	camera->SetEye({ cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z });
 	camera->SetTarget(playerPos);
 
@@ -103,15 +84,17 @@ void TestField::Draw()
 	assert(cmdList);
 
 	InterfaceObject3d::SetCmdList(cmdList);
-	Object3d::PreDraw();
-	//player->Draw();
-	//heightmap->Draw();
-	HeightMap::PreDraw();
-	//ground->Draw();
-
+	if (isDraw)
+	{
+		Object3d::PreDraw();
+		player->Draw();
+		//heightmap->Draw();
+		HeightMap::PreDraw();
+		ground->Draw();
+	}
 	PrimitiveObject3D::PreDraw();
 	ground->CDraw();
-	heightmap->ColliderDraw();
+	//heightmap->ColliderDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
 

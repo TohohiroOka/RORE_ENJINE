@@ -40,8 +40,6 @@ public:
 
 private:
 
-	//カメラ座標
-	XMFLOAT3 cameraPos = {};
 	//カメラの回転
 	float cameraAngle = 100;
 	//カメラの高さ
@@ -56,5 +54,5 @@ private:
 
 	std::unique_ptr<TouchableObject> heightmap = nullptr;
 	
-	int topolo = 0;
+	bool isDraw = true;
 };

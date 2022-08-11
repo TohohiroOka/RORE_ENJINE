@@ -24,8 +24,7 @@ public://構造体宣言
 	struct ConstBufferData {
 		XMFLOAT4 color;//色
 		XMMATRIX matWorld;//3D変換行列
-		XMMATRIX matView;//3D変換行列
-		XMMATRIX maProjection;//3D変換行列
+		XMMATRIX viewproj;//3D変換行列
 	};
 
 	//頂点データ3D
@@ -124,17 +123,15 @@ public://メンバ関数
 	/// </summary>
 	void Draw();
 
-
 private://静的メンバ変数
 
 	// 一本分の頂点数
 	static const int vertNum = 4;
 	// 一本分のインデックス数
-	static const int indexNum = 12;
+	static const int indexNum = 6;
 	// 一本分のインデックBasics
 	unsigned short BASE_INDICES[indexNum] = {
 	0,1,2,1,2,3,
-	2,1,0,3,2,1
 	};
 	//デバイス
 	static ID3D12Device* device;

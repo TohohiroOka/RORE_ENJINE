@@ -13,7 +13,7 @@ public:
 	/// 3Dオブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static std::unique_ptr<Player> Create(Model *model = nullptr);
+	static std::unique_ptr<Player> Create(Model* model = nullptr);
 public:
 
 	/// <summary>
@@ -57,4 +57,3 @@ public:
 
 	XMFLOAT3 GetPos() { return position; }
 };
-
