@@ -173,62 +173,6 @@ void HeightMap::Initialize()
 
 	//挿入インデックス番号
 	unsigned long index = 0;
-	{
-		//頂点保存
-		//for (int j = 0; j < heightSize; ++j)
-		//{
-		//	for (int i = 0; i < windthSize; ++i)
-		//	{
-		//		int index1 = (hmInfo.terrainHeight * j) + i;// 左下
-		//		int index2 = (hmInfo.terrainHeight * j) + (i + 1);// 右下
-		//		int index3 = (hmInfo.terrainHeight * (j + 1)) + i;// 左上
-		//		int index4 = (hmInfo.terrainHeight * (j + 1)) + (i + 1);// 右上
-
-		//		int vertNum1 = index;
-		//		index++;
-		//		int vertNum2 = index;
-		//		index++;
-		//		int vertNum3 = index;
-		//		index++;
-		//		int vertNum4 = index;
-		//		index++;
-
-		//		// 左下
-		//		vertices[vertNum1].pos = hmInfo.heightMap[index1];
-		//		vertices[vertNum1].uv = XMFLOAT2(0.0f, 1.0f);
-
-		//		// 左上
-		//		vertices[vertNum2].pos = hmInfo.heightMap[index3];
-		//		vertices[vertNum2].uv = XMFLOAT2(0.0f, 0.0f);
-
-		//		// 右下
-		//		vertices[vertNum3].pos = hmInfo.heightMap[index2];
-		//		vertices[vertNum3].uv = XMFLOAT2(1.0f, 1.0f);
-
-		//		// 右上
-		//		vertices[vertNum4].pos = hmInfo.heightMap[index4];
-		//		vertices[vertNum4].uv = XMFLOAT2(1.0f, 0.0f);
-		//	}
-		//}
-
-		////インデックス保存
-		//for (int i = 0; i < surfaceNum; i++)
-		//{
-		//	int vertexNum = i * 4;
-		//	index = i * 6;
-		//	indices[index] = basicsIndices[0] + vertexNum;
-		//	index++;
-		//	indices[index] = basicsIndices[1] + vertexNum;
-		//	index++;
-		//	indices[index] = basicsIndices[2] + vertexNum;
-		//	index++;
-		//	indices[index] = basicsIndices[3] + vertexNum;
-		//	index++;
-		//	indices[index] = basicsIndices[4] + vertexNum;
-		//	index++;
-		//	indices[index] = basicsIndices[5] + vertexNum;
-		//}
-	}
 
 	//頂点保存
 	for (int j = 0; j < heightSize; ++j)

@@ -88,6 +88,7 @@ private:
 	int indexNum = 0;
 	//頂点数
 	int vertNum = 0;
+	//ハイトマップの情報
 	HeightMapInfo hmInfo;
 
 public:
