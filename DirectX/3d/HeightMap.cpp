@@ -7,47 +7,8 @@
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
-ID3D12Device* HeightMap::device = nullptr;
-ID3D12GraphicsCommandList* HeightMap::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> HeightMap::pipeline = nullptr;
-Camera* HeightMap::camera = nullptr;
-LightGroup* HeightMap::lightGroup = nullptr;
+GraphicsPipelineManager::GRAPHICS_PIPELINE HeightMap::pipeline;
 const std::string HeightMap::baseDirectory = "Resources/HeightMap/";
-
-void HeightMap::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xyz座標
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("HeightMap",
-		GraphicsPipelineManager::OBJECT_KINDS::HEIGHT_MAP, inputLayout, _countof(inputLayout));
-}
-
-void HeightMap::StaticInitialize(ID3D12Device* device)
-{
-	// 再初期化チェック
-	assert(!HeightMap::device);
-	assert(device);
-	HeightMap::device = device;
-
-	CreateGraphicsPipeline();
-}
 
 std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename,
 	const std::string filename1, const std::string filename2)
@@ -68,32 +29,16 @@ std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename
 	return std::unique_ptr<HeightMap>(instance);
 }
 
-void HeightMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void HeightMap::PreDraw()
 {
-	// PreDrawとPostDrawがペアで呼ばれていなければエラー
-	assert(HeightMap::cmdList == nullptr);
-
-	HeightMap::cmdList = cmdList;
-
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void HeightMap::PostDraw()
-{
-	// コマンドリストを解除
-	HeightMap::cmdList = nullptr;
-}
-
-void HeightMap::Finalize()
-{
-	pipeline.reset();
 }
 
 bool HeightMap::HeightMapLoad(const std::string filename)
@@ -222,6 +167,8 @@ void HeightMap::LoadTexture(const std::string filename1, const std::string filen
 
 void HeightMap::Initialize()
 {
+	scale = { 25,25,25 };
+
 	HRESULT result = S_FALSE;
 
 	int windthSize = hmInfo.terrainWidth - 1;
@@ -231,16 +178,12 @@ void HeightMap::Initialize()
 	vertNum = surfaceNum * 4;
 	indexNum = surfaceNum * 6;
 
-	std::vector<Vertex> vertices;
+	std::vector<Mesh::Vertex> vertices;
 	vertices.resize(vertNum);
-	if (vertices.size() == 0)
-	{
-		assert(0);
-	}
 	std::vector<unsigned long> indices;
 	indices.resize(indexNum);
 
-	unsigned long basicsIndices[6] = { 0 ,2 ,1 ,2 ,3 ,1 };
+	unsigned long basicsIndices[6] = { 1 ,2 ,0 ,1 ,3 ,2 };
 
 	//挿入インデックス番号
 	unsigned long index = 0;
@@ -250,30 +193,35 @@ void HeightMap::Initialize()
 	{
 		for (int i = 0; i < windthSize; ++i)
 		{
-			int index1 = (hmInfo.terrainHeight * j) + i;// Bottom left.
-			int index2 = (hmInfo.terrainHeight * j) + (i + 1);// Bottom right.
-			int index3 = (hmInfo.terrainHeight * (j + 1)) + i;// Upper left.
-			int index4 = (hmInfo.terrainHeight * (j + 1)) + (i + 1);// Upper right.
+			int index1 = (hmInfo.terrainHeight * j) + i;// 左下
+			int index2 = (hmInfo.terrainHeight * j) + (i + 1);// 右下
+			int index3 = (hmInfo.terrainHeight * (j + 1)) + i;// 左上
+			int index4 = (hmInfo.terrainHeight * (j + 1)) + (i + 1);// 右上
 
-			// Bottom left.
-			vertices[index].pos = hmInfo.heightMap[index1];
-			vertices[index].uv = XMFLOAT2(0.0f, 1.0f);
+			int vertNum1 = index;
+			index++;
+			int vertNum2 = index;
+			index++;
+			int vertNum3 = index;
+			index++;
+			int vertNum4 = index;
 			index++;
 
-			// Upper left.
-			vertices[index].pos = hmInfo.heightMap[index3];
-			vertices[index].uv = XMFLOAT2(0.0f, 0.0f);
-			index++;
+			// 左上
+			vertices[vertNum2].pos = hmInfo.heightMap[index3];
+			vertices[vertNum2].uv = XMFLOAT2(1.0f, 0.0f);
 
-			// Bottom right.
-			vertices[index].pos = hmInfo.heightMap[index2];
-			vertices[index].uv = XMFLOAT2(1.0f, 1.0f);
-			index++;
+			// 右上
+			vertices[vertNum4].pos = hmInfo.heightMap[index4];
+			vertices[vertNum4].uv = XMFLOAT2(0.0f, 1.0f);
 
-			// Upper right.
-			vertices[index].pos = hmInfo.heightMap[index4];
-			vertices[index].uv = XMFLOAT2(1.0f, 0.0f);
-			index++;
+			// 左下
+			vertices[vertNum1].pos = hmInfo.heightMap[index1];
+			vertices[vertNum1].uv = XMFLOAT2(0.0f, 0.0f);
+
+			// 右下
+			vertices[vertNum3].pos = hmInfo.heightMap[index2];
+			vertices[vertNum3].uv = XMFLOAT2(1.0f, 1.0f);
 		}
 	}
 
@@ -295,6 +243,7 @@ void HeightMap::Initialize()
 		indices[index] = basicsIndices[5] + vertexNum;
 	}
 
+
 	int normalNum = static_cast<int>(indices.size() / 3);
 	for (int i = 0; i < normalNum; i++)
 	{
@@ -309,8 +258,8 @@ void HeightMap::Initialize()
 		XMVECTOR p1 = XMLoadFloat3(&vertices[index2].pos);
 		XMVECTOR p2 = XMLoadFloat3(&vertices[index3].pos);
 
-		XMVECTOR v1 = XMVectorSubtract(p1, p0);
-		XMVECTOR v2 = XMVectorSubtract(p2, p0);
+		XMVECTOR v1 = XMVectorSubtract(p0, p1);
+		XMVECTOR v2 = XMVectorSubtract(p0, p2);
 
 		XMVECTOR normal = XMVector3Cross(v1, v2);
 		normal = XMVector3Normalize(normal);
@@ -320,127 +269,46 @@ void HeightMap::Initialize()
 		XMStoreFloat3(&vertices[index3].normal, normal);
 	}
 
-	//頂点バッファ生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(Vertex) * vertNum),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertBuff));
-	assert(SUCCEEDED(result));
+	Mesh* mesh = new Mesh;
 
-	Vertex* vertMap = nullptr;
-	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
-	std::copy(vertices.begin(), vertices.end(), vertMap);
-	vertBuff->Unmap(0, nullptr);
+	//メッシュへ保存
+	for (int i = 0; i < vertNum; i++)
+	{
+		mesh->AddVertex(vertices[i]);
+	}
 
-	//頂点バッファビューの生成
-	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
-	vbView.SizeInBytes = sizeof(Vertex) * vertNum;
-	vbView.StrideInBytes = sizeof(Vertex);
+	//メッシュへ保存
+	for (int i = 0; i < indexNum; i++)
+	{
+		mesh->AddIndex(indices[i]);
+	}
 
-	//インデックスバッファ生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(unsigned long) * indexNum), // リソース設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&indexBuff));
-	assert(SUCCEEDED(result));
+	mesh->CreateBuffers();
 
-	//インデックスバッファへのデータ転送
-	unsigned long* indexMap = nullptr;
-	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
-	std::copy(indices.begin(), indices.end(), indexMap);
-	indexBuff->Unmap(0, nullptr);
+	model = new Model;
+	model->SetMeshes(mesh);
 
-	//インデックスバッファビューの作成
-	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
-	ibView.Format = DXGI_FORMAT_R32_UINT;
-	ibView.SizeInBytes = sizeof(unsigned long) * indexNum;
-
-	//定数バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuff));
-	assert(SUCCEEDED(result));
+	InterfaceObject3d::Initialize();
 }
 
 HeightMap::~HeightMap()
 {
-	vertBuff.Reset();
-	indexBuff.Reset();
-	constBuff.Reset();
 	for (int i = 0; i < TEXTURE::Size; i++)
 	{
 		texture[i].reset();
 	}
 }
 
-void HeightMap::Update()
+void HeightMap::Draw()
 {
-	//ワールド行列変換
-	XMMATRIX matWorld = XMMatrixIdentity();
-	XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	matWorld *= matScale;
+	model->VIDraw(cmdList);
 
-	XMMATRIX matRot;//角度
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(0));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(0));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(0));
-	matWorld *= matRot;
-
-	XMMATRIX matTrans;//平行方向
-	matTrans = XMMatrixTranslation(0, 0, 0);
-	matWorld *= matTrans;
-
-	const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
-	const XMFLOAT3& cameraPos = camera->GetEye();
-
-	//定数バッファにデータを転送
-	ConstBufferData* constMap = nullptr;
-	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
-	assert(SUCCEEDED(result));
-	constMap->viewproj = matViewProjection;
-	constMap->world = matWorld;
-	constMap->cameraPos = cameraPos;
-	constBuff->Unmap(0, nullptr);
-}
-
-void HeightMap::Draw(UINT topology)
-{
-	//プリミティブ形状の設定コマンド
-	if (topology == 0)
-	{
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
-	else if (topology == 1)
-	{
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	}
-	//定数バッファをセット
-	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
-
-	//頂点バッファの設定
-	cmdList->IASetIndexBuffer(&ibView);
-
-	//頂点バッファをセット
-	cmdList->IASetVertexBuffers(0, 1, &vbView);
-
-	// ライトの描画
-	lightGroup->Draw(cmdList, 4);
+	InterfaceObject3d::Draw();
 
 	//テクスチャ転送
-	cmdList->SetGraphicsRootDescriptorTable(1, texture[HeightMapTex]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(2, texture[GraphicTex1]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(3, texture[GraphicTex2]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(3, texture[HeightMapTex]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(4, texture[GraphicTex1]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(5, texture[GraphicTex2]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);

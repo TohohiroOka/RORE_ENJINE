@@ -8,7 +8,7 @@ using namespace Microsoft::WRL;
 ID3D12Device* ParticleManager::device = nullptr;
 ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
 Camera* ParticleManager::camera = nullptr;
-std::unique_ptr<GraphicsPipelineManager> ParticleManager::pipeline;
+GraphicsPipelineManager::GRAPHICS_PIPELINE ParticleManager::pipeline;
 std::map<std::string, ParticleManager::Information> ParticleManager::texture;
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
@@ -28,45 +28,6 @@ const DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& lhs, const DirectX::X
 	result.z = lhs.z + rhs.z;
 
 	return result;
-}
-
-void ParticleManager::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // スケール
-			"SCALE", 0, DXGI_FORMAT_R32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // 色
-			"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("Particle",
-		GraphicsPipelineManager::OBJECT_KINDS::PARTICLE, inputLayout, _countof(inputLayout));
-}
-
-void ParticleManager::StaticInitialize(ID3D12Device* device)
-{
-	// 初期化チェック
-	assert(!ParticleManager::device);
-
-	// nullptrチェック
-	assert(device);
-
-	ParticleManager::device = device;
-
-	//パイプライン設定
-	CreateGraphicsPipeline();
 }
 
 void ParticleManager::LoadTexture(const std::string keepName, const std::string filename, const bool isDelete)
@@ -302,14 +263,12 @@ void ParticleManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(ParticleManager::cmdList == nullptr);
 
-	// コマンドリストをセット
 	ParticleManager::cmdList = cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
-
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -363,5 +322,4 @@ void ParticleManager::Finalize()
 		(*itr).second.instance.reset();
 	}
 	texture.clear();
-	pipeline.reset();
 }

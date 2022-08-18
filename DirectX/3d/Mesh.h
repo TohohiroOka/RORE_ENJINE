@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
@@ -24,7 +23,7 @@ private: // エイリアス
 
 public: // サブクラス
 	// 頂点データ構造体（テクスチャあり）
-	struct VertexPosNormalUv
+	struct Vertex
 	{
 		XMFLOAT3 pos; // xyz座標
 		XMFLOAT3 normal; // 法線ベクトル
@@ -72,13 +71,13 @@ public: // メンバ関数
 	/// 頂点データの追加
 	/// </summary>
 	/// <param name="vertex">頂点データ</param>
-	void AddVertex(const VertexPosNormalUv& vertex);
+	void AddVertex(const Vertex& vertex);
 
 	/// <summary>
 	/// 頂点インデックスの追加
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	void AddIndex(unsigned short index);
+	void AddIndex(unsigned long index);
 
 	/// <summary>
 	/// 頂点データの数を取得
@@ -134,16 +133,22 @@ public: // メンバ関数
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="cmdList">命令発行先コマンドリスト</param>
+	void VIDraw(ID3D12GraphicsCommandList* cmdList);
+
+	/// <summary>
 	/// 頂点配列を取得
 	/// </summary>
 	/// <returns>頂点配列</returns>
-	inline const std::vector<VertexPosNormalUv>& GetVertices() { return vertices; }
+	inline const std::vector<Vertex>& GetVertices() { return vertices; }
 
 	/// <summary>
 	/// インデックス配列を取得
 	/// </summary>
 	/// <returns>インデックス配列</returns>
-	inline const std::vector<unsigned short>& GetIndices() { return indices; }
+	inline const std::vector<unsigned long>& GetIndices() { return indices; }
 
 private: // メンバ変数
 	// 名前
@@ -157,12 +162,11 @@ private: // メンバ変数
 	// インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView = {};
 	// 頂点データ配列
-	std::vector<VertexPosNormalUv> vertices;
+	std::vector<Vertex> vertices;
 	// 頂点インデックス配列
-	std::vector<unsigned short> indices;
+	std::vector<unsigned long> indices;
 	// 頂点法線スムージング用データ
 	std::unordered_map<unsigned short, std::vector<unsigned short>> smoothData;
 	// マテリアル
 	Material* material = nullptr;
 };
-

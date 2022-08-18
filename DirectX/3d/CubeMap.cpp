@@ -9,28 +9,8 @@ using namespace DirectX;
 
 ID3D12Device* CubeMap::device = nullptr;
 ID3D12GraphicsCommandList* CubeMap::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> CubeMap::pipeline = nullptr;
+GraphicsPipelineManager::GRAPHICS_PIPELINE CubeMap::pipeline;
 Camera* CubeMap::camera = nullptr;
-
-void CubeMap::CreateGraphicsPipeline()
-{
-	////頂点レイアウト配列の宣言と設定
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT,
-			0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("CubeBox",
-		GraphicsPipelineManager::OBJECT_KINDS::CUBE_BOX, inputLayout, _countof(inputLayout));
-}
 
 void CubeMap::StaticInitialize(ID3D12Device* device)
 {
@@ -38,8 +18,6 @@ void CubeMap::StaticInitialize(ID3D12Device* device)
 	assert(!CubeMap::device);
 	assert(device);
 	CubeMap::device = device;
-
-	CreateGraphicsPipeline();
 }
 
 std::unique_ptr<CubeMap> CubeMap::Create(ID3D12GraphicsCommandList* cmdList)
@@ -66,10 +44,10 @@ void CubeMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	CubeMap::cmdList = cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -83,7 +61,7 @@ void CubeMap::PostDraw()
 
 void CubeMap::Finalize()
 {
-	pipeline.reset();
+	//pipeline.reset();
 }
 
 void CubeMap::Initialize()
@@ -244,7 +222,7 @@ void CubeMap::Draw()
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }
 
-void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* cmdList,UINT RootParameterIndex)
+void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* cmdList, UINT RootParameterIndex)
 {
 	cmdList->SetGraphicsRootDescriptorTable(RootParameterIndex, texture->descriptor->gpu);
 }

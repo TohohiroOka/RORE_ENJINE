@@ -4,16 +4,19 @@
 #include "Audio.h"
 
 //オブジェクト系
-#include "Object3d.h"
+#include "InterfaceObject3d.h"
 #include "Sprite.h"
 #include "Emitter.h"
 #include "LightGroup.h"
-#include "Fbx.h"
+//#include "Fbx.h"
 #include "Easing.h"
-#include "DrawLine.h"
+//#include "DrawLine.h"
 #include "DrawLine3D.h"
 #include "CubeMap.h"
 #include "HeightMap.h"
+#include "PrimitiveObject3D.h"
+
+#include "GraphicsPipelineManager.h"
 
 //計算シェーダー
 #include "ComputeShaderManager.h"
@@ -45,7 +48,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual bool Draw() = 0;
+	virtual void Draw() = 0;
 
 	/// <summary>
 	/// 解放

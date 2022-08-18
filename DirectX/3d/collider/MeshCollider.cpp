@@ -5,6 +5,12 @@ using namespace DirectX;
 
 void MeshCollider::ConstructTriangles(Model* model)
 {
+	if (!isInit)
+	{
+		object = std::make_unique<PrimitiveObject3D>();
+		isInit = true;
+	}
+
 	triangles.clear();
 	
 	const std::vector<Mesh*>& meshes = model->GetMeshes();
@@ -14,8 +20,8 @@ void MeshCollider::ConstructTriangles(Model* model)
 	std::vector<Mesh*>::const_iterator it = meshes.cbegin();
 	for (; it != meshes.cend(); ++it) {
 		Mesh* mesh = *it;
-		const std::vector<Mesh::VertexPosNormalUv>& vertices = mesh->GetVertices();
-		const std::vector<unsigned short>& indices = mesh->GetIndices();
+		const std::vector<Mesh::Vertex>& vertices = mesh->GetVertices();
+		const std::vector<unsigned long>& indices = mesh->GetIndices();
 
 		size_t triangleNum = indices.size() / 3;
 
@@ -33,7 +39,6 @@ void MeshCollider::ConstructTriangles(Model* model)
 				vertices[idx0].pos.y,
 				vertices[idx0].pos.z,
 				1 };
-
 			tri.p1 = {
 				vertices[idx1].pos.x,
 				vertices[idx1].pos.y,
@@ -47,6 +52,23 @@ void MeshCollider::ConstructTriangles(Model* model)
 				1 };
 
 			tri.ComputeNormal();
+
+			//XMFLOAT3 normalnormal =
+			//{
+			//	vertices[idx0].normal.x + vertices[idx1].normal.x + vertices[idx2].normal.x,
+			//	vertices[idx0].normal.y + vertices[idx1].normal.y + vertices[idx2].normal.y,
+			//	vertices[idx0].normal.z + vertices[idx1].normal.z + vertices[idx2].normal.z,
+			//};
+
+			//tri.normal = {
+			//	normalnormal.x / 3.0f,
+			//	normalnormal.y / 3.0f,
+			//	normalnormal.z / 3.0f,
+			//	1 };
+
+			object->SetVertex(vertices[idx0].pos);
+			object->SetVertex(vertices[idx1].pos);
+			object->SetVertex(vertices[idx2].pos);
 		}
 	}
 }
@@ -54,6 +76,17 @@ void MeshCollider::ConstructTriangles(Model* model)
 void MeshCollider::Update()
 {
 	invMatWorld = XMMatrixInverse(nullptr, GetObject3d()->GetMatWorld());
+	if (isInit && !isCreateBuffer)
+	{
+		object->Initialize();
+	}
+}
+
+void MeshCollider::Draw()
+{
+	object->SetMatWorld(GetObject3d()->GetMatWorld());
+	object->Update();
+	object->Draw();
 }
 
 bool MeshCollider::CheckCollisionSphere(const Sphere & sphere, DirectX::XMVECTOR * inter, DirectX::XMVECTOR * reject)

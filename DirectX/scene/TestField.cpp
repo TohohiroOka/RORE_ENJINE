@@ -4,7 +4,6 @@
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "DebugText.h"
-#include "PostEffect.h"
 
 #include <imgui.h>
 #include <iomanip>
@@ -16,8 +15,10 @@
 void TestField::Initialize()
 {
 	playerModel = Model::CreateFromOBJ("uma");
+	groundModel = Model::CreateFromOBJ("map");
+
 	player = Player::Create(playerModel.get());
-	heightmap = HeightMap::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
+	ground = Ground::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
 }
 
 void TestField::Update()
@@ -31,85 +32,62 @@ void TestField::Update()
 		BrowsingCircle* nextScene = new BrowsingCircle();
 		nextScene->Initialize();
 		SceneManager::SetNextScene(nextScene);
-		return;
 	}
 
-	if (input->PushKey(DIK_LEFT)) { cameraAngle+=3.0f; }
-	if (input->PushKey(DIK_RIGHT)) { cameraAngle-= 3.0f; }
-	if (input->PushKey(DIK_UP)) { cameraY-= 3.0f; }
-	if (input->PushKey(DIK_DOWN)) { cameraY+= 3.0f; }
+	if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
+	if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
+	if (input->PushKey(DIK_UP)) { cameraY += 3.0f; }
+	if (input->PushKey(DIK_DOWN)) { cameraY -= 3.0f; }
 
-	if (cameraAngle > 360 || cameraAngle < -360)
-	{
-		cameraAngle = 0;
-	}
-
-	//ラジアン変換
-	float radiusLR = DirectX::XMConvertToRadians(cameraAngle + 90.0f);
-	float radiusUD = DirectX::XMConvertToRadians(cameraAngle);
-
-	//player移動
-	float Pspeed = 5.0f;
-
-	//右入力
-	if (input->PushKey(DIK_A)) {
-		cameraPos.x += Pspeed * cosf(radiusLR);
-		cameraPos.z += Pspeed * sinf(radiusLR);
-	}
-	//左入力
-	if (input->PushKey(DIK_D)) {
-		cameraPos.x -= Pspeed * cosf(radiusLR);
-		cameraPos.z -= Pspeed * sinf(radiusLR);
-	}
-	if (input->PushKey(DIK_W)) {
-		cameraPos.x += Pspeed * cosf(radiusUD);
-		cameraPos.z += Pspeed * sinf(radiusUD);
-	}
-	//左入力
-	if (input->PushKey(DIK_S)) {
-		cameraPos.x -= Pspeed * cosf(radiusUD);
-		cameraPos.z -= Pspeed * sinf(radiusUD);
-	}
+	player->SetCameraAngle(cameraAngle);
 
 	if (input->PushKey(DIK_Z)) {
-		cameraPos.y += 3.0f;
+		cameraY += 3.0f;
 	}
 	//左入力
 	if (input->PushKey(DIK_X)) {
-		cameraPos.y -= 3.0f;
+		cameraY -= 3.0f;
 	}
 
+	//heightmap->Update();
 	player->Update();
-	heightmap->Update();
+	ground->Update();
 
+	if (input->TriggerKey(DIK_L))
+	{
+		if (isDraw)
+		{
+			isDraw = false;
+		} else {
+			isDraw = true;
+		}
+	}
+
+	//カメラ更新
 	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
 	const float range = 100.0f;
-	camera->SetEye(cameraPos);
-	XMFLOAT3 cameraT = { cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z };
-	camera->SetTarget(cameraT);
-
-	player->SetPosition(cameraT);
+	XMFLOAT3 playerPos = player->GetPos();
+	XMFLOAT3 cameraPos = playerPos;
+	camera->SetEye({ cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z });
+	camera->SetTarget(playerPos);
 
 	input = nullptr;
 	xinput = nullptr;
 }
 
-bool TestField::Draw()
+void TestField::Draw()
 {
 	assert(cmdList);
 
-	if (drawPlayer)
+	InterfaceObject3d::SetCmdList(cmdList);
+	if (isDraw)
 	{
-		Object3d::PreDraw(cmdList);
+		Object3d::PreDraw();
 		player->Draw();
-		Object3d::PostDraw();
+		HeightMap::PreDraw();
+		ground->Draw();
 	}
-
-	HeightMap::PreDraw(cmdList);
-	heightmap->Draw(0);
-	HeightMap::PostDraw();
-
-	return false;
+	InterfaceObject3d::ReleaseCmdList();
 }
 
 void TestField::Finalize()
@@ -118,40 +96,43 @@ void TestField::Finalize()
 
 void TestField::ImguiDraw()
 {
-	bool Fog;
-	bool Bloom;//ブルーム
-	bool Toon;//トゥーン
-	bool OutLine;//アウトライン
-	float OutlineWidth;//アウトラインの幅
-	float OutlineColor[3];//アウトラインの色
+	//float baseColor[3];//ベースカラ―
+	//float metalness;//金属度(0 or 1)
+	//float specular;//鏡面反射度
+	//float roughness;//粗さ
 
-	Fog = PostEffect::GetFog();
-	Bloom = player->GetBloom();
-	Toon = player->GetToon();
-	OutLine = player->GetOutline();
-	OutlineWidth = player->GetOutlineWidth();
-	OutlineColor[0] = player->GetOutlineColor().x;
-	OutlineColor[1] = player->GetOutlineColor().y;
-	OutlineColor[2] = player->GetOutlineColor().z;
+	//baseColor[0] = anm->GetBaseColor().x;
+	//baseColor[1] = anm->GetBaseColor().y;
+	//baseColor[2] = anm->GetBaseColor().z;
+	//metalness = anm->GetMetalness();
+	//specular = anm->GetSpecular();
+	//roughness = anm->GetRoughness();
 
-	ImGui::Begin("PostEffect");
-	ImGui::SetWindowPos(ImVec2(0, 0));
-	ImGui::SetWindowSize(ImVec2(300, 400));
-	ImGui::Checkbox("Fog", &Fog);
-	ImGui::Checkbox("drawUma", &drawPlayer);
-	ImGui::Checkbox("Bloom", &Bloom);
-	ImGui::Checkbox("Toon", &Toon);
-	ImGui::Checkbox("OutLine", &OutLine);
-	ImGui::SliderFloat("OutLineWidth", &OutlineWidth, 0, 0.005f);
-	ImGui::ColorEdit3("OutLinColor", OutlineColor, ImGuiColorEditFlags_Float);
-	ImGui::End();
+	////ライトon/off
+	//static bool lightAct1 = false;
+	//static bool lightAct2 = false;
+	//static bool lightAct3 = false;
 
-	PostEffect::SetFog(Fog);
-	player->SetBloom(Bloom);
-	player->SetToon(Toon);
-	player->SetOutline(OutLine);
-	player->SetOutlineWidth(OutlineWidth);
-	player->SetOutlineColor({ OutlineColor[0],OutlineColor[1],OutlineColor[2],1.0f });
+	//ImGui::Begin("Material");
+	//ImGui::SetWindowPos(ImVec2(0, 0));
+	//ImGui::SetWindowSize(ImVec2(300, 130));
+	//ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
+	//ImGui::SliderFloat("metalness", &metalness, 0, 1);
+	//ImGui::SliderFloat("specular", &specular, 0, 1);
+	//ImGui::SliderFloat("roughness", &roughness, 0, 1);
+	//ImGui::Checkbox("Light1", &lightAct1);
+	//ImGui::Checkbox("Light2", &lightAct2);
+	//ImGui::Checkbox("Light3", &lightAct3);
+	//ImGui::End();
+
+	//anm->SetBaseColor({ baseColor[0],baseColor[1],baseColor[2] });
+	//anm->SetMetalness(metalness);
+	//anm->SetSpecular(specular);
+	//anm->SetRoughness(roughness);
+
+	//light->SetDirLightActive(0, lightAct1);
+	//light->SetDirLightActive(1, lightAct2);
+	//light->SetDirLightActive(2, lightAct3);
 }
 
 void TestField::GetConstbufferNum()

@@ -1,11 +1,11 @@
 #include "MainEngine.h"
-#include "DrawLine.h"
+//#include "DrawLine.h"
 #include "DrawLine3D.h"
-#include "Object3d.h"
+#include "InterfaceObject3d.h"
 #include "Sprite.h"
 #include "DebugText.h"
 #include "Emitter.h"
-#include "Fbx.h"
+//#include "Fbx.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
@@ -19,11 +19,9 @@ MainEngine::~MainEngine()
 {
 	DebugText::Finalize();
 	scene.reset();
-	Object3d::Finalize();
-	DrawLine3D::Finalize();
-	DrawLine::Finalize();
+	//DrawLine::Finalize();
 	Sprite::Finalize();
-	Fbx::Finalize();
+	//Fbx::Finalize();
 	CubeMap::Finalize();
 	ParticleManager::Finalize();
 	postEffect->Finalize();
@@ -46,19 +44,17 @@ void MainEngine::Initialize()
 
 	//ObjectŒn‚Ì‰Šú‰»
 	Texture::StaticInitialize(dXCommon->GetDevice());
-	GraphicsPipelineManager::StaticInitialize(dXCommon->GetDevice());
-	Object3d::StaticInitialize(dXCommon->GetDevice());
+	GraphicsPipelineManager::SetDevice(dXCommon->GetDevice());
+	InterfaceObject3d::StaticInitialize(dXCommon->GetDevice());
 	Sprite::StaticInitialize(dXCommon->GetDevice());
-	DrawLine::StaticInitialize(dXCommon->GetDevice());
 	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
-	ParticleManager::StaticInitialize(dXCommon->GetDevice());
+	ParticleManager::SetDevice(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
-	Fbx::StaticInitialize(dXCommon->GetDevice());
+	//Fbx::StaticInitialize(dXCommon->GetDevice());
 	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 	DebugText::GetInstance()->Initialize();
 	CubeMap::StaticInitialize(dXCommon->GetDevice());
-	HeightMap::StaticInitialize(dXCommon->GetDevice());
 
 	scene = SceneManager::Create();
 
@@ -66,8 +62,7 @@ void MainEngine::Initialize()
 
 	fps = FrameRateKeep::Create();
 
-	cubemap = CubeMap::Create(dXCommon->GetCmdList());
-	Fbx::SetCubeTex(cubemap->SetTexture());
+	//cubemap = CubeMap::Create(dXCommon->GetCmdList());
 }
 
 bool MainEngine::Update()
@@ -79,8 +74,9 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//XV
+	//Fbx::SetCubeTex(cubemap->SetTexture());
 	scene->Update();
-	cubemap->Update();
+	//cubemap->Update();
 
 	return false;
 }
@@ -90,17 +86,11 @@ void MainEngine::Draw()
 	//•`‰æ
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
+	//CubeMap::PreDraw(dXCommon->GetCmdList());
+	//cubemap->Draw();
+	//CubeMap::PostDraw();
 
-	bool cubeDraw = false;
-	cubeDraw = scene->Draw(dXCommon->GetCmdList());
-
-	if (cubeDraw)
-	{
-		CubeMap::PreDraw(dXCommon->GetCmdList());
-		cubemap->Draw();
-		CubeMap::PostDraw();
-	}
-
+	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
 
 	//•`‰æ‘Oİ’è

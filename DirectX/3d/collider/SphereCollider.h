@@ -27,6 +27,8 @@ public:
 	/// </summary>
 	void Update() override;
 
+	void Draw() override;
+
 	inline const XMVECTOR& GetOffset() { return offset; }
 
 	inline void SetOffset(const XMVECTOR& offset) { this->offset = offset; }

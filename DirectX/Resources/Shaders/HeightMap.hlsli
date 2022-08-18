@@ -3,6 +3,21 @@ cbuffer cbuff0 : register(b0)
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
+	uint isSkinning;//スキニング
+	uint isBloom;//ブルームの有無
+	uint isToon;//トゥーンの有無
+	uint isOutline;//アウトラインの有無
+};
+
+cbuffer cbuff1 : register(b1)
+{
+	float3 m_baseColor;//ベースカラー
+	float3 m_ambient; //アンビエント係数
+	float3 m_diffuse; //ディフューズ係数
+	float m_metalness; //金属度
+	float m_specular; //スペキュラー係数
+	float m_roughness; //粗さ
+	float m_alpha; //アルファ
 };
 
 // 平行光源の数
@@ -64,9 +79,9 @@ cbuffer cbuff2 : register(b2)
 // 頂点シェーダーからピクセルシェーダーへのやり取りに使用する構造体
 struct VSOutput
 {
-	float4 pos : POSITION; // 
 	float4 svpos : SV_POSITION; // システム用頂点座標
 	float4 worldpos : POSITION1; // ワールド
+	float4 localpos : POSITION2;//ローカル
 	float3 normal :NORMAL; // 法線
 	float2 uv : TEXCOORD;//uv
 };

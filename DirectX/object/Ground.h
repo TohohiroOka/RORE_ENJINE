@@ -1,26 +1,29 @@
 ﻿#pragma once
-#include "Object3d.h"
+#include "HeightMap.h"
 
-class Ground : public Object3d
+class Ground
 {
 public:
+
 	/// <summary>
 	/// オブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static std::unique_ptr<Ground> Create(Model* model = nullptr);
+	static std::unique_ptr<Ground> Create(const std::string heightmapFilename,
+		const std::string filename1 = "null", const std::string filename2 = "null");
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <returns>成否</returns>
-	bool Initialize(Model * model);
+	void Initialize();
 
-	/// <summary>
-	/// スケールの設定
-	/// </summary>
-	/// <param name="position">スケール</param>
-	inline void SetScale(float scale) { this->scale = { scale,scale,scale }; }
-	void SetScale(XMFLOAT3 scale) = delete;
+	void Update();
+
+	void Draw();
+
+	void CDraw();
+
+private:
+
+	std::unique_ptr<HeightMap> object = nullptr;
 };
-

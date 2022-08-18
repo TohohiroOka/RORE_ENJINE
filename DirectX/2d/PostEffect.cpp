@@ -1,17 +1,16 @@
 #include "PostEffect.h"
 #include "WindowApp.h"
 #include "DirectInput.h"
-#include "Object3d.h"
+#include "InterfaceObject3d.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 const float PostEffect::clearColor[2][4] = {
-	{0.0f,0.0f,0.0f,0.0f },
-	{0.0f,0.0f,0.0f,0.0f}
+	{ 0.1f,0.1f,0.7f,0.0f },
+	{ 0.0f,0.0f,0.0f,0.0f }
 };
-std::unique_ptr<GraphicsPipelineManager> PostEffect::pipeline;
-bool PostEffect::isFog = false;
+GraphicsPipelineManager::GRAPHICS_PIPELINE PostEffect::pipeline;
 
 PostEffect::PostEffect()
 	:Sprite()
@@ -24,34 +23,13 @@ PostEffect::~PostEffect()
 
 void PostEffect::Finalize()
 {
-	pipeline.reset();
+	//pipeline.reset();
 	descHeapRTV.Reset();
 	descHeapDSV.Reset();
 }
 
-void PostEffect::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標(1行で書いたほうが見やすい)
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("PostEffect",
-		GraphicsPipelineManager::OBJECT_KINDS::POST_EFFECT, inputLayout, _countof(inputLayout));
-}
-
 void PostEffect::StaticInitialize()
 {
-	CreateGraphicsPipeline();
 }
 
 void PostEffect::Initialize()
@@ -105,23 +83,22 @@ void PostEffect::Initialize()
 		WindowApp::GetWindowWidth(), (UINT)WindowApp::GetWindowHeight(),
 		1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
-	for (int i = 0; i < normalTexNum; i++)
+	//深度以外のテクスチャ枚数
+	const int breakNum = TEX_TYPE::SIZE - 1;
+
+	for (int i = 0; i < breakNum; i++)
 	{
 		// テクスチャ用バッファの生成
 		texture[i] = std::make_unique<Texture>();
 
-		int clearC = 1;
-		if (i == 0)
-		{
-			clearC = 0;
-		}
+		int clearColorNum = i != TEX_TYPE::NORMAL;
 
 		result = device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
 			D3D12_HEAP_FLAG_NONE,
 			&texresDesc,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // テクスチャ用指定
-			&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor[clearC]),
+			&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor[clearColorNum]),
 			IID_PPV_ARGS(&texture[i]->texBuffer));
 		assert(SUCCEEDED(result));
 
@@ -144,6 +121,7 @@ void PostEffect::Initialize()
 			delete[] img;
 		}
 	}
+
 	//SRV設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -151,9 +129,9 @@ void PostEffect::Initialize()
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	//デスクリプタヒープにSRV生成
-	for (int i = 0; i < normalTexNum; i++)
+	for (int i = 0; i < breakNum; i++)
 	{
+		//デスクリプタヒープにSRV生成
 		texture[i]->descriptor = std::make_unique<DescriptorHeapManager>();
 		texture[i]->descriptor->CreateSRV(texture[i]->texBuffer, srvDesc);
 	}
@@ -161,14 +139,14 @@ void PostEffect::Initialize()
 	//RTV用デスクリプタヒープ設定
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescHescDesc{};
 	rtvDescHescDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvDescHescDesc.NumDescriptors = normalTexNum;
+	rtvDescHescDesc.NumDescriptors = breakNum;
 
 	//RTV用デスクリプタヒープを生成
 	result = device->CreateDescriptorHeap(&rtvDescHescDesc, IID_PPV_ARGS(&descHeapRTV));
 	assert(SUCCEEDED(result));
 
 	//デスクリプタヒープにRTV生成
-	for (int i = 0; i < normalTexNum; i++)
+	for (int i = 0; i < breakNum; i++)
 	{
 		device->CreateRenderTargetView(texture[i]->texBuffer.Get(), nullptr,
 			CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapRTV->GetCPUDescriptorHandleForHeapStart(), i,
@@ -248,17 +226,16 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	// 定数バッファへデータ転送
 	ConstBufferData* constMap = nullptr;
-	HRESULT result= constBuff->Map(0, nullptr, (void**)&constMap);
-	constMap->outlineColor = Object3d::GetOutlineColor();
-	constMap->outlineWidth = Object3d::GetOutlineWidth();
-	constMap->isFog = isFog;
+	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);
+	constMap->outlineColor = InterfaceObject3d::GetOutlineColor();
+	constMap->outlineWidth = InterfaceObject3d::GetOutlineWidth();
 	constBuff->Unmap(0, nullptr);
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -270,7 +247,7 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 
 	//シェーダーリソースビュー
-	for (int i = 0; i < texBuffNum; i++)
+	for (int i = 0; i < TEX_TYPE::SIZE; i++)
 	{
 		cmdList->SetGraphicsRootDescriptorTable(i + 1, texture[i]->descriptor->gpu);
 	}
@@ -281,8 +258,10 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
 
 void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 {
+	const int breakNum = TEX_TYPE::SIZE - 1;
+
 	//リソースバリアを変更
-	for (int i = 0; i < normalTexNum; i++)
+	for (int i = 0; i < breakNum; i++)
 	{
 		cmdList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(texture[i]->texBuffer.Get(),
@@ -291,39 +270,37 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 	}
 
 	//レンダーターゲットビュー用デスクリプタヒープのハンドル取得
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHs[normalTexNum];
-	for (int i = 0; i < normalTexNum; i++)
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHs[breakNum];
+	for (int i = 0; i < breakNum; i++)
 	{
+		if (breakNum == i) { break; }
 		rtvHs[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapRTV->GetCPUDescriptorHandleForHeapStart(), i,
 			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 	}
+
 	//深度ステンシルビュー用デスクリプタヒープのハンドル取得
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = descHeapDSV->GetCPUDescriptorHandleForHeapStart();
 	//レンダーターゲットをセット
-	cmdList->OMSetRenderTargets(normalTexNum, rtvHs, false, &dsvH);
+	cmdList->OMSetRenderTargets(breakNum, rtvHs, false, &dsvH);
 
 	//ビューポート設定
-	CD3DX12_VIEWPORT viewports[normalTexNum];
-	CD3DX12_RECT scissorRects[normalTexNum];
-	for (int i = 0; i < normalTexNum; i++)
+	CD3DX12_VIEWPORT viewports[breakNum];
+	CD3DX12_RECT scissorRects[breakNum];
+	for (int i = 0; i < breakNum; i++)
 	{
 		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowApp::GetWindowWidth(), (FLOAT)WindowApp::GetWindowHeight());
 		scissorRects[i] = CD3DX12_RECT(0, 0, (LONG)WindowApp::GetWindowWidth(), (LONG)WindowApp::GetWindowHeight());
 	}
 
-	cmdList->RSSetViewports(normalTexNum, viewports);
+	cmdList->RSSetViewports(1, viewports);
 	//シザリング矩形設定
-	cmdList->RSSetScissorRects(normalTexNum, scissorRects);
+	cmdList->RSSetScissorRects(1, scissorRects);
 
 	//全画面クリア
-	for (int i = 0; i < normalTexNum; i++)
+	for (int i = 0; i < breakNum; i++)
 	{
-		int clearC = 1;
-		if (i == 0)
-		{
-			clearC = 0;
-		}
-		cmdList->ClearRenderTargetView(rtvHs[i], clearColor[clearC], 0, nullptr);
+		int clearColorNum = i != TEX_TYPE::NORMAL;
+		cmdList->ClearRenderTargetView(rtvHs[i], clearColor[clearColorNum], 0, nullptr);
 	}
 
 	//深度バッファのクリア
@@ -332,8 +309,10 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 
 void PostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList)
 {
+	const int breakNum = TEX_TYPE::DEPTH - 1;
+
 	//リソースバリアを変更
-	for (int i = 0; i < normalTexNum; i++)
+	for (int i = 0; i < breakNum; i++)
 	{
 		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(texture[i]->texBuffer.Get(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));

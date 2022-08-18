@@ -1,6 +1,7 @@
 #pragma once
 #include "InterfaceScene.h"
 #include "Player.h"
+#include "Ground.h"
 
 class TestField : public InterfaceScene
 {
@@ -19,7 +20,7 @@ public:
 	/// <summary>
 	///	描画
 	/// </summary>
-	bool Draw() override;
+	void Draw() override;
 
 	/// <summary>
 	///	解放
@@ -38,16 +39,17 @@ public:
 
 private:
 
-	//カメラ座標
-	XMFLOAT3 cameraPos = {};
 	//カメラの回転
-	float cameraAngle = 57;
+	float cameraAngle = 100;
 	//カメラの高さ
-	float cameraY = 0.0f;
+	float cameraY = 50.0f;
+
 
 	std::unique_ptr<Model> playerModel = nullptr;
-	std::unique_ptr<Player> player = nullptr;
-	std::unique_ptr<HeightMap> heightmap = nullptr;
+	std::unique_ptr<Model> groundModel = nullptr;
 
-	bool drawPlayer = true;
+	std::unique_ptr<Player> player = nullptr;
+	std::unique_ptr<Ground> ground = nullptr;
+
+	bool isDraw = true;
 };

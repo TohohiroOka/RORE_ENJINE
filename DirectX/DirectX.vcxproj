@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)camera;$(ProjectDir)easing;$(ProjectDir)external;$(ProjectDir)input;$(ProjectDir)light;$(ProjectDir)object;$(ProjectDir)particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)3d\collider;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)camera;$(ProjectDir)easing;$(ProjectDir)external;$(ProjectDir)input;$(ProjectDir)light;$(ProjectDir)object;$(ProjectDir)particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -98,23 +98,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="2d\DebugText.cpp" />
-    <ClCompile Include="2d\DrawLine.cpp" />
     <ClCompile Include="2d\PostEffect.cpp" />
     <ClCompile Include="2d\Sprite.cpp" />
-    <ClCompile Include="3d\Collision.cpp" />
-    <ClCompile Include="3d\CollisionManager.cpp" />
-    <ClCompile Include="3d\CollisionPrimitive.cpp" />
+    <ClCompile Include="3d\collider\Collision.cpp" />
+    <ClCompile Include="3d\collider\CollisionManager.cpp" />
+    <ClCompile Include="3d\collider\CollisionPrimitive.cpp" />
+    <ClCompile Include="3d\collider\MeshCollider.cpp" />
+    <ClCompile Include="3d\collider\SphereCollider.cpp" />
     <ClCompile Include="3d\CubeMap.cpp" />
     <ClCompile Include="3d\DrawLine3D.cpp" />
-    <ClCompile Include="3d\Fbx.cpp" />
-    <ClCompile Include="3d\FbxModel.cpp" />
     <ClCompile Include="3d\HeightMap.cpp" />
+    <ClCompile Include="3d\InterfaceObject3d.cpp" />
     <ClCompile Include="3d\Material.cpp" />
     <ClCompile Include="3d\Mesh.cpp" />
-    <ClCompile Include="3d\MeshCollider.cpp" />
     <ClCompile Include="3d\Model.cpp" />
     <ClCompile Include="3d\Object3d.cpp" />
-    <ClCompile Include="3d\SphereCollider.cpp" />
+    <ClCompile Include="3d\PrimitiveObject3D.cpp" />
     <ClCompile Include="audio\Audio.cpp" />
     <ClCompile Include="base\ComputeShaderManager.cpp" />
     <ClCompile Include="base\Csv.cpp" />
@@ -300,29 +299,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\DebugText.h" />
-    <ClInclude Include="2d\DrawLine.h" />
     <ClInclude Include="2d\PostEffect.h" />
     <ClInclude Include="2d\Sprite.h" />
-    <ClInclude Include="3d\BaseCollider.h" />
-    <ClInclude Include="3d\Collision.h" />
-    <ClInclude Include="3d\CollisionAttribute.h" />
-    <ClInclude Include="3d\CollisionInfo.h" />
-    <ClInclude Include="3d\CollisionManager.h" />
-    <ClInclude Include="3d\CollisionPrimitive.h" />
-    <ClInclude Include="3d\CollisionTypes.h" />
+    <ClInclude Include="3d\collider\BaseCollider.h" />
+    <ClInclude Include="3d\collider\Collision.h" />
+    <ClInclude Include="3d\collider\CollisionAttribute.h" />
+    <ClInclude Include="3d\collider\CollisionInfo.h" />
+    <ClInclude Include="3d\collider\CollisionManager.h" />
+    <ClInclude Include="3d\collider\CollisionPrimitive.h" />
+    <ClInclude Include="3d\collider\CollisionTypes.h" />
+    <ClInclude Include="3d\collider\MeshCollider.h" />
+    <ClInclude Include="3d\collider\QueryCallback.h" />
+    <ClInclude Include="3d\collider\RaycastHit.h" />
+    <ClInclude Include="3d\collider\SphereCollider.h" />
     <ClInclude Include="3d\CubeMap.h" />
     <ClInclude Include="3d\DrawLine3D.h" />
-    <ClInclude Include="3d\Fbx.h" />
-    <ClInclude Include="3d\FbxModel.h" />
     <ClInclude Include="3d\HeightMap.h" />
+    <ClInclude Include="3d\InterfaceObject3d.h" />
     <ClInclude Include="3d\Material.h" />
     <ClInclude Include="3d\Mesh.h" />
-    <ClInclude Include="3d\MeshCollider.h" />
     <ClInclude Include="3d\Model.h" />
     <ClInclude Include="3d\Object3d.h" />
-    <ClInclude Include="3d\QueryCallback.h" />
-    <ClInclude Include="3d\RaycastHit.h" />
-    <ClInclude Include="3d\SphereCollider.h" />
+    <ClInclude Include="3d\PrimitiveObject3D.h" />
     <ClInclude Include="audio\Audio.h" />
     <ClInclude Include="base\ComputeShaderManager.h" />
     <ClInclude Include="base\Csv.h" />

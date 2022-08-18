@@ -6,8 +6,6 @@
 using namespace Microsoft::WRL;
 
 ID3D12Device* GraphicsPipelineManager::device = nullptr;
-std::unique_ptr<ShaderManager> GraphicsPipelineManager::shaderManager = nullptr;
-D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::defaultPipeline{};
 
 //名前を結合する
 LPCWSTR GetName(std::string className, std::string setName)
@@ -23,54 +21,6 @@ LPCWSTR GetName(std::string className, std::string setName)
 	returnName[size] = 0;
 
 	return returnName;
-}
-
-GraphicsPipelineManager::~GraphicsPipelineManager()
-{
-	rootSignature.Reset();
-	pipelineState.Reset();
-}
-
-void GraphicsPipelineManager::StaticInitialize(ID3D12Device* device)
-{
-	// 再初期化チェック
-	assert(!GraphicsPipelineManager::device);
-
-	// nullptrチェック
-	assert(device);
-
-	//デバイスの登録
-	GraphicsPipelineManager::device = device;
-
-	//シェーダーのコンパイル
-	shaderManager = ShaderManager::Create();
-
-	//パイプラインの基盤生成
-	CreateDefaultGpipeline();
-}
-
-void GraphicsPipelineManager::CreateDefaultGpipeline()
-{
-	// サンプルマスク
-	defaultPipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	// ラスタライザステート
-	defaultPipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	// デプスステンシルステート
-	defaultPipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-
-	// レンダーターゲットのブレンド設定
-	D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
-	defaultPipeline.BlendState.RenderTarget[0] = blenddesc;
-
-	// 深度バッファのフォーマット
-	defaultPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	// 図形の形状設定（三角形）
-	defaultPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	defaultPipeline.NumRenderTargets = 1;    // 描画対象は1つ
-	defaultPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	defaultPipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 }
 
 D3D12_RENDER_TARGET_BLEND_DESC GraphicsPipelineManager::CreateBlendDesc(BLEND_MODE mode)
@@ -120,346 +70,136 @@ D3D12_RENDER_TARGET_BLEND_DESC GraphicsPipelineManager::CreateBlendDesc(BLEND_MO
 	return blenddesc;
 }
 
-std::unique_ptr<GraphicsPipelineManager> GraphicsPipelineManager::Create(const std::string name, const unsigned char objectKind,
-	const D3D12_INPUT_ELEMENT_DESC* inputLayout, const UINT inputLayoutSize)
-{
-	// 3Dオブジェクトのインスタンスを生成
-	GraphicsPipelineManager* instance = new GraphicsPipelineManager();
-	if (instance == nullptr) {
-		return nullptr;
-	}
-
-	// 初期化
-	instance->CreatePipeline(name, objectKind, inputLayout, inputLayoutSize);
-
-	return std::unique_ptr<GraphicsPipelineManager>(instance);
-}
-
-void GraphicsPipelineManager::CreatePipeline(const std::string name, const unsigned char objectKind,
-	const D3D12_INPUT_ELEMENT_DESC* inputLayout, const UINT inputLayoutSize)
-{
-	HRESULT result = S_FALSE;
-
-	//オブジェクトの種類を登録
-	this->objectKind = objectKind;
-
-	//グラフィックスパイプラインの設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = CreatepelineDesc(inputLayout, inputLayoutSize);
-
-	//ルートシグネチャの生成
-	CreateRootSignature();
-
-	//パイプラインデスクにルートシグネチャを登録
-	gpipeline.pRootSignature = rootSignature.Get();
-
-	// グラフィックスパイプラインの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
-	if (FAILED(result)) {
-		assert(0);
-	}
-
-	pipelineState->SetName(GetName(name, "PipelineState"));
-	rootSignature->SetName(GetName(name, "RootSignature"));
-}
-
-D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(
-	const D3D12_INPUT_ELEMENT_DESC* inputLayout, const UINT inputLayoutSize)
+D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(PEPELINE_DESC* pepelineDescSet)
 {
 	// グラフィックスパイプラインの流れを設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = defaultPipeline;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 
-	//Obj
-	if (objectKind == OBJECT_KINDS::OBJ)
+	//シェーダーのセット
+	if (pepelineDescSet->vertShader != "null")
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["OBJ"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["OBJ"].Get());
-
-		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
-		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
-		gpipeline.BlendState.RenderTarget[1] = blenddesc;
-		gpipeline.BlendState.RenderTarget[2] = blenddesc;
-
-		gpipeline.NumRenderTargets = 3;    // 描画対象は1つ
-		gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS[pepelineDescSet->vertShader].Get());
 	}
-	//Fbx
-	else if (objectKind == OBJECT_KINDS::FBX)
+	if (pepelineDescSet->pixelShader != "null")
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["FBX"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["FBX"].Get());
-
-		// ブレンドステートの設定（ポストエフェクト分を追加で生成）
-		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
-		gpipeline.BlendState.RenderTarget[1] = blenddesc;
-		gpipeline.BlendState.RenderTarget[2] = blenddesc;
-
-		gpipeline.NumRenderTargets = 3;    // 描画対象は1つ
-		gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-		gpipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS[pepelineDescSet->pixelShader].Get());
 	}
-	//DrawLine3d
-	else if (objectKind == OBJECT_KINDS::DRAW_LINE_3D)
+	if (pepelineDescSet->geometryShader != "null")
 	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["DRAW_LINE_3D"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["DRAW_LINE_3D"].Get());
+		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectGS[pepelineDescSet->geometryShader].Get());
 	}
-	//NormalMap
-	else if (objectKind == OBJECT_KINDS::NORMAL_MAP)
-	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["NORMAL_MAP"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["NORMAL_MAP"].Get());
-	}
-	//Sprite
-	else if (objectKind == OBJECT_KINDS::SPRITE)
-	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["SPRITE"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["SPRITE"].Get());
 
-		//常に三角形描画
-		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		//常に上書きルール
+	// サンプルマスク
+	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
+	// ラスタライザステート
+	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	// デプスステンシルステート
+	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+
+	//ブレンドモード設定
+	D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(pepelineDescSet->blendMode);
+	for (int i = 0; i < pepelineDescSet->stateNum; i++)
+	{
+		gpipeline.BlendState.RenderTarget[i] = blenddesc;
+	}
+
+	gpipeline.NumRenderTargets = pepelineDescSet->rtvNum;    // 描画対象は1つ
+	for (int i = 0; i < pepelineDescSet->rtvNum; i++)
+	{
+		gpipeline.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+	}
+	gpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
+
+	// 深度バッファのフォーマット
+	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
+	//カリング（現在は両面描画に設定）
+	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
+	// 図形の形状設定
+	gpipeline.PrimitiveTopologyType = pepelineDescSet->topologyType;
+
+	//2D描画なら上書きモードに設定
+	if (pepelineDescSet->object2d)
+	{
 		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		gpipeline.DepthStencilState.DepthEnable = false;
-	}
-	//DrawLine2d
-	else if (objectKind == OBJECT_KINDS::DRAW_LINE_2D)
-	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["DRAW_LINE_3D"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["DRAW_LINE_3D"].Get());
-
-		//常に三角形描画
-		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		//常に上書きルール
-		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		gpipeline.DepthStencilState.DepthEnable = false;
-	}
-	//PostEffect
-	else if (objectKind == OBJECT_KINDS::POST_EFFECT)
-	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["POST_EFFECT"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["POST_EFFECT"].Get());
-
-		//常に三角形描画
-		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		//常に上書きルール
-		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		gpipeline.DepthStencilState.DepthEnable = false;
-	}
-	//Particle
-	else if (objectKind == OBJECT_KINDS::PARTICLE)
-	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["PARTICLE"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["PARTICLE"].Get());
-		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectGS["PARTICLE"].Get());
-
-		gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-
-		// 図形の形状設定（三角形）
-		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-
-		// ブレンドステートの再設定
-		D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(BLEND_MODE::ALPHA);
-		gpipeline.BlendState.RenderTarget[1] = blenddesc;
-	}
-	//CubeBox
-	else if (objectKind == OBJECT_KINDS::CUBE_BOX)
-	{
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["CUBE_BOX"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["CUBE_BOX"].Get());
-	}
-	//HeightMap
-	else if (objectKind == OBJECT_KINDS::HEIGHT_MAP)
-	{
-		//常に三角形描画
-		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectVS["HEIGHT_MAP"].Get());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderManager->shaderObjectPS["HEIGHT_MAP"].Get());
+		gpipeline.DepthStencilState.DepthEnable = true;
 	}
 
-	// 頂点レイアウトの設定
-	gpipeline.InputLayout.pInputElementDescs = inputLayout;
-	gpipeline.InputLayout.NumElements = inputLayoutSize;
+	gpipeline.InputLayout.pInputElementDescs = pepelineDescSet->inputLayout;
+	gpipeline.InputLayout.NumElements = pepelineDescSet->layoutNum;
 
 	return gpipeline;
 }
 
-void GraphicsPipelineManager::CreateRootSignature()
+void GraphicsPipelineManager::CreateRootSignature(SIGNATURE_DESC* signatureDescSet)
 {
 	HRESULT result = S_FALSE;
 
-	// デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV;
-	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
-	// ルートパラメータ
-	std::vector<CD3DX12_ROOT_PARAMETER> rootparams;
 	// スタティックサンプラー
-	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR);
+	CD3DX12_STATIC_SAMPLER_DESC samplerDesc;
 
-	//Obj
-	if (objectKind == OBJECT_KINDS::OBJ)
-	{
-		// ルートパラメータ
-		rootparams.resize(5);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// CBV（マテリアルデータ用）
-		rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ）
-		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		// CBV (ライト)
-		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
-	}
-	//Fbx
-	else if (objectKind == OBJECT_KINDS::FBX)
+	// ルートパラメータ
+	int rootparamNum = 1 + (signatureDescSet->materialData + signatureDescSet->light) + signatureDescSet->textureNum;
+
+	std::vector<CD3DX12_ROOT_PARAMETER> rootparams(rootparamNum);
+	// CBV（座標変換行列用）
+	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
+	//2d描画
+	if (signatureDescSet->object2d)
 	{
 		// デスクリプタレンジ
-		CD3DX12_DESCRIPTOR_RANGE descRangeSRV_t1;
-		descRangeSRV_t1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1); // t1 レジスタ
-		CD3DX12_DESCRIPTOR_RANGE descRangeSRV_t2;
-		descRangeSRV_t2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2); // t2 レジスタ
+		const int texNum = signatureDescSet->textureNum;
+		CD3DX12_DESCRIPTOR_RANGE* descRangeSRV = new CD3DX12_DESCRIPTOR_RANGE[texNum];
 
-		// ルートパラメータ
-		rootparams.resize(7);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// CBV（マテリアルデータ用）
-		rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ）
-		rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		// CBV (ライト)
-		rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// CBV (スキニング用)
-		rootparams[4].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（キューブマップテクスチャ）
-		rootparams[5].InitAsDescriptorTable(1, &descRangeSRV_t1, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（キューブマップテクスチャ）
-		rootparams[6].InitAsDescriptorTable(1, &descRangeSRV_t2, D3D12_SHADER_VISIBILITY_ALL);
-	}
-	//DrawLine3d
-	else if (objectKind == OBJECT_KINDS::DRAW_LINE_3D)
-	{
-		// ルートパラメータ
-		rootparams.resize(2);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	}
-	//NormalMap
-	else if (objectKind == OBJECT_KINDS::NORMAL_MAP)
-	{
-		//追加のデスクリプタレンジ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV[2] = {};
-		addDescRangeSRV[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);//t0レジスタ
-		addDescRangeSRV[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);//t0レジスタ
+		for (int i = 0; i < signatureDescSet->textureNum; i++)
+		{
+			// デスクリプタレンジ
+			descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i); // t0 レジスタ
 
-		// ルートパラメータ
-		rootparams.resize(4);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ1）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ2）
-		rootparams[2].InitAsDescriptorTable(1, &addDescRangeSRV[0], D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ3）
-		rootparams[3].InitAsDescriptorTable(1, &addDescRangeSRV[1], D3D12_SHADER_VISIBILITY_ALL);
-	}
-	//Sprite
-	else if (objectKind == OBJECT_KINDS::SPRITE)
-	{
-		// ルートパラメータ
-		rootparams.resize(2);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ1）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		
-		// スタティックサンプラーのs0レジスタ
+
+			// SRV（テクスチャ）
+			int paramNum = 1 + i;
+			rootparams[paramNum].InitAsDescriptorTable(1, &descRangeSRV[i], D3D12_SHADER_VISIBILITY_ALL);
+		}
+
+		//サンプラー設定
 		samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
 	}
-	//DrawLine2d
-	else if (objectKind == OBJECT_KINDS::DRAW_LINE_2D)
+	//3d描画
+	else
 	{
-		// ルートパラメータ
-		rootparams.resize(2);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ1）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
+		int rootNum = 1;
+		if (signatureDescSet->materialData)
+		{
+			// CBV（マテリアルデータ用）
+			rootparams[rootNum].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
+			rootNum++;
+		}
+		if (signatureDescSet->light)
+		{
+			// CBV (ライト)
+			rootparams[rootNum].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
+			rootNum++;
+		}
 
-		// スタティックサンプラーのs0レジスタ
-		samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
-	}
-	//PostEffect
-	else if (objectKind == OBJECT_KINDS::POST_EFFECT)
-	{
-		//追加のデスクリプタレンジ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV1;
-		addDescRangeSRV1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);//t1レジスタ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV2;
-		addDescRangeSRV2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);//t1レジスタ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV3;
-		addDescRangeSRV3.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3);//t1レジスタ
+		// デスクリプタレンジ
+		const int texNum = signatureDescSet->textureNum;
+		CD3DX12_DESCRIPTOR_RANGE* descRangeSRV = new CD3DX12_DESCRIPTOR_RANGE[texNum];
 
-		// ルートパラメータ
-		rootparams.resize(5);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（通常テクスチャ）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ2）
-		rootparams[2].InitAsDescriptorTable(1, &addDescRangeSRV1, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ2）
-		rootparams[3].InitAsDescriptorTable(1, &addDescRangeSRV2, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ2）
-		rootparams[4].InitAsDescriptorTable(1, &addDescRangeSRV3, D3D12_SHADER_VISIBILITY_ALL);
+		for (int i = 0; i < signatureDescSet->textureNum; i++)
+		{
+			// デスクリプタレンジ
+			descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i); // t0 レジスタ
 
-		// スタティックサンプラーのs0レジスタ
-		samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
-	}
-	//Particle
-	else if (objectKind == OBJECT_KINDS::PARTICLE)
-	{
-		// ルートパラメータ
-		rootparams.resize(2);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ1）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	}
-	//CubeBox
-	else if (objectKind == OBJECT_KINDS::CUBE_BOX)
-	{
-		// ルートパラメータ
-		rootparams.resize(2);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ1）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	}
-	//HeightMap
-	else if (objectKind == OBJECT_KINDS::HEIGHT_MAP)
-	{
-		//追加のデスクリプタレンジ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV1;
-		addDescRangeSRV1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);//t1レジスタ
-		CD3DX12_DESCRIPTOR_RANGE addDescRangeSRV2;
-		addDescRangeSRV2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);//t1レジスタ
+			// SRV（テクスチャ）
+			int paramNum = rootNum + i;
+			rootparams[paramNum].InitAsDescriptorTable(1, &descRangeSRV[i], D3D12_SHADER_VISIBILITY_ALL);
+		}
 
-		// ルートパラメータ
-		rootparams.resize(5);
-		// CBV（座標変換行列用）
-		rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（HeightMap用テクスチャ）
-		rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ）
-		rootparams[2].InitAsDescriptorTable(1, &addDescRangeSRV1, D3D12_SHADER_VISIBILITY_ALL);
-		// SRV（テクスチャ）
-		rootparams[3].InitAsDescriptorTable(1, &addDescRangeSRV2, D3D12_SHADER_VISIBILITY_ALL);
-		// CBV (ライト)
-		rootparams[4].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
+		//サンプラー設定
+		samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR);
 	}
 
 	// ルートシグネチャの設定
@@ -469,18 +209,53 @@ void GraphicsPipelineManager::CreateRootSignature()
 	ComPtr<ID3DBlob> rootSigBlob;
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, nullptr);
-	if (FAILED(result)) {
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	// ルートシグネチャの生成
-	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	if (FAILED(result)) {
-		assert(0);
-	}
+	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&graphicsPipeline[name].rootSignature));
+	if (FAILED(result)) { assert(0); }
 }
 
-void GraphicsPipelineManager::Finalize()
+GraphicsPipelineManager::GraphicsPipelineManager()
 {
+	//シェーダーのコンパイル
+	shaderManager = ShaderManager::Create();
+}
+
+GraphicsPipelineManager::~GraphicsPipelineManager()
+{
+	for (auto& pipeline : graphicsPipeline)
+	{
+		pipeline.second.pipelineState.Reset();
+		pipeline.second.rootSignature.Reset();
+	}
 	shaderManager.reset();
+}
+
+void GraphicsPipelineManager::CreatePipeline(const std::string name,
+	PEPELINE_DESC* pepelineDescSet, SIGNATURE_DESC* signatureDescSet)
+{
+	HRESULT result = S_FALSE;
+
+	//同じキーがあればエラーを出力
+	assert(!graphicsPipeline.count(name));
+	size_t size = graphicsPipeline.size() + 1;
+	graphicsPipeline.reserve(size);
+	this->name = name;
+
+	//グラフィックスパイプラインの設定
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = CreatepelineDesc(pepelineDescSet);
+
+	//ルートシグネチャの生成
+	CreateRootSignature(signatureDescSet);
+
+	//パイプラインデスクにルートシグネチャを登録
+	gpipeline.pRootSignature = graphicsPipeline[name].rootSignature.Get();
+
+	// グラフィックスパイプラインの生成
+	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&graphicsPipeline[name].pipelineState));
+	if (FAILED(result)) { assert(0); }
+
+	graphicsPipeline[name].pipelineState->SetName(GetName(name, "PipelineState"));
+	graphicsPipeline[name].rootSignature->SetName(GetName(name, "RootSignature"));
 }

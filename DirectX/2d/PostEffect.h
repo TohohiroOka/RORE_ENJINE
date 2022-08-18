@@ -3,13 +3,6 @@
 
 class PostEffect : public Sprite
 {
-private://静的メンバ関数
-
-	/// <summary>
-	/// グラフィックスパイプラインの生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public: // サブクラス
 
 	// 定数バッファ用データ構造体B0
@@ -17,9 +10,6 @@ public: // サブクラス
 	{
 		XMFLOAT4 outlineColor;//アウトラインの色
 		float outlineWidth;//アウトラインの太さ
-		unsigned int isFog;//フォグの有無
-		unsigned int isGaussianBlur;//ガウスブラーの有無
-		float BlurStrength;//ブラー強度
 	};
 
 	enum TEX_TYPE
@@ -27,7 +17,8 @@ public: // サブクラス
 		NORMAL,
 		BLOOM,
 		OUTLINE,
-		DEPTH
+		DEPTH,
+		SIZE
 	};
 
 public://メンバ関数
@@ -87,29 +78,21 @@ public://メンバ関数
 	/// <param name="cmdList">描画コマンドリスト</param>
 	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
 
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 private://静的メンバ変数
-	
-	//通常テクスチャ数
-	static const int texBuffNum = 4;
-	static const int normalTexNum = 3;
+
 	//画面クリアカラー
 	static const float clearColor[2][4];
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
-	//フォグ
-	static bool isFog;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 
 private://メンバ変数
 
 	//テクスチャ情報
-	std::array<std::unique_ptr<Texture>, texBuffNum> texture;
+	std::array<std::unique_ptr<Texture>, TEX_TYPE::SIZE> texture;
 	//RTV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
-
-public:
-
-	static bool GetFog() { return PostEffect::isFog; }
-	static void SetFog(bool isFog) { PostEffect::isFog = isFog; }
 };

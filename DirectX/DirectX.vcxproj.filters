@@ -53,9 +53,6 @@
     <Filter Include="エンジンシステム\Object">
       <UniqueIdentifier>{f9763ffe-2661-489a-b178-3b5613888aef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Object\collider">
-      <UniqueIdentifier>{01e36be7-9665-4170-9568-05beaf158a24}</UniqueIdentifier>
-    </Filter>
     <Filter Include="エンジンシステム\Object\2d">
       <UniqueIdentifier>{d1b2616a-7617-475b-9481-78aa38115a72}</UniqueIdentifier>
     </Filter>
@@ -68,14 +65,8 @@
     <Filter Include="エンジンシステム\Object\3d\OBJ">
       <UniqueIdentifier>{0789e0f6-e5b2-4934-8399-12f9516c08e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Object\3d\FBX">
-      <UniqueIdentifier>{d7680875-1fb9-4320-9ca0-a948969a5f47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="エンジンシステム\Object\2d\PostEffect">
       <UniqueIdentifier>{0395157f-cfe5-4ae8-b61c-ca939ad99a27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\Object\2d\DrawLine">
-      <UniqueIdentifier>{83cf2b23-eebd-4cc1-8889-88d561f21c6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="エンジンシステム\Object\3d\DrawLine3D">
       <UniqueIdentifier>{23dfebfc-16ed-4a5a-ab22-b48d8195c6e9}</UniqueIdentifier>
@@ -143,6 +134,9 @@
     <Filter Include="シェーダーファイル\HeightMap">
       <UniqueIdentifier>{3a93725c-abc3-4024-816d-8a3a69153d13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="エンジンシステム\Object\3d\collider">
+      <UniqueIdentifier>{01e36be7-9665-4170-9568-05beaf158a24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -151,29 +145,14 @@
     <ClCompile Include="2d\DebugText.cpp">
       <Filter>エンジンシステム\Object\2d\DebugText</Filter>
     </ClCompile>
-    <ClCompile Include="2d\DrawLine.cpp">
-      <Filter>エンジンシステム\Object\2d\DrawLine</Filter>
-    </ClCompile>
     <ClCompile Include="2d\PostEffect.cpp">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="2d\Sprite.cpp">
       <Filter>エンジンシステム\Object\2d</Filter>
     </ClCompile>
-    <ClCompile Include="3d\Collision.cpp">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\CollisionManager.cpp">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\CollisionPrimitive.cpp">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClCompile>
     <ClCompile Include="3d\DrawLine3D.cpp">
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\SphereCollider.cpp">
-      <Filter>エンジンシステム\Object\collider</Filter>
     </ClCompile>
     <ClCompile Include="3d\Material.cpp">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
@@ -247,12 +226,6 @@
     <ClCompile Include="base\GraphicsPipelineManager.cpp">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClCompile>
-    <ClCompile Include="3d\FbxModel.cpp">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\MeshCollider.cpp">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClCompile>
     <ClCompile Include="scene\SceneManager.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
@@ -261,9 +234,6 @@
     </ClCompile>
     <ClCompile Include="scene\BrowsingCircle.cpp">
       <Filter>ゲームシステム\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="3d\Fbx.cpp">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClCompile>
     <ClCompile Include="3d\CubeMap.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
@@ -296,7 +266,28 @@
       <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="3d\HeightMap.cpp">
-      <Filter>エンジンシステム\Object</Filter>
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\InterfaceObject3d.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\PrimitiveObject3D.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\collider\SphereCollider.cpp">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\collider\Collision.cpp">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\collider\CollisionManager.cpp">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\collider\CollisionPrimitive.cpp">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\collider\MeshCollider.cpp">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -403,47 +394,14 @@
     <ClInclude Include="2d\DebugText.h">
       <Filter>エンジンシステム\Object\2d\DebugText</Filter>
     </ClInclude>
-    <ClInclude Include="2d\DrawLine.h">
-      <Filter>エンジンシステム\Object\2d\DrawLine</Filter>
-    </ClInclude>
     <ClInclude Include="2d\PostEffect.h">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="2d\Sprite.h">
       <Filter>エンジンシステム\Object\2d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\BaseCollider.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\Collision.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\CollisionAttribute.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\CollisionInfo.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\CollisionManager.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\CollisionPrimitive.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\CollisionTypes.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
     <ClInclude Include="3d\DrawLine3D.h">
       <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\QueryCallback.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\RaycastHit.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\SphereCollider.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
     </ClInclude>
     <ClInclude Include="3d\Material.h">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
@@ -532,12 +490,6 @@
     <ClInclude Include="base\GraphicsPipelineManager.h">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClInclude>
-    <ClInclude Include="3d\FbxModel.h">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\MeshCollider.h">
-      <Filter>エンジンシステム\Object\collider</Filter>
-    </ClInclude>
     <ClInclude Include="scene\SceneManager.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
@@ -549,9 +501,6 @@
     </ClInclude>
     <ClInclude Include="scene\BrowsingCircle.h">
       <Filter>ゲームシステム\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="3d\Fbx.h">
-      <Filter>エンジンシステム\Object\3d\FBX</Filter>
     </ClInclude>
     <ClInclude Include="3d\CubeMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
@@ -586,11 +535,50 @@
     <ClInclude Include="external\Imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="3d\HeightMap.h">
-      <Filter>エンジンシステム\Object</Filter>
-    </ClInclude>
     <ClInclude Include="base\PipelineHelpar.h">
       <Filter>エンジンシステム\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\HeightMap.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\InterfaceObject3d.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\PrimitiveObject3D.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\MeshCollider.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\QueryCallback.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\RaycastHit.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\SphereCollider.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\BaseCollider.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\Collision.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\CollisionAttribute.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\CollisionInfo.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\CollisionManager.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\CollisionPrimitive.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\collider\CollisionTypes.h">
+      <Filter>エンジンシステム\Object\3d\collider</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

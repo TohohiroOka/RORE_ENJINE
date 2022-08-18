@@ -32,13 +32,6 @@ private: // エイリアス
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
 	};
 
-private:
-
-	/// <summary>
-	/// パイプライン生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public://メンバ関数
 
 	/// <summary>
@@ -103,13 +96,15 @@ public:
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
 	/// <param name="RootParameterIndex"></param>
-	void TransferTextureBubber(ID3D12GraphicsCommandList* cmdList,UINT RootParameterIndex);
+	void TransferTextureBubber(ID3D12GraphicsCommandList* cmdList, UINT RootParameterIndex);
 
 	/// <summary>
 	/// キューブマップのセット
 	/// </summary>
 	/// <returns></returns>
 	Texture* SetTexture() { return texture.get(); }
+
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
 
 private:
 
@@ -118,7 +113,7 @@ private:
 	//コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//カメラ
 	static Camera* camera;
 	//インデックス数

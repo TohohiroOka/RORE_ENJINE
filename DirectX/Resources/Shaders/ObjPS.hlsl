@@ -13,10 +13,12 @@ float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color);
 /// </summary>
 float4 SetToon(float4 shadecolor);
 
-PSOutput main(VSOutput input)
+PSOutput main(VSOutput input) : SV_TARGET
 {
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
+
+	float4 color = float4(m_baseColor.rgb, 1.0f);
 
 	// 光沢度
 	const float shininess = 4.0f;
@@ -156,8 +158,9 @@ PSOutput main(VSOutput input)
 		shadecolor = SetToon(shadecolor);
 	}
 
+
 	// シェーディングによる色で描画
-	float4 mainColor = shadecolor * texcolor * color;
+	float4 mainColor = shadecolor * texcolor;
 	PSOutput output;
 	output.target0 = float4(mainColor.rgb, color.w);
 	output.target1 = bloom;
@@ -168,10 +171,12 @@ PSOutput main(VSOutput input)
 float4 SetBloom(float4 shadecolor, float4 texcolor, float4 color)
 {
 	//光度値の抽出
-	float LuminousIntensity = shadecolor.r * 0.299 + shadecolor.g * 0.587 + shadecolor.b * 0.114;
-	LuminousIntensity = smoothstep(0.6, 0.9, LuminousIntensity);
+	float LuminousIntensity = dot(shadecolor.rgb * texcolor.rgb, float3(0.2125, 0.7154, 0.0712));
 
-	return float4(LuminousIntensity, LuminousIntensity, LuminousIntensity, 1.0);
+	//ブルームをかける場所
+	float4 bloomColor = step(1.0, LuminousIntensity) * texcolor * color;
+
+	return bloomColor;
 }
 
 float4 SetToon(float4 shadecolor)

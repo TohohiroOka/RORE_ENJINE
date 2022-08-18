@@ -2,7 +2,7 @@
 
 #include "CollisionTypes.h"
 #include "CollisionInfo.h"
-#include "Object3d.h"
+#include "InterfaceObject3d.h"
 
 /// <summary>
 /// コライダー基底クラス
@@ -14,11 +14,11 @@ public:
 	BaseCollider() = default;
 	virtual ~BaseCollider() = default;
 
-	inline void SetObject(Object3d* object) {
+	inline void SetObject(InterfaceObject3d* object) {
 		this->object3d = object;
 	}
 
-	inline Object3d* GetObject3d() {
+	inline InterfaceObject3d* GetObject3d() {
 		return object3d;
 	}
 
@@ -27,8 +27,13 @@ public:
 	/// </summary>
 	virtual void Update() = 0;
 
+	/// <summary>
+	/// 描画
+	/// </summary>
+	virtual void Draw() = 0;
+
 	inline CollisionShapeType GetShapeType() { return shapeType; }
-	
+
 	/// <summary>
 	/// 衝突時コールバック関数
 	/// </summary>
@@ -62,10 +67,9 @@ public:
 	}
 
 protected:
-	Object3d* object3d = nullptr;
+	InterfaceObject3d* object3d = nullptr;
 	// 形状タイプ
 	CollisionShapeType shapeType = SHAPE_UNKNOWN;
 	// 当たり判定属性
 	unsigned short attribute = 0b1111111111111111;
 };
-

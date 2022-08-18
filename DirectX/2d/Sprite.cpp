@@ -1,14 +1,13 @@
 #include "Sprite.h"
 #include "WindowApp.h"
 #include <cassert>
-#include <DirectXTex.h>
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 ID3D12Device* Sprite::device = nullptr;
 ID3D12GraphicsCommandList* Sprite::cmdList = nullptr;
-std::unique_ptr<GraphicsPipelineManager> Sprite::pipeline = nullptr;
+GraphicsPipelineManager::GRAPHICS_PIPELINE Sprite::pipeline;
 std::map<std::string, Sprite::Information> Sprite::texture;
 XMMATRIX Sprite::matProjection;
 
@@ -28,9 +27,6 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 
 	Sprite::device = device;
 
-	// グラフィックパイプラインの生成
-	CreateGraphicsPipeline();
-
 	// 射影行列計算
 	matProjection = XMMatrixOrthographicOffCenterLH(
 		0.0f, (float)WindowApp::GetWindowWidth(),
@@ -40,26 +36,6 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 	Sprite::LoadTexture("debugfont", "Resources/LetterResources/debugfont.png", false);
 
 	return true;
-}
-
-void Sprite::CreateGraphicsPipeline()
-{
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標(1行で書いたほうが見やすい)
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("Sprite",
-		GraphicsPipelineManager::OBJECT_KINDS::SPRITE, inputLayout, _countof(inputLayout));
 }
 
 void Sprite::LoadTexture(const std::string keepName, const std::string filename, const bool isDelete)
@@ -83,9 +59,9 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	Sprite::cmdList = cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 	// プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 }
@@ -117,7 +93,7 @@ std::unique_ptr<Sprite> Sprite::Create(const std::string name)
 	return std::unique_ptr<Sprite>(instance);
 }
 
-bool Sprite::Initialize(const std::string name,const XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
+bool Sprite::Initialize(const std::string name, const XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	this->name = name;
 	this->anchorpoint = anchorpoint;
@@ -282,5 +258,4 @@ void Sprite::Finalize()
 		(*itr).second.instance.reset();
 	}
 	texture.clear();
-	pipeline.reset();
 }

@@ -78,20 +78,7 @@ private: // 定数
 	static const int vertexCount = 512;// 頂点数
 	std::forward_list<Particle>particle;
 
-private: // 静的メンバ関数
-
-	/// <summary>
-	/// パイプライン生成
-	/// </summary>
-	static void CreateGraphicsPipeline();
-
 public: // 静的メンバ関数
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
 
 	/// <summary>
 	/// テクスチャ読み込み
@@ -107,6 +94,14 @@ public: // 静的メンバ関数
 	/// <param name="name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
 	static std::unique_ptr<ParticleManager> Create(const std::string name);
+
+	/// <summary>
+	/// デバイスのセット
+	/// </summary>
+	/// <param name="camera">デバイス</param>
+	static void SetDevice(ID3D12Device* device) {
+		ParticleManager::device = device;
+	}
 
 	/// <summary>
 	/// カメラのセット
@@ -126,6 +121,8 @@ public: // 静的メンバ関数
 	/// </summary>
 	static void Finalize();
 
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+
 private: // 静的メンバ変数
 
 	// デバイス
@@ -135,7 +132,7 @@ private: // 静的メンバ変数
 	//カメラ
 	static Camera* camera;
 	//パイプライン
-	static std::unique_ptr<GraphicsPipelineManager> pipeline;
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//テクスチャ情報
 	static std::map<std::string, Information> texture;
 	//ビルボード行列

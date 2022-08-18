@@ -1,9 +1,6 @@
 #include "DrawLine3D.h"
 #include "Camera.h"
-#include "SafeDelete.h"
 
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -14,7 +11,7 @@ using namespace std;
 ID3D12Device* DrawLine3D::device = nullptr;
 ID3D12GraphicsCommandList* DrawLine3D::cmdList = nullptr;
 Camera* DrawLine3D::camera = nullptr;
-std::unique_ptr<GraphicsPipelineManager> DrawLine3D::pipeline;
+GraphicsPipelineManager::GRAPHICS_PIPELINE DrawLine3D::pipeline;
 
 const float PI = 3.141592f;
 
@@ -24,21 +21,6 @@ DrawLine3D::~DrawLine3D()
 	vertBuff.Reset();
 	indexBuff.Reset();
 	constBuff.Reset();
-}
-
-void DrawLine3D::CreateGraphicsPipeline()
-{
-	////頂点レイアウト配列の宣言と設定
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	pipeline = GraphicsPipelineManager::Create("DrawLine3d",
-		GraphicsPipelineManager::OBJECT_KINDS::DRAW_LINE_3D, inputLayout, _countof(inputLayout));
 }
 
 std::unique_ptr<DrawLine3D> DrawLine3D::Create(UINT LineNum)
@@ -69,9 +51,6 @@ void DrawLine3D::StaticInitialize(ID3D12Device* device)
 	assert(device);
 
 	DrawLine3D::device = device;
-
-	//パイプライン設定
-	CreateGraphicsPipeline();
 }
 
 bool DrawLine3D::Initialize(UINT LineNum)
@@ -224,11 +203,11 @@ void DrawLine3D::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
 	DrawLine3D::cmdList = cmdList;
 
-	//パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline->pipelineState.Get());
+	// パイプラインステートの設定
+	cmdList->SetPipelineState(pipeline.pipelineState.Get());
 
-	//ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline->rootSignature.Get());
+	// ルートシグネチャの設定
+	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -265,11 +244,10 @@ void DrawLine3D::Update()
 	constMap->matWorld = matWorld;
 	if (camera != nullptr)
 	{
-		constMap->matView = camera->GetView();
-		constMap->maProjection = camera->GetProjection();
+		const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
+		constMap->viewproj = matViewProjection;
 	} else {
-		constMap->matView = XMMatrixIdentity();
-		constMap->maProjection = XMMatrixIdentity();
+		constMap->viewproj = XMMatrixIdentity();
 	}
 
 	constBuff->Unmap(0, nullptr);
@@ -288,9 +266,4 @@ void DrawLine3D::Draw()
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(INDEX_ARRAY_NUM, 1, 0, 0, 0);
-}
-
-void DrawLine3D::Finalize()
-{
-	pipeline.reset();
 }
