@@ -19,6 +19,8 @@ void TestField::Initialize()
 
 	player = Player::Create(playerModel.get());
 	ground = Ground::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
+
+	//tmap = TouchableObject::Create(groundModel.get());
 }
 
 void TestField::Update()
@@ -52,6 +54,7 @@ void TestField::Update()
 	//heightmap->Update();
 	player->Update();
 	ground->Update();
+	//tmap->Update();
 
 	if (input->TriggerKey(DIK_L))
 	{
@@ -84,9 +87,15 @@ void TestField::Draw()
 	{
 		Object3d::PreDraw();
 		player->Draw();
+		//tmap->Draw();
 		HeightMap::PreDraw();
 		ground->Draw();
+		
 	}
+
+	//PrimitiveObject3D::PreDraw();
+	//ground->CDraw();
+
 	InterfaceObject3d::ReleaseCmdList();
 }
 

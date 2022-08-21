@@ -1,7 +1,89 @@
 ﻿#include "MeshCollider.h"
 #include "Collision.h"
+#include <bitset>
 
 using namespace DirectX;
+
+void MeshCollider::MinMax(Model* model)
+{
+	const std::vector<Mesh*>& meshes = model->GetMeshes();
+	std::vector<Mesh*>::const_iterator it = meshes.cbegin();
+
+	//[0]最大[1]最小
+	XMFLOAT3 minmax[2] = { {0,0,0},{100,100,100} };
+
+	for (; it != meshes.cend(); ++it) {
+		Mesh* mesh = *it;
+		const std::vector<Mesh::Vertex>& vertices = mesh->GetVertices();
+		const int size = static_cast<int>(vertices.size());
+
+		for (int i = 0; i < size; i++)
+		{
+			if (vertices[i].pos.x > minmax[0].x)
+			{
+				minmax[0].x = vertices[i].pos.x;
+			}
+			else if (vertices[i].pos.x < minmax[1].x)
+			{
+				minmax[1].x = vertices[i].pos.x;
+			}
+
+			if (vertices[i].pos.y > minmax[0].y)
+			{
+				minmax[0].y = vertices[i].pos.y;
+			}
+			else if (vertices[i].pos.y < minmax[1].y)
+			{
+				minmax[1].y = vertices[i].pos.y;
+			}
+
+			if (vertices[i].pos.z > minmax[0].z)
+			{
+				minmax[0].z = vertices[i].pos.z;
+			}
+			else if (vertices[i].pos.z < minmax[1].z)
+			{
+				minmax[1].z = vertices[i].pos.z;
+			}
+		}
+	}
+
+	min = minmax[1];
+	max = minmax[0];
+}
+
+int MeshCollider::OctreeSet(XMFLOAT3 pos)
+{
+	int octtreenum[2] = {};
+	for (int i = 0; i < 8; i++)
+	{
+		if (octtreeRange[i].x < pos.x && pos.x < octtreeRange[i + 1].x)
+		{
+			octtreenum[0] = i;
+			break;
+		}
+	}
+	for (int i = 0; i < 8; i++)
+	{
+		if (octtreeRange[i].z < pos.z && pos.z < octtreeRange[i + 1].z)
+		{
+			octtreenum[1] = i;
+			break;
+		}
+	}
+
+	std::string binaryX = std::bitset<3>(octtreenum[0]).to_string();
+	std::string binaryZ = std::bitset<3>(octtreenum[1]).to_string();
+
+	std::string nowBinary =
+		binaryZ.substr(0, 1) + binaryX.substr(0, 1) +
+		binaryZ.substr(1, 1) + binaryX.substr(1, 1) +
+		binaryZ.substr(2, 1) + binaryX.substr(2, 1);
+
+	int Octree = strtoul(nowBinary.c_str(), NULL, 2);
+
+	return Octree;
+}
 
 void MeshCollider::ConstructTriangles(Model* model)
 {
@@ -16,6 +98,16 @@ void MeshCollider::ConstructTriangles(Model* model)
 	const std::vector<Mesh*>& meshes = model->GetMeshes();
 
 	int start = 0;
+
+	MinMax(model);
+
+	XMFLOAT3 minmaxRange = { max.x - min.x,max.y - min.y,max.z - min.z };
+	for (int i = 0; i < 9; i++)
+	{
+		octtreeRange[i].x = minmaxRange.x / 8 * i;
+		octtreeRange[i].y = minmaxRange.y / 8 * i;
+		octtreeRange[i].z = minmaxRange.z / 8 * i;
+	}
 
 	std::vector<Mesh*>::const_iterator it = meshes.cbegin();
 	for (; it != meshes.cend(); ++it) {
@@ -53,18 +145,19 @@ void MeshCollider::ConstructTriangles(Model* model)
 
 			tri.ComputeNormal();
 
-			//XMFLOAT3 normalnormal =
-			//{
-			//	vertices[idx0].normal.x + vertices[idx1].normal.x + vertices[idx2].normal.x,
-			//	vertices[idx0].normal.y + vertices[idx1].normal.y + vertices[idx2].normal.y,
-			//	vertices[idx0].normal.z + vertices[idx1].normal.z + vertices[idx2].normal.z,
-			//};
+			int Octree1 = OctreeSet(vertices[idx0].pos);
+			int Octree2 = OctreeSet(vertices[idx1].pos);
+			int Octree3 = OctreeSet(vertices[idx2].pos);
 
-			//tri.normal = {
-			//	normalnormal.x / 3.0f,
-			//	normalnormal.y / 3.0f,
-			//	normalnormal.z / 3.0f,
-			//	1 };
+			tri.Octree.push_back(Octree1);
+			if (Octree1 != Octree2)
+			{
+				tri.Octree.push_back(Octree2);
+			}
+			if (Octree1 != Octree3&& Octree2 != Octree3)
+			{
+				tri.Octree.push_back(Octree3);
+			}
 
 			object->SetVertex(vertices[idx0].pos);
 			object->SetVertex(vertices[idx1].pos);
@@ -126,10 +219,28 @@ bool MeshCollider::CheckCollisionRay(const Ray & ray, float * distance, DirectX:
 	localRay.start = XMVector3Transform(ray.start, invMatWorld);
 	localRay.dir = XMVector3TransformNormal(ray.dir, invMatWorld);
 
+	if (localRay.start.m128_f32[0] < min.x || localRay.start.m128_f32[0] > max.x ||
+		localRay.start.m128_f32[2] < min.z || localRay.start.m128_f32[2] > max.z)
+	{
+		return false;
+	}
+
 	std::vector<Triangle>::const_iterator it = triangles.cbegin();
+
+	//プレイヤーの八分木位置
+	const int Octree = OctreeSet({ localRay.start.m128_f32[0],localRay.start.m128_f32[1],localRay.start.m128_f32[2] });
 
 	for (; it != triangles.cend(); ++it) {
 		const Triangle& triangle = *it;
+
+		int triOctSize = static_cast<int>(triangle.Octree.size());
+		int cntiNum = 0;
+		for (int i = 0; i < triOctSize; i++)
+		{
+			if (triangle.Octree[i] != Octree) { cntiNum++; }
+		}
+
+		if (triOctSize == cntiNum) { continue; }
 
 		XMVECTOR tempInter;
 

@@ -38,7 +38,7 @@ void Mesh::AddIndex(unsigned long index)
 	indices.emplace_back(index);
 }
 
-void Mesh::AddSmoothData(unsigned short indexPosition, unsigned short indexVertex)
+void Mesh::AddSmoothData(unsigned long indexPosition, unsigned long indexVertex)
 {
 	smoothData[indexPosition].emplace_back(indexVertex);
 }
@@ -48,15 +48,15 @@ void Mesh::CalculateSmoothedVertexNormals()
 	auto itr = smoothData.begin();
 	for (; itr != smoothData.end(); ++itr) {
 		// 各面用の共通頂点コレクション
-		std::vector<unsigned short>& v = itr->second;
+		std::vector<unsigned long>& v = itr->second;
 		// 全頂点の法線を平均する
 		XMVECTOR normal = {};
-		for (unsigned short index : v) {
+		for (unsigned long index : v) {
 			normal += XMVectorSet(vertices[index].normal.x, vertices[index].normal.y, vertices[index].normal.z, 0);
 		}
 		normal = XMVector3Normalize(normal / (float)v.size());
 
-		for (unsigned short index : v) {
+		for (unsigned long index : v) {
 			vertices[index].normal = { normal.m128_f32[0], normal.m128_f32[1], normal.m128_f32[2] };
 		}
 	}

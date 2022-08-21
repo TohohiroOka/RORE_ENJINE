@@ -4,6 +4,8 @@
 /// </summary>
 
 #include <DirectXMath.h>
+#include <vector>
+
 
 /// <summary>
 /// 球
@@ -39,6 +41,9 @@ public:
 	DirectX::XMVECTOR	p2;
 	// 法線ベクトル
 	DirectX::XMVECTOR	normal;
+
+	//八分木
+	std::vector<int> Octree;
 
 	/// <summary>
 	/// 法線の計算

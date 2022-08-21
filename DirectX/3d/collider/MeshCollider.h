@@ -20,6 +20,19 @@ public:
 	}
 
 	/// <summary>
+	/// 八分木の最大最小の保存
+	/// </summary>
+	/// <param name="model">モデル</param>
+	void MinMax(Model* model);
+
+	/// <summary>
+	/// 八分木の現在地セット
+	/// </summary>
+	/// <param name="pos">座標</param>
+	/// <returns>現在番号</returns>
+	int OctreeSet(DirectX::XMFLOAT3 pos);
+
+	/// <summary>
 	/// 三角形の配列を構築する
 	/// </summary>
 	void ConstructTriangles(Model* model);
@@ -53,7 +66,14 @@ public:
 	bool CheckCollisionRay(const Ray& ray, float* distance = nullptr, DirectX::XMVECTOR*inter = nullptr);
 
 private:
+	//判定用三角形
 	std::vector<Triangle> triangles;
+	//八分木の最小値
+	DirectX::XMFLOAT3 min = {};
+	//八分木の最大値
+	DirectX::XMFLOAT3 max = {};
+	//八分木の分割範囲
+	DirectX::XMFLOAT3 octtreeRange[9] = {};
 	// ワールド行列の逆行列
 	DirectX::XMMATRIX invMatWorld;
 	//オブジェクトの初期化フラグ

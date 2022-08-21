@@ -243,7 +243,6 @@ void HeightMap::Initialize()
 		indices[index] = basicsIndices[5] + vertexNum;
 	}
 
-
 	int normalNum = static_cast<int>(indices.size() / 3);
 	for (int i = 0; i < normalNum; i++)
 	{
@@ -268,6 +267,50 @@ void HeightMap::Initialize()
 		XMStoreFloat3(&vertices[index2].normal, normal);
 		XMStoreFloat3(&vertices[index3].normal, normal);
 	}
+
+	//const int Size = windthSize * 2;
+
+	//for (int i = 0; i < vertNum; i++)
+	//{
+	//	int index1 = i - Size;// ‰º
+	//	int index2 = i + Size;// ã
+	//	int index3 = i - 1;// ¶
+	//	int index4 = i + 1;// ‰E
+
+	//	XMFLOAT3 addNormal = { 0,0,0 };
+
+	//	if (index1 > 0)
+	//	{
+	//		addNormal.x += vertices[index1].normal.x;
+	//		addNormal.y += vertices[index1].normal.y;
+	//		addNormal.z += vertices[index1].normal.z;
+	//	}
+	//	if (index2 < vertNum)
+	//	{
+	//		addNormal.x += vertices[index2].normal.x;
+	//		addNormal.y += vertices[index2].normal.y;
+	//		addNormal.z += vertices[index2].normal.z;
+	//	}
+
+	//	const int retuhaba = ((i / Size) + 1) * Size;
+	//	if (index3 > retuhaba -Size)
+	//	{
+	//		addNormal.x += vertices[index3].normal.x;
+	//		addNormal.y += vertices[index3].normal.y;
+	//		addNormal.z += vertices[index3].normal.z;
+	//	}
+	//	if (index4 < retuhaba)
+	//	{
+	//		addNormal.x += vertices[index4].normal.x;
+	//		addNormal.y += vertices[index4].normal.y;
+	//		addNormal.z += vertices[index4].normal.z;
+	//	}
+
+	//	vertices[i].normal = {
+	//		addNormal.x / 4.0f,
+	//		addNormal.y / 4.0f,
+	//		addNormal.z / 4.0f };
+	//}
 
 	Mesh* mesh = new Mesh;
 

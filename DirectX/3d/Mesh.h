@@ -90,7 +90,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="indexPosition">座標インデックス</param>
 	/// <param name="indexVertex">頂点インデックス</param>
-	void AddSmoothData(unsigned short indexPosition, unsigned short indexVertex);
+	void AddSmoothData(unsigned long indexPosition, unsigned long indexVertex);
 
 	/// <summary>
 	/// 平滑化された頂点法線の計算
@@ -166,7 +166,7 @@ private: // メンバ変数
 	// 頂点インデックス配列
 	std::vector<unsigned long> indices;
 	// 頂点法線スムージング用データ
-	std::unordered_map<unsigned short, std::vector<unsigned short>> smoothData;
+	std::unordered_map<unsigned long, std::vector<unsigned long>> smoothData;
 	// マテリアル
 	Material* material = nullptr;
 };

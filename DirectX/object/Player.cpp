@@ -50,7 +50,7 @@ void Player::Update()
 	DirectInput* input = DirectInput::GetInstance();
 
 	//player移動
-	float Pspeed = 2.0f;
+	float Pspeed = 5.0f;
 
 	//ラジアン変換
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
@@ -79,8 +79,8 @@ void Player::Update()
 	// 落下処理
 	if (!onGround) {
 		// 下向き加速度
-		const float fallAcc = -0.01f;
-		const float fallVYMin = -0.5f;
+		const float fallAcc = -0.1f;
+		const float fallVYMin = -3.0f;
 		// 加速
 		fallV.m128_f32[1] = max(fallV.m128_f32[1] + fallAcc, fallVYMin);
 		// 移動
@@ -97,7 +97,7 @@ void Player::Update()
 
 	if (input->PushKey(DIK_RETURN))
 	{
-		position.y += 1.0f;
+		position.y += 5.0f;
 	}
 
 	SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(object->GetCollider());

@@ -2,6 +2,7 @@
 #include "InterfaceScene.h"
 #include "Player.h"
 #include "Ground.h"
+#include "TouchableObject.h"
 
 class TestField : public InterfaceScene
 {
@@ -50,6 +51,8 @@ private:
 
 	std::unique_ptr<Player> player = nullptr;
 	std::unique_ptr<Ground> ground = nullptr;
+
+	std::unique_ptr<TouchableObject> tmap = nullptr;
 
 	bool isDraw = true;
 };

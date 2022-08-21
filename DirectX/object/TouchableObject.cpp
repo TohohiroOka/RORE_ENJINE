@@ -31,5 +31,7 @@ bool TouchableObject::Initialize(Model* model)
 	collider->ConstructTriangles(model);
 	collider->SetAttribute(COLLISION_ATTR_LANDSHAPE);
 
+	SetScale(50.0f);
+
 	return true;
 }
