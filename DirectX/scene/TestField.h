@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Ground.h"
 #include "TouchableObject.h"
+#include <array>
 
 class TestField : public InterfaceScene
 {
@@ -50,7 +51,8 @@ private:
 	std::unique_ptr<Model> groundModel = nullptr;
 
 	std::unique_ptr<Player> player = nullptr;
-	std::unique_ptr<Ground> ground = nullptr;
+	static const int groundNum = 2;
+	std::array<std::unique_ptr<Ground>, groundNum> ground;
 
 	std::unique_ptr<TouchableObject> tmap = nullptr;
 

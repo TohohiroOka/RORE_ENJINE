@@ -168,7 +168,8 @@ void MeshCollider::ConstructTriangles(Model* model)
 
 void MeshCollider::Update()
 {
-	invMatWorld = XMMatrixInverse(nullptr, GetObject3d()->GetMatWorld());
+	matWorld = GetObject3d()->GetMatWorld();
+	invMatWorld = XMMatrixInverse(nullptr, matWorld);
 	if (isInit && !isCreateBuffer)
 	{
 		object->Initialize();
@@ -219,8 +220,13 @@ bool MeshCollider::CheckCollisionRay(const Ray & ray, float * distance, DirectX:
 	localRay.start = XMVector3Transform(ray.start, invMatWorld);
 	localRay.dir = XMVector3TransformNormal(ray.dir, invMatWorld);
 
-	if (localRay.start.m128_f32[0] < min.x || localRay.start.m128_f32[0] > max.x ||
-		localRay.start.m128_f32[2] < min.z || localRay.start.m128_f32[2] > max.z)
+	XMVECTOR vecmax = { max.x,max.y ,max.z,1 };
+	XMVECTOR vecmin = { min.x,min.y ,min.z,1 };
+	XMVECTOR worldmax = XMVector3Transform(vecmax, matWorld);
+	XMVECTOR worldmin = XMVector3Transform(vecmin, matWorld);
+
+	if (ray.start.m128_f32[0] < worldmin.m128_f32[0] || ray.start.m128_f32[0] > worldmax.m128_f32[0] ||
+		ray.start.m128_f32[2] <  worldmin.m128_f32[2] || ray.start.m128_f32[2] >  worldmax.m128_f32[2])
 	{
 		return false;
 	}

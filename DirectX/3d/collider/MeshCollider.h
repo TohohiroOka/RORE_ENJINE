@@ -74,6 +74,8 @@ private:
 	DirectX::XMFLOAT3 max = {};
 	//八分木の分割範囲
 	DirectX::XMFLOAT3 octtreeRange[9] = {};
+	// ワールド行列
+	DirectX::XMMATRIX matWorld;
 	// ワールド行列の逆行列
 	DirectX::XMMATRIX invMatWorld;
 	//オブジェクトの初期化フラグ

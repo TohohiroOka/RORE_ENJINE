@@ -42,7 +42,7 @@ void Player::Initialize()
 	object->SetPosition({ 0,0,-100 });
 
 	//SetToon(true);
-	object->SetScale({ 2,2,2 });
+	object->SetScale({ 1,1,1 });
 }
 
 void Player::Update()
@@ -50,7 +50,7 @@ void Player::Update()
 	DirectInput* input = DirectInput::GetInstance();
 
 	//player移動
-	float Pspeed = 5.0f;
+	float Pspeed = 3.0f;
 
 	//ラジアン変換
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);

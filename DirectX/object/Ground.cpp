@@ -20,6 +20,8 @@ std::unique_ptr<Ground> Ground::Create(const std::string heightmapFilename,
 
 void Ground::Initialize()
 {
+	object->SetScale({ 10,10,10 });
+
 	// コライダーの追加
 	MeshCollider* collider = new MeshCollider;
 	object->SetCollider(collider);
@@ -40,4 +42,9 @@ void Ground::Draw()
 void Ground::CDraw()
 {
 	object->ColliderDraw();
+}
+
+void Ground::SetPos(DirectX::XMFLOAT3 pos)
+{
+	object->SetPosition(pos);
 }

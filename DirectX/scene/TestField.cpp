@@ -18,7 +18,16 @@ void TestField::Initialize()
 	groundModel = Model::CreateFromOBJ("map");
 
 	player = Player::Create(playerModel.get());
-	ground = Ground::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
+	ground[0] = Ground::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
+	
+	ground[1] = Ground::Create("heightmap03.bmp", "Dirt.jpg", "Grass.jpg");
+	ground[1]->SetPos({ -2550.0f,0.0f,0.0f });
+	
+	//ground[2] = Ground::Create("heightmap03.bmp", "Dirt.jpg", "Grass.jpg");
+	//ground[2]->SetPos({ 0.0f,0.0f,-2550.0f });
+	//
+	//ground[3] = Ground::Create("heightmap04.bmp", "Dirt.jpg", "Grass.jpg");
+	//ground[3]->SetPos({ -2550.0f,0.0f,-2550.0f });
 
 	//tmap = TouchableObject::Create(groundModel.get());
 }
@@ -53,7 +62,10 @@ void TestField::Update()
 
 	//heightmap->Update();
 	player->Update();
-	ground->Update();
+	for (int i = 0; i < groundNum; i++)
+	{
+		ground[i]->Update();
+	}
 	//tmap->Update();
 
 	if (input->TriggerKey(DIK_L))
@@ -89,7 +101,10 @@ void TestField::Draw()
 		player->Draw();
 		//tmap->Draw();
 		HeightMap::PreDraw();
-		ground->Draw();
+		for (int i = 0; i < groundNum; i++)
+		{
+			ground[i]->Draw();
+		}
 		
 	}
 

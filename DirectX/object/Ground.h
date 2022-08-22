@@ -23,6 +23,8 @@ public:
 
 	void CDraw();
 
+	void SetPos(DirectX::XMFLOAT3 pos);
+
 private:
 
 	std::unique_ptr<HeightMap> object = nullptr;
