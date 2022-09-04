@@ -34,10 +34,10 @@ void Camera::Update()
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&inoutEye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 }
 
-void Camera::StartCameraShake(int strength)
+void Camera::StartCameraShake(int _strength)
 {
-	int x = (rand() % strength * 2) - strength;
-	int y = (rand() % strength * 2) - strength;
+	int x = (rand() % _strength * 2) - _strength;
+	int y = (rand() % _strength * 2) - _strength;
 
 	ShakeDifference = { (float)x ,(float)y,0.0f };
 }

@@ -8,7 +8,25 @@
 
 using namespace DirectX;
 
-std::unique_ptr<Player> Player::Create(Model* model)
+bool Player::isTargeting = false;
+XMFLOAT3 Player::targetPos = {};
+
+//二点間の角度算出
+float GetAngle(XMFLOAT2 startPoint, XMFLOAT2 endPoint) {
+	float radian = atan2f(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
+	float angle = XMConvertToDegrees(radian);
+	return angle;
+}
+
+//二点間の距離算出
+float GetDistance(XMFLOAT2 startPoint, XMFLOAT2 endPoint) {
+	float x = powf(endPoint.x - startPoint.x, 2);
+	float y = powf(endPoint.y - startPoint.y, 2);
+
+	return sqrt(x + y);
+}
+
+std::unique_ptr<Player> Player::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Player* instance = new Player();
@@ -16,8 +34,11 @@ std::unique_ptr<Player> Player::Create(Model* model)
 		return nullptr;
 	}
 
+	//モデル読み込み
+	instance->model = Model::CreateFromOBJ("uma");
+
 	// 初期化
-	instance->object = Object3d::Create(model);
+	instance->object = Object3d::Create(instance->model.get());
 
 	instance->Initialize();
 
@@ -39,38 +60,52 @@ void Player::Initialize()
 	object->SetOutlineWidth(0.002f);
 	object->SetOutlineColor({ 1,1,1,1 });
 
-	object->SetPosition({ 0,0,-100 });
+	object->SetPosition({ 50,100,50 });
 
 	//SetToon(true);
 	object->SetScale({ 1,1,1 });
+
+	bullet = PlayerBullet::Create();
 }
 
 void Player::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
-
-	//player移動
-	float Pspeed = 3.0f;
+	XMFLOAT3 position = object->GetPosition();
 
 	//ラジアン変換
-	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
-	float radiusUD = XMConvertToRadians(cameraAngle);
+	float radiusLR = 0;
+	float radiusUD = 0;
 
-	//右入力
+	if (!isTargeting)
+	{
+		radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
+		radiusUD = XMConvertToRadians(cameraAngle);
+	}
+	else
+	{
+		float angle = GetAngle({ position.x,position.z }, { targetPos.x,targetPos.z });
+		radiusLR = XMConvertToRadians(angle - 90.0f);
+		radiusUD = XMConvertToRadians(angle + 180);
+	}
+
+	const float Pspeed = 3.0f;
+	//左へ移動
 	if (input->PushKey(DIK_A)) {
 		position.x -= Pspeed * cosf(radiusLR);
 		position.z -= Pspeed * sinf(radiusLR);
 	}
-	//左入力
+	//右へ移動
 	if (input->PushKey(DIK_D)) {
 		position.x += Pspeed * cosf(radiusLR);
 		position.z += Pspeed * sinf(radiusLR);
 	}
+	//前へ移動
 	if (input->PushKey(DIK_W)) {
 		position.x -= Pspeed * cosf(radiusUD);
 		position.z -= Pspeed * sinf(radiusUD);
 	}
-	//左入力
+	//後へ移動
 	if (input->PushKey(DIK_S)) {
 		position.x += Pspeed * cosf(radiusUD);
 		position.z += Pspeed * sinf(radiusUD);
@@ -110,7 +145,7 @@ void Player::Update()
 		PlayerQueryCallback(Sphere* sphere) : sphere(sphere) {};
 
 		// 衝突時コールバック関数
-		bool OnQueryHit(const QueryHit& info) {
+		bool OnQueryHit(const QUERY_HIT& info) {
 
 			const XMVECTOR up = { 0,1,0,0 };
 
@@ -146,7 +181,7 @@ void Player::Update()
 	ray.start = sphereCollider->center;
 	ray.start.m128_f32[1] += sphereCollider->GetRadius();
 	ray.dir = { 0.0f,-1.0f,0.0f,0.0f };
-	RaycastHit raycastHit;
+	RAYCAST_HIT raycastHit;
 
 	// 接地状態
 	if (onGround) {
@@ -176,10 +211,40 @@ void Player::Update()
 	object->SetPosition(position);
 	object->Update();
 
+	if (input->TriggerKey(DIK_SPACE))
+	{
+		bullet->Reset();
+	}
+
+	//弾更新
+	bullet->Update();
+
 	input = nullptr;
 }
 
 void Player::Draw()
 {
 	object->Draw();
+	bullet->Draw();
+}
+
+void Player::BulletUpdate(const XMFLOAT3 target)
+{
+	XMFLOAT3 vecPt = {};
+	XMFLOAT3 position = object->GetPosition();
+	vecPt.x = target.x - position.x;
+	vecPt.y = target.y - position.y;
+	vecPt.z = target.z - position.z;
+
+	//正規化
+	float x = powf(vecPt.x, 2);
+	float y = powf(vecPt.y, 2);
+	float z = powf(vecPt.z, 2);
+	float dist = sqrt(x + y + z);
+	dist = 1.0f / dist;
+	vecPt.x *= dist;
+	vecPt.y *= dist;
+	vecPt.z *= dist;
+
+	bullet->SetMove(object->GetPosition(), vecPt);
 }

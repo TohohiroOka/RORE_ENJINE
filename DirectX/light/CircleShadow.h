@@ -18,7 +18,7 @@ private: // エイリアス
 public: // サブクラス
 
 	// 定数バッファ用データ構造体
-	struct ConstBufferData
+	struct CONST_BUFFER_DATA
 	{
 		XMVECTOR dir;
 		XMFLOAT3 casterPos;
@@ -32,24 +32,24 @@ public: // サブクラス
 
 public: // メンバ関数
 
-	inline void SetDir(const XMVECTOR& dir) { this->dir = DirectX::XMVector3Normalize(dir); }
+	inline void SetDir(const XMVECTOR& _dir) { this->dir = DirectX::XMVector3Normalize(_dir); }
 	inline const XMVECTOR& GetDir() { return dir; }
 
-	inline void SetCasterPos(const XMFLOAT3& casterPos) { this->casterPos = casterPos; }
+	inline void SetCasterPos(const XMFLOAT3& _casterPos) { this->casterPos = _casterPos; }
 	inline const XMFLOAT3& GetCasterPos() { return casterPos; }
 
-	inline void SetDistanceCasterLight(float distanceCasterLight) { this->distanceCasterLight = distanceCasterLight; }
+	inline void SetDistanceCasterLight(float _distanceCasterLight) { this->distanceCasterLight = _distanceCasterLight; }
 	inline float GetDistanceCasterLight() { return distanceCasterLight; }
 
-	inline void SetAtten(const XMFLOAT3& atten) { this->atten = atten; }
+	inline void SetAtten(const XMFLOAT3& _atten) { this->atten = _atten; }
 	inline const XMFLOAT3& GetAtten() { return atten; }
 
-	inline void SetFactorAngle(const XMFLOAT2& factorAngle) {
-		this->factorAngleCos.x = cosf(DirectX::XMConvertToRadians(factorAngle.x));
-		this->factorAngleCos.y = cosf(DirectX::XMConvertToRadians(factorAngle.y));}
+	inline void SetFactorAngle(const XMFLOAT2& _factorAngle) {
+		this->factorAngleCos.x = cosf(DirectX::XMConvertToRadians(_factorAngle.x));
+		this->factorAngleCos.y = cosf(DirectX::XMConvertToRadians(_factorAngle.y));}
 	inline const XMFLOAT2& GetFactorAngleCos() { return factorAngleCos; }
 
-	inline void SetActive(bool active) { this->active = active; }
+	inline void SetActive(bool _active) { this->active = _active; }
 	inline bool IsActive() { return active; }
 
 private: // メンバ変数

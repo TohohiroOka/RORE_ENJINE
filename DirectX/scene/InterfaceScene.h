@@ -58,12 +58,12 @@ public:
 	/// <summary>
 	/// imguiの表示
 	/// </summary>
-	virtual void ImguiDraw() = 0;
+	virtual void ImguiDraw() {};
 
 	/// <summary>
 	/// コンピュートシェーダーからの計算結果取得
 	/// </summary>
-	virtual void GetConstbufferNum() = 0;
+	virtual void GetConstbufferNum() {};
 
 	/// <summary>
 	/// コマンドリストのセット

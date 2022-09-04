@@ -6,9 +6,9 @@
 
 using namespace std;
 
-void Csv::LoadFile(string fileName, vector<vector<int>> map)
+void Csv::LoadFile(string _fileName, vector<vector<int>> _map)
 {
-	std::ifstream ifs(fileName);
+	std::ifstream ifs(_fileName);
 	std::string line;
 	int y = 0;
 
@@ -19,11 +19,11 @@ void Csv::LoadFile(string fileName, vector<vector<int>> map)
 
 		int addY = y + 1;
 
-		map.resize(addY);
+		_map.resize(addY);
 
 		while (std::getline(stream, field, ','))
 		{
-			map[y].push_back(stoi(field));
+			_map[y].push_back(stoi(field));
 		}
 
 		//ŽŸ‚Ì’i‚É‚¢‚­
@@ -31,18 +31,18 @@ void Csv::LoadFile(string fileName, vector<vector<int>> map)
 	}
 }
 
-int Csv::GetChipNum(vector<vector<int>> map, float chipSize, XMFLOAT2 position)
+int Csv::GetChipNum(vector<vector<int>> _map, float _chipSize, XMFLOAT2 _position)
 {
-	int X = (UINT)(position.x / chipSize);
-	int Y = (UINT)(position.y / chipSize);
+	int x = (UINT)(_position.x / _chipSize);
+	int y = (UINT)(_position.y / _chipSize);
 
-	int maxX = (UINT)map[0].size();
-	int maxY = (UINT)map.size();
+	int maxX = (UINT)_map[0].size();
+	int maxY = (UINT)_map.size();
 
-	if (X < 0 || X >= maxX || Y < 0 || Y >= maxY)
+	if (x < 0 || x >= maxX || y < 0 || y >= maxY)
 	{
 		return 0;
 	}
 
-	return map[Y][X];
+	return _map[y][x];
 }

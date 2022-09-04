@@ -12,15 +12,15 @@ ID3D12GraphicsCommandList* CubeMap::cmdList = nullptr;
 GraphicsPipelineManager::GRAPHICS_PIPELINE CubeMap::pipeline;
 Camera* CubeMap::camera = nullptr;
 
-void CubeMap::StaticInitialize(ID3D12Device* device)
+void CubeMap::StaticInitialize(ID3D12Device* _device)
 {
 	// 再初期化チェック
 	assert(!CubeMap::device);
-	assert(device);
-	CubeMap::device = device;
+	assert(_device);
+	CubeMap::device = _device;
 }
 
-std::unique_ptr<CubeMap> CubeMap::Create(ID3D12GraphicsCommandList* cmdList)
+std::unique_ptr<CubeMap> CubeMap::Create(ID3D12GraphicsCommandList* _cmdList)
 {
 	//インスタンスを生成
 	CubeMap* instance = new CubeMap();
@@ -28,7 +28,7 @@ std::unique_ptr<CubeMap> CubeMap::Create(ID3D12GraphicsCommandList* cmdList)
 		return nullptr;
 	}
 
-	instance->texture = Texture::Create("Resources/CubeMap/cubemap.dds", cmdList);
+	instance->texture = Texture::Create("Resources/CubeMap/cubemap.dds", _cmdList);
 
 	//初期化
 	instance->Initialize();
@@ -36,12 +36,12 @@ std::unique_ptr<CubeMap> CubeMap::Create(ID3D12GraphicsCommandList* cmdList)
 	return std::unique_ptr<CubeMap>(instance);
 }
 
-void CubeMap::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void CubeMap::PreDraw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(CubeMap::cmdList == nullptr);
 
-	CubeMap::cmdList = cmdList;
+	CubeMap::cmdList = _cmdList;
 
 	// パイプラインステートの設定
 	cmdList->SetPipelineState(pipeline.pipelineState.Get());
@@ -70,7 +70,7 @@ void CubeMap::Initialize()
 	//頂点の長さ
 	float edge = 1.0f;
 	const int vertNum = 24;
-	Vertex vertices[vertNum] = {
+	VERTEX vertices[vertNum] = {
 		//face1
 		{{ -edge, -edge, -edge }, { -1.0f, -1.0f, -1.0f}}, // 左下 / 頂点1
 		{{ -edge,  edge, -edge }, { -1.0f,  1.0f, -1.0f}}, // 左上 / 頂点2
@@ -107,21 +107,21 @@ void CubeMap::Initialize()
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(Vertex) * vertNum),
+		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(VERTEX) * vertNum),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
 	assert(SUCCEEDED(result));
 
-	Vertex* vertMap = nullptr;
+	VERTEX* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	memcpy(vertMap, vertices, sizeof(vertices));
 	vertBuff->Unmap(0, nullptr);
 
 	//頂点バッファビューの生成
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
-	vbView.SizeInBytes = sizeof(Vertex) * vertNum;
-	vbView.StrideInBytes = sizeof(Vertex);
+	vbView.SizeInBytes = sizeof(VERTEX) * vertNum;
+	vbView.StrideInBytes = sizeof(VERTEX);
 
 	unsigned short indices[indexNum] = {
 		0 ,2 ,1 ,2 ,3 ,1 ,
@@ -157,7 +157,7 @@ void CubeMap::Initialize()
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
@@ -195,7 +195,7 @@ void CubeMap::Update()
 	const XMFLOAT3& cameraPos = camera->GetEye();
 
 	//定数バッファにデータを転送
-	ConstBufferData* constMap = nullptr;
+	CONST_BUFFER_DATA* constMap = nullptr;
 	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
 	assert(SUCCEEDED(result));
 	constMap->viewproj = matViewProjection;
@@ -222,7 +222,7 @@ void CubeMap::Draw()
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }
 
-void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* cmdList, UINT RootParameterIndex)
+void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* _cmdList, UINT _rootParameterIndex)
 {
-	cmdList->SetGraphicsRootDescriptorTable(RootParameterIndex, texture->descriptor->gpu);
+	_cmdList->SetGraphicsRootDescriptorTable(_rootParameterIndex, texture->descriptor->gpu);
 }

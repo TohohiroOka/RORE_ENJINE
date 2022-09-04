@@ -12,35 +12,35 @@ Mesh::~Mesh()
 	indexBuff.Reset();
 }
 
-void Mesh::StaticInitialize(ID3D12Device* device)
+void Mesh::StaticInitialize(ID3D12Device* _device)
 {
 	// 再初期化チェック
 	assert(!Mesh::device);
 
-	Mesh::device = device;
+	Mesh::device = _device;
 
 	// マテリアルの静的初期化
-	Material::StaticInitialize(device);
+	Material::StaticInitialize(_device);
 }
 
-void Mesh::SetName(const std::string& name)
+void Mesh::SetName(const std::string& _name)
 {
-	this->name = name;
+	this->name = _name;
 }
 
-void Mesh::AddVertex(const Vertex& vertex)
+void Mesh::AddVertex(const VERTEX& _vertex)
 {
-	vertices.emplace_back(vertex);
+	vertices.emplace_back(_vertex);
 }
 
-void Mesh::AddIndex(unsigned long index)
+void Mesh::AddIndex(unsigned long _index)
 {
-	indices.emplace_back(index);
+	indices.emplace_back(_index);
 }
 
-void Mesh::AddSmoothData(unsigned long indexPosition, unsigned long indexVertex)
+void Mesh::AddSmoothData(unsigned long _indexPosition, unsigned long _indexVertex)
 {
-	smoothData[indexPosition].emplace_back(indexVertex);
+	smoothData[_indexPosition].emplace_back(_indexVertex);
 }
 
 void Mesh::CalculateSmoothedVertexNormals()
@@ -62,16 +62,16 @@ void Mesh::CalculateSmoothedVertexNormals()
 	}
 }
 
-void Mesh::SetMaterial(Material* material)
+void Mesh::SetMaterial(Material* _material)
 {
-	this->material = material;
+	this->material = _material;
 }
 
 void Mesh::CreateBuffers()
 {
 	HRESULT result;
 
-	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * vertices.size());
+	UINT sizeVB = static_cast<UINT>(sizeof(VERTEX) * vertices.size());
 	// 頂点バッファ生成
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
@@ -80,9 +80,10 @@ void Mesh::CreateBuffers()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
+	if (FAILED(result)) { assert(0); }
 
 	// 頂点バッファへのデータ転送
-	Vertex* vertMap = nullptr;
+	VERTEX* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(result)) {
 		std::copy(vertices.begin(), vertices.end(), vertMap);
@@ -108,10 +109,7 @@ void Mesh::CreateBuffers()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&indexBuff));
-	if (FAILED(result)) {
-		assert(0);
-		return;
-	}
+	if (FAILED(result)) { assert(0); }
 
 	// インデックスバッファへのデータ転送
 	unsigned long* indexMap = nullptr;
@@ -127,27 +125,27 @@ void Mesh::CreateBuffers()
 	ibView.SizeInBytes = sizeIB;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList* cmdList)
+void Mesh::Draw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// 頂点バッファをセット
-	cmdList->IASetVertexBuffers(0, 1, &vbView);
+	_cmdList->IASetVertexBuffers(0, 1, &vbView);
 	// インデックスバッファをセット
-	cmdList->IASetIndexBuffer(&ibView);
+	_cmdList->IASetIndexBuffer(&ibView);
 	// シェーダリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(3, material->GetGpuHandle());
+	_cmdList->SetGraphicsRootDescriptorTable(3, material->GetGpuHandle());
 
 	// マテリアルの定数バッファをセット
 	ID3D12Resource* constBuff = material->GetConstantBuffer();
-	cmdList->SetGraphicsRootConstantBufferView(1, constBuff->GetGPUVirtualAddress());
+	_cmdList->SetGraphicsRootConstantBufferView(1, constBuff->GetGPUVirtualAddress());
 
 	// 描画コマンド
-	cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
+	_cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
 }
 
-void Mesh::VIDraw(ID3D12GraphicsCommandList* cmdList)
+void Mesh::VIDraw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// 頂点バッファをセット
-	cmdList->IASetVertexBuffers(0, 1, &vbView);
+	_cmdList->IASetVertexBuffers(0, 1, &vbView);
 	// インデックスバッファをセット
-	cmdList->IASetIndexBuffer(&ibView);
+	_cmdList->IASetIndexBuffer(&ibView);
 }

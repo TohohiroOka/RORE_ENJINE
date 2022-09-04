@@ -4,14 +4,14 @@ ID3D12Device* DescriptorHeapManager::device = nullptr;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DescriptorHeapManager::descHeap = nullptr;
 std::array<bool, DescriptorHeapManager::DescriptorsSize> DescriptorHeapManager::TableManager = {};
 
-void DescriptorHeapManager::StaticInitialize(ID3D12Device* device)
+void DescriptorHeapManager::StaticInitialize(ID3D12Device* _device)
 {
 	HRESULT result = S_FALSE;
 
 	// nullptrチェック
 	assert(!DescriptorHeapManager::device);
-	assert(device);
-	DescriptorHeapManager::device = device;
+	assert(_device);
+	DescriptorHeapManager::device = _device;
 
 	//デスクリプタヒープの生成
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
@@ -21,12 +21,12 @@ void DescriptorHeapManager::StaticInitialize(ID3D12Device* device)
 	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));
 }
 
-void DescriptorHeapManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void DescriptorHeapManager::PreDraw(ID3D12GraphicsCommandList* _cmdList)
 {
 	assert(descHeap);
 	//デスクリプタヒープをセット
 	ID3D12DescriptorHeap* ppHeaps[] = { descHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+	_cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 }
 
 void DescriptorHeapManager::Finalize()
@@ -40,7 +40,7 @@ DescriptorHeapManager::~DescriptorHeapManager()
 }
 
 void DescriptorHeapManager::CreateSRV(
-	Microsoft::WRL::ComPtr<ID3D12Resource> texBuffer, D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	Microsoft::WRL::ComPtr<ID3D12Resource> _texBuffer, D3D12_SHADER_RESOURCE_VIEW_DESC _srvDesc)
 {
 	for (; heapNumber < DescriptorsSize; heapNumber++)
 	{
@@ -58,7 +58,7 @@ void DescriptorHeapManager::CreateSRV(
 
 	//ヒープのtexnumber番目にシェーダーリソースビューを作成
 	device->CreateShaderResourceView(
-		texBuffer.Get(),
-		&srvDesc,
+		_texBuffer.Get(),
+		&_srvDesc,
 		cpu);
 }

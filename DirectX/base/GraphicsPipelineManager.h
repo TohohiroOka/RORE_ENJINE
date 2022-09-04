@@ -90,22 +90,22 @@ private://メンバ関数
 	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
-	/// <param name="mode">ブレンドの種類</param>
+	/// <param name="_mode">ブレンドの種類</param>
 	/// <returns>ブレンド設定</returns>
-	D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(BLEND_MODE mode);
+	D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(BLEND_MODE _mode);
 
 	/// <summary>
 	/// パイプラインデスクの生成
 	/// </summary>
-	/// <param name="pepelineDescSet">パイプライン設定</param>
+	/// <param name="_pepelineDescSet">パイプライン設定</param>
 	/// <returns>パイプラインデスク</returns>
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatepelineDesc(PEPELINE_DESC* pepelineDescSet);
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatepelineDesc(PEPELINE_DESC* _pepelineDescSet);
 
 	/// <summary>
 	/// ルートシグネチャの生成
 	/// </summary>
-	/// <param name="signatureDescSet">ルートシグネチャ設定</param>
-	void CreateRootSignature(SIGNATURE_DESC* signatureDescSet);
+	/// <param name="_signatureDescSet">ルートシグネチャ設定</param>
+	void CreateRootSignature(SIGNATURE_DESC* _signatureDescSet);
 
 public://メンバ関数
 
@@ -115,17 +115,17 @@ public://メンバ関数
 	/// <summary>
 	/// デバイスのセット
 	/// </summary>
-	/// <param name="device">デバイスの</param>
-	static void SetDevice(ID3D12Device* device) { GraphicsPipelineManager::device = device; }
+	/// <param name="_device">デバイス</param>
+	static void SetDevice(ID3D12Device* _device) { GraphicsPipelineManager::device = _device; }
 
 	/// <summary>
 	/// パイプラインの生成
 	/// enum OBJECT_KINDSの中から一を引数とする
 	/// </summary>
-	/// <param name="className">パイプライン名</param>
-	/// <param name="pepelineDescSet">パイプラインの設定</param>
-	/// <param name="signatureDescSet">ルートシグネチャ設定</param>
-	void CreatePipeline(const std::string name, PEPELINE_DESC* pepelineDescSet, SIGNATURE_DESC* signatureDescSet);
+	/// <param name="_name">パイプライン名</param>
+	/// <param name="_pepelineDescSet">パイプラインの設定</param>
+	/// <param name="_signatureDescSet">ルートシグネチャ設定</param>
+	void CreatePipeline(const std::string _name, PEPELINE_DESC* _pepelineDescSet, SIGNATURE_DESC* _signatureDescSet);
 
 private://静的メンバ変数
 

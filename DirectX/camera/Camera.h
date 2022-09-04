@@ -41,24 +41,10 @@ public: // メンバ関数
 	void Update();
 
 	/// <summary>
-	/// 1人称カメラの更新
-	/// </summary>
-	/// <param name="position">移動量</param>
-	/// <param name="move">移動量</param>
-	/// <param name="speed">感度</param>
-	void FpsCamera(XMFLOAT3& position, XMFLOAT3& move, float speed);
-
-	/// <summary>
-	/// 3人称カメラの更新
-	/// </summary>
-	/// <param name="distance">追従する物との距離</param>
-	void TpsCamera(XMFLOAT3 distance);
-
-	/// <summary>
 	/// カメラのシェイク開始
 	/// </summary>
-	/// <param name="strength">シェイクの強さ</param>
-	void StartCameraShake(int strength);
+	/// <param name="_strength">シェイクの強さ</param>
+	void StartCameraShake(int _strength);
 
 	/// <summary>
 	/// カメラのシェイク終了
@@ -99,13 +85,13 @@ public: // メンバ関数
 	/// 視点座標セット
 	/// </summary>
 	/// <param name="eye">視点座標</param>
-	void SetEye(XMFLOAT3 eye) { this->eye = eye; }
+	void SetEye(XMFLOAT3 _eye) { this->eye = _eye; }
 
 	/// <summary>
 	/// 注視点座標セット
 	/// </summary>
 	/// <param name="position">注視点座標</param>
-	void SetTarget(XMFLOAT3 target) { this->target = target; }
+	void SetTarget(XMFLOAT3 _target) { this->target = _target; }
 
 protected: // メンバ変数
 	// ビュー行列

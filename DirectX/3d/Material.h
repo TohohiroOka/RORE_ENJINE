@@ -21,7 +21,7 @@ private: // エイリアス
 
 public: // サブクラス
 	// 定数バッファ用データ構造体B1
-	struct ConstBufferDataB1
+	struct CONST_BUFFER_DATA_B1
 	{
 		XMFLOAT3 ambient; // アンビエント係数
 		float pad1; // パディング
@@ -36,8 +36,8 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	/// <param name="_device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// マテリアル生成
@@ -46,16 +46,24 @@ public: // 静的メンバ関数
 	static Material* Create();
 
 private: // 静的メンバ変数
+
 	// デバイス
 	static ID3D12Device* device;
 
 public:
-	std::string name;	// マテリアル名
-	XMFLOAT3 ambient;	// アンビエント影響度
-	XMFLOAT3 diffuse;	// ディフューズ影響度
-	XMFLOAT3 specular;	// スペキュラー影響度
-	float alpha;		// アルファ
-	std::string textureFilename;	// テクスチャファイル名
+
+	// マテリアル名
+	std::string name;
+	// アンビエント影響度
+	XMFLOAT3 ambient;
+	// ディフューズ影響度
+	XMFLOAT3 diffuse;
+	// スペキュラー影響度
+	XMFLOAT3 specular;
+	// アルファ
+	float alpha;
+	// テクスチャファイル名
+	std::string textureFilename;
 
 public:
 
@@ -72,8 +80,8 @@ public:
 
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="directoryPath">読み込みディレクトリパス</param>
-	void LoadTexture(const std::string& directoryPath);
+	/// <param name="_directoryPath">読み込みディレクトリパス</param>
+	void LoadTexture(const std::string& _directoryPath);
 
 	/// <summary>
 	/// 更新

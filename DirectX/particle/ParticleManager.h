@@ -23,7 +23,7 @@ private: // エイリアス
 
 public: // サブクラス
 	// 頂点データ構造体
-	struct Vertex
+	struct VERTEX
 	{
 		XMFLOAT3 pos; // xyz座標
 		float scale;//スケール
@@ -31,14 +31,14 @@ public: // サブクラス
 	};
 
 	// 定数バッファ用データ構造体
-	struct ConstBufferData
+	struct CONST_BUFFER_DATA
 	{
 		XMMATRIX mat;	// ３Ｄ変換行列
 		XMMATRIX matBillboard;//ビルボード行列
 	};
 
 	//パーティクル一粒
-	struct Particle
+	struct PARTICLE
 	{
 		//DirectX::を省略
 		using XMFLOAT3 = DirectX::XMFLOAT3;
@@ -52,22 +52,22 @@ public: // サブクラス
 		//現在フレーム
 		int frame = 0;
 		//終了フレーム
-		int num_frame = 0;
+		int numFrame = 0;
 		//スケール
 		float scale = 1.0f;
 		//初期値
-		float s_scale = 1.0f;
+		float startScale = 1.0f;
 		//最終値
-		float e_scale = 0.0f;
+		float endScale = 0.0f;
 		//カラー
 		XMFLOAT4 color = { 0,0,0,0 };
 		//初期カラー
-		XMFLOAT4 s_color = { 0,0,0,0 };
+		XMFLOAT4 startColor = { 0,0,0,0 };
 		//最終カラー
-		XMFLOAT4 e_color = { 0,0,0,0 };
+		XMFLOAT4 endColor = { 0,0,0,0 };
 	};
 
-	struct Information
+	struct INFORMATION
 	{
 		bool isDelete = false; //シーン遷移で削除を行うか
 		std::unique_ptr<Texture> instance = nullptr;
@@ -76,39 +76,39 @@ public: // サブクラス
 private: // 定数
 
 	static const int vertexCount = 512;// 頂点数
-	std::forward_list<Particle>particle;
+	std::forward_list<PARTICLE>particle;
 
 public: // 静的メンバ関数
 
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="keepName">保存名</param>
-	/// <param name="filename">ファイル名</param>
-	/// <param name="isDelete">シーン遷移で削除を行うか</param>
-	static void LoadTexture(const std::string keepName, const std::string filename, const bool isDelete = true);
+	/// <param name="_keepName">保存名</param>
+	/// <param name="_filename">ファイル名</param>
+	/// <param name="_isDelete">シーン遷移で削除を行うか</param>
+	static void LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete = true);
 
 	/// <summary>
 	/// インスタンス生成
 	/// </summary>
-	/// <param name="name">テクスチャ名</param>
+	/// <param name="_name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<ParticleManager> Create(const std::string name);
+	static std::unique_ptr<ParticleManager> Create(const std::string _name);
 
 	/// <summary>
 	/// デバイスのセット
 	/// </summary>
-	/// <param name="camera">デバイス</param>
-	static void SetDevice(ID3D12Device* device) {
-		ParticleManager::device = device;
+	/// <param name="_device">デバイス</param>
+	static void SetDevice(ID3D12Device* _device) {
+		ParticleManager::device = _device;
 	}
 
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) {
-		ParticleManager::camera = camera;
+	/// <param name="_camera">カメラ</param>
+	static void SetCamera(Camera* _camera) {
+		ParticleManager::camera = _camera;
 	}
 
 	/// <summary>
@@ -121,7 +121,11 @@ public: // 静的メンバ関数
 	/// </summary>
 	static void Finalize();
 
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+	/// <summary>
+	/// パイプラインのセット
+	/// </summary>
+	/// <param name="pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
 
 private: // 静的メンバ変数
 
@@ -134,7 +138,7 @@ private: // 静的メンバ変数
 	//パイプライン
 	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//テクスチャ情報
-	static std::map<std::string, Information> texture;
+	static std::map<std::string, INFORMATION> texture;
 	//ビルボード行列
 	static XMMATRIX matBillboard;
 	//Y軸回りのビルボード行列
@@ -161,16 +165,16 @@ public: // メンバ関数
 	/// <summary>
 	/// パーティクルの追加
 	/// </summary>
-	/// <param name="maxFrame">生存時間</param>
-	/// <param name="position">初期座標</param>
-	/// <param name="velocity">速度</param>
-	/// <param name="accel">加速度</param>
-	/// <param name="startScale">初期サイズ</param>
-	/// <param name="endScale">最終サイズ</param>
-	/// <param name="startColor">初期カラー</param>
-	/// <param name="endColor">最終カラー</param>
-	void Add(int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 accel,
-		float startScale, float endScale, XMFLOAT4 startColor, XMFLOAT4 endColor);
+	/// <param name="_maxFrame">生存時間</param>
+	/// <param name="_position">初期座標</param>
+	/// <param name="_velocity">速度</param>
+	/// <param name="_accel">加速度</param>
+	/// <param name="_startScale">初期サイズ</param>
+	/// <param name="_endScale">最終サイズ</param>
+	/// <param name="_startColor">初期カラー</param>
+	/// <param name="_endColor">最終カラー</param>
+	void Add(int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity, XMFLOAT3 _accel,
+		float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor);
 
 	/// <summary>
 	/// 更新
@@ -181,8 +185,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画後処理
@@ -208,7 +212,7 @@ private: // メンバ変数
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vbView = {};
 	// 頂点データ配列
-	Vertex vertices[vertexCount] = {};
+	VERTEX vertices[vertexCount] = {};
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
 	// ローカルスケール

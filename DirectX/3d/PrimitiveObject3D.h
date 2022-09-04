@@ -8,8 +8,9 @@ class LightGroup;
 class PrimitiveObject3D : public InterfaceObject3d
 {
 public://構造体宣言
-//定数バッファの構造体
-	struct ConstBufferData {
+
+	//定数バッファの構造体
+	struct CONST_BUFFER_DATA {
 		XMFLOAT4 color;//色
 		XMMATRIX matWorld;//3D変換行列
 		XMMATRIX viewproj;//3D変換行列
@@ -28,10 +29,10 @@ public://静的メンバ関数
 	static void PreDraw();
 
 	/// <summary>
-	/// パイプラインの設定
+	/// パイプラインのセット
 	/// </summary>
-	/// <param name="pipeline"></param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline) { PrimitiveObject3D::pipeline = pipeline; }
+	/// <param name="_pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
 
 public://メンバ関数
 
@@ -77,6 +78,6 @@ public:
 	/// <summary>
 	/// 頂点のセット
 	/// </summary>
-	/// <param name="model">頂点</param>
-	void SetVertex(XMFLOAT3 vertex) { this->vertices.push_back(vertex); }
+	/// <param name="_vertex">頂点</param>
+	void SetVertex(XMFLOAT3 _vertex) { this->vertices.push_back(_vertex); }
 };

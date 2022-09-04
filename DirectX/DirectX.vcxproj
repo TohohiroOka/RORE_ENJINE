@@ -142,8 +142,14 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="object\BaseBullet.cpp" />
+    <ClCompile Include="object\BaseEnemy.cpp" />
+    <ClCompile Include="object\BulletManager.cpp" />
+    <ClCompile Include="object\EnemyManager.cpp" />
+    <ClCompile Include="object\FirstBoss.cpp" />
     <ClCompile Include="object\Ground.cpp" />
     <ClCompile Include="object\Player.cpp" />
+    <ClCompile Include="object\PlayerBullet.cpp" />
     <ClCompile Include="object\TouchableObject.cpp" />
     <ClCompile Include="particle\Emitter.cpp" />
     <ClCompile Include="particle\ParticleManager.cpp" />
@@ -352,8 +358,14 @@
     <ClInclude Include="light\LightGroup.h" />
     <ClInclude Include="light\PointLight.h" />
     <ClInclude Include="light\SpotLight.h" />
+    <ClInclude Include="object\BaseBullet.h" />
+    <ClInclude Include="object\BaseEnemy.h" />
+    <ClInclude Include="object\BulletManager.h" />
+    <ClInclude Include="object\EnemyManager.h" />
+    <ClInclude Include="object\FirstBoss.h" />
     <ClInclude Include="object\Ground.h" />
     <ClInclude Include="object\Player.h" />
+    <ClInclude Include="object\PlayerBullet.h" />
     <ClInclude Include="object\TouchableObject.h" />
     <ClInclude Include="particle\Emitter.h" />
     <ClInclude Include="particle\ParticleManager.h" />

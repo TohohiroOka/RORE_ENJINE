@@ -12,16 +12,17 @@
 #include <iomanip>
 #include <memory>
 
+using namespace DirectX;
+
 void TestField::Initialize()
 {
-	playerModel = Model::CreateFromOBJ("uma");
-	groundModel = Model::CreateFromOBJ("map");
+	player = Player::Create();
 
-	player = Player::Create(playerModel.get());
+	//地形
 	ground[0] = Ground::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
 	
-	ground[1] = Ground::Create("heightmap03.bmp", "Dirt.jpg", "Grass.jpg");
-	ground[1]->SetPos({ -2550.0f,0.0f,0.0f });
+	//ground[1] = Ground::Create("heightmap02.bmp", "Dirt.jpg", "Grass.jpg");
+	//ground[1]->SetPos({ -2550.0f,0.0f,0.0f });
 	
 	//ground[2] = Ground::Create("heightmap03.bmp", "Dirt.jpg", "Grass.jpg");
 	//ground[2]->SetPos({ 0.0f,0.0f,-2550.0f });
@@ -29,7 +30,7 @@ void TestField::Initialize()
 	//ground[3] = Ground::Create("heightmap04.bmp", "Dirt.jpg", "Grass.jpg");
 	//ground[3]->SetPos({ -2550.0f,0.0f,-2550.0f });
 
-	//tmap = TouchableObject::Create(groundModel.get());
+	enemy = EnemyManager::Create();
 }
 
 void TestField::Update()
@@ -45,46 +46,21 @@ void TestField::Update()
 		SceneManager::SetNextScene(nextScene);
 	}
 
-	if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
-	if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
-	if (input->PushKey(DIK_UP)) { cameraY += 3.0f; }
-	if (input->PushKey(DIK_DOWN)) { cameraY -= 3.0f; }
-
 	player->SetCameraAngle(cameraAngle);
-
-	if (input->PushKey(DIK_Z)) {
-		cameraY += 3.0f;
-	}
-	//左入力
-	if (input->PushKey(DIK_X)) {
-		cameraY -= 3.0f;
-	}
-
-	//heightmap->Update();
 	player->Update();
-	for (int i = 0; i < groundNum; i++)
+	for (int i = 0; i < ground_num; i++)
 	{
 		ground[i]->Update();
 	}
-	//tmap->Update();
 
-	if (input->TriggerKey(DIK_L))
+	enemy->Update();
+
+	CameraUpdate();
+
+	if (input->TriggerKey(DIK_P))
 	{
-		if (isDraw)
-		{
-			isDraw = false;
-		} else {
-			isDraw = true;
-		}
+		player->BulletUpdate(camera->GetTarget());
 	}
-
-	//カメラ更新
-	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
-	const float range = 100.0f;
-	XMFLOAT3 playerPos = player->GetPos();
-	XMFLOAT3 cameraPos = playerPos;
-	camera->SetEye({ cosf(cameraRadius) * range + cameraPos.x,cameraPos.y + cameraY,sinf(cameraRadius) * range + cameraPos.z });
-	camera->SetTarget(playerPos);
 
 	input = nullptr;
 	xinput = nullptr;
@@ -95,21 +71,16 @@ void TestField::Draw()
 	assert(cmdList);
 
 	InterfaceObject3d::SetCmdList(cmdList);
-	if (isDraw)
+
+	HeightMap::PreDraw();
+	for (int i = 0; i < ground_num; i++)
 	{
-		Object3d::PreDraw();
-		player->Draw();
-		//tmap->Draw();
-		HeightMap::PreDraw();
-		for (int i = 0; i < groundNum; i++)
-		{
-			ground[i]->Draw();
-		}
-		
+		ground[i]->Draw();
 	}
 
-	//PrimitiveObject3D::PreDraw();
-	//ground->CDraw();
+	Object3d::PreDraw();
+	player->Draw();		
+	enemy->Draw();
 
 	InterfaceObject3d::ReleaseCmdList();
 }
@@ -159,12 +130,49 @@ void TestField::ImguiDraw()
 	//light->SetDirLightActive(2, lightAct3);
 }
 
-void TestField::GetConstbufferNum()
+void TestField::CameraUpdate()
 {
-	//XMFLOAT3* inPos = new XMFLOAT3[max];
-	//inPos = compute->GetConstBufferNum();
-	//for (int i = 0; i < max; i++)
-	//{
-	//	nowPosition[i] = inPos[i];
-	//}
+	DirectInput* input = DirectInput::GetInstance();
+
+	if (input->TriggerKey(DIK_RETURN))
+	{
+		enemy->SetTarget();
+	}
+
+	if (!player->GetIsTargeting())
+	{
+		if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
+		if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
+
+		//カメラ更新
+		float cameraEyeRadius = DirectX::XMConvertToRadians(cameraAngle);
+		float cameraTargetRadius = DirectX::XMConvertToRadians(cameraAngle - 180);
+		const float range = 100.0f;
+		XMFLOAT3 playerPos = player->GetPos();
+		camera->SetEye({ cosf(cameraEyeRadius) * range + playerPos.x,playerPos.y + cameraY,sinf(cameraEyeRadius) * range + playerPos.z });
+		camera->SetTarget({ cosf(cameraTargetRadius) * range + playerPos.x,playerPos.y,sinf(cameraTargetRadius) * range + playerPos.z });
+	}
+	else
+	{
+		XMFLOAT2 vecPt = {};
+		XMFLOAT3 playerPos = player->GetPos();
+		XMFLOAT3 targetPos = player->GetTarget();
+		vecPt.x = targetPos.x - playerPos.x;
+		vecPt.y = targetPos.z - playerPos.z;
+
+		//正規化
+		float x = powf(targetPos.x - playerPos.x, 2);
+		float y = powf(targetPos.z - playerPos.z, 2);
+		float dist = sqrt(x + y);
+		dist = 1.0f / dist;
+		vecPt.x *= dist;
+		vecPt.y *= dist;
+		vecPt.x *= 50.0f;
+		vecPt.y *= 50.0f;
+
+		camera->SetEye({ playerPos.x - vecPt.x ,playerPos.y + cameraY/2,playerPos.z - vecPt.y });
+		camera->SetTarget(player->GetTarget());
+	}
+
+	input = nullptr;
 }

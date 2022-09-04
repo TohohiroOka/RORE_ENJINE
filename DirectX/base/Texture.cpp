@@ -4,29 +4,29 @@
 
 ID3D12Device* Texture::device = nullptr;
 
-void Texture::StaticInitialize(ID3D12Device* device)
+void Texture::StaticInitialize(ID3D12Device* _device)
 {
 	// nullptrチェック
 	assert(!Texture::device);
-	assert(device);
-	Texture::device = device;
+	assert(_device);
+	Texture::device = _device;
 
-	DescriptorHeapManager::StaticInitialize(device);
+	DescriptorHeapManager::StaticInitialize(_device);
 }
 
-std::unique_ptr<Texture> Texture::Create(const std::string fileName, ID3D12GraphicsCommandList* cmdList)
+std::unique_ptr<Texture> Texture::Create(const std::string _fileName, ID3D12GraphicsCommandList* _cmdList)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Texture* instance = new Texture();
 
 	//Fbxファイルの読み込み
-	if (cmdList == nullptr)
+	if (_cmdList == nullptr)
 	{
-		instance->LoadTexture(fileName);
+		instance->LoadTexture(_fileName);
 	}
 	else
 	{
-		instance->LoadTextureFromDDSFile(fileName, cmdList);
+		instance->LoadTextureFromDDSFile(_fileName, _cmdList);
 	}
 
 	return std::unique_ptr<Texture>(instance);
@@ -38,7 +38,7 @@ Texture::~Texture()
 	texConstBuffer.Reset();
 }
 
-void Texture::LoadTexture(const std::string fileName)
+void Texture::LoadTexture(const std::string _fileName)
 {
 	HRESULT result;
 
@@ -51,8 +51,8 @@ void Texture::LoadTexture(const std::string fileName)
 
 	//ユニコードに変換
 	wchar_t wfilePath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0,
-		fileName.c_str(), -1, wfilePath, _countof(wfilePath));
+	int bufferSize = MultiByteToWideChar(CP_ACP, 0,
+		_fileName.c_str(), -1, wfilePath, _countof(wfilePath));
 
 	result = LoadFromWICFile(
 		wfilePath,
@@ -100,7 +100,7 @@ void Texture::LoadTexture(const std::string fileName)
 	descriptor->CreateSRV(texBuffer, srvDesc);
 }
 
-void Texture::LoadTextureFromDDSFile(const std::string fileName, ID3D12GraphicsCommandList* cmdList)
+void Texture::LoadTextureFromDDSFile(const std::string _fileName, ID3D12GraphicsCommandList* _cmdList)
 {
 	HRESULT result;
 
@@ -109,8 +109,8 @@ void Texture::LoadTextureFromDDSFile(const std::string fileName, ID3D12GraphicsC
 
 	//ユニコードに変換
 	wchar_t wfilePath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0,
-		fileName.c_str(), -1, wfilePath, _countof(wfilePath));
+	int bufferSize = MultiByteToWideChar(CP_ACP, 0,
+		_fileName.c_str(), -1, wfilePath, _countof(wfilePath));
 
 	result = DirectX::LoadFromDDSFile(wfilePath, DirectX::DDS_FLAGS_NONE, &metadata, image);
 	assert(SUCCEEDED(result));
@@ -136,14 +136,14 @@ void Texture::LoadTextureFromDDSFile(const std::string fileName, ID3D12GraphicsC
 	assert(SUCCEEDED(result));
 
 	UpdateSubresources(
-		cmdList,
+		_cmdList,
 		texBuffer.Get(), texConstBuffer.Get(),
 		0, 0, (UINT)subresources.size(), subresources.data());
 
 	auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		texBuffer.Get(),
 		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	cmdList->ResourceBarrier(1, &barrier);
+	_cmdList->ResourceBarrier(1, &barrier);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;

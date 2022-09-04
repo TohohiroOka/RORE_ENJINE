@@ -20,18 +20,18 @@ void DebugText::Initialize()
 	}
 }
 
-void DebugText::Print(const std::string& text, float x, float y, float size)
+void DebugText::Print(const std::string& _text, float _x, float _y, float _size)
 {
-	SetPos(x, y);
-	SetSize(size);
+	SetPos(_x, _y);
+	SetSize(_size);
 
-	NPrint((UINT)text.size(), text.c_str());
+	NPrint((UINT)_text.size(), _text.c_str());
 }
 
-void DebugText::NPrint(int len, const char* text)
+void DebugText::NPrint(int _len, const char* _text)
 {
 	// 全ての文字について
-	for (int i = 0; i < len; i++)
+	for (int i = 0; i < _len; i++)
 	{
 		// 最大文字数超過
 		if (spriteIndex >= maxCharCount) {
@@ -39,10 +39,10 @@ void DebugText::NPrint(int len, const char* text)
 		}
 
 		// 1文字取り出す(※ASCIIコードでしか成り立たない)
-		const unsigned char& character = text[i];
+		const unsigned char& beeline = _text[i];
 
-		int fontIndex = character - 32;
-		if (character >= 0x7f) {
+		int fontIndex = beeline - 32;
+		if (beeline >= 0x7f) {
 			fontIndex = 0;
 		}
 
@@ -64,7 +64,7 @@ void DebugText::NPrint(int len, const char* text)
 	}
 }
 
-void DebugText::DrawAll(ID3D12GraphicsCommandList* cmdList)
+void DebugText::DrawAll()
 {
 	// 全ての文字のスプライトについて
 	for (int i = 0; i < spriteIndex; i++)

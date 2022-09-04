@@ -17,18 +17,18 @@ Texture* InterfaceObject3d::cubetex;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-void InterfaceObject3d::StaticInitialize(ID3D12Device* device)
+void InterfaceObject3d::StaticInitialize(ID3D12Device* _device)
 {
 	// 初期化チェック
 	assert(!InterfaceObject3d::device);
 
 	// nullptrチェック
-	assert(device);
+	assert(_device);
 
-	InterfaceObject3d::device = device;
+	InterfaceObject3d::device = _device;
 
 	// モデルの静的初期化
-	Model::StaticInitialize(device);
+	Model::StaticInitialize(_device);
 }
 
 InterfaceObject3d::~InterfaceObject3d()
@@ -51,21 +51,21 @@ void InterfaceObject3d::Initialize()
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB0) + 0xff) & ~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B0) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffB0));
-	assert(SUCCEEDED(result));
+	if (FAILED(result)) { assert(0); }
 
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B1) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffB1));
-	assert(SUCCEEDED(result));
+	if (FAILED(result)) { assert(0); }
 }
 
 void InterfaceObject3d::Update()
@@ -78,30 +78,31 @@ void InterfaceObject3d::Update()
 	const XMFLOAT3& cameraPos = camera->GetEye();
 
 	//定数バッファにデータを転送
-	ConstBufferDataB0* constMap = nullptr;
+	CONST_BUFFER_DATA_B0* constMap = nullptr;
 	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
-	assert(SUCCEEDED(result));
-	constMap->viewproj = matViewProjection;
-	constMap->world = matWorld;
-	constMap->cameraPos = cameraPos;
-	constMap->isSkinning = isSkinning;
-	constMap->isBloom = isBloom;
-	constMap->isToon = isToon;
-	constMap->isOutline = isOutline;
-	constBuffB0->Unmap(0, nullptr);
+	if (SUCCEEDED(result)) {
+		constMap->viewproj = matViewProjection;
+		constMap->world = matWorld;
+		constMap->cameraPos = cameraPos;
+		constMap->isSkinning = isSkinning;
+		constMap->isBloom = isBloom;
+		constMap->isToon = isToon;
+		constMap->isOutline = isOutline;
+		constBuffB0->Unmap(0, nullptr);
+	}
 
-	ConstBufferDataB1* constMapB1 = nullptr;
+	CONST_BUFFER_DATA_B1* constMapB1 = nullptr;
 	result = constBuffB1->Map(0, nullptr, (void**)&constMapB1);//マッピング
-	assert(SUCCEEDED(result));
-	constMapB1->baseColor = constBufferB1Num.baseColor;
-	constMapB1->ambient = constBufferB1Num.ambient;
-	constMapB1->diffuse = constBufferB1Num.diffuse;
-	constMapB1->metalness = constBufferB1Num.metalness;
-	constMapB1->specular = constBufferB1Num.specular;
-	constMapB1->roughness = constBufferB1Num.roughness;
-	constMapB1->alpha = constBufferB1Num.alpha;;
-	constBuffB1->Unmap(0, nullptr);
-
+	if (SUCCEEDED(result)) {
+		constMapB1->baseColor = constBufferB1Num.baseColor;
+		constMapB1->ambient = constBufferB1Num.ambient;
+		constMapB1->diffuse = constBufferB1Num.diffuse;
+		constMapB1->metalness = constBufferB1Num.metalness;
+		constMapB1->specular = constBufferB1Num.specular;
+		constMapB1->roughness = constBufferB1Num.roughness;
+		constMapB1->alpha = constBufferB1Num.alpha;;
+		constBuffB1->Unmap(0, nullptr);
+	}
 	// 当たり判定更新
 	if (collider) {
 		collider->Update();
@@ -147,15 +148,15 @@ void InterfaceObject3d::UpdateWorldMatrix()
 	}
 }
 
-void InterfaceObject3d::SetCollider(BaseCollider* collider)
+void InterfaceObject3d::SetCollider(BaseCollider* _collider)
 {
-	collider->SetObject(this);
-	this->collider = collider;
+	_collider->SetObject(this);
+	this->collider = _collider;
 	// コリジョンマネージャに追加
-	CollisionManager::GetInstance()->AddCollider(collider);
+	CollisionManager::GetInstance()->AddCollider(_collider);
 
 	UpdateWorldMatrix();
-	collider->Update();
+	_collider->Update();
 }
 
 XMFLOAT3 InterfaceObject3d::GetWorldPosition()

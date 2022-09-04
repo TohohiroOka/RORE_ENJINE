@@ -1,27 +1,23 @@
 #include "Emitter.h"
 #include "Camera.h"
 
-Emitter::~Emitter()
-{
-}
-
-std::unique_ptr<Emitter> Emitter::Create(const std::string name)
+std::unique_ptr<Emitter> Emitter::Create(const std::string _name)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Emitter* instance = new Emitter();
 
-	instance->particleManager = ParticleManager::Create(name);
+	instance->particleManager = ParticleManager::Create(_name);
 
 	return std::unique_ptr<Emitter>(instance);
 }
 
-void Emitter::InEmitter(int maxCount, int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity,
-	XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 startColor, XMFLOAT4 endColor)
+void Emitter::InEmitter(int _maxCount, int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity,
+	XMFLOAT3 _accel, float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor)
 {
-	if (maxCount > count)
+	if (_maxCount > count)
 	{
-		particleManager->Add(maxFrame, position, velocity,
-			accel, startScale, endScale, startColor, endColor);
+		particleManager->Add(_maxFrame, _position, _velocity,
+			_accel, _startScale, _endScale, _startColor, _endColor);
 	}
 }
 

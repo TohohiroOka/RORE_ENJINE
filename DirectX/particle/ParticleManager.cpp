@@ -9,7 +9,7 @@ ID3D12Device* ParticleManager::device = nullptr;
 ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
 Camera* ParticleManager::camera = nullptr;
 GraphicsPipelineManager::GRAPHICS_PIPELINE ParticleManager::pipeline;
-std::map<std::string, ParticleManager::Information> ParticleManager::texture;
+std::map<std::string, ParticleManager::INFORMATION> ParticleManager::texture;
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
@@ -20,27 +20,27 @@ ParticleManager::~ParticleManager()
 }
 
 //XMFLOAT3同士の加算処理
-const DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
+const DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& _lhs, const DirectX::XMFLOAT3& _rhs)
 {
 	XMFLOAT3 result;
-	result.x = lhs.x + rhs.x;
-	result.y = lhs.y + rhs.y;
-	result.z = lhs.z + rhs.z;
+	result.x = _lhs.x + _rhs.x;
+	result.y = _lhs.y + _rhs.y;
+	result.z = _lhs.z + _rhs.z;
 
 	return result;
 }
 
-void ParticleManager::LoadTexture(const std::string keepName, const std::string filename, const bool isDelete)
+void ParticleManager::LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete)
 {
 	// nullptrチェック
 	assert(device);
 
 	//同じキーがあればエラーを出力
-	assert(!texture.count(keepName));
+	assert(!texture.count(_keepName));
 
 	//テクスチャ読み込み
-	texture[keepName].instance = Texture::Create(filename);
-	texture[keepName].isDelete = isDelete;
+	texture[_keepName].instance = Texture::Create(_filename);
+	texture[_keepName].isDelete = _isDelete;
 }
 
 void ParticleManager::Initialize()
@@ -55,10 +55,10 @@ void ParticleManager::Initialize()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
-	assert(SUCCEEDED(result));
+	if (FAILED(result)) { assert(0); }
 
 	// 頂点バッファへのデータ転送
-	Vertex* vertMap = nullptr;
+	VERTEX* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(result)) {
 		memcpy(vertMap, vertices, sizeof(vertices));
@@ -74,19 +74,19 @@ void ParticleManager::Initialize()
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
-	assert(SUCCEEDED(result));
+	if (FAILED(result)) { assert(0); }
 }
 
-std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string name)
+std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string _name)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	ParticleManager* instance = new ParticleManager();
 
-	instance->name = name;
+	instance->name = _name;
 
 	// 初期化
 	instance->Initialize();
@@ -94,24 +94,24 @@ std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string name)
 	return std::unique_ptr<ParticleManager>(instance);
 }
 
-void ParticleManager::Add(int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity,
-	XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 startColor, XMFLOAT4 endColor)
+void ParticleManager::Add(int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity,
+	XMFLOAT3 _accel, float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor)
 {
 	//リストに要素を追加
 	particle.emplace_front();
 	//追加した要素の参照
-	Particle& p = particle.front();
+	PARTICLE& p = particle.front();
 	//値のリセット
-	p.position = position;
-	p.velocity = velocity;
-	p.accel = accel;
-	p.num_frame = maxFrame;
-	p.scale = startScale;
-	p.s_scale = startScale;
-	p.e_scale = endScale;
-	p.color = startColor;
-	p.s_color = startColor;
-	p.e_color = endColor;
+	p.position = _position;
+	p.velocity = _velocity;
+	p.accel = _accel;
+	p.numFrame = _maxFrame;
+	p.scale = _startScale;
+	p.startScale = _startScale;
+	p.endScale = _endScale;
+	p.color = _startColor;
+	p.startColor = _startColor;
+	p.endColor = _endColor;
 }
 
 XMMATRIX ParticleManager::UpdateViewMatrix()
@@ -205,13 +205,13 @@ int ParticleManager::Update()
 	HRESULT result;
 
 	//表示時間をが過ぎたパーティクルを削除
-	particle.remove_if([](Particle& x) {
-		return x.frame >= x.num_frame;
+	particle.remove_if([](PARTICLE& x) {
+		return x.frame >= x.numFrame;
 		}
 	);
 
 	//全パーティクル更新
-	for (std::forward_list<Particle>::iterator it = particle.begin();
+	for (std::forward_list<PARTICLE>::iterator it = particle.begin();
 		it != particle.end(); it++) {
 		//経過フレーム数をカウント
 		it->frame++;
@@ -220,20 +220,20 @@ int ParticleManager::Update()
 		//速度による移動
 		it->position = it->position + it->velocity;
 		//大きさの変更
-		it->scale = it->scale - (it->s_scale - it->e_scale) / it->num_frame;
+		it->scale = it->scale - (it->startScale - it->endScale) / it->numFrame;
 		//色の変更
-		it->color.x = it->color.x - (it->s_color.x - it->e_color.x) / it->num_frame;//赤
-		it->color.y = it->color.y - (it->s_color.y - it->e_color.y) / it->num_frame;//緑
-		it->color.z = it->color.z - (it->s_color.z - it->e_color.z) / it->num_frame;//青
-		it->color.w = it->color.w - (it->s_color.w - it->e_color.w) / it->num_frame;//明度
+		it->color.x = it->color.x - (it->startColor.x - it->endColor.x) / it->numFrame;//赤
+		it->color.y = it->color.y - (it->startColor.y - it->endColor.y) / it->numFrame;//緑
+		it->color.z = it->color.z - (it->startColor.z - it->endColor.z) / it->numFrame;//青
+		it->color.w = it->color.w - (it->startColor.w - it->endColor.w) / it->numFrame;//明度
 	}
 
-	Vertex* vertMap = nullptr;
+	VERTEX* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	int count = 0;
 	if (SUCCEEDED(result)) {
 		//パーティクルの情報を一つずつ反映
-		for (std::forward_list<Particle>::iterator it = particle.begin();
+		for (std::forward_list<PARTICLE>::iterator it = particle.begin();
 			it != particle.end(); it++) {
 			if (count >= vertexCount) { break; }
 			//座標
@@ -249,7 +249,7 @@ int ParticleManager::Update()
 	}
 
 	// 定数バッファへデータ転送
-	ConstBufferData* constMap = nullptr;
+	CONST_BUFFER_DATA* constMap = nullptr;
 	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->mat = UpdateViewMatrix() * camera->GetProjection();// 行列の合成
 	constMap->matBillboard = matBillboard;// 行列の合成
@@ -258,21 +258,20 @@ int ParticleManager::Update()
 	return (int)std::distance(particle.begin(), particle.end());
 }
 
-void ParticleManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void ParticleManager::PreDraw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(ParticleManager::cmdList == nullptr);
 
-	ParticleManager::cmdList = cmdList;
+	ParticleManager::cmdList = _cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline.pipelineState.Get());
+	_cmdList->SetPipelineState(pipeline.pipelineState.Get());
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
+	_cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
 
 	//プリミティブ形状の設定コマンド
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-
+	_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 }
 
 void ParticleManager::PostDraw()

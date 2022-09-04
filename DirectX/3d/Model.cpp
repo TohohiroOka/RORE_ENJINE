@@ -11,22 +11,22 @@ using namespace std;
 const std::string Model::baseDirectory = "Resources/OBJ/";
 ID3D12Device* Model::device = nullptr;
 
-void Model::StaticInitialize(ID3D12Device* device)
+void Model::StaticInitialize(ID3D12Device* _device)
 {
 	// 再初期化チェック
 	assert(!Model::device);
 
-	Model::device = device;
+	Model::device = _device;
 
 	// メッシュの静的初期化
-	Mesh::StaticInitialize(device);
+	Mesh::StaticInitialize(_device);
 }
 
-std::unique_ptr<Model> Model::CreateFromOBJ(const std::string& modelname, bool smoothing)
+std::unique_ptr<Model> Model::CreateFromOBJ(const std::string& _modelname, bool _smoothing)
 {
 	// メモリ確保
 	Model* instance = new Model;
-	instance->Initialize(modelname, smoothing);
+	instance->Initialize(_modelname, _smoothing);
 
 	return std::unique_ptr<Model>(instance);
 }
@@ -44,10 +44,10 @@ Model::~Model()
 	materials.clear();
 }
 
-void Model::Initialize(const std::string& modelname, bool smoothing)
+void Model::Initialize(const std::string& _modelname, bool _smoothing)
 {
 	// モデル読み込み
-	LoadModel(modelname, smoothing);
+	LoadModel(_modelname, _smoothing);
 
 	// メッシュのマテリアルチェック
 	for (auto& m : meshes) {
@@ -78,10 +78,10 @@ void Model::Initialize(const std::string& modelname, bool smoothing)
 	LoadTextures();
 }
 
-void Model::LoadModel(const std::string& modelname, bool smoothing)
+void Model::LoadModel(const std::string& _modelname, bool _smoothing)
 {
-	const string filename = modelname + ".obj";
-	const string directoryPath = baseDirectory + modelname + "/";
+	const string filename = _modelname + ".obj";
+	const string directoryPath = baseDirectory + _modelname + "/";
 
 	// ファイルストリーム
 	std::ifstream file;
@@ -92,7 +92,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 		assert(0);
 	}
 
-	name = modelname;
+	name = _modelname;
 
 	// メッシュ生成
 	meshes.emplace_back(new Mesh);
@@ -129,7 +129,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 			// カレントメッシュの情報が揃っているなら
 			if (mesh->GetName().size() > 0 && mesh->GetVertexCount() > 0) {
 				// 頂点法線の平均によるエッジの平滑化
-				if (smoothing) {
+				if (_smoothing) {
 					mesh->CalculateSmoothedVertexNormals();
 				}
 				// 次のメッシュ生成
@@ -212,13 +212,13 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 					index_stream.seekg(1, ios_base::cur); // スラッシュを飛ばす
 					index_stream >> indexNormal;
 					// 頂点データの追加
-					Mesh::Vertex vertex{};
+					Mesh::VERTEX vertex{};
 					vertex.pos = positions[indexPosition - 1];
 					vertex.normal = normals[indexNormal - 1];
 					vertex.uv = texcoords[indexTexcoord - 1];
 					mesh->AddVertex(vertex);
 					// エッジ平滑化用のデータを追加
-					if (smoothing) {
+					if (_smoothing) {
 						mesh->AddSmoothData(indexPosition, (unsigned short)mesh->GetVertexCount() - 1);
 					}
 				} else {
@@ -227,7 +227,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 					// スラッシュ2連続の場合、頂点番号のみ
 					if (c == '/') {
 						// 頂点データの追加
-						Mesh::Vertex vertex{};
+						Mesh::VERTEX vertex{};
 						vertex.pos = positions[indexPosition - 1];
 						vertex.normal = { 0, 0, 1 };
 						vertex.uv = { 0, 0 };
@@ -238,13 +238,13 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 						index_stream.seekg(1, ios_base::cur); // スラッシュを飛ばす
 						index_stream >> indexNormal;
 						// 頂点データの追加
-						Mesh::Vertex vertex{};
+						Mesh::VERTEX vertex{};
 						vertex.pos = positions[indexPosition - 1];
 						vertex.normal = normals[indexNormal - 1];
 						vertex.uv = { 0, 0 };
 						mesh->AddVertex(vertex);
 						// エッジ平滑化用のデータを追加
-						if (smoothing) {
+						if (_smoothing) {
 							mesh->AddSmoothData(indexPosition, (unsigned short)mesh->GetVertexCount() - 1);
 						}
 					}
@@ -268,17 +268,17 @@ void Model::LoadModel(const std::string& modelname, bool smoothing)
 	file.close();
 
 	// 頂点法線の平均によるエッジの平滑化
-	if (smoothing) {
+	if (_smoothing) {
 		mesh->CalculateSmoothedVertexNormals();
 	}
 }
 
-void Model::LoadMaterial(const std::string& directoryPath, const std::string& filename)
+void Model::LoadMaterial(const std::string& _directoryPath, const std::string& _filename)
 {
 	// ファイルストリーム
 	std::ifstream file;
 	// マテリアルファイルを開く
-	file.open(directoryPath + filename);
+	file.open(_directoryPath + _filename);
 	// ファイルオープン失敗をチェック
 	if (file.fail()) {
 		assert(0);
@@ -361,10 +361,10 @@ void Model::LoadMaterial(const std::string& directoryPath, const std::string& fi
 	}
 }
 
-void Model::AddMaterial(Material* material)
+void Model::AddMaterial(Material* _material)
 {
 	// コンテナに登録
-	materials.emplace(material->name, material);
+	materials.emplace(_material->name, _material);
 }
 
 void Model::LoadTextures()
@@ -390,18 +390,18 @@ void Model::LoadTextures()
 	}
 }
 
-void Model::Draw(ID3D12GraphicsCommandList* cmdList)
+void Model::Draw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// 全メッシュを描画
 	for (auto& mesh : meshes) {
-		mesh->Draw(cmdList);
+		mesh->Draw(_cmdList);
 	}
 }
 
-void Model::VIDraw(ID3D12GraphicsCommandList* cmdList)
+void Model::VIDraw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// 全メッシュを描画
 	for (auto& mesh : meshes) {
-		mesh->VIDraw(cmdList);
+		mesh->VIDraw(_cmdList);
 	}
 }

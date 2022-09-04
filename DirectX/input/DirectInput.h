@@ -12,7 +12,7 @@ public: //エイリアス
 
 public: //列挙
 	//マウスボタン
-	enum MouseButton
+	enum MOUSE_BUTTON
 	{
 		MOUSE_LEFT,
 		MOUSE_RIGHT,
@@ -52,44 +52,44 @@ public: //メンバ関数
 	/// <summary>
 	/// キーの押下をチェック
 	/// </summary>
-	/// <param name = "keyNumber">キー番号( DIK_0 等)</param>
+	/// <param name = "_keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>押されているか</returns>
-	bool PushKey(BYTE keyNumber);
+	bool PushKey(BYTE _keyNumber);
 
 	/// <summary>
 	/// キーのトリガーをチェック
 	/// </summary>
-	/// <param name = "keyNumber">キー番号( DIK_0 等)</param>
+	/// <param name = "_keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>トリガーか</returns>
-	bool TriggerKey(BYTE keyNumber);
+	bool TriggerKey(BYTE _keyNumber);
 
 	/// <summary>
 	/// キーを離したかチェック
 	/// </summary>
-	/// <param name = "keyNumber">キー番号( DIK_0 等)</param>
+	/// <param name = "_keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>離したか</returns>
-	bool ReleaseKey(BYTE keyNumber);
+	bool ReleaseKey(BYTE _keyNumber);
 
 	/// <summary>
 	/// マウスボタンの押下をチェック
 	/// </summary>
-	/// <param name = "mouseButton">マウスボタン</param>
+	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>押されているか</returns>
-	bool PushMouseButton(const int mouseButton);
+	bool PushMouseButton(const int _mouseButton);
 
 	/// <summary>
 	/// マウスボタンのトリガーをチェック
 	/// </summary>
-	/// <param name = "mouseButton">マウスボタン</param>
+	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>トリガーか</returns>
-	bool TriggerMouseButton(const int mouseButton);
+	bool TriggerMouseButton(const int _mouseButton);
 
 	/// <summary>
 	/// マウスボタンを離したかチェック
 	/// </summary>
-	/// <param name = "mouseButton">マウスボタン</param>
+	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>離したか</returns>
-	bool ReleaseMouseButton(const int mouseButton);
+	bool ReleaseMouseButton(const int _mouseButton);
 
 	/// <summary>
 	/// マウスポインターの座標を取得

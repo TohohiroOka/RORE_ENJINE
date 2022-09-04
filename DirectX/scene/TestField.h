@@ -5,6 +5,8 @@
 #include "TouchableObject.h"
 #include <array>
 
+#include "EnemyManager.h"
+
 class TestField : public InterfaceScene
 {
 public:
@@ -35,26 +37,24 @@ public:
 	void ImguiDraw() override;
 
 	/// <summary>
-	/// コンピュートシェーダーからの計算結果取得
+	/// カメラの更新
 	/// </summary>
-	void GetConstbufferNum() override;
+	void CameraUpdate();
 
 private:
 
 	//カメラの回転
 	float cameraAngle = 100;
 	//カメラの高さ
-	float cameraY = 50.0f;
+	const float cameraY = 30.0f;
 
-
-	std::unique_ptr<Model> playerModel = nullptr;
-	std::unique_ptr<Model> groundModel = nullptr;
-
+	//プレイヤー
 	std::unique_ptr<Player> player = nullptr;
-	static const int groundNum = 2;
-	std::array<std::unique_ptr<Ground>, groundNum> ground;
 
-	std::unique_ptr<TouchableObject> tmap = nullptr;
+	//地形
+	static const int ground_num = 1;
+	std::array<std::unique_ptr<Ground>, ground_num> ground;
 
-	bool isDraw = true;
+	//敵
+	std::unique_ptr<EnemyManager> enemy = nullptr;
 };

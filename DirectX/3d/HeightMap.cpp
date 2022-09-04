@@ -10,8 +10,8 @@ using namespace DirectX;
 GraphicsPipelineManager::GRAPHICS_PIPELINE HeightMap::pipeline;
 const std::string HeightMap::baseDirectory = "Resources/HeightMap/";
 
-std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename,
-	const std::string filename1, const std::string filename2)
+std::unique_ptr<HeightMap> HeightMap::Create(const std::string _heightmapFilename,
+	const std::string _filename1, const std::string _filename2)
 {
 	//インスタンスを生成
 	HeightMap* instance = new HeightMap();
@@ -19,9 +19,9 @@ std::unique_ptr<HeightMap> HeightMap::Create(const std::string heightmapFilename
 		return nullptr;
 	}
 
-	instance->HeightMapLoad(heightmapFilename);
+	instance->HeightMapLoad(_heightmapFilename);
 
-	instance->LoadTexture(filename1, filename2);
+	instance->LoadTexture(_filename1, _filename2);
 
 	//初期化
 	instance->Initialize();
@@ -41,12 +41,12 @@ void HeightMap::PreDraw()
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-bool HeightMap::HeightMapLoad(const std::string filename)
+bool HeightMap::HeightMapLoad(const std::string _filename)
 {
 	//名前結合
-	std::string fname = baseDirectory + filename;
+	std::string fname = baseDirectory + _filename;
 
-	texture[HeightMapTex] = Texture::Create(fname);
+	texture[TEXTURE::HEIGHT_MAP_TEX] = Texture::Create(fname);
 
 	//height mapを開く
 	FILE* filePtr;
@@ -118,7 +118,7 @@ bool HeightMap::HeightMapLoad(const std::string filename)
 	{
 		for (int i = 0; i < hmInfo.terrainWidth; i++)
 		{
-			int height = static_cast<int>(bitmapImage[k]) - 9;
+			int height = static_cast<int>(bitmapImage[k]);
 
 			int index = (hmInfo.terrainHeight * j) + i;
 
@@ -137,32 +137,32 @@ bool HeightMap::HeightMapLoad(const std::string filename)
 	return true;
 }
 
-void HeightMap::LoadTexture(const std::string filename1, const std::string filename2)
+void HeightMap::LoadTexture(const std::string _filename1, const std::string _filename2)
 {
 	// テクスチャ無し
 	std::string filepath;
-	if (filename1 == "null") {
+	if (_filename1 == "null") {
 		filepath = "Resources/SubTexture/white1x1.png";
 	}
 	//テクスチャ有し
 	else
 	{
-		filepath = baseDirectory + filename1;
+		filepath = baseDirectory + _filename1;
 	}
 
-	texture[GraphicTex1] = Texture::Create(filepath);
+	texture[TEXTURE::GRAPHIC_TEX_1] = Texture::Create(filepath);
 
 	// テクスチャ無し
-	if (filename2 == "null") {
+	if (_filename2 == "null") {
 		filepath = "Resources/SubTexture/white1x1.png";
 	}
 	//テクスチャ有し
 	else
 	{
-		filepath = baseDirectory + filename2;
+		filepath = baseDirectory + _filename2;
 	}
 
-	texture[GraphicTex2] = Texture::Create(filepath);
+	texture[TEXTURE::GRAPHIC_TEX_2] = Texture::Create(filepath);
 }
 
 void HeightMap::Initialize()
@@ -176,7 +176,7 @@ void HeightMap::Initialize()
 	vertNum = surfaceNum * 4;
 	indexNum = surfaceNum * 6;
 
-	std::vector<Mesh::Vertex> vertices;
+	std::vector<Mesh::VERTEX> vertices;
 	vertices.resize(vertNum);
 	std::vector<unsigned long> indices;
 	indices.resize(indexNum);
@@ -290,7 +290,7 @@ void HeightMap::Initialize()
 
 HeightMap::~HeightMap()
 {
-	for (int i = 0; i < TEXTURE::Size; i++)
+	for (int i = 0; i < TEXTURE::SIZE; i++)
 	{
 		texture[i].reset();
 	}
@@ -303,9 +303,9 @@ void HeightMap::Draw()
 	InterfaceObject3d::Draw();
 
 	//テクスチャ転送
-	cmdList->SetGraphicsRootDescriptorTable(3, texture[HeightMapTex]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(4, texture[GraphicTex1]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(5, texture[GraphicTex2]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(3, texture[TEXTURE::HEIGHT_MAP_TEX]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(4, texture[TEXTURE::GRAPHIC_TEX_1]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(5, texture[TEXTURE::GRAPHIC_TEX_2]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);

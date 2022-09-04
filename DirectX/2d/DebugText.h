@@ -40,23 +40,25 @@ public:// メンバ関数
 	/// </summary>
 	/// <param name="x">x軸</param>
 	/// <param name="y">y軸</param>
-	inline void SetPos(float x, float y) {
-		posX = x;
-		posY = y;
+	inline void SetPos(float _x, float _y) {
+		posX = _x;
+		posY = _y;
 	}
 
 	/// <summary>
 	/// サイズ変更
 	/// </summary>
 	/// <param name="size"></param>
-	inline void SetSize(float size) { this->size = size; }
+	inline void SetSize(float _size) { this->size = _size; }
 
 	/// <summary>
 	/// 色変更
 	/// </summary>
 	/// <param name="size"></param>
-	inline void SetColor(float red, float green, float blue) {
-		this->size = size;
+	inline void SetColor(float _red, float _green, float _blue) {
+		this->red = _red;
+		this->green = _green;
+		this->blue = _blue;
 	}
 
 	/// <summary>
@@ -66,20 +68,19 @@ public:// メンバ関数
 	/// <param name="x">x軸の位置</param>
 	/// <param name="y">y軸の位置</param>
 	/// <param name="size">大きさ</param>
-	void Print(const std::string& text, float x, float y, float size = 1.0f);
+	void Print(const std::string& _text, float _x, float _y, float _size = 1.0f);
 
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <param name="len">文字列の長さ</param>
 	/// <param name="text">出力する文字</param>
-	void NPrint(int len, const char* text);
+	void NPrint(int _len, const char* _text);
 
 	/// <summary>
 	/// 全ての描画
 	/// </summary>
-	/// <param name="cmdList">コマンドリスト</param>
-	void DrawAll(ID3D12GraphicsCommandList* cmdList);
+	void DrawAll();
 
 	/// <summary>
 	/// 解放処理

@@ -4,7 +4,7 @@
 /// 衝突判定用関連の型定義
 /// </summary>
 
-enum CollisionShapeType
+enum COLILSION_SHAPE_TYPE
 {
 	SHAPE_UNKNOWN = -1, // 未設定
 

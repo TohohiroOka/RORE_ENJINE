@@ -21,15 +21,10 @@ private: // エイリアス
 
 public://構造体宣言
 	//定数バッファの構造体
-	struct ConstBufferData {
+	struct CONST_BUFFER_DATA {
 		XMFLOAT4 color;//色
 		XMMATRIX matWorld;//3D変換行列
 		XMMATRIX viewproj;//3D変換行列
-	};
-
-	//頂点データ3D
-	struct Vertex {
-		XMFLOAT3 pos;
 	};
 
 private://静的メンバ関数
@@ -37,10 +32,10 @@ private://静的メンバ関数
 	/// <summary>
 	/// 角度を求める
 	/// </summary>
-	/// <param name="startPoint">始点</param>
-	/// <param name="endPoint">終点</param>
+	/// <param name="_startPoint">始点</param>
+	/// <param name="_endPoint">終点</param>
 	/// <returns>二点間の角度</returns>
-	float GetAngle(XMFLOAT3 startPoint, XMFLOAT3 endPoint);
+	float GetAngle(XMFLOAT3 _startPoint, XMFLOAT3 _endPoint);
 
 public://静的メンバ関数
 
@@ -58,28 +53,28 @@ public://静的メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	/// <param name="_device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// Objectの生成
 	/// </summary>
-	/// <param name="LineNum">線の本数</param>
-	static std::unique_ptr<DrawLine3D> Create(UINT LineNum);
+	/// <param name="_lineNum">線の本数</param>
+	static std::unique_ptr<DrawLine3D> Create(UINT _lineNum);
 
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) {
-		DrawLine3D::camera = camera;
+	/// <param name="_camera">カメラ</param>
+	static void SetCamera(Camera* _camera) {
+		DrawLine3D::camera = _camera;
 	}
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画後処理
@@ -89,8 +84,8 @@ public://静的メンバ関数
 	/// <summary>
 	/// パイプラインの設定
 	/// </summary>
-	/// <param name="pipeline"></param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline) { DrawLine3D::pipeline = pipeline; }
+	/// <param name="_pipeline"></param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { DrawLine3D::pipeline = _pipeline; }
 
 public://メンバ関数
 
@@ -98,7 +93,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <returns>成否</returns>
-	bool Initialize(UINT LineNum);
+	bool Initialize(UINT _lineNum);
 
 	/// <summary>
 	/// 更新
@@ -108,15 +103,15 @@ public://メンバ関数
 	/// <summary>
 	/// 線の情報セット
 	/// </summary>
-	/// <param name="startPoint">始点</param>
-	/// <param name="endPoint">終点</param>
-	/// <param name="width">線の幅</param>
-	void SetLine(XMFLOAT3 startPoint[], XMFLOAT3 endPoint[], float width);
+	/// <param name="_startPoint">始点</param>
+	/// <param name="_endPoint">終点</param>
+	/// <param name="_width">線の幅</param>
+	void SetLine(XMFLOAT3 _startPoint[], XMFLOAT3 _endPoint[], float _width);
 
 	/// <summary>
 	/// 色の変更
 	/// </summary>
-	void SetColor(XMFLOAT4 color) { this->color = color; }
+	void SetColor(XMFLOAT4 _color) { this->color = _color; }
 
 	/// <summary>
 	/// //描画
@@ -145,7 +140,7 @@ private://静的メンバ変数
 protected://メンバ変数
 
 	//頂点配列
-	std::vector<Vertex> vertices;
+	std::vector<XMFLOAT3> vertices;
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//頂点バッファビュー
@@ -155,9 +150,9 @@ protected://メンバ変数
 	//インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView{};
 	//頂点データの要素数
-	UINT VERTEX_ARRAY_NUM = 0;
+	UINT vertexArrayNum = 0;
 	//インデックスデータの要素数
-	UINT INDEX_ARRAY_NUM = 0;
+	UINT indexArrayNum = 0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
 	// 色

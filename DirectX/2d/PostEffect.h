@@ -6,7 +6,7 @@ class PostEffect : public Sprite
 public: // サブクラス
 
 	// 定数バッファ用データ構造体B0
-	struct ConstBufferData
+	struct CONST_BUFFER_DATA
 	{
 		XMFLOAT4 outlineColor;//アウトラインの色
 		float outlineWidth;//アウトラインの太さ
@@ -63,22 +63,26 @@ public://メンバ関数
 	/// <summary>
 	/// 描画コマンドの発行
 	/// </summary>
-	/// <param name="cmdList">コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">コマンドリスト</param>
+	void Draw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	void PreDrawScene(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	void PreDrawScene(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画後処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	void PostDrawScene(ID3D12GraphicsCommandList* _cmdList);
 
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+	/// <summary>
+	/// パイプラインのセット
+	/// </summary>
+	/// <param name="_pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
 
 private://静的メンバ変数
 

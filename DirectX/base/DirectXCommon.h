@@ -23,7 +23,6 @@ private://ƒƒ“ƒoŠÖ”
 	/// <summary>
 	/// imgui‰Šú‰»
 	/// </summary>
-	/// <returns>¬”Û</returns>
 	void InitImgui();
 
 public://Ã“Iƒƒ“ƒoŠÖ”

@@ -60,17 +60,17 @@ void CollisionManager::CheckAllCollisions()
 	}
 }
 
-bool CollisionManager::Raycast(const Ray& ray, RaycastHit* hitInfo, float maxDistance)
+bool CollisionManager::Raycast(const Ray& _ray, RAYCAST_HIT* _hitInfo, float _maxDistance)
 {
-	return Raycast(ray, 0xffff, hitInfo, maxDistance);
+	return Raycast(_ray, 0xffff, _hitInfo, _maxDistance);
 }
 
-bool CollisionManager::Raycast(const Ray & ray, unsigned short attribute, RaycastHit * hitInfo, float maxDistance)
+bool CollisionManager::Raycast(const Ray& _ray, unsigned short _attribute, RAYCAST_HIT* _hitInfo, float _maxDistance)
 {
 	bool result = false;
 	std::forward_list<BaseCollider*>::iterator it;
 	std::forward_list<BaseCollider*>::iterator it_hit;
-	float distance = maxDistance;
+	float distance = _maxDistance;
 	XMVECTOR inter;
 
 	// 全てのコライダーと総当りチェック
@@ -79,7 +79,7 @@ bool CollisionManager::Raycast(const Ray & ray, unsigned short attribute, Raycas
 		BaseCollider* colA = *it;
 
 		// 属性が合わなければスキップ
-		if (!(colA->attribute & attribute)) {
+		if (!(colA->attribute & _attribute)) {
 			continue;
 		}
 
@@ -89,7 +89,7 @@ bool CollisionManager::Raycast(const Ray & ray, unsigned short attribute, Raycas
 			float tempDistance;
 			XMVECTOR tempInter;
 
-			if (!Collision::CheckRay2Sphere(ray, *sphere, &tempDistance, &tempInter)) continue;
+			if (!Collision::CheckRay2Sphere(_ray, *sphere, &tempDistance, &tempInter)) continue;
 			if (tempDistance >= distance) continue;
 
 			result = true;
@@ -102,7 +102,7 @@ bool CollisionManager::Raycast(const Ray & ray, unsigned short attribute, Raycas
 
 			float tempDistance;
 			DirectX::XMVECTOR tempInter;
-			if (!meshCollider->CheckCollisionRay(ray, &tempDistance, &tempInter)) continue;
+			if (!meshCollider->CheckCollisionRay(_ray, &tempDistance, &tempInter)) continue;
 			if (tempDistance >= distance) continue;
 
 			result = true;
@@ -112,19 +112,19 @@ bool CollisionManager::Raycast(const Ray & ray, unsigned short attribute, Raycas
 		}
 	}
 
-	if (result && hitInfo) {
-		hitInfo->distance = distance;
-		hitInfo->inter = inter;
-		hitInfo->collider = *it_hit;
-		hitInfo->object = hitInfo->collider->GetObject3d();
+	if (result && _hitInfo) {
+		_hitInfo->distance = distance;
+		_hitInfo->inter = inter;
+		_hitInfo->collider = *it_hit;
+		_hitInfo->object = _hitInfo->collider->GetObject3d();
 	}
 
 	return result;
 }
 
-void CollisionManager::QuerySphere(const Sphere & sphere, QueryCallback * callback, unsigned short attribute)
+void CollisionManager::QuerySphere(const Sphere& _sphere, QueryCallback* _callback, unsigned short _attribute)
 {
-	assert(callback);
+	assert(_callback);
 
 	std::forward_list<BaseCollider*>::iterator it;
 
@@ -134,7 +134,7 @@ void CollisionManager::QuerySphere(const Sphere & sphere, QueryCallback * callba
 		BaseCollider* col = *it;
 
 		// 属性が合わなければスキップ
-		if (!(col->attribute & attribute)) {
+		if (!(col->attribute & _attribute)) {
 			continue;
 		}
 
@@ -144,17 +144,17 @@ void CollisionManager::QuerySphere(const Sphere & sphere, QueryCallback * callba
 
 			XMVECTOR tempInter;
 			XMVECTOR tempReject;
-			if (!Collision::CheckSphere2Sphere(sphere, *sphereB, &tempInter, &tempReject)) continue;
+			if (!Collision::CheckSphere2Sphere(_sphere, *sphereB, &tempInter, &tempReject)) continue;
 
 			// 交差情報をセット
-			QueryHit info;
+			QUERY_HIT info;
 			info.collider = col;
 			info.object = col->GetObject3d();
 			info.inter = tempInter;
 			info.reject = tempReject;
 
 			// クエリーコールバック呼び出し
-			if (!callback->OnQueryHit(info)) {
+			if (!_callback->OnQueryHit(info)) {
 				// 戻り値がfalseの場合、継続せず終了
 				return;
 			}
@@ -165,17 +165,17 @@ void CollisionManager::QuerySphere(const Sphere & sphere, QueryCallback * callba
 
 			XMVECTOR tempInter;
 			XMVECTOR tempReject;
-			if (!meshCollider->CheckCollisionSphere(sphere, &tempInter, &tempReject)) continue;
+			if (!meshCollider->CheckCollisionSphere(_sphere, &tempInter, &tempReject)) continue;
 
 			// 交差情報をセット
-			QueryHit info;
+			QUERY_HIT info;
 			info.collider = col;
 			info.object = col->GetObject3d();
 			info.inter = tempInter;
 			info.reject = tempReject;
 
 			// クエリーコールバック呼び出し
-			if (!callback->OnQueryHit(info)) {
+			if (!_callback->OnQueryHit(info)) {
 				// 戻り値がfalseの場合、継続せず終了
 				return;
 			}

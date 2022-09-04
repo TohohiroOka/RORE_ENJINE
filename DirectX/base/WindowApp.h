@@ -18,20 +18,20 @@ public:
 	/// <summary>
 	/// ウィンドウプロ―ジャの生成
 	/// </summary>
-	/// <param name="hwnd"></param>
-	/// <param name="msg"></param>
-	/// <param name="wparam"></param>
-	/// <param name="lparam"></param>
+	/// <param name="_hwnd"></param>
+	/// <param name="_msg"></param>
+	/// <param name="_wparam"></param>
+	/// <param name="_lparam"></param>
 	/// <returns>ウィンドウプロ―ジャ</returns>
-	static LRESULT WindowProcdure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	static LRESULT WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM _lparam);
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="windowWidth">画面幅</param>
-	/// <param name="windowHeight">画面高さ</param>
-	/// <param name="gameName">タイトルバー名</param>
-	void Initialize(const int windowWidth, const int windowHeight, const wchar_t* gameName);
+	/// <param name="_windowWidth">画面幅</param>
+	/// <param name="_windowHeight">画面高さ</param>
+	/// <param name="_gameName">タイトルバー名</param>
+	void Initialize(const int _windowWidth, const int _windowHeight, const wchar_t* _gameName);
 
 	/// <summary>
 	/// 更新

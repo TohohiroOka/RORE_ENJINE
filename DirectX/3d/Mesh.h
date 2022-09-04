@@ -23,7 +23,7 @@ private: // エイリアス
 
 public: // サブクラス
 	// 頂点データ構造体（テクスチャあり）
-	struct Vertex
+	struct VERTEX
 	{
 		XMFLOAT3 pos; // xyz座標
 		XMFLOAT3 normal; // 法線ベクトル
@@ -36,9 +36,10 @@ public: // 静的メンバ関数
 	/// 静的初期化
 	/// </summary>
 	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	static void StaticInitialize(ID3D12Device* _device);
 
 private: // 静的メンバ変数
+
 	// デバイス
 	static ID3D12Device* device;
 
@@ -64,20 +65,20 @@ public: // メンバ関数
 	/// <summary>
 	/// 名前をセット
 	/// </summary>
-	/// <param name="name">名前</param>
-	void SetName(const std::string& name);
+	/// <param name="_name">名前</param>
+	void SetName(const std::string& _name);
 
 	/// <summary>
 	/// 頂点データの追加
 	/// </summary>
-	/// <param name="vertex">頂点データ</param>
-	void AddVertex(const Vertex& vertex);
+	/// <param name="_vertex">頂点データ</param>
+	void AddVertex(const VERTEX& _vertex);
 
 	/// <summary>
 	/// 頂点インデックスの追加
 	/// </summary>
-	/// <param name="index">インデックス</param>
-	void AddIndex(unsigned long index);
+	/// <param name="_index">インデックス</param>
+	void AddIndex(unsigned long _index);
 
 	/// <summary>
 	/// 頂点データの数を取得
@@ -88,9 +89,9 @@ public: // メンバ関数
 	/// <summary>
 	/// エッジ平滑化データの追加
 	/// </summary>
-	/// <param name="indexPosition">座標インデックス</param>
-	/// <param name="indexVertex">頂点インデックス</param>
-	void AddSmoothData(unsigned long indexPosition, unsigned long indexVertex);
+	/// <param name="_indexPosition">座標インデックス</param>
+	/// <param name="_indexVertex">頂点インデックス</param>
+	void AddSmoothData(unsigned long _indexPosition, unsigned long _indexVertex);
 
 	/// <summary>
 	/// 平滑化された頂点法線の計算
@@ -106,8 +107,8 @@ public: // メンバ関数
 	/// <summary>
 	/// マテリアルの割り当て
 	/// </summary>
-	/// <param name="material">マテリアル</param>
-	void SetMaterial(Material* material);
+	/// <param name="_material">マテリアル</param>
+	void SetMaterial(Material* _material);
 
 	/// <summary>
 	/// バッファの生成
@@ -129,20 +130,20 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="cmdList">命令発行先コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">命令発行先コマンドリスト</param>
+	void Draw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="cmdList">命令発行先コマンドリスト</param>
-	void VIDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">命令発行先コマンドリスト</param>
+	void VIDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 頂点配列を取得
 	/// </summary>
 	/// <returns>頂点配列</returns>
-	inline const std::vector<Vertex>& GetVertices() { return vertices; }
+	inline const std::vector<VERTEX>& GetVertices() { return vertices; }
 
 	/// <summary>
 	/// インデックス配列を取得
@@ -162,7 +163,7 @@ private: // メンバ変数
 	// インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView = {};
 	// 頂点データ配列
-	std::vector<Vertex> vertices;
+	std::vector<VERTEX> vertices;
 	// 頂点インデックス配列
 	std::vector<unsigned long> indices;
 	// 頂点法線スムージング用データ

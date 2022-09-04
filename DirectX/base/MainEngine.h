@@ -34,22 +34,14 @@ public:
 	bool Update();
 
 	/// <summary>
-	/// デバッグ用数字
-	/// </summary>
-	/// <param name="x">値1</param>
-	/// <param name="y">値2</param>
-	/// <param name="z">値3</param>
-	void debugNum(float x, float y, float z);
-
-	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// ウィンドウクラスのインスタンス
+	/// フレームレートキープ
 	/// </summary>
-	void FrameControl(WindowApp* winApp);
+	void FrameControl();
 
 private:
 
@@ -58,7 +50,7 @@ private:
 	//Inputのインスタンス
 	DirectInput* input = nullptr;
 	//XInputManager
-	XInputManager* Xinput = nullptr;
+	XInputManager* xinput = nullptr;
 	//GameSceneのインスタンス
 	std::unique_ptr<SceneManager> scene = nullptr;
 	//ポストエフェクトのインスタンス

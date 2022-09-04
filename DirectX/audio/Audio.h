@@ -12,28 +12,28 @@ private: // エイリアス
 
 public:
 	//チャンクヘッダ
-	struct ChunkHeader
+	struct CHUNK_HEADER
 	{
 		char id[4];//チャンク毎のID
 		int	size;  // チャンクサイズ
 	};
 
 	//RIFFヘッダチャンク
-	struct RiffHeader
+	struct RIFF_HEADER
 	{
-		ChunkHeader chunk;//"RIFF"
+		CHUNK_HEADER chunk;//"RIFF"
 		char type[4];//"WAVE"
 	};
 
 	//FMTチャンク
-	struct FormatChunk
+	struct FORMAT_CHUNK
 	{
-		ChunkHeader chunk;//"fmt"
+		CHUNK_HEADER chunk;//"fmt"
 		WAVEFORMATEX fmt;//波形フォーマット
 	};
 
 	//音声データ
-	struct SoundData
+	struct SOUND_DATA
 	{
 		WAVEFORMATEX wfex;//波形フォーマット
 		BYTE* pBuffer;//バッファの先頭アドレス
@@ -41,31 +41,45 @@ public:
 		IXAudio2SourceVoice* pSourceVoice;
 	};
 
-
 public:
 
 	Audio();
 	~Audio();
 
-	//音声データ読み込み
-	int SoundLoadWave(const char* fileName);
+	/// <summary>
+	/// 音声データ読み込み
+	/// </summary>
+	/// <param name="_fileName">ファイル名</param>
+	/// <returns>格納番号</returns>
+	int SoundLoadWave(const char* _fileName);
 	
-	//データの生成
-	void CreateSoundData(SoundData& soundData);
+	/// <summary>
+	/// データの生成
+	/// </summary>
+	/// <param name="_soundData">生成するサウンドデータ情報</param>
+	void CreateSoundData(SOUND_DATA& _soundData);
 
-	//音声再生
-	bool SoundPlayWava(int number, bool roop);
+	/// <summary>
+	/// 音声再生
+	/// </summary>
+	/// <param name="_number">サウンドデータの格納番号</param>
+	/// <param name="_roop">ループの有無</param>
+	/// <returns>データの設定を行ったか</returns>
+	bool SoundPlayWava(int _number, bool _roop);
 
-	//サウンドの停止
-	void StopSound(int number);
+	/// <summary>
+	/// サウンドの停止
+	/// </summary>
+	/// <param name="_number">サウンドデータの格納番号</param>
+	void StopSound(int _number);
 
 private:
 	//サウンドデータ配列
-	static std::vector<SoundData*> SData;
+	static std::vector<SOUND_DATA*> soundData;
 
 	//サウンドのバッファ
 	XAUDIO2_BUFFER buf{};
 
-	static ComPtr<IXAudio2>xAudio2;
+	static ComPtr<IXAudio2> xAudio2;
 	static IXAudio2MasteringVoice* masterVoice;
 };

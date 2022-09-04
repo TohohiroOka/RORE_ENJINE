@@ -20,13 +20,13 @@ private: // エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 	//頂点データ3D
-	struct Vertex {
+	struct VERTEX {
 		XMFLOAT3 pos;
 		XMFLOAT3 uv;
 	};
 
 	//定数バッファの構造体
-	struct ConstBufferData {
+	struct CONST_BUFFER_DATA {
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
@@ -37,27 +37,29 @@ public://メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	static void StaticInitialize(ID3D12Device* device);
+	/// <param name="_device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
-	/// directXCommon生成
+	/// 
 	/// </summary>
+	/// <param name="_cmdList">コマンドリスト</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<CubeMap> Create(ID3D12GraphicsCommandList* cmdList);
+	static std::unique_ptr<CubeMap> Create(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) {
-		CubeMap::camera = camera;
+	/// <param name="_camera">カメラ</param>
+	static void SetCamera(Camera* _camera) {
+		CubeMap::camera = _camera;
 	}
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画後処理
@@ -94,9 +96,9 @@ public:
 	/// <summary>
 	/// キューブマップの転送
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	/// <param name="RootParameterIndex"></param>
-	void TransferTextureBubber(ID3D12GraphicsCommandList* cmdList, UINT RootParameterIndex);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	/// <param name="_rootParameterIndex"></param>
+	void TransferTextureBubber(ID3D12GraphicsCommandList* _cmdList, UINT _rootParameterIndex);
 
 	/// <summary>
 	/// キューブマップのセット
@@ -104,7 +106,11 @@ public:
 	/// <returns></returns>
 	Texture* SetTexture() { return texture.get(); }
 
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+	/// <summary>
+	/// パイプラインのセット
+	/// </summary>
+	/// <param name="_pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
 
 private:
 

@@ -30,16 +30,16 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	/// <param name="_device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// OBJファイルからメッシュ生成
 	/// </summary>
-	/// <param name="modelname">モデル名</param>
-	/// <param name="modelname">エッジ平滑化フラグ</param>
+	/// <param name="_modelname">モデル名</param>
+	/// <param name="_smoothing">エッジ平滑化フラグ</param>
 	/// <returns>生成されたモデル</returns>
-	static std::unique_ptr<Model> CreateFromOBJ(const std::string& modelname, bool smoothing = false);
+	static std::unique_ptr<Model> CreateFromOBJ(const std::string& _modelname, bool _smoothing = false);
 
 public: // メンバ関数
 	/// <summary>
@@ -50,15 +50,15 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelname">モデル名</param>
-	/// <param name="modelname">エッジ平滑化フラグ</param>
-	void Initialize(const std::string& modelname, bool smoothing);
+	/// <param name="_modelname">モデル名</param>
+	/// <param name="_smoothing">エッジ平滑化フラグ</param>
+	void Initialize(const std::string& _modelname, bool _smoothing);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="cmdList">命令発行先コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">命令発行先コマンドリスト</param>
+	void Draw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// メッシュコンテナを取得
@@ -69,8 +69,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="cmdList">命令発行先コマンドリスト</param>
-	void VIDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">命令発行先コマンドリスト</param>
+	void VIDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// メッシュコンテナを取得
@@ -93,19 +93,22 @@ private: // メンバ関数
 	/// <summary>
 	/// モデル読み込み
 	/// </summary>
-	/// <param name="modelname">モデル名</param>
-	/// <param name="modelname">エッジ平滑化フラグ</param>
-	void LoadModel(const std::string& modelname, bool smoothing);
+	/// <param name="_modelname">モデル名</param>
+	/// <param name="_smoothing">エッジ平滑化フラグ</param>
+	void LoadModel(const std::string& _modelname, bool _smoothing);
 
 	/// <summary>
 	/// マテリアル読み込み
 	/// </summary>
-	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
+	/// <param name="_directoryPath">ファイルパス</param>
+	/// <param name="_filename">ファイル名</param>
+	void LoadMaterial(const std::string& _directoryPath, const std::string& _filename);
 
 	/// <summary>
 	/// マテリアル登録
 	/// </summary>
-	void AddMaterial(Material* material);
+	/// <param name="_material">マテリアル</param>
+	void AddMaterial(Material* _material);
 
 	/// <summary>
 	/// テクスチャ読み込み

@@ -137,12 +137,14 @@ void DirectXCommon::Initialize()
 	result = device->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		IID_PPV_ARGS(&cmdAllocator));
+	if (FAILED(result)) { assert(0); }
 
 	// コマンドリストを生成
 	result = device->CreateCommandList(0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		cmdAllocator.Get(), nullptr,
 		IID_PPV_ARGS(&cmdList));
+	if (FAILED(result)) { assert(0); }
 
 	// 標準設定でコマンドキューを生成
 	D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
@@ -197,13 +199,12 @@ void DirectXCommon::Initialize()
 
 	// フェンスの生成
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	if (FAILED(result)) { assert(0); }
 
 	device->SetName(L"DXdev");
-	//dxgiFactory->SetName(L"DXdxgiFactory");
 	cmdList->SetName(L"DXcmdList");
 	cmdAllocator->SetName(L"DXcmdAllocator");
 	cmdQueue->SetName(L"DXcmdQueue");
-	//swapchain->SetName(L"DXswapchain");
 	backBuffers[0]->SetName(L"DXbackBuffers0");
 	backBuffers[1]->SetName(L"DXbackBuffers1");
 	rtvHeaps->SetName(L"DXrtvHeaps");
@@ -231,11 +232,13 @@ void DirectXCommon::CreateDepth()
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,//深度値書き込みに使用
 		&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0),
 		IID_PPV_ARGS(&depthBuffer));
+	if (FAILED(result)) { assert(0); }
 
 	//深度ビュー用のデスクリプタヒープ生成
 	dsvHeapDesc.NumDescriptors = 1;//深度ビューは1つ
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;//デプスステンシルビュー
 	result = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+	if (FAILED(result)) { assert(0); }
 
 	//深度ビュー作成
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
@@ -257,16 +260,12 @@ void DirectXCommon::InitImgui()
 	heapDesc.NumDescriptors = 1;
 	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	result = device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&imguiHeap));
-	if (FAILED(result)) {
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	// スワップチェーンの情報を取得
 	DXGI_SWAP_CHAIN_DESC swcDesc = {};
 	result = swapchain->GetDesc(&swcDesc);
-	if (FAILED(result)) {
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	if (ImGui::CreateContext() == nullptr) {
 		assert(0);

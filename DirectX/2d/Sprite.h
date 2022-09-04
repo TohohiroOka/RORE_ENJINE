@@ -23,7 +23,7 @@ public: // サブクラス
 	/// <summary>
 	/// 頂点データ構造体
 	/// </summary>
-	struct VertexPosUv
+	struct VERTEX
 	{
 		XMFLOAT3 pos; // xyz座標
 		XMFLOAT2 uv;  // uv座標
@@ -32,13 +32,13 @@ public: // サブクラス
 	/// <summary>
 	/// 定数バッファ用データ構造体
 	/// </summary>
-	struct ConstBufferData
+	struct CONST_BUFFER_DATA
 	{
 		XMFLOAT4 color;	// 色 (RGBA)
 		XMMATRIX mat;	// ３Ｄ変換行列
 	};
 
-	struct Information
+	struct INFORMATION
 	{
 		bool isDelete = false; //シーン遷移で削除を行うか
 		std::unique_ptr<Texture> instance = nullptr;
@@ -49,23 +49,23 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	/// <param name="device">デバイス</param>
+	/// <param name="_device">デバイス</param>
 	/// <returns>成否</returns>
-	static bool StaticInitialize(ID3D12Device* device);
+	static bool StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="keepName">保存名</param>
-	/// <param name="filename">画像ファイル名</param>
-	/// <param name="isDelete">シーン遷移で削除を行うか</param>
-	static void LoadTexture(const std::string keepName, const std::string filename, const bool isDelete = true);
+	/// <param name="_keepName">保存名</param>
+	/// <param name="_filename">画像ファイル名</param>
+	/// <param name="_isDelete">シーン遷移で削除を行うか</param>
+	static void LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete = true);
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">描画コマンドリスト</param>
+	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 描画後処理
@@ -75,9 +75,9 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// スプライト生成
 	/// </summary>
-	/// <param name="name">テクスチャ保存名</param>
+	/// <param name="_name">テクスチャ保存名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Sprite> Create(const std::string name);
+	static std::unique_ptr<Sprite> Create(const std::string _name);
 
 	/// <summary>
 	/// シーンごとの解放処理
@@ -89,7 +89,11 @@ public: // 静的メンバ関数
 	/// </summary>
 	static void Finalize();
 
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipe) { pipeline = pipe; }
+	/// <summary>
+	/// パイプラインのセット
+	/// </summary>
+	/// <param name="_pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
 
 protected: // 静的メンバ変数
 
@@ -102,7 +106,7 @@ protected: // 静的メンバ変数
 	//パイプライン
 	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//テクスチャ情報
-	static std::map<std::string, Information> texture;
+	static std::map<std::string, INFORMATION> texture;
 	// 射影行列
 	static XMMATRIX matProjection;
 
@@ -121,12 +125,11 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="name">テクスチャ保存名</param>
-	/// <param name="anchorpoint">アンカーポイント</param>
-	/// <param name="isFlipX">左右反転するか</param>
-	/// <param name="isFlipY">上下反転するか</param>
-	/// <returns>成否</returns>
-	bool Initialize(const std::string name, const XMFLOAT2 anchorpoint, bool isFlipX = false, bool isFlipY = false);
+	/// <param name="_name">テクスチャ保存名</param>
+	/// <param name="_anchorpoint">アンカーポイント</param>
+	/// <param name="_isFlipX">左右反転するか</param>
+	/// <param name="_isFlipY">上下反転するか</param>
+	void Initialize(const std::string _name, const XMFLOAT2 _anchorpoint, bool _isFlipX = false, bool _isFlipY = false);
 
 	/// <summary>
 	/// 更新
@@ -235,50 +238,50 @@ public:
 	/// <summary>
 	/// テクスチャのセット
 	/// </summary>
-	void SetTexNumber(std::string name) { this->name = name; };
+	void SetTexNumber(std::string _name) { this->name = _name; };
 
 	/// <summary>
 	/// 座標の入力
 	/// </summary>
-	void SetPosition(const XMFLOAT2& position) { this->position = position; }
+	void SetPosition(const XMFLOAT2& _position) { this->position = _position; }
 
 	/// <summary>
 	/// 回転角の入力
 	/// </summary>
-	void SetRotation(float rotation) { this->rotation = rotation; }
+	void SetRotation(float _rotation) { this->rotation = _rotation; }
 
 	/// <summary>
 	/// 大きさの入力
 	/// </summary>
-	void SetSize(const XMFLOAT2& size) { this->size = size; }
+	void SetSize(const XMFLOAT2& _size) { this->size = _size; }
 
 	/// <summary>
 	/// 高さの入力
 	/// </summary>
-	void SetTexSize(const XMFLOAT2& texSize) { this->texSize = texSize; }
+	void SetTexSize(const XMFLOAT2& _texSize) { this->texSize = _texSize; }
 
 	/// <summary>
 	/// 終点の入力
 	/// </summary>
-	void SetTexLeftTop(const XMFLOAT2& texLeftTop) { this->texLeftTop = texLeftTop; }
+	void SetTexLeftTop(const XMFLOAT2& _texLeftTop) { this->texLeftTop = _texLeftTop; }
 
 	/// <summary>
 	/// 色の入力
 	/// </summary>
-	void SetColor(const XMFLOAT4& color) { this->color = color; }
+	void SetColor(const XMFLOAT4& _color) { this->color = _color; }
 
 	/// <summary>
 	/// アンカーポイントの入力
 	/// </summary>
-	void SetAnchorpoint(const XMFLOAT2& anchorpoint) { this->anchorpoint = anchorpoint; }
+	void SetAnchorpoint(const XMFLOAT2& _anchorpoint) { this->anchorpoint = _anchorpoint; }
 
 	/// <summary>
 	/// 左右反転フラグの入力
 	/// </summary>
-	void SetIsFlipX(bool isFlipX) { this->isFlipX = isFlipX; };
+	void SetIsFlipX(bool _isFlipX) { this->isFlipX = _isFlipX; };
 
 	/// <summary>
 	/// 上下反転フラグの入力
 	/// </summary>
-	void SetIsFlipY(bool isFlipY) { this->isFlipY = isFlipY; };
+	void SetIsFlipY(bool _isFlipY) { this->isFlipY = _isFlipY; };
 };

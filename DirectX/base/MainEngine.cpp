@@ -39,8 +39,8 @@ void MainEngine::Initialize()
 	input->Initialize();
 
 	//パッド
-	Xinput = XInputManager::GetInstance();
-	Xinput->Initialize();
+	xinput = XInputManager::GetInstance();
+	xinput->Initialize();
 
 	//Object系の初期化
 	Texture::StaticInitialize(dXCommon->GetDevice());
@@ -68,7 +68,7 @@ void MainEngine::Initialize()
 bool MainEngine::Update()
 {
 	input->Update();
-	Xinput->Update();
+	xinput->Update();
 
 	//エスケープか×が押されたときゲーム終了
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
@@ -106,14 +106,14 @@ void MainEngine::Draw()
 	dXCommon->PostDraw();
 }
 
-void MainEngine::debugNum(float x, float y, float z)
+void MainEngine::FrameControl()
 {
-	//数字のデバッグ
-	swprintf_s(str, L"%f,%f,%f\n", x, y, z);
-	OutputDebugString(str);
+	fps->FixedFps();
 }
 
-void MainEngine::FrameControl(WindowApp* winApp)
-{
-	fps->FixedFps(winApp);
-}
+//void MainEngine::debugNum(float x, float y, float z)
+//{
+//	//数字のデバッグ
+//	swprintf_s(str, L"%f,%f,%f\n", x, y, z);
+//	OutputDebugString(str);
+//}

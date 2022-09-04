@@ -28,7 +28,7 @@ protected:// エイリアス
 protected:// サブクラス
 
 	// 定数バッファ用データ構造体B0
-	struct ConstBufferDataB0
+	struct CONST_BUFFER_DATA_B0
 	{
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
@@ -40,7 +40,7 @@ protected:// サブクラス
 	};
 
 	// 定数バッファ用データ構造体B1
-	struct ConstBufferDataB1
+	struct CONST_BUFFER_DATA_B1
 	{
 		XMFLOAT3 baseColor = { 1,1,1 };//ベースカラ―
 		float pad1; // パディング
@@ -58,14 +58,14 @@ public:
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	/// <param name="_device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// コマンドリストのセット
 	/// </summary>
-	/// <param name="cmdList">コマンドリスト</param>
-	static void SetCmdList(ID3D12GraphicsCommandList* cmdList) { InterfaceObject3d::cmdList = cmdList; }
+	/// <param name="_cmdList">コマンドリスト</param>
+	static void SetCmdList(ID3D12GraphicsCommandList* _cmdList) { InterfaceObject3d::cmdList = _cmdList; }
 
 	/// <summary>
 	/// コマンドリストのセット
@@ -75,20 +75,20 @@ public:
 	/// <summary>
 	/// カメラのセット
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	static void SetCamera(Camera* camera) { InterfaceObject3d::camera = camera; }
+	/// <param name="_camera">カメラ</param>
+	static void SetCamera(Camera* _camera) { InterfaceObject3d::camera = _camera; }
 
 	/// <summary>
 	/// ライトグループのセット
 	/// </summary>
-	/// <param name="lightGroup">ライトグループ</param>
-	static void SetLightGroup(LightGroup* light) { InterfaceObject3d::light = light; }
+	/// <param name="_light">ライトグループ</param>
+	static void SetLightGroup(LightGroup* _light) { InterfaceObject3d::light = _light; }
 
 	/// <summary>
 	/// キューブマップのセット
 	/// </summary>
-	/// <param name="cubetex">キューブマップテクスチャ</param>
-	static void SetLightGroup(Texture* cubetex) { InterfaceObject3d::cubetex = cubetex; }
+	/// <param name="_cubetex">キューブマップテクスチャ</param>
+	static void SetLightGroup(Texture* _cubetex) { InterfaceObject3d::cubetex = _cubetex; }
 
 public:
 
@@ -123,8 +123,8 @@ public:
 	/// <summary>
 	/// 衝突時コールバック関数
 	/// </summary>
-	/// <param name="info">衝突情報</param>
-	virtual void OnCollision(const CollisionInfo& info) {}
+	/// <param name="_info">衝突情報</param>
+	virtual void OnCollision(const CollisionInfo& _info) {}
 
 protected:
 
@@ -150,7 +150,7 @@ protected:
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
 	//定数バッファに渡す変数
-	ConstBufferDataB1 constBufferB1Num;
+	CONST_BUFFER_DATA_B1 constBufferB1Num;
 	//ブルームの有無
 	bool isBloom = false;
 	//トゥーンの有無
@@ -197,50 +197,50 @@ public:
 	/// <summary>
 	/// 座標の設定
 	/// </summary>
-	/// <param name="position">座標</param>
-	void SetPosition(XMFLOAT3 position) { this->position = position; }
+	/// <param name="_position">座標</param>
+	void SetPosition(XMFLOAT3 _position) { this->position = _position; }
 
 	/// <summary>
 	/// 回転角の設定
 	/// </summary>
-	/// <param name="rotation">回転角</param>
-	void SetRotation(XMFLOAT3 rotation) { this->rotation = rotation; }
+	/// <param name="_rotation">回転角</param>
+	void SetRotation(XMFLOAT3 _rotation) { this->rotation = _rotation; }
 
 	/// <summary>
 	/// スケールの設定
 	/// </summary>
-	/// <param name="position">スケール</param>
-	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
+	/// <param name="_scale">スケール</param>
+	void SetScale(XMFLOAT3 _scale) { this->scale = _scale; }
 
 	/// <summary>
 	/// ブルームのセット
 	/// </summary>
-	/// <param name="isBloom">ブルーム有->true / 無->false</param>
-	void SetBloom(bool isBloom) { this->isBloom = isBloom; }
+	/// <param name="_isBloom">ブルーム有->true / 無->false</param>
+	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
 
 	/// <summary>
 	/// トゥーンのセット
 	/// </summary>
-	/// <param name="isToon">トゥーン有->true / 無->false</param>
-	void SetToon(bool isToon) { this->isToon = isToon; }
+	/// <param name="_isToon">トゥーン有->true / 無->false</param>
+	void SetToon(bool _isToon) { this->isToon = _isToon; }
 
 	/// <summary>
 	/// アウトラインのセット
 	/// </summary>
-	/// <param name="isOutline">アウトライン有->true / 無->false</param>
-	void SetOutline(bool isOutline) { this->isOutline = isOutline; }
+	/// <param name="_isOutline">アウトライン有->true / 無->false</param>
+	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
 
 	/// <summary>
 	/// アウトラインの色セット
 	/// </summary>
-	/// <param name="outlineColor">幅</param>
-	static void SetOutlineColor(XMFLOAT4 outlineColor) { InterfaceObject3d::outlineColor = outlineColor; }
+	/// <param name="_outlineColor">幅</param>
+	static void SetOutlineColor(XMFLOAT4 _outlineColor) { InterfaceObject3d::outlineColor = _outlineColor; }
 
 	/// <summary>
 	/// アウトラインの幅セット
 	/// </summary>
-	/// <param name="outlineWidth">幅</param>
-	static void SetOutlineWidth(float outlineWidth) { InterfaceObject3d::outlineWidth = outlineWidth; }
+	/// <param name="_outlineWidth">幅</param>
+	static void SetOutlineWidth(float _outlineWidth) { InterfaceObject3d::outlineWidth = _outlineWidth; }
 
 	/// <summary>
 	/// アウトラインの色取得
@@ -257,8 +257,8 @@ public:
 	/// <summary>
 	/// コライダーのセット
 	/// </summary>
-	/// <param name="collider">コライダー</param>
-	void SetCollider(BaseCollider* collider);
+	/// <param name="_collider">コライダー</param>
+	void SetCollider(BaseCollider* _collider);
 
 	/// <summary>
 	/// コライダーの取得
@@ -273,10 +273,10 @@ public:
 	const XMMATRIX& GetMatWorld() { return matWorld; }
 
 	/// <summary>
-	/// 頂点のセット
+	/// ワールド行列のセット
 	/// </summary>
-	/// <param name="model">頂点</param>
-	void SetMatWorld(XMMATRIX matWorld) { this->matWorld = matWorld; }
+	/// <param name="_matWorld">ワールド行列</param>
+	void SetMatWorld(XMMATRIX _matWorld) { this->matWorld = _matWorld; }
 
 	/// <summary>
 	/// ワールド座標を取得

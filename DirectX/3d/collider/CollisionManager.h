@@ -19,16 +19,16 @@ public:// メンバ関数
 	/// コライダーの追加
 	/// </summary>
 	/// <param name="collider">コライダー</param>
-	inline void AddCollider(BaseCollider* collider) {
-		colliders.push_front(collider);
+	inline void AddCollider(BaseCollider* _collider) {
+		colliders.push_front(_collider);
 	}
 
 	/// <summary>
 	/// コライダーの削除
 	/// </summary>
 	/// <param name="collider">コライダー</param>
-	inline void RemoveCollider(BaseCollider* collider) {
-		colliders.remove(collider);
+	inline void RemoveCollider(BaseCollider* _collider) {
+		colliders.remove(_collider);
 	}
 
 	/// <summary>
@@ -39,29 +39,29 @@ public:// メンバ関数
 	/// <summary>
 	/// レイキャスト
 	/// </summary>
-	/// <param name="ray">レイ</param>
-	/// <param name="hitInfo">衝突情報</param>
-	/// <param name="maxDistance">最大距離</param>
+	/// <param name="_ray">レイ</param>
+	/// <param name="_hitInfo">衝突情報</param>
+	/// <param name="_maxDistance">最大距離</param>
 	/// <returns>レイが任意のコライダーと交わる場合はtrue、それ以外はfalse</returns>
-	bool Raycast(const Ray& ray, RaycastHit* hitInfo = nullptr, float maxDistance = D3D12_FLOAT32_MAX);
+	bool Raycast(const Ray& _ray, RAYCAST_HIT* _hitInfo = nullptr, float _maxDistance = D3D12_FLOAT32_MAX);
 
 	/// <summary>
 	/// レイキャスト
 	/// </summary>
-	/// <param name="ray">レイ</param>
-	/// <param name="hitInfo">対象の衝突属性</param>
-	/// <param name="hitInfo">衝突情報</param>
-	/// <param name="maxDistance">最大距離</param>
+	/// <param name="_ray">レイ</param>
+	/// <param name="_hitInfo">対象の衝突属性</param>
+	/// <param name="_hitInfo">衝突情報</param>
+	/// <param name="_maxDistance">最大距離</param>
 	/// <returns>レイが任意のコライダーと交わる場合はtrue、それ以外はfalse</returns>
-	bool Raycast(const Ray& ray, unsigned short attribute, RaycastHit* hitInfo = nullptr, float maxDistance = D3D12_FLOAT32_MAX);
+	bool Raycast(const Ray& _ray, unsigned short _attribute, RAYCAST_HIT* _hitInfo = nullptr, float _maxDistance = D3D12_FLOAT32_MAX);
 
 	/// <summary>
 	/// 球による衝突全検索
 	/// </summary>
-	/// <param name="sphere">球</param>
-	/// <param name="callback">衝突時コールバック</param>
-	/// <param name="attribute">対象の衝突属性</param>
-	void QuerySphere(const Sphere& sphere, QueryCallback* callback, unsigned short attribute = (unsigned short)0xffffffff);
+	/// <param name="_sphere">球</param>
+	/// <param name="_callback">衝突時コールバック</param>
+	/// <param name="_attribute">対象の衝突属性</param>
+	void QuerySphere(const Sphere& _sphere, QueryCallback* _callback, unsigned short _attribute = (unsigned short)0xffffffff);
 
 private:
 	CollisionManager() = default;

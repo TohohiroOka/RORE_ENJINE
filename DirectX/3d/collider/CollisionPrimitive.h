@@ -57,7 +57,7 @@ public:
 struct Ray
 {
 	// 始点座標
-	DirectX::XMVECTOR	start = { 0,0,0,1 };
+	DirectX::XMVECTOR start = { 0,0,0,1 };
 	// 方向
-	DirectX::XMVECTOR	dir = { 1,0,0,0 };
+	DirectX::XMVECTOR dir = { 1,0,0,0 };
 };

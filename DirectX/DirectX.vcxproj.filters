@@ -35,14 +35,8 @@
     <Filter Include="エンジンシステム\Particle">
       <UniqueIdentifier>{33bd4f75-ebed-40fd-837b-60126820b578}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ゲームシステム\player">
-      <UniqueIdentifier>{a15f0d01-4f6d-4e9a-a4a0-6a27daf39fc2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="エンジンシステム\Light">
       <UniqueIdentifier>{4aa578b4-27fc-4eb3-ab2f-ee4aa96fefae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ゲームシステム\Ground">
-      <UniqueIdentifier>{12d2ba67-d429-4db9-aa2d-c60f1ccf1397}</UniqueIdentifier>
     </Filter>
     <Filter Include="エンジンシステム\CSV">
       <UniqueIdentifier>{89695aff-10b9-4ffc-a805-fceb5d716a93}</UniqueIdentifier>
@@ -137,6 +131,21 @@
     <Filter Include="エンジンシステム\Object\3d\collider">
       <UniqueIdentifier>{01e36be7-9665-4170-9568-05beaf158a24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ゲームシステム\object">
+      <UniqueIdentifier>{d9aada42-7d56-457d-bb40-6ec31093798e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ゲームシステム\object\Ground">
+      <UniqueIdentifier>{12d2ba67-d429-4db9-aa2d-c60f1ccf1397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ゲームシステム\object\player">
+      <UniqueIdentifier>{a15f0d01-4f6d-4e9a-a4a0-6a27daf39fc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ゲームシステム\object\Enemy">
+      <UniqueIdentifier>{f6307291-f752-42aa-85f8-d6c4147ae8a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ゲームシステム\object\Bullet">
+      <UniqueIdentifier>{6e14a1ca-e053-469a-9e2d-6dc1f9574b93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -203,10 +212,10 @@
       <Filter>エンジンシステム\Light</Filter>
     </ClCompile>
     <ClCompile Include="object\Ground.cpp">
-      <Filter>ゲームシステム\Ground</Filter>
+      <Filter>ゲームシステム\object\Ground</Filter>
     </ClCompile>
     <ClCompile Include="object\Player.cpp">
-      <Filter>ゲームシステム\player</Filter>
+      <Filter>ゲームシステム\object\player</Filter>
     </ClCompile>
     <ClCompile Include="object\TouchableObject.cpp">
       <Filter>ゲームシステム\TouchableObject</Filter>
@@ -288,6 +297,24 @@
     </ClCompile>
     <ClCompile Include="3d\collider\MeshCollider.cpp">
       <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="object\BaseEnemy.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="object\FirstBoss.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="object\EnemyManager.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="object\BaseBullet.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="object\BulletManager.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="object\PlayerBullet.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -467,10 +494,10 @@
       <Filter>エンジンシステム\Light</Filter>
     </ClInclude>
     <ClInclude Include="object\Ground.h">
-      <Filter>ゲームシステム\Ground</Filter>
+      <Filter>ゲームシステム\object\Ground</Filter>
     </ClInclude>
     <ClInclude Include="object\Player.h">
-      <Filter>ゲームシステム\player</Filter>
+      <Filter>ゲームシステム\object\player</Filter>
     </ClInclude>
     <ClInclude Include="object\TouchableObject.h">
       <Filter>ゲームシステム\TouchableObject</Filter>
@@ -579,6 +606,24 @@
     </ClInclude>
     <ClInclude Include="3d\collider\CollisionTypes.h">
       <Filter>エンジンシステム\Object\3d\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="object\BaseEnemy.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="object\FirstBoss.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="object\EnemyManager.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="object\BaseBullet.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="object\BulletManager.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="object\PlayerBullet.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

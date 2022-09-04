@@ -36,19 +36,19 @@ public: // 定数
 public: // サブクラス
 
 	// 定数バッファ用データ構造体
-	struct ConstBufferData
+	struct CONST_BUFFER_DATA
 	{
 		// 環境光の色
 		XMFLOAT3 ambientColor;
 		float pad1;
 		// 平行光源用
-		DirectionalLight::ConstBufferData dirLights[DirLightNum];
+		DirectionalLight::CONST_BUFFER_DATA dirLights[DirLightNum];
 		// 点光源用
 		PointLight::ConstBufferData pointLights[PointLightNum];
 		// スポットライト用
-		SpotLight::ConstBufferData spotLights[SpotLightNum];
+		SpotLight::CONST_BUFFER_DATA spotLights[SpotLightNum];
 		// 丸影用
-		CircleShadow::ConstBufferData circleShadows[CircleShadowNum];
+		CircleShadow::CONST_BUFFER_DATA circleShadows[CircleShadowNum];
 	};
 
 public: // 静的メンバ関数
@@ -57,7 +57,7 @@ public: // 静的メンバ関数
 	/// 静的初期化
 	/// </summary>
 	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// インスタンス生成
@@ -88,7 +88,9 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParameterIndex);
+	/// <param name="_cmdList">コマンドリスト</param>
+	/// <param name="_rootParameterIndex">格納ルートパラメータ番号</param>
+	void Draw(ID3D12GraphicsCommandList* _cmdList, UINT _rootParameterIndex);
 
 	/// <summary>
 	/// 定数バッファ転送
@@ -103,141 +105,141 @@ public: // メンバ関数
 	/// <summary>
 	/// 環境光のライト色をセット
 	/// </summary>
-	/// <param name="color">ライト色</param>
-	void SetAmbientColor(const XMFLOAT3& color);
+	/// <param name="_color">ライト色</param>
+	void SetAmbientColor(const XMFLOAT3& _color);
 
 	/// <summary>
 	/// 平行光源の有効フラグをセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="active">有効フラグ</param>
-	void SetDirLightActive(int index, bool active);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_active">有効フラグ</param>
+	void SetDirLightActive(int _index, bool _active);
 
 	/// <summary>
 	/// 平行光源のライト方向をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightdir">ライト方向</param>
-	void SetDirLightDir(int index, const XMVECTOR& lightdir);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightdir">ライト方向</param>
+	void SetDirLightDir(int _index, const XMVECTOR& _lightdir);
 
 	/// <summary>
 	/// 平行光源のライト色をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightcolor">ライト色</param>
-	void SetDirLightColor(int index, const XMFLOAT3& lightcolor);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightcolor">ライト色</param>
+	void SetDirLightColor(int _index, const XMFLOAT3& _lightcolor);
 
 	/// <summary>
 	/// 点光源の有効フラグをセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="active">有効フラグ</param>
-	void SetPointLightActive(int index, bool active);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_active">有効フラグ</param>
+	void SetPointLightActive(int _index, bool _active);
 
 	/// <summary>
 	/// 点光源のライト座標をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightpos">ライト座標</param>
-	void SetPointLightPos(int index, const XMFLOAT3& lightpos);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightpos">ライト座標</param>
+	void SetPointLightPos(int _index, const XMFLOAT3& _lightpos);
 
 	/// <summary>
 	/// 点光源のライト色をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightcolor">ライト色</param>
-	void SetPointLightColor(int index, const XMFLOAT3& lightcolor);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightcolor">ライト色</param>
+	void SetPointLightColor(int _index, const XMFLOAT3& _lightcolor);
 
 	/// <summary>
 	/// 点光源のライト距離減衰係数をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
+	/// <param name="_index">ライト番号</param>
 	/// <param name="lightatten">ライト距離減衰係数</param>
-	void SetPointLightAtten(int index, const XMFLOAT3& lightAtten);
+	void SetPointLightAtten(int _index, const XMFLOAT3& _lightAtten);
 
 	/// <summary>
 	/// スポットライトの有効フラグをセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="active">有効フラグ</param>
-	void SetSpotLightActive(int index, bool active);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_active">有効フラグ</param>
+	void SetSpotLightActive(int _index, bool _active);
 
 	/// <summary>
 	/// スポットライトのライト方向をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightdir">ライト方向</param>
-	void SetSpotLightDir(int index, const XMVECTOR& lightdir);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightdir">ライト方向</param>
+	void SetSpotLightDir(int _index, const XMVECTOR& _lightdir);
 
 	/// <summary>
 	/// スポットライトのライト座標をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightpos">ライト座標</param>
-	void SetSpotLightPos(int index, const XMFLOAT3& lightpos);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightpos">ライト座標</param>
+	void SetSpotLightPos(int _index, const XMFLOAT3& _lightpos);
 
 	/// <summary>
 	/// スポットライトのライト色をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightcolor">ライト色</param>
-	void SetSpotLightColor(int index, const XMFLOAT3& lightcolor);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightcolor">ライト色</param>
+	void SetSpotLightColor(int _index, const XMFLOAT3& _lightcolor);
 
 	/// <summary>
 	/// スポットライトのライト距離減衰係数をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
+	/// <param name="_index">ライト番号</param>
 	/// <param name="lightatten">ライト距離減衰係数</param>
-	void SetSpotLightAtten(int index, const XMFLOAT3& lightAtten);
+	void SetSpotLightAtten(int _index, const XMFLOAT3& _lightAtten);
 
 	/// <summary>
 	/// スポットライトのライト減衰角度をセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="lightFactorAngle">x:減衰開始角度 y:減衰終了角度</param>
-	void SetSpotLightFactorAngle(int index, const XMFLOAT2& lightFactorAngle);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_lightFactorAngle">x:減衰開始角度 y:減衰終了角度</param>
+	void SetSpotLightFactorAngle(int _index, const XMFLOAT2& _lightFactorAngle);
 
 	/// <summary>
 	/// 丸影の有効フラグをセット
 	/// </summary>
-	/// <param name="index">ライト番号</param>
-	/// <param name="active">有効フラグ</param>
-	void SetCircleShadowActive(int index, bool active);
+	/// <param name="_index">ライト番号</param>
+	/// <param name="_active">有効フラグ</param>
+	void SetCircleShadowActive(int _index, bool _active);
 
 	/// <summary>
 	/// 丸影のキャスター座標をセット
 	/// </summary>
-	/// <param name="index">番号</param>
-	/// <param name="lightpos">キャスター座標</param>
-	void SetCircleShadowCasterPos(int index, const XMFLOAT3& casterPos);
+	/// <param name="_index">番号</param>
+	/// <param name="_lightpos">キャスター座標</param>
+	void SetCircleShadowCasterPos(int _index, const XMFLOAT3& _casterPos);
 
 	/// <summary>
 	/// 丸影の方向をセット
 	/// </summary>
-	/// <param name="index">番号</param>
-	/// <param name="lightdir">方向</param>
-	void SetCircleShadowDir(int index, const XMVECTOR& lightdir);
+	/// <param name="_index">番号</param>
+	/// <param name="_lightdir">方向</param>
+	void SetCircleShadowDir(int _index, const XMVECTOR& _lightdir);
 
 	/// <summary>
 	/// 丸影のキャスターとライトの距離をセット
 	/// </summary>
-	/// <param name="index">番号</param>
-	/// <param name="distanceCasterLight">キャスターとライトの距離</param>
-	void SetCircleShadowDistanceCasterLight(int index, float distanceCasterLight);
+	/// <param name="_index">番号</param>
+	/// <param name="_distanceCasterLight">キャスターとライトの距離</param>
+	void SetCircleShadowDistanceCasterLight(int _index, float _distanceCasterLight);
 
 	/// <summary>
 	/// 丸影の距離減衰係数をセット
 	/// </summary>
-	/// <param name="index">番号</param>
+	/// <param name="_index">番号</param>
 	/// <param name="lightatten">距離減衰係数</param>
-	void SetCircleShadowAtten(int index, const XMFLOAT3& lightAtten);
+	void SetCircleShadowAtten(int _index, const XMFLOAT3& _lightAtten);
 
 	/// <summary>
 	/// 丸影の減衰角度をセット
 	/// </summary>
-	/// <param name="index">番号</param>
-	/// <param name="lightFactorAngle">x:減衰開始角度 y:減衰終了角度</param>
-	void SetCircleShadowFactorAngle(int index, const XMFLOAT2& lightFactorAngle);
+	/// <param name="_index">番号</param>
+	/// <param name="_lightFactorAngle">x:減衰開始角度 y:減衰終了角度</param>
+	void SetCircleShadowFactorAngle(int _index, const XMFLOAT2& _lightFactorAngle);
 
 private: // メンバ変数
 	// 定数バッファ

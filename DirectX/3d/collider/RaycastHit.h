@@ -8,7 +8,7 @@ class InterfaceObject3d;
 /// <summary>
 /// レイキャストによる情報を得る為の構造体
 /// </summary>
-struct RaycastHit
+struct RAYCAST_HIT
 {
 	// 衝突相手のオブジェクト
 	InterfaceObject3d* object = nullptr;

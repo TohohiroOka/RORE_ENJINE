@@ -22,20 +22,21 @@ public:
 	/// <summary>
 	/// 八分木の最大最小の保存
 	/// </summary>
-	/// <param name="model">モデル</param>
-	void MinMax(Model* model);
+	/// <param name="_model">モデル</param>
+	void MinMax(Model* _model);
 
 	/// <summary>
 	/// 八分木の現在地セット
 	/// </summary>
-	/// <param name="pos">座標</param>
+	/// <param name="_pos">座標</param>
 	/// <returns>現在番号</returns>
-	int OctreeSet(DirectX::XMFLOAT3 pos);
+	int OctreeSet(DirectX::XMFLOAT3 _pos);
 
 	/// <summary>
 	/// 三角形の配列を構築する
 	/// </summary>
-	void ConstructTriangles(Model* model);
+	/// <param name="_model">モデル</param>
+	void ConstructTriangles(Model* _model);
 
 	/// <summary>
 	/// 更新
@@ -50,20 +51,20 @@ public:
 	/// <summary>
 	/// 球との当たり判定
 	/// </summary>
-	/// <param name="sphere">球</param>
-	/// <param name="inter">交点（出力用）</param>
-	/// <param name="reject">排斥ベクトル（出力用）</param>
+	/// <param name="_sphere">球</param>
+	/// <param name="_inter">交点（出力用）</param>
+	/// <param name="_reject">排斥ベクトル（出力用）</param>
 	/// <returns>交差しているか否か</returns>
-	bool CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR*inter = nullptr, DirectX::XMVECTOR* reject = nullptr);
+	bool CheckCollisionSphere(const Sphere& _sphere, DirectX::XMVECTOR* _inter = nullptr, DirectX::XMVECTOR* _reject = nullptr);
 
 	/// <summary>
 	/// レイとの当たり判定
 	/// </summary>
-	/// <param name="sphere">レイ</param>
-	/// <param name="distance">距離（出力用）</param>
-	/// <param name="inter">交点（出力用）</param>
+	/// <param name="_sphere">レイ</param>
+	/// <param name="_distance">距離（出力用）</param>
+	/// <param name="_inter">交点（出力用）</param>
 	/// <returns>交差しているか否か</returns>
-	bool CheckCollisionRay(const Ray& ray, float* distance = nullptr, DirectX::XMVECTOR*inter = nullptr);
+	bool CheckCollisionRay(const Ray& _ray, float* _distance = nullptr, DirectX::XMVECTOR* _inter = nullptr);
 
 private:
 	//判定用三角形

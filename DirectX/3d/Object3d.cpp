@@ -17,7 +17,7 @@ using namespace Microsoft::WRL;
 
 GraphicsPipelineManager::GRAPHICS_PIPELINE Object3d::pipeline;
 
-std::unique_ptr<Object3d> Object3d::Create(Model* model)
+std::unique_ptr<Object3d> Object3d::Create(Model* _model)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Object3d* instance = new Object3d();
@@ -28,8 +28,8 @@ std::unique_ptr<Object3d> Object3d::Create(Model* model)
 	// 初期化
 	instance->Initialize();
 
-	if (model) {
-		instance->SetModel(model);
+	if (_model) {
+		instance->SetModel(_model);
 	}
 
 	return std::unique_ptr<Object3d>(instance);

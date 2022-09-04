@@ -12,14 +12,14 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* device);
+	/// <param name="_device">デバイス</param>
+	static void StaticInitialize(ID3D12Device* _device);
 
 	/// <summary>
 	/// 描画前準備
 	/// </summary>
-	/// <param name="cmdList">コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	/// <param name="_cmdList">コマンドリスト</param>
+	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
 
 	/// <summary>
 	/// 解放処理
@@ -41,9 +41,9 @@ public:
 	/// <summary>
 	/// シェーダーリソースビューの作成
 	/// </summary>
-	/// <param name="texBuffer">テクスチャバッファ</param>
-	/// <param name="srvDesc">シェーダーリソースビュー設定</param>
-	void CreateSRV(Microsoft::WRL::ComPtr<ID3D12Resource> texBuffer, D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc);
+	/// <param name="_texBuffer">テクスチャバッファ</param>
+	/// <param name="_srvDesc">シェーダーリソースビュー設定</param>
+	void CreateSRV(Microsoft::WRL::ComPtr<ID3D12Resource> _texBuffer, D3D12_SHADER_RESOURCE_VIEW_DESC _srvDesc);
 
 private:
 

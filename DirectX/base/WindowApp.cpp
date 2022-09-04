@@ -6,30 +6,30 @@ UINT WindowApp::windowHeight;
 WNDCLASSEX WindowApp::winClass{};
 HWND WindowApp::hwnd = nullptr;
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);
 
-LRESULT WindowApp::WindowProcdure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT WindowApp::WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM _lparam)
 {
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+	if (ImGui_ImplWin32_WndProcHandler(_hwnd, _msg, _wparam, _lparam)) {
 		return 1;
 	}
 
-	if (msg == WM_DESTROY)
+	if (_msg == WM_DESTROY)
 	{
 		PostQuitMessage((0));
 		return 0;
 	}
-	return DefWindowProc(hwnd, msg, wparam, lparam);
+	return DefWindowProc(_hwnd, _msg, _wparam, _lparam);
 }
 
-void WindowApp::Initialize(const int window_Width, const int window_height,const wchar_t* gameName)
+void WindowApp::Initialize(const int _windowWidth, const int _windowHeight,const wchar_t* _gameName)
 {
-	windowWidth = window_Width;
-	windowHeight = window_height;
+	windowWidth = _windowWidth;
+	windowHeight = _windowHeight;
 
 	winClass.cbSize = sizeof(WNDCLASSEX);
 	winClass.lpfnWndProc = (WNDPROC)WindowProcdure;// ウィンドウプロシージャを設定
-	winClass.lpszClassName = gameName;// ウィンドウクラス名
+	winClass.lpszClassName = _gameName;// ウィンドウクラス名
 	winClass.hInstance = GetModuleHandle(nullptr);// ウィンドウハンドル
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);// カーソル指定
 
@@ -41,7 +41,7 @@ void WindowApp::Initialize(const int window_Width, const int window_height,const
 
 	// ウィンドウオブジェクトの生成
 	hwnd = CreateWindow(winClass.lpszClassName,// クラス名
-		gameName,// タイトルバーの文字
+		_gameName,// タイトルバーの文字
 		WS_OVERLAPPEDWINDOW,// 標準的なウィンドウスタイル
 		CW_USEDEFAULT,// 表示X座標（OSに任せる）
 		CW_USEDEFAULT,// 表示Y座標（OSに任せる）

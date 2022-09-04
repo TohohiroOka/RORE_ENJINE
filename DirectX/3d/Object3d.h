@@ -17,14 +17,15 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 3Dオブジェクト生成
 	/// </summary>
-	/// <returns></returns>
-	static std::unique_ptr<Object3d> Create(Model* model = nullptr);
+	/// <param name="_model">モデル</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<Object3d> Create(Model* _model = nullptr);
 
 	/// <summary>
 	/// パイプラインの設定
 	/// </summary>
-	/// <param name="pipeline"></param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline) { Object3d::pipeline = pipeline; }
+	/// <param name="_pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { Object3d::pipeline = _pipeline; }
 
 private: // 静的メンバ変数
 
@@ -36,7 +37,6 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <returns>成否</returns>
 	void Initialize() override;
 
 	/// <summary>
@@ -57,7 +57,7 @@ public:
 	/// モデルのセット
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void SetModel(Model* model) { this->model = model; }
+	void SetModel(Model* _model) { this->model = _model; }
 
 	/// <summary>
 	/// モデルを取得

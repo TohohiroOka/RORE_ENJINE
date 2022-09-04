@@ -5,14 +5,14 @@
 const std::wstring pass = L"Resources/Shaders/";
 
 //エラーの出力
-void OutputErrstr(ID3DBlob* errorBlob)
+void OutputErrstr(ID3DBlob* _errorBlob)
 {
 	// errorBlobからエラー内容をstring型にコピー
 	std::string errstr;
-	errstr.resize(errorBlob->GetBufferSize());
+	errstr.resize(_errorBlob->GetBufferSize());
 
-	std::copy_n((char*)errorBlob->GetBufferPointer(),
-		errorBlob->GetBufferSize(),
+	std::copy_n((char*)_errorBlob->GetBufferPointer(),
+		_errorBlob->GetBufferSize(),
 		errstr.begin());
 	errstr += "\n";
 	// エラー内容を出力ウィンドウに表示
@@ -21,13 +21,13 @@ void OutputErrstr(ID3DBlob* errorBlob)
 }
 
 //パスの取得
-std::wstring GetFullPath(LPCWSTR assetName)
+std::wstring GetFullPath(LPCWSTR _assetName)
 {
-	return pass + assetName;
+	return pass + _assetName;
 }
 
 //シェーダーの読み込みとコンパイル
-ID3DBlob* CompileShader(const LPCWSTR fileName, LPCSTR target)
+ID3DBlob* CompileShader(const LPCWSTR _fileName, LPCSTR _target)
 {
 	HRESULT result = S_FALSE;
 	//出力用オブジェクト
@@ -39,7 +39,7 @@ ID3DBlob* CompileShader(const LPCWSTR fileName, LPCSTR target)
 	//エラーオブジェクト
 	ID3DBlob* error;
 
-	result = D3DCompileFromFile(GetFullPath(fileName).c_str(), nullptr, includeFrag, "main", target,
+	result = D3DCompileFromFile(GetFullPath(_fileName).c_str(), nullptr, includeFrag, "main", _target,
 		compileFlags, 0, &blob, &error);
 	if (FAILED(result))
 	{
@@ -86,8 +86,8 @@ void ShaderManager::LoadShader()
 	shaderObjectVS["DRAW_LINE_3D"] = CompileShader(L"DrawLine3DVS.hlsl", vsModel);
 	shaderObjectPS["DRAW_LINE_3D"] = CompileShader(L"DrawLine3DPS.hlsl", psModel);
 	//NormalMap
-	shaderObjectVS["NORMAL_MAP"] = CompileShader(L"NormalMapVS.hlsl", vsModel);
-	shaderObjectPS["NORMAL_MAP"] = CompileShader(L"NormalMapPS.hlsl", psModel);
+	shaderObjectVS["NORMAMAP"] = CompileShader(L"NormalMapVS.hlsl", vsModel);
+	shaderObjectPS["NORMAMAP"] = CompileShader(L"NormalMapPS.hlsl", psModel);
 	//Sprite
 	shaderObjectVS["SPRITE"] = CompileShader(L"SpriteVS.hlsl", vsModel);
 	shaderObjectPS["SPRITE"] = CompileShader(L"SpritePS.hlsl", psModel);

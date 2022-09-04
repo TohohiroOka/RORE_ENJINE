@@ -9,17 +9,17 @@ class HeightMap : public InterfaceObject3d
 {
 private: // エイリアス
 
-	struct HeightMapInfo {		// Heightmap structure
+	struct HEIGHT_MAP_INFO {		// Heightmap structure
 		int terrainWidth;		// Width of heightmap
 		int terrainHeight;		// Height (Length) of heightmap
 		std::vector<XMFLOAT3> heightMap;	// Array to store terrain's vertex positions
 	};
 
 	enum TEXTURE {
-		HeightMapTex,
-		GraphicTex1,
-		GraphicTex2,
-		Size,
+		HEIGHT_MAP_TEX,
+		GRAPHIC_TEX_1,
+		GRAPHIC_TEX_2,
+		SIZE,
 	};
 
 public://メンバ関数
@@ -27,16 +27,16 @@ public://メンバ関数
 	/// <summary>
 	/// directXCommon生成
 	/// </summary>
-	/// <param name="heightmapFilename">heightmap名</param>
-	/// <param name="filename">ファイル名</param>
+	/// <param name="_heightmapFilename">heightmap名</param>
+	/// <param name="_filename">ファイル名1</param>
+	/// <param name="_filename2">ファイル名2</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<HeightMap> Create(const std::string heightmapFilename,
-		const std::string filename1 = "null", const std::string filename2 = "null");
+	static std::unique_ptr<HeightMap> Create(const std::string _heightmapFilename,
+		const std::string _filename1 = "null", const std::string _filename2 = "null");
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="cmdList">描画コマンドリスト</param>
 	static void PreDraw();
 
 private://メンバ関数
@@ -44,16 +44,16 @@ private://メンバ関数
 	/// <summary>
 	/// ハイトマップ
 	/// </summary>
-	/// <param name="filename">ファイル名</param>
+	/// <param name="_filename">ファイル名</param>
 	/// <returns>成功か</returns>
-	bool HeightMapLoad(const std::string filename);
+	bool HeightMapLoad(const std::string _filename);
 
 	/// <summary
 	/// テクスチャ読み込み
 	/// </summary>
-	/// <param name="filename1">ファイル名</param>
-	/// <param name="filename2">ファイル名</param>
-	void LoadTexture(const std::string filename1, const std::string filename2);
+	/// <param name="_filename1">ファイル名1</param>
+	/// <param name="_filename2">ファイル名2</param>
+	void LoadTexture(const std::string _filename1, const std::string _filename2);
 
 	/// <summary>
 	/// 初期化
@@ -71,10 +71,10 @@ public:
 	void Draw() override;
 
 	/// <summary>
-	/// パイプラインの設定
+	/// パイプラインのセット
 	/// </summary>
-	/// <param name="pipeline"></param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline) { HeightMap::pipeline = pipeline; }
+	/// <param name="_pipeline">パイプライン</param>
+	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { HeightMap::pipeline = _pipeline; }
 
 private:
 
@@ -86,7 +86,7 @@ private:
 private:
 
 	//テクスチャ情報
-	std::array<std::unique_ptr<Texture>, TEXTURE::Size> texture;
+	std::array<std::unique_ptr<Texture>, TEXTURE::SIZE> texture;
 	// モデル
 	Model* model = nullptr;
 	//インデックスの大きさ
@@ -94,7 +94,7 @@ private:
 	//頂点数
 	int vertNum = 0;
 	//ハイトマップの情報
-	HeightMapInfo hmInfo;
+	HEIGHT_MAP_INFO hmInfo;
 
 public:
 

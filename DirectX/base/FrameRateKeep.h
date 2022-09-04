@@ -11,15 +11,15 @@ private:
 public:
 
 	/// <summary>
-	/// 
+	/// インスタンスの生成
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>インスタンス</returns>
 	static std::unique_ptr<FrameRateKeep> Create();
 
 	/// <summary>
 	/// Fps値の固定
 	/// </summary>
-	void FixedFps(WindowApp* winApp);
+	void FixedFps();
 
 public:
 
@@ -27,8 +27,8 @@ public:
 	float deltaTime = 0.0f;
 	float frameRate = 0.0f;
 	float commandWaitTime = 0.0f;
+	int count = 0;
 	std::chrono::steady_clock::time_point lastUpdate;
-
 
 };
 

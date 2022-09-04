@@ -14,9 +14,9 @@ private: // エイリアス
 	// DirectX::を省略
 	using XMVECTOR = DirectX::XMVECTOR;
 public:
-	SphereCollider(XMVECTOR offset = {0,0,0,0}, float radius = 1.0f) :
-		offset(offset),
-		radius(radius)
+	SphereCollider(XMVECTOR _offset = {0,0,0,0}, float _radius = 1.0f) :
+		offset(_offset),
+		radius(_radius)
 	{
 		// 球形状をセット
 		shapeType = COLLISIONSHAPE_SPHERE;
@@ -27,15 +27,18 @@ public:
 	/// </summary>
 	void Update() override;
 
+	/// <summary>
+	/// 判定描画
+	/// </summary>
 	void Draw() override;
 
 	inline const XMVECTOR& GetOffset() { return offset; }
 
-	inline void SetOffset(const XMVECTOR& offset) { this->offset = offset; }
+	inline void SetOffset(const XMVECTOR& _offset) { this->offset = _offset; }
 
 	inline float GetRadius() { return radius; }
 
-	inline void SetRadius(float radius) { this->radius = radius; }
+	inline void SetRadius(float _radius) { this->radius = _radius; }
 
 private:
 	// オブジェクト中心からのオフセット

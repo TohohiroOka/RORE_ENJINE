@@ -3,7 +3,7 @@
 /// <summary>
 /// クエリーによる情報を得る為の構造体
 /// </summary>
-struct QueryHit
+struct QUERY_HIT
 {
 	// 衝突相手のオブジェクト
 	InterfaceObject3d* object = nullptr;
@@ -29,6 +29,6 @@ public:
 	/// </summary>
 	/// <param name="info">交差情報</param>
 	/// <returns>クエリーを続けるならtrue、打ち切るならfalseを返す</returns>
-	virtual bool OnQueryHit(const QueryHit& info) = 0;
+	virtual bool OnQueryHit(const QUERY_HIT& _info) = 0;
 };
 

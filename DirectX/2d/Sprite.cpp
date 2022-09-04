@@ -8,7 +8,7 @@ using namespace Microsoft::WRL;
 ID3D12Device* Sprite::device = nullptr;
 ID3D12GraphicsCommandList* Sprite::cmdList = nullptr;
 GraphicsPipelineManager::GRAPHICS_PIPELINE Sprite::pipeline;
-std::map<std::string, Sprite::Information> Sprite::texture;
+std::map<std::string, Sprite::INFORMATION> Sprite::texture;
 XMMATRIX Sprite::matProjection;
 
 Sprite::~Sprite()
@@ -17,15 +17,15 @@ Sprite::~Sprite()
 	constBuff.Reset();
 }
 
-bool Sprite::StaticInitialize(ID3D12Device* device)
+bool Sprite::StaticInitialize(ID3D12Device* _device)
 {
 	// 初期化チェック
 	assert(!Sprite::device);
 
 	// nullptrチェック
-	assert(device);
+	assert(_device);
 
-	Sprite::device = device;
+	Sprite::device = _device;
 
 	// 射影行列計算
 	matProjection = XMMatrixOrthographicOffCenterLH(
@@ -38,25 +38,25 @@ bool Sprite::StaticInitialize(ID3D12Device* device)
 	return true;
 }
 
-void Sprite::LoadTexture(const std::string keepName, const std::string filename, const bool isDelete)
+void Sprite::LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete)
 {
 	// nullptrチェック
 	assert(device);
 
 	//同じキーがあればエラーを出力
-	assert(!texture.count(keepName));
+	assert(!texture.count(_keepName));
 
 	//テクスチャ読み込み
-	texture[keepName].instance = Texture::Create(filename);
-	texture[keepName].isDelete = isDelete;
+	texture[_keepName].instance = Texture::Create(_filename);
+	texture[_keepName].isDelete = _isDelete;
 }
 
-void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void Sprite::PreDraw(ID3D12GraphicsCommandList* _cmdList)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(Sprite::cmdList == nullptr);
 
-	Sprite::cmdList = cmdList;
+	Sprite::cmdList = _cmdList;
 
 	// パイプラインステートの設定
 	cmdList->SetPipelineState(pipeline.pipelineState.Get());
@@ -72,7 +72,7 @@ void Sprite::PostDraw()
 	Sprite::cmdList = nullptr;
 }
 
-std::unique_ptr<Sprite> Sprite::Create(const std::string name)
+std::unique_ptr<Sprite> Sprite::Create(const std::string _name)
 {
 	// Spriteのインスタンスを生成
 	Sprite* instance = new Sprite();
@@ -81,24 +81,21 @@ std::unique_ptr<Sprite> Sprite::Create(const std::string name)
 	}
 
 	// 初期化
-	if (!instance->Initialize(name, { 0.5f,0.5f })) {
-		delete instance;
-		assert(0);
-		return nullptr;
-	}
+	instance->Initialize(_name, { 0.5f,0.5f });
 
+	//更新
 	instance->Update();
 
 	//ユニークポインタを返す
 	return std::unique_ptr<Sprite>(instance);
 }
 
-bool Sprite::Initialize(const std::string name, const XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
+void Sprite::Initialize(const std::string _name, const XMFLOAT2 _anchorpoint, bool _isFlipX, bool _isFlipY)
 {
-	this->name = name;
-	this->anchorpoint = anchorpoint;
-	this->isFlipX = isFlipX;
-	this->isFlipY = isFlipY;
+	this->name = _name;
+	this->anchorpoint = _anchorpoint;
+	this->isFlipX = _isFlipX;
+	this->isFlipY = _isFlipY;
 
 	HRESULT result = S_FALSE;
 
@@ -106,46 +103,38 @@ bool Sprite::Initialize(const std::string name, const XMFLOAT2 anchorpoint, bool
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(VertexPosUv) * vertNum),
+		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(VERTEX) * vertNum),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
-	if (FAILED(result)) {
-		assert(0);
-		return false;
-	}
+	if (FAILED(result)) { assert(0); }
 
 	// 頂点バッファへのデータ転送
 	TransferVertices();
 
 	// 頂点バッファビューの作成
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
-	vbView.SizeInBytes = sizeof(VertexPosUv) * 4;
-	vbView.StrideInBytes = sizeof(VertexPosUv);
+	vbView.SizeInBytes = sizeof(VERTEX) * 4;
+	vbView.StrideInBytes = sizeof(VERTEX);
 
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
-	if (FAILED(result)) {
-		assert(0);
-		return false;
-	}
+	if (FAILED(result)) { assert(0); }
 
 	// 定数バッファにデータ転送
-	ConstBufferData* constMap = nullptr;
+	CONST_BUFFER_DATA* constMap = nullptr;
 	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result)) {
 		constMap->color = color;
 		constMap->mat = matProjection;
 		constBuff->Unmap(0, nullptr);
 	}
-
-	return true;
 }
 
 void Sprite::Update()
@@ -159,7 +148,7 @@ void Sprite::Update()
 	TransferVertices();
 
 	// 定数バッファにデータ転送
-	ConstBufferData* constMap = nullptr;
+	CONST_BUFFER_DATA* constMap = nullptr;
 	HRESULT result = this->constBuff->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result)) {
 		constMap->color = this->color;
@@ -205,7 +194,7 @@ void Sprite::TransferVertices()
 	}
 
 	// 頂点データ
-	VertexPosUv vertices[vertNum];
+	VERTEX vertices[vertNum];
 
 	vertices[LB].pos = { left,	bottom,	0.0f }; // 左下
 	vertices[LT].pos = { left,	top,	0.0f }; // 左上
@@ -217,19 +206,19 @@ void Sprite::TransferVertices()
 	{
 		D3D12_RESOURCE_DESC resDesc = texture[name].instance->texBuffer->GetDesc();
 
-		float tex_left = texLeftTop.x / resDesc.Width;
-		float tex_right = (texLeftTop.x + texSize.x) / resDesc.Width;
-		float tex_top = texLeftTop.y / resDesc.Height;
-		float tex_bottom = (texLeftTop.y + texSize.y) / resDesc.Height;
+		float texLeft = texLeftTop.x / resDesc.Width;
+		float texRight = (texLeftTop.x + texSize.x) / resDesc.Width;
+		float texTop = texLeftTop.y / resDesc.Height;
+		float texBottom = (texLeftTop.y + texSize.y) / resDesc.Height;
 
-		vertices[LB].uv = { tex_left,	tex_bottom }; // 左下
-		vertices[LT].uv = { tex_left,	tex_top }; // 左上
-		vertices[RB].uv = { tex_right,	tex_bottom }; // 右下
-		vertices[RT].uv = { tex_right,	tex_top }; // 右上
+		vertices[LB].uv = { texLeft,	texBottom }; // 左下
+		vertices[LT].uv = { texLeft,	texTop }; // 左上
+		vertices[RB].uv = { texRight,	texBottom }; // 右下
+		vertices[RT].uv = { texRight,	texTop }; // 右上
 	}
 
 	// 頂点バッファへのデータ転送
-	VertexPosUv* vertMap = nullptr;
+	VERTEX* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(result)) {
 		memcpy(vertMap, vertices, sizeof(vertices));

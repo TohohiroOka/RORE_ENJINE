@@ -16,9 +16,9 @@ public://静的メンバ関数
 	/// <summary>
 	/// インスタンスの生成
 	/// </summary>
-	/// <param name="name">テクスチャ名</param>
+	/// <param name="_name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Emitter> Create(const std::string name);
+	static std::unique_ptr<Emitter> Create(const std::string _name);
 
 public://メンバ関数
 
@@ -30,22 +30,22 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Emitter();
+	~Emitter() {};
 
 	/// <summary>
 	/// パーティクルの発生地点
 	/// </summary>
-	/// <param name="maxCount">生成する個数の最大</param>
-	/// <param name="maxFrame">生存時間</param>
-	/// <param name="position">初期座標</param>
-	/// <param name="velocity">速度</param>
-	/// <param name="accel">加速度</param>
-	/// <param name="startScale">初期サイズ</param>
-	/// <param name="endScale">最終サイズ</param>
-	/// <param name="startColor">初期カラー</param>
-	/// <param name="endColor">最終カラー</param>
-	void InEmitter(int maxCount, int maxFrame, XMFLOAT3 position, XMFLOAT3 velocity,
-		XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 startColor, XMFLOAT4 endColor);
+	/// <param name="_maxCount">生成する個数の最大</param>
+	/// <param name="_maxFrame">生存時間</param>
+	/// <param name="_position">初期座標</param>
+	/// <param name="_velocity">速度</param>
+	/// <param name="_accel">加速度</param>
+	/// <param name="_startScale">初期サイズ</param>
+	/// <param name="_endScale">最終サイズ</param>
+	/// <param name="_startColor">初期カラー</param>
+	/// <param name="_endColor">最終カラー</param>
+	void InEmitter(int _maxCount, int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity,
+		XMFLOAT3 _accel, float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor);
 
 	/// <summary>
 	/// 更新
