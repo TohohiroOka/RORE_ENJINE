@@ -38,11 +38,11 @@ void EnemyABullet::Update()
 	ray.start.m128_f32[1] += scale / 2.0f;
 	RAYCAST_HIT raycastHit;
 
-	//地形に当たっている、もしくは上の最大値にいったら生存フラグを消す
-	if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, scale) ||
-		pos.y > 500 || pos.z < 0.0f) {
-		isAlive = false;
-	}
+	////地形に当たっている、もしくは上の最大値にいったら生存フラグを消す
+	//if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, scale) ||
+	//	pos.y > 500 || pos.z < 0.0f) {
+	//	isAlive = false;
+	//}
 
 	const float speed = 5.0f;
 
