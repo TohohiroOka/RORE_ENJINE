@@ -5,9 +5,11 @@
 #include "TouchableObject.h"
 #include <array>
 
+#include "BulletManager.h"
+#include "FixedTurret.h"
 #include "EnemyManager.h"
 
-class TestField : public InterfaceScene
+class Boss1 : public InterfaceScene
 {
 public:
 
@@ -44,7 +46,7 @@ public:
 private:
 
 	//ƒJƒƒ‰‚Ì‰ñ“]
-	float cameraAngle = 100;
+	float cameraAngle = -90;
 	//ƒJƒƒ‰‚Ì‚‚³
 	const float cameraY = 30.0f;
 
@@ -55,6 +57,13 @@ private:
 	static const int ground_num = 1;
 	std::array<std::unique_ptr<Ground>, ground_num> ground;
 
+	//’e
+	std::unique_ptr<BulletManager> bullet;
+	
+	//ŒÅ’è–C‘ä
+	static const int fixed_turret_num = 4;
+	std::array<std::unique_ptr<FixedTurret>, fixed_turret_num> fixedTurret;
+
 	//“G
-	std::unique_ptr<EnemyManager> enemy = nullptr;
+	std::unique_ptr<EnemyManager> enemy;
 };

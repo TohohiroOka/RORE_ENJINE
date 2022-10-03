@@ -138,8 +138,10 @@ float4 main(VSOutput input) : SV_TARGET
 	float4 color1 = tex.Sample(smp, input.uv);
 	float4 color2 = tex2.Sample(smp, input.uv);
 
-	float stepNum1 = 2.5;
-	float stepNum2 = 3.5;
+	//float stepNum1 = 2.5;
+	//float stepNum2 = 3.5;
+	float stepNum1 = 2.0;
+	float stepNum2 = 3.0;
 	float4 addColor = smoothstep(stepNum1, stepNum2, input.localpos.y) * color1 + (1 - smoothstep(stepNum1, stepNum2, input.localpos.y)) * color2;
 
 	float4 mainColor = shadecolor * addColor;

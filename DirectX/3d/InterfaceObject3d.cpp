@@ -70,20 +70,23 @@ void InterfaceObject3d::Initialize()
 
 void InterfaceObject3d::Update()
 {
-	assert(camera);
-
 	UpdateWorldMatrix();
-
-	const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
-	const XMFLOAT3& cameraPos = camera->GetEye();
 
 	//定数バッファにデータを転送
 	CONST_BUFFER_DATA_B0* constMap = nullptr;
 	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
 	if (SUCCEEDED(result)) {
-		constMap->viewproj = matViewProjection;
+		if (camera)
+		{
+			constMap->viewproj = camera->GetView() * camera->GetProjection();;
+			constMap->cameraPos = camera->GetEye();;
+		}
+		else
+		{
+			constMap->viewproj = XMMatrixIdentity();
+			constMap->cameraPos = { 0,0,0 };
+		}
 		constMap->world = matWorld;
-		constMap->cameraPos = cameraPos;
 		constMap->isSkinning = isSkinning;
 		constMap->isBloom = isBloom;
 		constMap->isToon = isToon;

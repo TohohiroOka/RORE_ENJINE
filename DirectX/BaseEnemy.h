@@ -1,7 +1,7 @@
 #pragma once
 #include "Object3d.h"
 
-class BaseBullet
+class BaseEnemy
 {
 protected: // エイリアス
 	// DirectX::を省略
@@ -32,4 +32,3 @@ protected:
 	//モデル
 	static std::unique_ptr<Model> model;
 };
-

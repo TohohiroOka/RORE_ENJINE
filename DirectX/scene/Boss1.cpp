@@ -1,6 +1,6 @@
-#include "TestField.h"
+#include "Boss1.h"
 #include "SceneManager.h"
-#include "BrowsingCircle.h"
+#include "Title.h"
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "DebugText.h"
@@ -14,26 +14,24 @@
 
 using namespace DirectX;
 
-void TestField::Initialize()
+void Boss1::Initialize()
 {
 	player = Player::Create();
 
 	//地形
-	ground[0] = Ground::Create("heightmap01.bmp", "Dirt.jpg", "Grass.jpg");
-	
-	//ground[1] = Ground::Create("heightmap02.bmp", "Dirt.jpg", "Grass.jpg");
-	//ground[1]->SetPos({ -2550.0f,0.0f,0.0f });
-	
-	//ground[2] = Ground::Create("heightmap03.bmp", "Dirt.jpg", "Grass.jpg");
-	//ground[2]->SetPos({ 0.0f,0.0f,-2550.0f });
-	//
-	//ground[3] = Ground::Create("heightmap04.bmp", "Dirt.jpg", "Grass.jpg");
-	//ground[3]->SetPos({ -2550.0f,0.0f,-2550.0f });
+	ground[0] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
+
+	bullet = BulletManager::Create();
+	FixedTurret::StaticInitialize();
+	fixedTurret[0] = FixedTurret::Create({ 1850,50,1250 }, { -1.0f,0.2f,0.0f });
+	fixedTurret[1] = FixedTurret::Create({ 650,50,1250 }, { 1.0f,0.2f,0.0f });
+	fixedTurret[2] = FixedTurret::Create({ 1250,50,1850 }, { 0.0f,0.2f,-1.0f });
+	fixedTurret[3] = FixedTurret::Create({ 1250,50,650 }, { 0.0f,0.2f,1.0f });
 
 	enemy = EnemyManager::Create();
 }
 
-void TestField::Update()
+void Boss1::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 	XInputManager* xinput = XInputManager::GetInstance();
@@ -41,32 +39,37 @@ void TestField::Update()
 	//シーンの移行
 	if (input->TriggerKey(DIK_0))
 	{
-		BrowsingCircle* nextScene = new BrowsingCircle();
+		Title* nextScene = new Title();
 		nextScene->Initialize();
 		SceneManager::SetNextScene(nextScene);
 	}
 
 	player->SetCameraAngle(cameraAngle);
 	player->Update();
+
+	bullet->Update();
+	bullet->CheckCollision(player->GetPosition());
+
+	enemy->Update(player->GetPosition());
+	enemy->CheckCollision(player->GetPosition());
+
+	for (auto& i : fixedTurret)
+	{
+		i->Update();
+	}
+
 	for (int i = 0; i < ground_num; i++)
 	{
 		ground[i]->Update();
 	}
 
-	enemy->Update();
-
 	CameraUpdate();
-
-	if (input->TriggerKey(DIK_P))
-	{
-		player->BulletUpdate(camera->GetTarget());
-	}
 
 	input = nullptr;
 	xinput = nullptr;
 }
 
-void TestField::Draw()
+void Boss1::Draw()
 {
 	assert(cmdList);
 
@@ -79,17 +82,26 @@ void TestField::Draw()
 	}
 
 	Object3d::PreDraw();
-	player->Draw();		
+	player->Draw();
+	bullet->Draw();
+	for (auto& i : fixedTurret)
+	{
+		i->Draw();
+	}
 	enemy->Draw();
 
 	InterfaceObject3d::ReleaseCmdList();
+
+	Sprite::PreDraw(cmdList);
+	DebugText::GetInstance()->DrawAll();
+	Sprite::PostDraw();
 }
 
-void TestField::Finalize()
+void Boss1::Finalize()
 {
 }
 
-void TestField::ImguiDraw()
+void Boss1::ImguiDraw()
 {
 	//float baseColor[3];//ベースカラ―
 	//float metalness;//金属度(0 or 1)
@@ -130,49 +142,17 @@ void TestField::ImguiDraw()
 	//light->SetDirLightActive(2, lightAct3);
 }
 
-void TestField::CameraUpdate()
+void Boss1::CameraUpdate()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	if (input->TriggerKey(DIK_RETURN))
-	{
-		enemy->SetTarget();
-	}
+	if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
+	if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
 
-	if (!player->GetIsTargeting())
-	{
-		if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
-		if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
-
-		//カメラ更新
-		float cameraEyeRadius = DirectX::XMConvertToRadians(cameraAngle);
-		float cameraTargetRadius = DirectX::XMConvertToRadians(cameraAngle - 180);
-		const float range = 100.0f;
-		XMFLOAT3 playerPos = player->GetPos();
-		camera->SetEye({ cosf(cameraEyeRadius) * range + playerPos.x,playerPos.y + cameraY,sinf(cameraEyeRadius) * range + playerPos.z });
-		camera->SetTarget({ cosf(cameraTargetRadius) * range + playerPos.x,playerPos.y,sinf(cameraTargetRadius) * range + playerPos.z });
-	}
-	else
-	{
-		XMFLOAT2 vecPt = {};
-		XMFLOAT3 playerPos = player->GetPos();
-		XMFLOAT3 targetPos = player->GetTarget();
-		vecPt.x = targetPos.x - playerPos.x;
-		vecPt.y = targetPos.z - playerPos.z;
-
-		//正規化
-		float x = powf(targetPos.x - playerPos.x, 2);
-		float y = powf(targetPos.z - playerPos.z, 2);
-		float dist = sqrt(x + y);
-		dist = 1.0f / dist;
-		vecPt.x *= dist;
-		vecPt.y *= dist;
-		vecPt.x *= 50.0f;
-		vecPt.y *= 50.0f;
-
-		camera->SetEye({ playerPos.x - vecPt.x ,playerPos.y + cameraY/2,playerPos.z - vecPt.y });
-		camera->SetTarget(player->GetTarget());
-	}
-
-	input = nullptr;
+	//カメラ更新
+	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
+	const float range = 100.0f;
+	XMFLOAT3 playerPos = player->GetPosition();
+	camera->SetEye({ cosf(cameraRadius) * range + playerPos.x,playerPos.y + cameraY,sinf(cameraRadius) * range + playerPos.z });
+	camera->SetTarget(playerPos);
 }

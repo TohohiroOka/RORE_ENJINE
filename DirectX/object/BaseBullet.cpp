@@ -1,6 +1,8 @@
 #include "BaseBullet.h"
 
-void BaseBullet::Initialize()
+std::unique_ptr<Model> BaseBullet::model;
+
+void BaseBullet::StaticInitialize()
 {
 	model = Model::CreateFromOBJ("Square");//ÉvÉåÉCÉÑÅ[ÇÃíe
 }

@@ -1,6 +1,6 @@
-#include "BrowsingCircle.h"
+#include "Title.h"
 #include "SceneManager.h"
-#include "TestField.h"
+#include "Boss1.h"
 #include "DirectInput.h"
 #include <imgui.h>
 #include "Easing.h"
@@ -8,7 +8,7 @@
 
 using namespace DirectX;
 
-void BrowsingCircle::Initialize()
+void Title::Initialize()
 {
 	////円モデル読み込み
 	//SpherePBRModel = FbxModel::Create("SpherePBR");
@@ -18,7 +18,7 @@ void BrowsingCircle::Initialize()
 	//circle->SetScale({ 5,5,5 });
 }
 
-void BrowsingCircle::Update()
+void Title::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
@@ -61,7 +61,7 @@ void BrowsingCircle::Update()
 	//シーンの移行
 	if (input->TriggerKey(DIK_0))
 	{
-		TestField* nextScene = new TestField();
+		Boss1* nextScene = new Boss1();
 		nextScene->Initialize();
 		SceneManager::SetNextScene(nextScene);
 	}
@@ -69,18 +69,18 @@ void BrowsingCircle::Update()
 	//circle->Update();
 }
 
-void BrowsingCircle::Draw()
+void Title::Draw()
 {
 	//Fbx::PreDraw(cmdList);
 	//circle->Draw();
 	//Fbx::PostDraw();
 }
 
-void BrowsingCircle::Finalize()
+void Title::Finalize()
 {
 }
 
-void BrowsingCircle::ImguiDraw()
+void Title::ImguiDraw()
 {
 	//float baseColor[3];//ベースカラ―
 	//float metalness;//金属度(0 or 1)
@@ -121,6 +121,6 @@ void BrowsingCircle::ImguiDraw()
 	//light->SetDirLightActive(2, lightAct3);
 }
 
-void BrowsingCircle::GetConstbufferNum()
+void Title::GetConstbufferNum()
 {
 }

@@ -2,7 +2,7 @@
 #include "InterfaceScene.h"
 #include <array>
 
-class BrowsingCircle : public InterfaceScene
+class Title : public InterfaceScene
 {
 public:
 

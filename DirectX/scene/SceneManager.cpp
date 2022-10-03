@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-#include "TestField.h"
+#include "Boss1.h"
 #include "PostEffect.h"
 
 std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
@@ -104,9 +104,9 @@ void SceneManager::Initialize()
 	light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
 
 	//Å‰‚ÌƒV[ƒ“Ý’è
-	TestField* firstScene = new TestField();
+	Boss1* firstScene = new Boss1();
 	firstScene->Initialize();
-	scene = std::unique_ptr<TestField>(firstScene);
+	scene = std::unique_ptr<Boss1>(firstScene);
 }
 
 void SceneManager::CreatePipeline()

@@ -140,11 +140,11 @@
     <Filter Include="ゲームシステム\object\player">
       <UniqueIdentifier>{a15f0d01-4f6d-4e9a-a4a0-6a27daf39fc2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ゲームシステム\object\Enemy">
-      <UniqueIdentifier>{f6307291-f752-42aa-85f8-d6c4147ae8a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\object\Bullet">
       <UniqueIdentifier>{6e14a1ca-e053-469a-9e2d-6dc1f9574b93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ゲームシステム\object\FixedTurret">
+      <UniqueIdentifier>{bc3d5065-f718-4dff-9ead-9faeadb1eb4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -238,10 +238,10 @@
     <ClCompile Include="scene\SceneManager.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\TestField.cpp">
+    <ClCompile Include="scene\Boss1.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\BrowsingCircle.cpp">
+    <ClCompile Include="scene\Title.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
     <ClCompile Include="3d\CubeMap.cpp">
@@ -298,24 +298,22 @@
     <ClCompile Include="3d\collider\MeshCollider.cpp">
       <Filter>エンジンシステム\Object\3d\collider</Filter>
     </ClCompile>
-    <ClCompile Include="object\BaseEnemy.cpp">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="object\FirstBoss.cpp">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="object\EnemyManager.cpp">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="object\BaseBullet.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="object\BulletManager.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="object\PlayerBullet.cpp">
+    <ClCompile Include="object\FixedTurret.cpp">
+      <Filter>ゲームシステム\object\FixedTurret</Filter>
+    </ClCompile>
+    <ClCompile Include="object\FixedTurretBullet.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="BaseEnemy.cpp" />
+    <ClCompile Include="EnemyA.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="EnemyABullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -520,13 +518,13 @@
     <ClInclude Include="scene\SceneManager.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\TestField.h">
+    <ClInclude Include="scene\Boss1.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
     <ClInclude Include="scene\InterfaceScene.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\BrowsingCircle.h">
+    <ClInclude Include="scene\Title.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
     <ClInclude Include="3d\CubeMap.h">
@@ -607,23 +605,21 @@
     <ClInclude Include="3d\collider\CollisionTypes.h">
       <Filter>エンジンシステム\Object\3d\collider</Filter>
     </ClInclude>
-    <ClInclude Include="object\BaseEnemy.h">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="object\FirstBoss.h">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="object\EnemyManager.h">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="object\BaseBullet.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="object\BulletManager.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="object\PlayerBullet.h">
+    <ClInclude Include="object\FixedTurret.h">
+      <Filter>ゲームシステム\object\FixedTurret</Filter>
+    </ClInclude>
+    <ClInclude Include="object\FixedTurretBullet.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="BaseEnemy.h" />
+    <ClInclude Include="EnemyA.h" />
+    <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="EnemyABullet.h" />
   </ItemGroup>
 </Project>

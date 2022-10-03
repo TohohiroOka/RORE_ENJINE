@@ -2,6 +2,16 @@
 
 using namespace DirectX;
 
+bool Collision::CheckCircle2Circle(const DirectX::XMFLOAT3& pos1, float radius1, const DirectX::XMFLOAT3& pos2, float radius2)
+{
+	float disX = pos2.x - pos1.x;
+	float disY = pos2.y - pos1.y;
+	float disZ = pos2.z - pos1.z;
+	float d = disX * disX + disY * disY + disZ * disZ;
+	float r = radius1 + radius2;
+	return d < r* r;
+}
+
 void Collision::ClosestPtPoint2Triangle(const DirectX::XMVECTOR& _point, const Triangle& _triangle, DirectX::XMVECTOR* _closest)
 {
 	// pointがp0の外側の頂点領域の中にあるかどうかチェック
