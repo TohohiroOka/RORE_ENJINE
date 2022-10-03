@@ -90,6 +90,9 @@ void Boss1::Draw()
 	}
 	enemy->Draw();
 
+	//PrimitiveObject3D::PreDraw();
+	//ground[0]->CDraw();
+
 	InterfaceObject3d::ReleaseCmdList();
 
 	Sprite::PreDraw(cmdList);

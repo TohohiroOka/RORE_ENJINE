@@ -26,6 +26,12 @@ public:
 	void MinMax(Model* _model);
 
 	/// <summary>
+	/// 八分木の最大最小の保存
+	/// </summary>
+	/// <param name="_vertices">頂点</param>
+	void MinMax(const std::vector<Mesh::VERTEX>* _vertices);
+
+	/// <summary>
 	/// 八分木の現在地セット
 	/// </summary>
 	/// <param name="_pos">座標</param>
@@ -37,6 +43,13 @@ public:
 	/// </summary>
 	/// <param name="_model">モデル</param>
 	void ConstructTriangles(Model* _model);
+
+	/// <summary>
+	/// 三角形の配列を構築する
+	/// </summary>
+	/// <param name="_vertices">頂点</param>
+	/// <param name="_indices">インデック</param>
+	void ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices, std::vector<unsigned long>* _indices);
 
 	/// <summary>
 	/// 更新

@@ -186,84 +186,179 @@ void HeightMap::Initialize()
 	//挿入インデックス番号
 	unsigned long index = 0;
 
-	//頂点保存
-	for (int j = 0; j < heightSize; ++j)
+	//描画用頂点情報保存
 	{
-		for (int i = 0; i < windthSize; ++i)
+		//頂点保存
+		for (int j = 0; j < heightSize; ++j)
 		{
-			int index1 = (hmInfo.terrainHeight * j) + i;// 左下
-			int index2 = (hmInfo.terrainHeight * j) + (i + 1);// 右下
-			int index3 = (hmInfo.terrainHeight * (j + 1)) + i;// 左上
-			int index4 = (hmInfo.terrainHeight * (j + 1)) + (i + 1);// 右上
+			for (int i = 0; i < windthSize; ++i)
+			{
+				int index1 = (hmInfo.terrainHeight * j) + i;// 左下
+				int index2 = (hmInfo.terrainHeight * j) + (i + 1);// 右下
+				int index3 = (hmInfo.terrainHeight * (j + 1)) + i;// 左上
+				int index4 = (hmInfo.terrainHeight * (j + 1)) + (i + 1);// 右上
 
-			int vertNum1 = index;
+				int vertNum1 = index;
+				index++;
+				int vertNum2 = index;
+				index++;
+				int vertNum3 = index;
+				index++;
+				int vertNum4 = index;
+				index++;
+
+				// 左上
+				vertices[vertNum2].pos = hmInfo.heightMap[index3];
+				vertices[vertNum2].uv = XMFLOAT2(1.0f, 0.0f);
+
+				// 右上
+				vertices[vertNum4].pos = hmInfo.heightMap[index4];
+				vertices[vertNum4].uv = XMFLOAT2(0.0f, 1.0f);
+
+				// 左下
+				vertices[vertNum1].pos = hmInfo.heightMap[index1];
+				vertices[vertNum1].uv = XMFLOAT2(0.0f, 0.0f);
+
+				// 右下
+				vertices[vertNum3].pos = hmInfo.heightMap[index2];
+				vertices[vertNum3].uv = XMFLOAT2(1.0f, 1.0f);
+			}
+		}
+
+		//インデックス保存
+		for (int i = 0; i < surfaceNum; i++)
+		{
+			int vertexNum = i * 4;
+			index = i * 6;
+			indices[index] = basicsIndices[0] + vertexNum;
 			index++;
-			int vertNum2 = index;
+			indices[index] = basicsIndices[1] + vertexNum;
 			index++;
-			int vertNum3 = index;
+			indices[index] = basicsIndices[2] + vertexNum;
 			index++;
-			int vertNum4 = index;
+			indices[index] = basicsIndices[3] + vertexNum;
 			index++;
+			indices[index] = basicsIndices[4] + vertexNum;
+			index++;
+			indices[index] = basicsIndices[5] + vertexNum;
+		}
 
-			// 左上
-			vertices[vertNum2].pos = hmInfo.heightMap[index3];
-			vertices[vertNum2].uv = XMFLOAT2(1.0f, 0.0f);
+		int normalNum = static_cast<int>(indices.size() / 3);
+		for (int i = 0; i < normalNum; i++)
+		{
+			index = i * 3;
+			unsigned long index1 = indices[index];
+			index++;
+			unsigned long index2 = indices[index];
+			index++;
+			unsigned long index3 = indices[index];
 
-			// 右上
-			vertices[vertNum4].pos = hmInfo.heightMap[index4];
-			vertices[vertNum4].uv = XMFLOAT2(0.0f, 1.0f);
+			XMVECTOR p0 = XMLoadFloat3(&vertices[index1].pos);
+			XMVECTOR p1 = XMLoadFloat3(&vertices[index2].pos);
+			XMVECTOR p2 = XMLoadFloat3(&vertices[index3].pos);
 
-			// 左下
-			vertices[vertNum1].pos = hmInfo.heightMap[index1];
-			vertices[vertNum1].uv = XMFLOAT2(0.0f, 0.0f);
+			XMVECTOR v1 = XMVectorSubtract(p0, p1);
+			XMVECTOR v2 = XMVectorSubtract(p0, p2);
 
-			// 右下
-			vertices[vertNum3].pos = hmInfo.heightMap[index2];
-			vertices[vertNum3].uv = XMFLOAT2(1.0f, 1.0f);
+			XMVECTOR normal = XMVector3Cross(v1, v2);
+			normal = XMVector3Normalize(normal);
+
+			XMStoreFloat3(&vertices[index1].normal, normal);
+			XMStoreFloat3(&vertices[index2].normal, normal);
+			XMStoreFloat3(&vertices[index3].normal, normal);
 		}
 	}
 
-	//インデックス保存
-	for (int i = 0; i < surfaceNum; i++)
+	//当たり判定用頂点情報保存
 	{
-		int vertexNum = i * 4;
-		index = i * 6;
-		indices[index] = basicsIndices[0] + vertexNum;
-		index++;
-		indices[index] = basicsIndices[1] + vertexNum;
-		index++;
-		indices[index] = basicsIndices[2] + vertexNum;
-		index++;
-		indices[index] = basicsIndices[3] + vertexNum;
-		index++;
-		indices[index] = basicsIndices[4] + vertexNum;
-		index++;
-		indices[index] = basicsIndices[5] + vertexNum;
-	}
+		int hitSurfaceNum = windthSize / 2 * heightSize / 2;
+		int hitVertNum = hitSurfaceNum * 4;
+		int hitIndexNum = hitSurfaceNum * 6;
 
-	int normalNum = static_cast<int>(indices.size() / 3);
-	for (int i = 0; i < normalNum; i++)
-	{
-		index = i * 3;
-		unsigned long index1 = indices[index];
-		index++;
-		unsigned long index2 = indices[index];
-		index++;
-		unsigned long index3 = indices[index];
+		hitVertices.resize(hitVertNum);
+		hitIndices.resize(hitIndexNum);
+		index = 0;
+		//頂点保存
+		for (int j = 0; j < heightSize - 1; ++j)
+		{
+			if (j % 2 == 1) { continue; }
+			for (int i = 0; i < windthSize - 1; ++i)
+			{
+				if (i % 2 == 1) { continue; }
+				int index1 = (hmInfo.terrainHeight * j) + i;// 左下
+				int index2 = (hmInfo.terrainHeight * j) + (i + 2);// 右下
+				int index3 = (hmInfo.terrainHeight * (j + 2)) + i;// 左上
+				int index4 = (hmInfo.terrainHeight * (j + 2)) + (i + 2);// 右上
 
-		XMVECTOR p0 = XMLoadFloat3(&vertices[index1].pos);
-		XMVECTOR p1 = XMLoadFloat3(&vertices[index2].pos);
-		XMVECTOR p2 = XMLoadFloat3(&vertices[index3].pos);
+				int vertNum1 = index;
+				index++;
+				int vertNum2 = index;
+				index++;
+				int vertNum3 = index;
+				index++;
+				int vertNum4 = index;
+				index++;
 
-		XMVECTOR v1 = XMVectorSubtract(p0, p1);
-		XMVECTOR v2 = XMVectorSubtract(p0, p2);
+				// 左上
+				hitVertices[vertNum2].pos = hmInfo.heightMap[index3];
+				hitVertices[vertNum2].uv = XMFLOAT2(1.0f, 0.0f);
 
-		XMVECTOR normal = XMVector3Cross(v1, v2);
-		normal = XMVector3Normalize(normal);
+				// 右上
+				hitVertices[vertNum4].pos = hmInfo.heightMap[index4];
+				hitVertices[vertNum4].uv = XMFLOAT2(0.0f, 1.0f);
 
-		XMStoreFloat3(&vertices[index1].normal, normal);
-		XMStoreFloat3(&vertices[index2].normal, normal);
-		XMStoreFloat3(&vertices[index3].normal, normal);
+				// 左下
+				hitVertices[vertNum1].pos = hmInfo.heightMap[index1];
+				hitVertices[vertNum1].uv = XMFLOAT2(0.0f, 0.0f);
+
+				// 右下
+				hitVertices[vertNum3].pos = hmInfo.heightMap[index2];
+				hitVertices[vertNum3].uv = XMFLOAT2(1.0f, 1.0f);
+			}
+		}
+
+		//インデックス保存
+		for (int i = 0; i < hitSurfaceNum; i++)
+		{
+			int vertexNum = i * 4;
+			index = i * 6;
+			hitIndices[index] = basicsIndices[0] + vertexNum;
+			index++;
+			hitIndices[index] = basicsIndices[1] + vertexNum;
+			index++;
+			hitIndices[index] = basicsIndices[2] + vertexNum;
+			index++;
+			hitIndices[index] = basicsIndices[3] + vertexNum;
+			index++;
+			hitIndices[index] = basicsIndices[4] + vertexNum;
+			index++;
+			hitIndices[index] = basicsIndices[5] + vertexNum;
+		}
+
+		int normalNum = static_cast<int>(hitIndices.size() / 3);
+		for (int i = 0; i < normalNum; i++)
+		{
+			index = i * 3;
+			unsigned long index1 = hitIndices[index];
+			index++;
+			unsigned long index2 = hitIndices[index];
+			index++;
+			unsigned long index3 = hitIndices[index];
+
+			XMVECTOR p0 = XMLoadFloat3(&hitVertices[index1].pos);
+			XMVECTOR p1 = XMLoadFloat3(&hitVertices[index2].pos);
+			XMVECTOR p2 = XMLoadFloat3(&hitVertices[index3].pos);
+
+			XMVECTOR v1 = XMVectorSubtract(p0, p1);
+			XMVECTOR v2 = XMVectorSubtract(p0, p2);
+
+			XMVECTOR normal = XMVector3Cross(v1, v2);
+			normal = XMVector3Normalize(normal);
+
+			XMStoreFloat3(&hitVertices[index1].normal, normal);
+			XMStoreFloat3(&hitVertices[index2].normal, normal);
+			XMStoreFloat3(&hitVertices[index3].normal, normal);
+		}
 	}
 
 	Mesh* mesh = new Mesh;

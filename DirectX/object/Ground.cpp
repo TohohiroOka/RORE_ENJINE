@@ -25,7 +25,8 @@ void Ground::Initialize()
 	// コライダーの追加
 	MeshCollider* collider = new MeshCollider;
 	object->SetCollider(collider);
-	collider->ConstructTriangles(object->GetModel());
+	//collider->ConstructTriangles(object->GetModel());
+	collider->ConstructTriangles(object->GetHitVertices(), object->GetHitIndices());
 	collider->SetAttribute(COLLISION_ATTR_LANDSHAPE);
 }
 

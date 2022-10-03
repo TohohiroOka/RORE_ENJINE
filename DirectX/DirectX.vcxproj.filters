@@ -146,6 +146,9 @@
     <Filter Include="ゲームシステム\object\FixedTurret">
       <UniqueIdentifier>{bc3d5065-f718-4dff-9ead-9faeadb1eb4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ゲームシステム\object\Enemy">
+      <UniqueIdentifier>{5254ab8a-bd70-46e2-b059-23696d304e03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -310,10 +313,18 @@
     <ClCompile Include="object\FixedTurretBullet.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="BaseEnemy.cpp" />
-    <ClCompile Include="EnemyA.cpp" />
-    <ClCompile Include="EnemyManager.cpp" />
-    <ClCompile Include="EnemyABullet.cpp" />
+    <ClCompile Include="object\EnemyA.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="object\EnemyManager.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="object\BaseEnemy.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="object\EnemyABullet.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -617,9 +628,17 @@
     <ClInclude Include="object\FixedTurretBullet.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="BaseEnemy.h" />
-    <ClInclude Include="EnemyA.h" />
-    <ClInclude Include="EnemyManager.h" />
-    <ClInclude Include="EnemyABullet.h" />
+    <ClInclude Include="object\EnemyA.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="object\EnemyManager.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="object\BaseEnemy.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="object\EnemyABullet.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

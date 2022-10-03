@@ -95,9 +95,13 @@ private:
 	int vertNum = 0;
 	//ハイトマップの情報
 	HEIGHT_MAP_INFO hmInfo;
+	//当たり判定用頂点情報
+	std::vector<Mesh::VERTEX> hitVertices;
+	std::vector<unsigned long> hitIndices;
 
 public:
 
 	Model* GetModel() { return model; }
-
+	std::vector<Mesh::VERTEX>* GetHitVertices() { return &hitVertices; }
+	std::vector<unsigned long>* GetHitIndices() { return &hitIndices; }
 };

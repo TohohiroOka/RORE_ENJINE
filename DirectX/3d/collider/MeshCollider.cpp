@@ -52,6 +52,45 @@ void MeshCollider::MinMax(Model* _model)
 	max = minmax[0];
 }
 
+void MeshCollider::MinMax(const std::vector<Mesh::VERTEX>* _vertices)
+{
+	//[0]最大[1]最小
+	XMFLOAT3 minmax[2] = { {0,0,0},{100,100,100} };
+
+	const std::vector<Mesh::VERTEX> vertices = *_vertices;
+	const int size = static_cast<int>(vertices.size());
+
+	for (int i = 0; i < size; i++)
+	{
+		if (vertices[i].pos.x > minmax[0].x)
+		{
+			minmax[0].x = vertices[i].pos.x;
+		} else if (vertices[i].pos.x < minmax[1].x)
+		{
+			minmax[1].x = vertices[i].pos.x;
+		}
+
+		if (vertices[i].pos.y > minmax[0].y)
+		{
+			minmax[0].y = vertices[i].pos.y;
+		} else if (vertices[i].pos.y < minmax[1].y)
+		{
+			minmax[1].y = vertices[i].pos.y;
+		}
+
+		if (vertices[i].pos.z > minmax[0].z)
+		{
+			minmax[0].z = vertices[i].pos.z;
+		} else if (vertices[i].pos.z < minmax[1].z)
+		{
+			minmax[1].z = vertices[i].pos.z;
+		}
+	}
+
+	min = minmax[1];
+	max = minmax[0];
+}
+
 int MeshCollider::OctreeSet(XMFLOAT3 _pos)
 {
 	int octtreenum[2] = {};
@@ -163,6 +202,81 @@ void MeshCollider::ConstructTriangles(Model* _model)
 			object->SetVertex(vertices[idx1].pos);
 			object->SetVertex(vertices[idx2].pos);
 		}
+	}
+}
+
+void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices, std::vector<unsigned long>* _indices)
+{
+	if (!isInit)
+	{
+		object = std::make_unique<PrimitiveObject3D>();
+		isInit = true;
+	}
+
+	triangles.clear();
+
+	int start = 0;
+
+	MinMax(_vertices);
+
+	XMFLOAT3 minmaxRange = { max.x - min.x,max.y - min.y,max.z - min.z };
+	for (int i = 0; i < 9; i++)
+	{
+		octtreeRange[i].x = minmaxRange.x / 8 * i;
+		octtreeRange[i].y = minmaxRange.y / 8 * i;
+		octtreeRange[i].z = minmaxRange.z / 8 * i;
+	}
+
+	const std::vector<Mesh::VERTEX> vertices = *_vertices;
+	const std::vector<unsigned long> indices = *_indices;
+
+	size_t triangleNum = indices.size() / 3;
+
+	triangles.resize(triangles.size() + triangleNum);
+
+	for (int i = 0; i < triangleNum; i++) {
+
+		Triangle& tri = triangles[start + i];
+		int idx0 = indices[i * 3 + 0];
+		int idx1 = indices[i * 3 + 1];
+		int idx2 = indices[i * 3 + 2];
+
+		tri.p0 = {
+			vertices[idx0].pos.x,
+			vertices[idx0].pos.y,
+			vertices[idx0].pos.z,
+			1 };
+		tri.p1 = {
+			vertices[idx1].pos.x,
+			vertices[idx1].pos.y,
+			vertices[idx1].pos.z,
+			1 };
+
+		tri.p2 = {
+			vertices[idx2].pos.x,
+			vertices[idx2].pos.y,
+			vertices[idx2].pos.z,
+			1 };
+
+		tri.ComputeNormal();
+
+		int Octree1 = OctreeSet(vertices[idx0].pos);
+		int Octree2 = OctreeSet(vertices[idx1].pos);
+		int Octree3 = OctreeSet(vertices[idx2].pos);
+
+		tri.Octree.push_back(Octree1);
+		if (Octree1 != Octree2)
+		{
+			tri.Octree.push_back(Octree2);
+		}
+		if (Octree1 != Octree3 && Octree2 != Octree3)
+		{
+			tri.Octree.push_back(Octree3);
+		}
+
+		object->SetVertex(vertices[idx0].pos);
+		object->SetVertex(vertices[idx1].pos);
+		object->SetVertex(vertices[idx2].pos);
 	}
 }
 
