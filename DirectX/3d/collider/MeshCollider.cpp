@@ -22,8 +22,7 @@ void MeshCollider::MinMax(Model* _model)
 			if (vertices[i].pos.x > minmax[0].x)
 			{
 				minmax[0].x = vertices[i].pos.x;
-			}
-			else if (vertices[i].pos.x < minmax[1].x)
+			} else if (vertices[i].pos.x < minmax[1].x)
 			{
 				minmax[1].x = vertices[i].pos.x;
 			}
@@ -31,8 +30,7 @@ void MeshCollider::MinMax(Model* _model)
 			if (vertices[i].pos.y > minmax[0].y)
 			{
 				minmax[0].y = vertices[i].pos.y;
-			}
-			else if (vertices[i].pos.y < minmax[1].y)
+			} else if (vertices[i].pos.y < minmax[1].y)
 			{
 				minmax[1].y = vertices[i].pos.y;
 			}
@@ -40,8 +38,7 @@ void MeshCollider::MinMax(Model* _model)
 			if (vertices[i].pos.z > minmax[0].z)
 			{
 				minmax[0].z = vertices[i].pos.z;
-			}
-			else if (vertices[i].pos.z < minmax[1].z)
+			} else if (vertices[i].pos.z < minmax[1].z)
 			{
 				minmax[1].z = vertices[i].pos.z;
 			}
@@ -132,8 +129,10 @@ void MeshCollider::ConstructTriangles(Model* _model)
 		isInit = true;
 	}
 
-	triangles.clear();
-	
+	for (int i = 0; i < octtreeSplit; i++)
+	{
+		triangles[i].clear();
+	}
 	const std::vector<Mesh*>& meshes = _model->GetMeshes();
 
 	int start = 0;
@@ -156,16 +155,14 @@ void MeshCollider::ConstructTriangles(Model* _model)
 
 		size_t triangleNum = indices.size() / 3;
 
-		triangles.resize(triangles.size() + triangleNum);
-
-		for (int i = 0; i < triangleNum; i++) {
-
-			Triangle& tri = triangles[start + i];
+		for (int i = 0; i < triangleNum; i++)
+		{
+			Triangle tri;
 			int idx0 = indices[i * 3 + 0];
 			int idx1 = indices[i * 3 + 1];
 			int idx2 = indices[i * 3 + 2];
 
-			tri.p0 = { 
+			tri.p0 = {
 				vertices[idx0].pos.x,
 				vertices[idx0].pos.y,
 				vertices[idx0].pos.z,
@@ -188,14 +185,14 @@ void MeshCollider::ConstructTriangles(Model* _model)
 			int Octree2 = OctreeSet(vertices[idx1].pos);
 			int Octree3 = OctreeSet(vertices[idx2].pos);
 
-			tri.Octree.push_back(Octree1);
+			triangles[Octree1].emplace_back(tri);
 			if (Octree1 != Octree2)
 			{
-				tri.Octree.push_back(Octree2);
+				triangles[Octree2].emplace_back(tri);
 			}
-			if (Octree1 != Octree3&& Octree2 != Octree3)
+			if (Octree1 != Octree3 && Octree2 != Octree3)
 			{
-				tri.Octree.push_back(Octree3);
+				triangles[Octree3].emplace_back(tri);
 			}
 
 			object->SetVertex(vertices[idx0].pos);
@@ -213,7 +210,10 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 		isInit = true;
 	}
 
-	triangles.clear();
+	for (int i = 0; i < octtreeSplit; i++)
+	{
+		triangles[i].clear();
+	}
 
 	int start = 0;
 
@@ -232,11 +232,9 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 
 	size_t triangleNum = indices.size() / 3;
 
-	triangles.resize(triangles.size() + triangleNum);
-
 	for (int i = 0; i < triangleNum; i++) {
 
-		Triangle& tri = triangles[start + i];
+		Triangle tri;
 		int idx0 = indices[i * 3 + 0];
 		int idx1 = indices[i * 3 + 1];
 		int idx2 = indices[i * 3 + 2];
@@ -264,14 +262,14 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 		int Octree2 = OctreeSet(vertices[idx1].pos);
 		int Octree3 = OctreeSet(vertices[idx2].pos);
 
-		tri.Octree.push_back(Octree1);
+		triangles[Octree1].emplace_back(tri);
 		if (Octree1 != Octree2)
 		{
-			tri.Octree.push_back(Octree2);
+			triangles[Octree2].emplace_back(tri);
 		}
 		if (Octree1 != Octree3 && Octree2 != Octree3)
 		{
-			tri.Octree.push_back(Octree3);
+			triangles[Octree3].emplace_back(tri);
 		}
 
 		object->SetVertex(vertices[idx0].pos);
@@ -304,26 +302,28 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& _sphere, DirectX::XMVECTOR
 	localSphere.center = XMVector3Transform(_sphere.center, invMatWorld);
 	localSphere.radius *= XMVector3Length(invMatWorld.r[0]).m128_f32[0];
 
-	std::vector<Triangle>::const_iterator it = triangles.cbegin();
+	for (auto& itr : triangles)
+	{
+		std::vector<Triangle>::const_iterator it = itr.cbegin();
 
-	for (; it != triangles.cend(); ++it) {
-		const Triangle& triangle = *it;
+		for (; it != itr.cend(); ++it) {
+			const Triangle& triangle = *it;
 
-		if (Collision::CheckSphere2Triangle(localSphere, triangle, _inter, _reject)) {
-			if (_inter) {
-				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+			if (Collision::CheckSphere2Triangle(localSphere, triangle, _inter, _reject)) {
+				if (_inter) {
+					const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
 
-				*_inter = XMVector3Transform(*_inter, matWorld);
+					*_inter = XMVector3Transform(*_inter, matWorld);
+				}
+				if (_reject) {
+					const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+
+					*_reject = XMVector3TransformNormal(*_reject, matWorld);
+				}
+				return true;
 			}
-			if (_reject) {
-				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
-
-				*_reject = XMVector3TransformNormal(*_reject, matWorld);
-			}
-			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -345,22 +345,13 @@ bool MeshCollider::CheckCollisionRay(const Ray& _ray, float* _distance, DirectX:
 		return false;
 	}
 
-	std::vector<Triangle>::const_iterator it = triangles.cbegin();
-
 	//プレイヤーの八分木位置
 	const int Octree = OctreeSet({ localRay.start.m128_f32[0],localRay.start.m128_f32[1],localRay.start.m128_f32[2] });
 
-	for (; it != triangles.cend(); ++it) {
+	std::vector<Triangle>::const_iterator it = triangles[Octree].cbegin();
+
+	for (; it != triangles[Octree].cend(); ++it) {
 		const Triangle& triangle = *it;
-
-		int triOctSize = static_cast<int>(triangle.Octree.size());
-		int cntiNum = 0;
-		for (int i = 0; i < triOctSize; i++)
-		{
-			if (triangle.Octree[i] != Octree) { cntiNum++; }
-		}
-
-		if (triOctSize == cntiNum) { continue; }
 
 		XMVECTOR tempInter;
 

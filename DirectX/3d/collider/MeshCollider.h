@@ -80,8 +80,11 @@ public:
 	bool CheckCollisionRay(const Ray& _ray, float* _distance = nullptr, DirectX::XMVECTOR* _inter = nullptr);
 
 private:
+
+	//八分木分割個数
+	static const int octtreeSplit = 64;
 	//判定用三角形
-	std::vector<Triangle> triangles;
+	std::array<std::vector<Triangle>, octtreeSplit> triangles;
 	//八分木の最小値
 	DirectX::XMFLOAT3 min = {};
 	//八分木の最大値
