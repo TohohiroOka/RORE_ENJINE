@@ -39,7 +39,7 @@ public: // ƒƒ“ƒoŠÖ”
 	inline void SetLightAtten(const XMFLOAT3& _lightAtten) { this->lightAtten = _lightAtten; }
 	inline const XMFLOAT3& GetLightAtten() { return lightAtten; }
 
-	inline void SetActive(bool _active) { this->active = _active; }
+	inline void SetActive(const bool& _active) { this->active = _active; }
 	inline bool IsActive() { return active; }
 
 private: // ƒƒ“ƒo•Ï”

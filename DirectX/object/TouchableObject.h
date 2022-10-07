@@ -20,7 +20,7 @@ public:
 	/// スケールの設定
 	/// </summary>
 	/// <param name="position">スケール</param>
-	inline void SetScale(float scale) { this->scale = { scale,scale,scale }; }
+	inline void SetScale(const float& scale) { this->scale = { scale,scale,scale }; }
 	void SetScale(XMFLOAT3 scale) = delete;
 };
 

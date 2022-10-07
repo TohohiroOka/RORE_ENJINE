@@ -198,49 +198,49 @@ public:
 	/// 座標の設定
 	/// </summary>
 	/// <param name="_position">座標</param>
-	void SetPosition(XMFLOAT3 _position) { this->position = _position; }
+	void SetPosition(const XMFLOAT3& _position) { this->position = _position; }
 
 	/// <summary>
 	/// 回転角の設定
 	/// </summary>
 	/// <param name="_rotation">回転角</param>
-	void SetRotation(XMFLOAT3 _rotation) { this->rotation = _rotation; }
+	void SetRotation(const XMFLOAT3& _rotation) { this->rotation = _rotation; }
 
 	/// <summary>
 	/// スケールの設定
 	/// </summary>
 	/// <param name="_scale">スケール</param>
-	void SetScale(XMFLOAT3 _scale) { this->scale = _scale; }
+	void SetScale(const XMFLOAT3& _scale) { this->scale = _scale; }
 
 	/// <summary>
 	/// ブルームのセット
 	/// </summary>
 	/// <param name="_isBloom">ブルーム有->true / 無->false</param>
-	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
+	void SetBloom(const bool& _isBloom) { this->isBloom = _isBloom; }
 
 	/// <summary>
 	/// トゥーンのセット
 	/// </summary>
 	/// <param name="_isToon">トゥーン有->true / 無->false</param>
-	void SetToon(bool _isToon) { this->isToon = _isToon; }
+	void SetToon(const bool& _isToon) { this->isToon = _isToon; }
 
 	/// <summary>
 	/// アウトラインのセット
 	/// </summary>
 	/// <param name="_isOutline">アウトライン有->true / 無->false</param>
-	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
+	void SetOutline(const bool& _isOutline) { this->isOutline = _isOutline; }
 
 	/// <summary>
 	/// アウトラインの色セット
 	/// </summary>
 	/// <param name="_outlineColor">幅</param>
-	static void SetOutlineColor(XMFLOAT4 _outlineColor) { InterfaceObject3d::outlineColor = _outlineColor; }
+	static void SetOutlineColor(const XMFLOAT4& _outlineColor) { InterfaceObject3d::outlineColor = _outlineColor; }
 
 	/// <summary>
 	/// アウトラインの幅セット
 	/// </summary>
 	/// <param name="_outlineWidth">幅</param>
-	static void SetOutlineWidth(float _outlineWidth) { InterfaceObject3d::outlineWidth = _outlineWidth; }
+	static void SetOutlineWidth(const float& _outlineWidth) { InterfaceObject3d::outlineWidth = _outlineWidth; }
 
 	/// <summary>
 	/// アウトラインの色取得
@@ -276,7 +276,7 @@ public:
 	/// ワールド行列のセット
 	/// </summary>
 	/// <param name="_matWorld">ワールド行列</param>
-	void SetMatWorld(XMMATRIX _matWorld) { this->matWorld = _matWorld; }
+	void SetMatWorld(const XMMATRIX& _matWorld) { this->matWorld = _matWorld; }
 
 	/// <summary>
 	/// ワールド座標を取得

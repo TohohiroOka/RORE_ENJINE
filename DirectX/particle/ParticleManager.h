@@ -86,14 +86,14 @@ public: // 静的メンバ関数
 	/// <param name="_keepName">保存名</param>
 	/// <param name="_filename">ファイル名</param>
 	/// <param name="_isDelete">シーン遷移で削除を行うか</param>
-	static void LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete = true);
+	static void LoadTexture(const std::string& _keepName, const std::string& _filename, const bool& _isDelete = true);
 
 	/// <summary>
 	/// インスタンス生成
 	/// </summary>
 	/// <param name="_name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<ParticleManager> Create(const std::string _name);
+	static std::unique_ptr<ParticleManager> Create(const std::string& _name);
 
 	/// <summary>
 	/// デバイスのセット
@@ -125,7 +125,7 @@ public: // 静的メンバ関数
 	/// パイプラインのセット
 	/// </summary>
 	/// <param name="pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
 
 private: // 静的メンバ変数
 
@@ -173,8 +173,8 @@ public: // メンバ関数
 	/// <param name="_endScale">最終サイズ</param>
 	/// <param name="_startColor">初期カラー</param>
 	/// <param name="_endColor">最終カラー</param>
-	void Add(int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity, XMFLOAT3 _accel,
-		float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor);
+	void Add(const int& _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity, const XMFLOAT3& _accel,
+		const float& _startScale, const float& _endScale, const XMFLOAT4& _startColor, const XMFLOAT4& _endColor);
 
 	/// <summary>
 	/// 更新

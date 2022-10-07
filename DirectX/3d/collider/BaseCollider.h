@@ -46,7 +46,7 @@ public:
 	/// 当たり判定属性をセット
 	/// </summary>
 	/// <param name="attribute">当たり判定属性</param>
-	inline void SetAttribute(unsigned short _attribute) {
+	inline void SetAttribute(const unsigned short& _attribute) {
 		this->attribute = _attribute;
 	}
 
@@ -54,7 +54,7 @@ public:
 	/// 当たり判定属性を追加
 	/// </summary>
 	/// <param name="attribute">当たり判定属性</param>
-	inline void AddAttribute(unsigned short _attribute) {
+	inline void AddAttribute(const unsigned short& _attribute) {
 		this->attribute |= _attribute;
 	}
 
@@ -62,7 +62,7 @@ public:
 	/// 当たり判定属性を削除
 	/// </summary>
 	/// <param name="attribute">当たり判定属性</param>
-	inline void RemoveAttribute(unsigned short _attribute) {
+	inline void RemoveAttribute(const unsigned short& _attribute) {
 		this->attribute &= !_attribute;
 	}
 

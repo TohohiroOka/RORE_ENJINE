@@ -88,7 +88,7 @@ void DirectInput::Update()
 	ScreenToClient(WindowApp::GetHwnd(), &mousePoint);
 }
 
-bool DirectInput::PushKey(BYTE _keyNumber)
+bool DirectInput::PushKey(const BYTE& _keyNumber)
 {
 	//指定のキーを押していればtrueを返す
 	if (key[_keyNumber]) {
@@ -98,7 +98,7 @@ bool DirectInput::PushKey(BYTE _keyNumber)
 	return false;
 }
 
-bool DirectInput::TriggerKey(BYTE _keyNumber)
+bool DirectInput::TriggerKey(const BYTE& _keyNumber)
 {
 	//指定のキーを押した瞬間ならtrueを返す
 	if (key[_keyNumber] && !keyPre[_keyNumber]) {
@@ -108,7 +108,7 @@ bool DirectInput::TriggerKey(BYTE _keyNumber)
 	return false;
 }
 
-bool DirectInput::ReleaseKey(BYTE _keyNumber)
+bool DirectInput::ReleaseKey(const BYTE& _keyNumber)
 {
 	//指定のキーを離した瞬間ならtrueを返す
 	if (!key[_keyNumber] && keyPre[_keyNumber]) {
@@ -118,7 +118,7 @@ bool DirectInput::ReleaseKey(BYTE _keyNumber)
 	return false;
 }
 
-bool DirectInput::PushMouseButton(const int _mouseButton)
+bool DirectInput::PushMouseButton(const int& _mouseButton)
 {
 	//指定のボタンを押していればtrueを返す
 	if (mouse.rgbButtons[_mouseButton]) {
@@ -128,7 +128,7 @@ bool DirectInput::PushMouseButton(const int _mouseButton)
 	return false;
 }
 
-bool DirectInput::TriggerMouseButton(const int _mouseButton)
+bool DirectInput::TriggerMouseButton(const int& _mouseButton)
 {
 	//指定のボタンを押した瞬間ならtrueを返す
 	if (mouse.rgbButtons[_mouseButton] &&
@@ -139,7 +139,7 @@ bool DirectInput::TriggerMouseButton(const int _mouseButton)
 	return false;
 }
 
-bool DirectInput::ReleaseMouseButton(const int _mouseButton)
+bool DirectInput::ReleaseMouseButton(const int& _mouseButton)
 {
 	//指定のボタンを離した瞬間ならtrueを返す
 	if (!mouse.rgbButtons[_mouseButton] &&

@@ -22,7 +22,7 @@ void Model::StaticInitialize(ID3D12Device* _device)
 	Mesh::StaticInitialize(_device);
 }
 
-std::unique_ptr<Model> Model::CreateFromOBJ(const std::string& _modelname, bool _smoothing)
+std::unique_ptr<Model> Model::CreateFromOBJ(const std::string& _modelname, const bool& _smoothing)
 {
 	// メモリ確保
 	Model* instance = new Model;
@@ -44,7 +44,7 @@ Model::~Model()
 	materials.clear();
 }
 
-void Model::Initialize(const std::string& _modelname, bool _smoothing)
+void Model::Initialize(const std::string& _modelname, const bool& _smoothing)
 {
 	// モデル読み込み
 	LoadModel(_modelname, _smoothing);
@@ -78,7 +78,7 @@ void Model::Initialize(const std::string& _modelname, bool _smoothing)
 	LoadTextures();
 }
 
-void Model::LoadModel(const std::string& _modelname, bool _smoothing)
+void Model::LoadModel(const std::string& _modelname, const bool& _smoothing)
 {
 	const string filename = _modelname + ".obj";
 	const string directoryPath = baseDirectory + _modelname + "/";

@@ -10,8 +10,8 @@ using namespace DirectX;
 GraphicsPipelineManager::GRAPHICS_PIPELINE HeightMap::pipeline;
 const std::string HeightMap::baseDirectory = "Resources/HeightMap/";
 
-std::unique_ptr<HeightMap> HeightMap::Create(const std::string _heightmapFilename,
-	const std::string _filename1, const std::string _filename2)
+std::unique_ptr<HeightMap> HeightMap::Create(const std::string& _heightmapFilename,
+	const std::string& _filename1, const std::string& _filename2)
 {
 	//インスタンスを生成
 	HeightMap* instance = new HeightMap();
@@ -41,7 +41,7 @@ void HeightMap::PreDraw()
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-bool HeightMap::HeightMapLoad(const std::string _filename)
+bool HeightMap::HeightMapLoad(const std::string& _filename)
 {
 	//名前結合
 	std::string fname = baseDirectory + _filename;
@@ -137,7 +137,7 @@ bool HeightMap::HeightMapLoad(const std::string _filename)
 	return true;
 }
 
-void HeightMap::LoadTexture(const std::string _filename1, const std::string _filename2)
+void HeightMap::LoadTexture(const std::string& _filename1, const std::string& _filename2)
 {
 	// テクスチャ無し
 	std::string filepath;

@@ -15,7 +15,7 @@ public:
 	/// </summary>
 	/// <param name="_fileName">ファイル名</param>
 	/// <param name="_map"></param>
-	static void LoadFile(std::string _fileName, std::vector<std::vector<int>> _map);
+	static void LoadFile(const std::string& _fileName, std::vector<std::vector<int>> _map);
 
 	/// <summary>
 	/// オブジェクト座標の配列番号の値の取得
@@ -24,5 +24,5 @@ public:
 	/// <param name="_chipSize">一つ分の大きさ</param>
 	/// <param name="_position">オブジェクト座標</param>
 	/// <returns></returns>
-	static int GetChipNum(std::vector<std::vector<int>> _map, float _chipSize, XMFLOAT2 _position);
+	static int GetChipNum(std::vector<std::vector<int>> _map, const float& _chipSize, const XMFLOAT2& _position);
 };

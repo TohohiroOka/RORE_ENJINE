@@ -48,5 +48,7 @@ private:
 	int timer;
 	//“GA
 	static std::vector<std::unique_ptr<EnemyA>> enemyA;
+	//oŒ»ˆÊ’u
+	static const std::array<XMFLOAT3, 4> popPos;
 };
 

@@ -11,7 +11,7 @@ Camera::Camera()
 	matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(60.0f),
 		aspectRatio,
-		0.1f, 3000.0f//奥行/手前,最奥
+		0.1f, 2400.0f//奥行/手前,最奥
 	);
 }
 
@@ -34,7 +34,7 @@ void Camera::Update()
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&inoutEye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 }
 
-void Camera::StartCameraShake(int _strength)
+void Camera::StartCameraShake(const int& _strength)
 {
 	int x = (rand() % _strength * 2) - _strength;
 	int y = (rand() % _strength * 2) - _strength;

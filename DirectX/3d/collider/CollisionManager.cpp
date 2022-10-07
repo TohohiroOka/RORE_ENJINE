@@ -60,12 +60,12 @@ void CollisionManager::CheckAllCollisions()
 	}
 }
 
-bool CollisionManager::Raycast(const Ray& _ray, RAYCAST_HIT* _hitInfo, float _maxDistance)
+bool CollisionManager::Raycast(const Ray& _ray, RAYCAST_HIT* _hitInfo, const float& _maxDistance)
 {
 	return Raycast(_ray, 0xffff, _hitInfo, _maxDistance);
 }
 
-bool CollisionManager::Raycast(const Ray& _ray, unsigned short _attribute, RAYCAST_HIT* _hitInfo, float _maxDistance)
+bool CollisionManager::Raycast(const Ray& _ray, const unsigned short& _attribute, RAYCAST_HIT* _hitInfo, const float& _maxDistance)
 {
 	bool result = false;
 	std::forward_list<BaseCollider*>::iterator it;
@@ -122,7 +122,7 @@ bool CollisionManager::Raycast(const Ray& _ray, unsigned short _attribute, RAYCA
 	return result;
 }
 
-void CollisionManager::QuerySphere(const Sphere& _sphere, QueryCallback* _callback, unsigned short _attribute)
+void CollisionManager::QuerySphere(const Sphere& _sphere, QueryCallback* _callback, const unsigned short& _attribute)
 {
 	assert(_callback);
 

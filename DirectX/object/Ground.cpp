@@ -2,8 +2,8 @@
 #include "MeshCollider.h"
 #include "CollisionAttribute.h"
 
-std::unique_ptr<Ground> Ground::Create(const std::string heightmapFilename,
-	const std::string filename1, const std::string filename2)
+std::unique_ptr<Ground> Ground::Create(const std::string& heightmapFilename,
+	const std::string& filename1, const std::string& filename2)
 {
 	// オブジェクトのインスタンスを生成
 	Ground* instance = new Ground();
@@ -20,7 +20,7 @@ std::unique_ptr<Ground> Ground::Create(const std::string heightmapFilename,
 
 void Ground::Initialize()
 {
-	object->SetScale({ 10,10,10 });
+	object->SetScale({ 15,15,15 });
 
 	// コライダーの追加
 	MeshCollider* collider = new MeshCollider;

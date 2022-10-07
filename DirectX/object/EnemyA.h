@@ -59,13 +59,13 @@ private:
 	//’n–Ê‚É‚Â‚¢‚Ä‚¢‚é‚©
 	bool onGround;
 	//ˆê‰ñ‚Éo‚·’e‚Ì—Ê
-	const int bulletNum = 10;
+	const int bulletNum = 1;
 
 public:
 
 	bool GetIsAlive() { return isAlive; }
 	XMFLOAT3 GetPosition() { return pos; }
 	float GetScale() { return scale; }
-	void SetIsAlive(bool _isAlive) { isAlive = _isAlive; }
+	void SetIsAlive(const bool& _isAlive) { isAlive = _isAlive; }
 };
 

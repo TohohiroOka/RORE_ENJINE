@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
-void Csv::LoadFile(string _fileName, vector<vector<int>> _map)
+void Csv::LoadFile(const std::string& _fileName, std::vector<std::vector<int>> _map)
 {
 	std::ifstream ifs(_fileName);
 	std::string line;
@@ -31,7 +29,7 @@ void Csv::LoadFile(string _fileName, vector<vector<int>> _map)
 	}
 }
 
-int Csv::GetChipNum(vector<vector<int>> _map, float _chipSize, XMFLOAT2 _position)
+int Csv::GetChipNum(std::vector<std::vector<int>> _map, const float& _chipSize, const XMFLOAT2& _position)
 {
 	int x = (UINT)(_position.x / _chipSize);
 	int y = (UINT)(_position.y / _chipSize);

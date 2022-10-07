@@ -22,7 +22,7 @@ LRESULT WindowApp::WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM 
 	return DefWindowProc(_hwnd, _msg, _wparam, _lparam);
 }
 
-void WindowApp::Initialize(const int _windowWidth, const int _windowHeight,const wchar_t* _gameName)
+void WindowApp::Initialize(const int& _windowWidth, const int& _windowHeight,const wchar_t* _gameName)
 {
 	windowWidth = _windowWidth;
 	windowHeight = _windowHeight;

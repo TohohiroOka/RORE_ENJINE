@@ -46,7 +46,7 @@ void Player::Initialize()
 	object->Initialize();
 
 	// コライダーの追加
-	float radius = 5.0f;
+	float radius = 3.0f;
 	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	object->GetCollider()->SetAttribute(COLLISION_ATTR_ALLIES);
 
@@ -71,34 +71,56 @@ void Player::Update()
 	//ラジアン変換
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
 	float radiusUD = XMConvertToRadians(cameraAngle);
+
+	//二つ以上のキーが押されたとき一定以上の速度にならないように調整するためのフラグ
+	std::array<bool, 4> isSpeed = { false,false, false, false };
 	//左
 	if (input->PushKey(DIK_A)) {
-		position.x -= Pspeed * cosf(radiusLR);
-		position.z -= Pspeed * sinf(radiusLR);
+		move.x -= Pspeed * cosf(radiusLR);
+		move.z -= Pspeed * sinf(radiusLR);
+		isSpeed[0] = true;
 	}
 	//右
 	if (input->PushKey(DIK_D)) {
-		position.x += Pspeed * cosf(radiusLR);
-		position.z += Pspeed * sinf(radiusLR);
+		move.x += Pspeed * cosf(radiusLR);
+		move.z += Pspeed * sinf(radiusLR);
+		isSpeed[1] = true;
 	}
 	//前
 	if (input->PushKey(DIK_W)) {
-		position.x -= Pspeed * cosf(radiusUD);
-		position.z -= Pspeed * sinf(radiusUD);
+		move.x -= Pspeed * cosf(radiusUD);
+		move.z -= Pspeed * sinf(radiusUD);
+		isSpeed[2] = true;
 	}
 	//後
 	if (input->PushKey(DIK_S)) {
-		position.x += Pspeed * cosf(radiusUD);
-		position.z += Pspeed * sinf(radiusUD);
+		move.x += Pspeed * cosf(radiusUD);
+		move.z += Pspeed * sinf(radiusUD);
+		isSpeed[3] = true;
 	}
 	//上
 	if (input->PushKey(DIK_UP)) {
-		position.y += 2.0f;
+		move.y += 2.0f;
 	}
 	//下
 	if (input->PushKey(DIK_DOWN)) {
-		position.y -= 2.0f;
+		move.y -= 2.0f;
 	}
+
+	//軸の異なる二方向が押されたときスピードを/2する
+	if (isSpeed[0] != isSpeed[1] && isSpeed[2] != isSpeed[3])
+	{
+		move.x /= 2.0f;
+		move.y /= 2.0f;
+		move.z /= 2.0f;
+	}
+
+	position.x += move.x;
+	position.y += move.y;
+	position.z += move.z;
+
+	object->SetPosition(position);
+	object->Update();
 
 	//当たり判定
 	Collider();
@@ -107,6 +129,15 @@ void Player::Update()
 	object->Update();
 
 	input = nullptr;
+
+	DebugText* text = DebugText::GetInstance();
+	std::string strX = std::to_string(position.x);
+	std::string strY = std::to_string(position.y);
+	std::string strZ = std::to_string(position.z);
+	text->Print("1 :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 100);
+	text = nullptr;
+
+	move = { 0,0,0 };
 }
 
 void Player::Draw()
@@ -182,10 +213,6 @@ void Player::Collider()
 	//左の判定
 	{
 		ray.dir = { -1.0f,0.0f,0.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -196,10 +223,6 @@ void Player::Collider()
 	//右の判定
 	{
 		ray.dir = { 1.0f,0.0f,0.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -210,10 +233,6 @@ void Player::Collider()
 	//前の判定
 	{
 		ray.dir = { 0.0f,0.0f,-1.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -224,10 +243,6 @@ void Player::Collider()
 	//後の判定
 	{
 		ray.dir = { 0.0f,0.0f,1.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -236,4 +251,3 @@ void Player::Collider()
 		}
 	}
 }
-

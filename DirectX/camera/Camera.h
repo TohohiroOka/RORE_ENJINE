@@ -44,7 +44,7 @@ public: // メンバ関数
 	/// カメラのシェイク開始
 	/// </summary>
 	/// <param name="_strength">シェイクの強さ</param>
-	void StartCameraShake(int _strength);
+	void StartCameraShake(const int& _strength);
 
 	/// <summary>
 	/// カメラのシェイク終了
@@ -85,13 +85,13 @@ public: // メンバ関数
 	/// 視点座標セット
 	/// </summary>
 	/// <param name="eye">視点座標</param>
-	void SetEye(XMFLOAT3 _eye) { this->eye = _eye; }
+	void SetEye(const XMFLOAT3& _eye) { this->eye = _eye; }
 
 	/// <summary>
 	/// 注視点座標セット
 	/// </summary>
 	/// <param name="position">注視点座標</param>
-	void SetTarget(XMFLOAT3 _target) { this->target = _target; }
+	void SetTarget(const XMFLOAT3& _target) { this->target = _target; }
 
 protected: // メンバ変数
 	// ビュー行列

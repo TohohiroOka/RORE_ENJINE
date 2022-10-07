@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-bool Collision::CheckCircle2Circle(const DirectX::XMFLOAT3& pos1, float radius1, const DirectX::XMFLOAT3& pos2, float radius2)
+bool Collision::CheckCircle2Circle(const DirectX::XMFLOAT3& pos1, const float& radius1, const DirectX::XMFLOAT3& pos2, const float& radius2)
 {
 	float disX = pos2.x - pos1.x;
 	float disY = pos2.y - pos1.y;

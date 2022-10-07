@@ -36,7 +36,7 @@ public:
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <returns>現在番号</returns>
-	int OctreeSet(DirectX::XMFLOAT3 _pos);
+	int OctreeSet(const DirectX::XMFLOAT3& _pos);
 
 	/// <summary>
 	/// 三角形の配列を構築する

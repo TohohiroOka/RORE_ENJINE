@@ -222,7 +222,7 @@ void CubeMap::Draw()
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }
 
-void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* _cmdList, UINT _rootParameterIndex)
+void CubeMap::TransferTextureBubber(ID3D12GraphicsCommandList* _cmdList, const UINT& _rootParameterIndex)
 {
 	_cmdList->SetGraphicsRootDescriptorTable(_rootParameterIndex, texture->descriptor->gpu);
 }

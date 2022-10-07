@@ -51,7 +51,7 @@ public:
 	/// </summary>
 	/// <param name="_fileName">ファイル名</param>
 	/// <returns>格納番号</returns>
-	int SoundLoadWave(const char* _fileName);
+	int SoundLoadWave(const std::string& _fileName);
 	
 	/// <summary>
 	/// データの生成
@@ -65,13 +65,13 @@ public:
 	/// <param name="_number">サウンドデータの格納番号</param>
 	/// <param name="_roop">ループの有無</param>
 	/// <returns>データの設定を行ったか</returns>
-	bool SoundPlayWava(int _number, bool _roop);
+	bool SoundPlayWava(const int& _number, const bool& _roop);
 
 	/// <summary>
 	/// サウンドの停止
 	/// </summary>
 	/// <param name="_number">サウンドデータの格納番号</param>
-	void StopSound(int _number);
+	void StopSound(const int& _number);
 
 private:
 	//サウンドデータ配列

@@ -35,7 +35,7 @@ Audio::~Audio()
 	soundData.clear();
 }
 
-int Audio::SoundLoadWave(const char* fileName)
+int Audio::SoundLoadWave(const std::string& fileName)
 {
 	//現在の配列サイズ
 	int size = (UINT)soundData.size();
@@ -130,7 +130,7 @@ void Audio::CreateSoundData(SOUND_DATA& soundData) {
 	assert(SUCCEEDED(result));
 }
 
-bool Audio::SoundPlayWava(int number, bool roop)
+bool Audio::SoundPlayWava(const int& number, const bool& roop)
 {
 	HRESULT result;
 
@@ -165,7 +165,7 @@ bool Audio::SoundPlayWava(int number, bool roop)
 	return true;
 }
 
-void Audio::StopSound(int number)
+void Audio::StopSound(const int& number)
 {
 	HRESULT result;
 

@@ -14,7 +14,7 @@ void Texture::StaticInitialize(ID3D12Device* _device)
 	DescriptorHeapManager::StaticInitialize(_device);
 }
 
-std::unique_ptr<Texture> Texture::Create(const std::string _fileName, ID3D12GraphicsCommandList* _cmdList)
+std::unique_ptr<Texture> Texture::Create(const std::string& _fileName, ID3D12GraphicsCommandList* _cmdList)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Texture* instance = new Texture();
@@ -38,7 +38,7 @@ Texture::~Texture()
 	texConstBuffer.Reset();
 }
 
-void Texture::LoadTexture(const std::string _fileName)
+void Texture::LoadTexture(const std::string& _fileName)
 {
 	HRESULT result;
 
@@ -100,7 +100,7 @@ void Texture::LoadTexture(const std::string _fileName)
 	descriptor->CreateSRV(texBuffer, srvDesc);
 }
 
-void Texture::LoadTextureFromDDSFile(const std::string _fileName, ID3D12GraphicsCommandList* _cmdList)
+void Texture::LoadTextureFromDDSFile(const std::string& _fileName, ID3D12GraphicsCommandList* _cmdList)
 {
 	HRESULT result;
 

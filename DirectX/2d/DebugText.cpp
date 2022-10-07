@@ -20,7 +20,7 @@ void DebugText::Initialize()
 	}
 }
 
-void DebugText::Print(const std::string& _text, float _x, float _y, float _size)
+void DebugText::Print(const std::string& _text, const float& _x, const float& _y, const float& _size)
 {
 	SetPos(_x, _y);
 	SetSize(_size);
@@ -28,7 +28,7 @@ void DebugText::Print(const std::string& _text, float _x, float _y, float _size)
 	NPrint((UINT)_text.size(), _text.c_str());
 }
 
-void DebugText::NPrint(int _len, const char* _text)
+void DebugText::NPrint(const int& _len, const char* _text)
 {
 	// ‘S‚Ä‚Ì•¶Žš‚É‚Â‚¢‚Ä
 	for (int i = 0; i < _len; i++)

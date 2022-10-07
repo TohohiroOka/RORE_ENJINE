@@ -78,7 +78,7 @@ public: // メンバ関数
 	/// 頂点インデックスの追加
 	/// </summary>
 	/// <param name="_index">インデックス</param>
-	void AddIndex(unsigned long _index);
+	void AddIndex(const unsigned long& _index);
 
 	/// <summary>
 	/// 頂点データの数を取得
@@ -91,7 +91,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="_indexPosition">座標インデックス</param>
 	/// <param name="_indexVertex">頂点インデックス</param>
-	void AddSmoothData(unsigned long _indexPosition, unsigned long _indexVertex);
+	void AddSmoothData(const unsigned long& _indexPosition, const unsigned long& _indexVertex);
 
 	/// <summary>
 	/// 平滑化された頂点法線の計算

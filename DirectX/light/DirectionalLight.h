@@ -54,7 +54,7 @@ public: // メンバ関数
 	/// 有効フラグをセット
 	/// </summary>
 	/// <param name="_active">有効フラグ</param>
-	inline void SetActive(bool _active) { this->active = _active; }
+	inline void SetActive(const bool& _active) { this->active = _active; }
 
 	/// <summary>
 	/// 有効チェック

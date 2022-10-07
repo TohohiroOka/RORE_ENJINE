@@ -47,7 +47,7 @@ private:
 
 public:
 
-	void SetIsAlive(bool _isAlive) { isAlive = _isAlive; }
+	void SetIsAlive(const bool& _isAlive) { isAlive = _isAlive; }
 	bool GetIsAlive() { return isAlive; }
 	XMFLOAT3 GetPosition() { return pos; }
 	float GetScale() { return scale; }

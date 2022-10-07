@@ -25,7 +25,7 @@ public: // 静的メンバ関数
 	/// パイプラインの設定
 	/// </summary>
 	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { Object3d::pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { Object3d::pipeline = _pipeline; }
 
 private: // 静的メンバ変数
 

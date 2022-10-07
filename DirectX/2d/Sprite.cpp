@@ -38,7 +38,7 @@ bool Sprite::StaticInitialize(ID3D12Device* _device)
 	return true;
 }
 
-void Sprite::LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete)
+void Sprite::LoadTexture(const std::string& _keepName, const std::string& _filename, const bool& _isDelete)
 {
 	// nullptrチェック
 	assert(device);
@@ -72,7 +72,7 @@ void Sprite::PostDraw()
 	Sprite::cmdList = nullptr;
 }
 
-std::unique_ptr<Sprite> Sprite::Create(const std::string _name)
+std::unique_ptr<Sprite> Sprite::Create(const std::string& _name)
 {
 	// Spriteのインスタンスを生成
 	Sprite* instance = new Sprite();
@@ -90,7 +90,7 @@ std::unique_ptr<Sprite> Sprite::Create(const std::string _name)
 	return std::unique_ptr<Sprite>(instance);
 }
 
-void Sprite::Initialize(const std::string _name, const XMFLOAT2 _anchorpoint, bool _isFlipX, bool _isFlipY)
+void Sprite::Initialize(const std::string& _name, const XMFLOAT2& _anchorpoint, const bool& _isFlipX, const bool& _isFlipY)
 {
 	this->name = _name;
 	this->anchorpoint = _anchorpoint;

@@ -54,7 +54,7 @@ private:
 	std::unique_ptr<Player> player = nullptr;
 
 	//’nŒ`
-	static const int ground_num = 1;
+	static const int ground_num = 2;
 	std::array<std::unique_ptr<Ground>, ground_num> ground;
 
 	//’e

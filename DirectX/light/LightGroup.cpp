@@ -65,7 +65,7 @@ void LightGroup::Update()
 	}
 }
 
-void LightGroup::Draw(ID3D12GraphicsCommandList* _cmdList, UINT _rootParameterIndex)
+void LightGroup::Draw(ID3D12GraphicsCommandList* _cmdList, const UINT& _rootParameterIndex)
 {
 	// 定数バッファビューをセット
 	_cmdList->SetGraphicsRootConstantBufferView(_rootParameterIndex, constBuff->GetGPUVirtualAddress());
@@ -166,7 +166,7 @@ void LightGroup::SetAmbientColor(const XMFLOAT3& _color)
 	dirty = true;
 }
 
-void LightGroup::SetDirLightActive(int _index, bool _active)
+void LightGroup::SetDirLightActive(const int& _index, const bool& _active)
 {
 	assert(0 <= _index && _index < DirLightNum);
 
@@ -174,7 +174,7 @@ void LightGroup::SetDirLightActive(int _index, bool _active)
 	dirty = true;
 }
 
-void LightGroup::SetDirLightDir(int _index, const XMVECTOR& _lightdir)
+void LightGroup::SetDirLightDir(const int& _index, const XMVECTOR& _lightdir)
 {
 	assert(0 <= _index && _index < DirLightNum);
 
@@ -182,7 +182,7 @@ void LightGroup::SetDirLightDir(int _index, const XMVECTOR& _lightdir)
 	dirty = true;
 }
 
-void LightGroup::SetDirLightColor(int _index, const XMFLOAT3& _lightcolor)
+void LightGroup::SetDirLightColor(const int& _index, const XMFLOAT3& _lightcolor)
 {
 	assert(0 <= _index && _index < DirLightNum);
 
@@ -190,14 +190,14 @@ void LightGroup::SetDirLightColor(int _index, const XMFLOAT3& _lightcolor)
 	dirty = true;
 }
 
-void LightGroup::SetPointLightActive(int _index, bool _active)
+void LightGroup::SetPointLightActive(const int& _index, const bool& _active)
 {
 	assert(0 <= _index && _index < PointLightNum);
 
 	pointLights[_index].SetActive(_active);
 }
 
-void LightGroup::SetPointLightPos(int _index, const XMFLOAT3& _lightpos)
+void LightGroup::SetPointLightPos(const int& _index, const XMFLOAT3& _lightpos)
 {
 	assert(0 <= _index && _index < PointLightNum);
 
@@ -205,7 +205,7 @@ void LightGroup::SetPointLightPos(int _index, const XMFLOAT3& _lightpos)
 	dirty = true;
 }
 
-void LightGroup::SetPointLightColor(int _index, const XMFLOAT3& _lightcolor)
+void LightGroup::SetPointLightColor(const int& _index, const XMFLOAT3& _lightcolor)
 {
 	assert(0 <= _index && _index < PointLightNum);
 
@@ -213,7 +213,7 @@ void LightGroup::SetPointLightColor(int _index, const XMFLOAT3& _lightcolor)
 	dirty = true;
 }
 
-void LightGroup::SetPointLightAtten(int _index, const XMFLOAT3& _lightAtten)
+void LightGroup::SetPointLightAtten(const int& _index, const XMFLOAT3& _lightAtten)
 {
 	assert(0 <= _index && _index < PointLightNum);
 
@@ -221,14 +221,14 @@ void LightGroup::SetPointLightAtten(int _index, const XMFLOAT3& _lightAtten)
 	dirty = true;
 }
 
-void LightGroup::SetSpotLightActive(int _index, bool _active)
+void LightGroup::SetSpotLightActive(const int& _index, const bool& _active)
 {
 	assert(0 <= _index && _index < SpotLightNum);
 
 	spotLights[_index].SetActive(_active);
 }
 
-void LightGroup::SetSpotLightDir(int _index, const XMVECTOR& _lightdir)
+void LightGroup::SetSpotLightDir(const int& _index, const XMVECTOR& _lightdir)
 {
 	assert(0 <= _index && _index < SpotLightNum);
 
@@ -236,7 +236,7 @@ void LightGroup::SetSpotLightDir(int _index, const XMVECTOR& _lightdir)
 	dirty = true;
 }
 
-void LightGroup::SetSpotLightPos(int _index, const XMFLOAT3& _lightpos)
+void LightGroup::SetSpotLightPos(const int& _index, const XMFLOAT3& _lightpos)
 {
 	assert(0 <= _index && _index < SpotLightNum);
 
@@ -244,7 +244,7 @@ void LightGroup::SetSpotLightPos(int _index, const XMFLOAT3& _lightpos)
 	dirty = true;
 }
 
-void LightGroup::SetSpotLightColor(int _index, const XMFLOAT3& _lightcolor)
+void LightGroup::SetSpotLightColor(const int& _index, const XMFLOAT3& _lightcolor)
 {
 	assert(0 <= _index && _index < SpotLightNum);
 
@@ -252,7 +252,7 @@ void LightGroup::SetSpotLightColor(int _index, const XMFLOAT3& _lightcolor)
 	dirty = true;
 }
 
-void LightGroup::SetSpotLightAtten(int _index, const XMFLOAT3& _lightAtten)
+void LightGroup::SetSpotLightAtten(const int& _index, const XMFLOAT3& _lightAtten)
 {
 	assert(0 <= _index && _index < SpotLightNum);
 
@@ -260,7 +260,7 @@ void LightGroup::SetSpotLightAtten(int _index, const XMFLOAT3& _lightAtten)
 	dirty = true;
 }
 
-void LightGroup::SetSpotLightFactorAngle(int _index, const XMFLOAT2& _lightFactorAngle)
+void LightGroup::SetSpotLightFactorAngle(const int& _index, const XMFLOAT2& _lightFactorAngle)
 {
 	assert(0 <= _index && _index < SpotLightNum);
 
@@ -268,14 +268,14 @@ void LightGroup::SetSpotLightFactorAngle(int _index, const XMFLOAT2& _lightFacto
 	dirty = true;
 }
 
-void LightGroup::SetCircleShadowActive(int _index, bool _active)
+void LightGroup::SetCircleShadowActive(const int& _index, const bool& _active)
 {
 	assert(0 <= _index && _index < CircleShadowNum);
 
 	circleShadows[_index].SetActive(_active);
 }
 
-void LightGroup::SetCircleShadowCasterPos(int _index, const XMFLOAT3& _casterPos)
+void LightGroup::SetCircleShadowCasterPos(const int& _index, const XMFLOAT3& _casterPos)
 {
 	assert(0 <= _index && _index < CircleShadowNum);
 
@@ -283,7 +283,7 @@ void LightGroup::SetCircleShadowCasterPos(int _index, const XMFLOAT3& _casterPos
 	dirty = true;
 }
 
-void LightGroup::SetCircleShadowDir(int _index, const XMVECTOR& _lightdir)
+void LightGroup::SetCircleShadowDir(const int& _index, const XMVECTOR& _lightdir)
 {
 	assert(0 <= _index && _index < CircleShadowNum);
 
@@ -291,7 +291,7 @@ void LightGroup::SetCircleShadowDir(int _index, const XMVECTOR& _lightdir)
 	dirty = true;
 }
 
-void LightGroup::SetCircleShadowDistanceCasterLight(int _index, float _distanceCasterLight)
+void LightGroup::SetCircleShadowDistanceCasterLight(const int& _index, const float& _distanceCasterLight)
 {
 	assert(0 <= _index && _index < CircleShadowNum);
 
@@ -299,7 +299,7 @@ void LightGroup::SetCircleShadowDistanceCasterLight(int _index, float _distanceC
 	dirty = true;
 }
 
-void LightGroup::SetCircleShadowAtten(int _index, const XMFLOAT3& _lightAtten)
+void LightGroup::SetCircleShadowAtten(const int& _index, const XMFLOAT3& _lightAtten)
 {
 	assert(0 <= _index && _index < CircleShadowNum);
 
@@ -307,7 +307,7 @@ void LightGroup::SetCircleShadowAtten(int _index, const XMFLOAT3& _lightAtten)
 	dirty = true;
 }
 
-void LightGroup::SetCircleShadowFactorAngle(int _index, const XMFLOAT2& _lightFactorAngle)
+void LightGroup::SetCircleShadowFactorAngle(const int& _index, const XMFLOAT2& _lightFactorAngle)
 {
 	assert(0 <= _index && _index < CircleShadowNum);
 

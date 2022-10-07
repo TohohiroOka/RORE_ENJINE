@@ -20,13 +20,14 @@ void Boss1::Initialize()
 
 	//地形
 	ground[0] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
+	ground[1] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
 
 	bullet = BulletManager::Create();
 	FixedTurret::StaticInitialize();
-	fixedTurret[0] = FixedTurret::Create({ 1850,50,1250 }, { -1.0f,0.2f,0.0f });
-	fixedTurret[1] = FixedTurret::Create({ 650,50,1250 }, { 1.0f,0.2f,0.0f });
-	fixedTurret[2] = FixedTurret::Create({ 1250,50,1850 }, { 0.0f,0.2f,-1.0f });
-	fixedTurret[3] = FixedTurret::Create({ 1250,50,650 }, { 0.0f,0.2f,1.0f });
+	fixedTurret[0] = FixedTurret::Create({ 1905,50,3000 }, { 0.0f,0.2f,-1.0f });//-z座標向き
+	fixedTurret[1] = FixedTurret::Create({ 1905,50,810 }, { 0.0f,0.2f,1.0f });//z座標向き
+	fixedTurret[2] = FixedTurret::Create({ 3000,50,1905 }, { -1.0f,0.2f,0.0f });//-x座標向き
+	fixedTurret[3] = FixedTurret::Create({ 810,50,1905 }, { 1.0f,0.2f,0.0f });//x座標向き
 
 	enemy = EnemyManager::Create();
 }
@@ -75,11 +76,11 @@ void Boss1::Draw()
 
 	InterfaceObject3d::SetCmdList(cmdList);
 
-	HeightMap::PreDraw();
-	for (int i = 0; i < ground_num; i++)
-	{
-		ground[i]->Draw();
-	}
+	//HeightMap::PreDraw();
+	//for (int i = 0; i < ground_num; i++)
+	//{
+	//	ground[i]->Draw();
+	//}
 
 	Object3d::PreDraw();
 	player->Draw();
@@ -90,8 +91,8 @@ void Boss1::Draw()
 	}
 	enemy->Draw();
 
-	//PrimitiveObject3D::PreDraw();
-	//ground[0]->CDraw();
+	PrimitiveObject3D::PreDraw();
+	ground[0]->CDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
 

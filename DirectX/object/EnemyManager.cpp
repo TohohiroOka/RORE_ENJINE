@@ -5,7 +5,15 @@
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
 
+using namespace DirectX;
+
 std::vector<std::unique_ptr<EnemyA>> EnemyManager::enemyA;
+const std::array<XMFLOAT3, 4> EnemyManager::popPos = {
+	XMFLOAT3(1905.0f,50.0f,3000.0f),
+XMFLOAT3(1905.0f,50.0f,810.0f),
+XMFLOAT3(3000.0f,50.0f,1905.0f),
+XMFLOAT3(810.0f,50.0f,1905.0f),
+};
 
 std::unique_ptr<EnemyManager> EnemyManager::Create()
 {
@@ -34,8 +42,8 @@ void EnemyManager::Update(const XMFLOAT3& _pos)
 	//“G’Ç‰Á
 	if (timer % 100 == 1 && enemyA.size() < 20)
 	{
-		XMFLOAT3 randPos = { 1250,50,0 };
-		enemyA.emplace_back(EnemyA::Create(randPos));
+		int randN = rand() % 4;
+		enemyA.emplace_back(EnemyA::Create(popPos[randN]));
 	}
 
 	for (auto& i : enemyA)

@@ -92,20 +92,20 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="_mode">ブレンドの種類</param>
 	/// <returns>ブレンド設定</returns>
-	D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(BLEND_MODE _mode);
+	D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(const BLEND_MODE& _mode);
 
 	/// <summary>
 	/// パイプラインデスクの生成
 	/// </summary>
 	/// <param name="_pepelineDescSet">パイプライン設定</param>
 	/// <returns>パイプラインデスク</returns>
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatepelineDesc(PEPELINE_DESC* _pepelineDescSet);
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatepelineDesc(const PEPELINE_DESC& _pepelineDescSet);
 
 	/// <summary>
 	/// ルートシグネチャの生成
 	/// </summary>
 	/// <param name="_signatureDescSet">ルートシグネチャ設定</param>
-	void CreateRootSignature(SIGNATURE_DESC* _signatureDescSet);
+	void CreateRootSignature(const SIGNATURE_DESC& _signatureDescSet);
 
 public://メンバ関数
 
@@ -125,7 +125,7 @@ public://メンバ関数
 	/// <param name="_name">パイプライン名</param>
 	/// <param name="_pepelineDescSet">パイプラインの設定</param>
 	/// <param name="_signatureDescSet">ルートシグネチャ設定</param>
-	void CreatePipeline(const std::string _name, PEPELINE_DESC* _pepelineDescSet, SIGNATURE_DESC* _signatureDescSet);
+	void CreatePipeline(const std::string& _name, const PEPELINE_DESC& _pepelineDescSet, const SIGNATURE_DESC& _signatureDescSet);
 
 private://静的メンバ変数
 

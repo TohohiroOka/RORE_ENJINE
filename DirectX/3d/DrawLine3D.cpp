@@ -23,7 +23,7 @@ DrawLine3D::~DrawLine3D()
 	constBuff.Reset();
 }
 
-std::unique_ptr<DrawLine3D> DrawLine3D::Create(UINT _lineNum)
+std::unique_ptr<DrawLine3D> DrawLine3D::Create(const int& _lineNum)
 {
 	DrawLine3D* instance = new DrawLine3D();
 	if (instance == nullptr) {
@@ -53,7 +53,7 @@ void DrawLine3D::StaticInitialize(ID3D12Device* _device)
 	DrawLine3D::device = _device;
 }
 
-bool DrawLine3D::Initialize(UINT _lineNum)
+bool DrawLine3D::Initialize(const int& _lineNum)
 {
 	HRESULT result = S_FALSE;
 
@@ -149,13 +149,13 @@ bool DrawLine3D::Initialize(UINT _lineNum)
 	return true;
 }
 
-float DrawLine3D::GetAngle(XMFLOAT3 _startPoint, XMFLOAT3 _endPoint)
+float DrawLine3D::GetAngle(const XMFLOAT3& _startPoint, const XMFLOAT3& _endPoint)
 {
 	float angle = atan2f(_endPoint.y - _startPoint.y, _endPoint.x - _startPoint.x) * (180.0f / PI);
 	return angle;
 }
 
-void DrawLine3D::SetLine(XMFLOAT3 _startPoint[], XMFLOAT3 _endPoint[], float _width)
+void DrawLine3D::SetLine(XMFLOAT3 _startPoint[], XMFLOAT3 _endPoint[], const float& _width)
 {
 	HRESULT result;
 

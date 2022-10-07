@@ -98,7 +98,7 @@ public:
 	/// </summary>
 	/// <param name="_cmdList">描画コマンドリスト</param>
 	/// <param name="_rootParameterIndex"></param>
-	void TransferTextureBubber(ID3D12GraphicsCommandList* _cmdList, UINT _rootParameterIndex);
+	void TransferTextureBubber(ID3D12GraphicsCommandList* _cmdList, const UINT& _rootParameterIndex);
 
 	/// <summary>
 	/// キューブマップのセット
@@ -110,7 +110,7 @@ public:
 	/// パイプラインのセット
 	/// </summary>
 	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
 
 private:
 
@@ -149,5 +149,4 @@ private:
 	XMFLOAT3 scale = { 500,500,500 };
 	//回転
 	XMFLOAT3 rotation = {};
-
 };

@@ -40,7 +40,7 @@ public:// メンバ関数
 	/// </summary>
 	/// <param name="x">x軸</param>
 	/// <param name="y">y軸</param>
-	inline void SetPos(float _x, float _y) {
+	inline void SetPos(const float& _x, const float& _y) {
 		posX = _x;
 		posY = _y;
 	}
@@ -49,13 +49,13 @@ public:// メンバ関数
 	/// サイズ変更
 	/// </summary>
 	/// <param name="size"></param>
-	inline void SetSize(float _size) { this->size = _size; }
+	inline void SetSize(const float& _size) { this->size = _size; }
 
 	/// <summary>
 	/// 色変更
 	/// </summary>
 	/// <param name="size"></param>
-	inline void SetColor(float _red, float _green, float _blue) {
+	inline void SetColor(const float& _red, const float& _green, const float& _blue) {
 		this->red = _red;
 		this->green = _green;
 		this->blue = _blue;
@@ -68,14 +68,14 @@ public:// メンバ関数
 	/// <param name="x">x軸の位置</param>
 	/// <param name="y">y軸の位置</param>
 	/// <param name="size">大きさ</param>
-	void Print(const std::string& _text, float _x, float _y, float _size = 1.0f);
+	void Print(const std::string& _text, const float& _x, const float& _y, const float& _size = 1.0f);
 
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <param name="len">文字列の長さ</param>
 	/// <param name="text">出力する文字</param>
-	void NPrint(int _len, const char* _text);
+	void NPrint(const int& _len, const char* _text);
 
 	/// <summary>
 	/// 全ての描画

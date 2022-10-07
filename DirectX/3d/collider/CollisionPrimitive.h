@@ -5,7 +5,7 @@
 
 #include <DirectXMath.h>
 #include <vector>
-
+#include "Vector3.h"
 
 /// <summary>
 /// 球
@@ -60,4 +60,24 @@ struct Ray
 	DirectX::XMVECTOR start = { 0,0,0,1 };
 	// 方向
 	DirectX::XMVECTOR dir = { 1,0,0,0 };
+};
+
+/// <summary>
+/// カプセル
+/// </summary>
+struct Capsule
+{
+	Vector3 startPosition;
+	Vector3 endPosition;
+	float radius;//半径
+
+	unsigned color;//表示色
+
+	//コンストラクタ
+	Capsule(const Vector3 startPosition, const Vector3 endPosition, float radius, unsigned color);
+
+	//描画
+	void draw();
+	//球の表示
+	void drawInfo(int x, int y, unsigned color);
 };

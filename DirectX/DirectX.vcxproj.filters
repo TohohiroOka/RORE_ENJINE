@@ -149,6 +149,15 @@
     <Filter Include="ゲームシステム\object\Enemy">
       <UniqueIdentifier>{5254ab8a-bd70-46e2-b059-23696d304e03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="エンジンシステム\Base\DescriptorHeapManager">
+      <UniqueIdentifier>{3051bf8a-d26c-4ead-8442-0b5b71920395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Texture">
+      <UniqueIdentifier>{26f09d4b-07a4-4861-afef-6d00e6259479}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Helpar">
+      <UniqueIdentifier>{3d04591c-d91a-409f-bed5-97956e0d7543}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -250,12 +259,6 @@
     <ClCompile Include="3d\CubeMap.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
-    <ClCompile Include="base\DescriptorHeapManager.cpp">
-      <Filter>エンジンシステム\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="base\Texture.cpp">
-      <Filter>エンジンシステム\Base</Filter>
-    </ClCompile>
     <ClCompile Include="external\Imgui\imgui.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
@@ -324,6 +327,21 @@
     </ClCompile>
     <ClCompile Include="object\EnemyABullet.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="base\DescriptorHeapManager.cpp">
+      <Filter>エンジンシステム\Base\DescriptorHeapManager</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Texture.cpp">
+      <Filter>エンジンシステム\Base\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Vector3.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Matrix4.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Vector2.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -541,12 +559,6 @@
     <ClInclude Include="3d\CubeMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
-    <ClInclude Include="base\DescriptorHeapManager.h">
-      <Filter>エンジンシステム\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="base\Texture.h">
-      <Filter>エンジンシステム\Base</Filter>
-    </ClInclude>
     <ClInclude Include="external\Imgui\imconfig.h">
       <Filter>Imgui</Filter>
     </ClInclude>
@@ -570,9 +582,6 @@
     </ClInclude>
     <ClInclude Include="external\Imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="base\PipelineHelpar.h">
-      <Filter>エンジンシステム\Base</Filter>
     </ClInclude>
     <ClInclude Include="3d\HeightMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
@@ -639,6 +648,24 @@
     </ClInclude>
     <ClInclude Include="object\EnemyABullet.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="base\DescriptorHeapManager.h">
+      <Filter>エンジンシステム\Base\DescriptorHeapManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\PipelineHelpar.h">
+      <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Texture.h">
+      <Filter>エンジンシステム\Base\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Vector3.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Matrix4.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Vector2.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

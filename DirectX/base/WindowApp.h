@@ -31,7 +31,7 @@ public:
 	/// <param name="_windowWidth">画面幅</param>
 	/// <param name="_windowHeight">画面高さ</param>
 	/// <param name="_gameName">タイトルバー名</param>
-	void Initialize(const int _windowWidth, const int _windowHeight, const wchar_t* _gameName);
+	void Initialize(const int& _windowWidth, const int& _windowHeight, const wchar_t* _gameName);
 
 	/// <summary>
 	/// 更新

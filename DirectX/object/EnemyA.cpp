@@ -26,6 +26,11 @@ void EnemyA::Initialize(const XMFLOAT3& _pos)
 
 	object = Object3d::Create(model.get());
 
+	// コライダーの追加
+	float radius = 3.0f;
+	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
+	object->GetCollider()->SetAttribute(COLLISION_ATTR_ENEMYS);
+
 	isAlive = true;
 	pos = _pos;
 	object->SetPosition(pos);
@@ -56,6 +61,11 @@ void EnemyA::Update()
 	pos.x += moveVec.x * speed;
 	pos.y += moveVec.y * speed;
 	pos.z += moveVec.z * speed;
+
+	object->SetPosition(pos);
+	object->Update();
+
+	MapCollider();
 	object->SetPosition(pos);
 	object->Update();
 }
@@ -148,10 +158,6 @@ void EnemyA::MapCollider()
 	//左の判定
 	{
 		ray.dir = { -1.0f,0.0f,0.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -162,10 +168,6 @@ void EnemyA::MapCollider()
 	//右の判定
 	{
 		ray.dir = { 1.0f,0.0f,0.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -176,10 +178,6 @@ void EnemyA::MapCollider()
 	//前の判定
 	{
 		ray.dir = { 0.0f,0.0f,-1.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{
@@ -190,10 +188,6 @@ void EnemyA::MapCollider()
 	//後の判定
 	{
 		ray.dir = { 0.0f,0.0f,1.0f,0.0f };
-		RAYCAST_HIT raycastHit;
-
-		// スムーズに坂を下る為の吸着距離
-		const float adsDistance = 1.0f;
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
 		{

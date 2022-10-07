@@ -93,70 +93,70 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="button">ボタン</param>
 	/// <returns>押されているか否か</returns>
-	bool PushButton(PUD_BUTTON _button);
+	bool PushButton(const PUD_BUTTON& _button);
 
 	/// <summary>
 	/// 指定ボタンのトリガーをチェック
 	/// </summary>
 	/// <param name="button">ボタン</param>
 	/// <returns>押されているか否か</returns>
-	bool TriggerButton(PUD_BUTTON _button);
+	bool TriggerButton(const PUD_BUTTON& _button);
 
 	/// <summary>
 	/// 左スティックのX軸チェック
 	/// </summary>
 	/// <param name="_leftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool LeftStickX(bool _leftRight);
+	bool LeftStickX(const bool& _leftRight);
 
 	/// <summary>
 	/// 左スティックのY軸チェック
 	/// </summary>
 	/// <param name="_upDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool LeftStickY(bool _upDown);
+	bool LeftStickY(const bool& _upDown);
 
 	/// <summary>
 	/// 右スティックのX軸チェック
 	/// </summary>
 	/// <param name="_leftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool RightStickX(bool _leftRight);
+	bool RightStickX(const bool& _leftRight);
 
 	/// <summary>
 	/// 右スティックのY軸チェック
 	/// </summary>
 	/// <param name="_upDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool RightStickY(bool _upDown);
+	bool RightStickY(const bool& _upDown);
 
 	/// <summary>
 	/// 左スティックのX軸トリガーでチェック
 	/// </summary>
 	/// <param name="_leftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerLeftStickX(bool _leftRight);
+	bool TriggerLeftStickX(const bool& _leftRight);
 
 	/// <summary>
 	/// 左スティックのY軸トリガーでチェック
 	/// </summary>
 	/// <param name="_upDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerLeftStickY(bool _upDown);
+	bool TriggerLeftStickY(const bool& _upDown);
 
 	/// <summary>
 	/// 右スティックのX軸トリガーでチェック
 	/// </summary>
 	/// <param name="_leftRight">Left -> true / Right -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerRightStickX(bool _leftRight);
+	bool TriggerRightStickX(const bool& _leftRight);
 
 	/// <summary>
 	/// 右スティックのX軸トリガーでチェック
 	/// </summary>
 	/// <param name="_upDown">Up -> true / Down -> false</param>
 	/// <returns>true/false</returns>
-	bool TriggerRightStickY(bool _upDown);
+	bool TriggerRightStickY(const bool& _upDown);
 
 	/// <summary>
 	/// ゲームパッドの左スティックの傾きを取得
@@ -186,7 +186,7 @@ public://メンバ関数
 	/// 振動開始
 	/// </summary>
 	/// <param name="_strength">強さ</param>
-	void StartVibration(STRENGTH _strength);
+	void StartVibration(const STRENGTH& _strength);
 
 	/// <summary>
 	/// 振動開始

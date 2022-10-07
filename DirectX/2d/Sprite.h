@@ -59,7 +59,7 @@ public: // 静的メンバ関数
 	/// <param name="_keepName">保存名</param>
 	/// <param name="_filename">画像ファイル名</param>
 	/// <param name="_isDelete">シーン遷移で削除を行うか</param>
-	static void LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete = true);
+	static void LoadTexture(const std::string& _keepName, const std::string& _filename, const bool& _isDelete = true);
 
 	/// <summary>
 	/// 描画前処理
@@ -77,7 +77,7 @@ public: // 静的メンバ関数
 	/// </summary>
 	/// <param name="_name">テクスチャ保存名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Sprite> Create(const std::string _name);
+	static std::unique_ptr<Sprite> Create(const std::string& _name);
 
 	/// <summary>
 	/// シーンごとの解放処理
@@ -93,7 +93,7 @@ public: // 静的メンバ関数
 	/// パイプラインのセット
 	/// </summary>
 	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
 
 protected: // 静的メンバ変数
 
@@ -129,7 +129,7 @@ public: // メンバ関数
 	/// <param name="_anchorpoint">アンカーポイント</param>
 	/// <param name="_isFlipX">左右反転するか</param>
 	/// <param name="_isFlipY">上下反転するか</param>
-	void Initialize(const std::string _name, const XMFLOAT2 _anchorpoint, bool _isFlipX = false, bool _isFlipY = false);
+	void Initialize(const std::string& _name, const XMFLOAT2& _anchorpoint,const bool& _isFlipX = false, const bool& _isFlipY = false);
 
 	/// <summary>
 	/// 更新
@@ -191,7 +191,7 @@ public:
 	/// 回転角の取得
 	/// </summary>
 	/// <returns>回転角</returns>
-	const float GetRotation() { return rotation; }
+	const float& GetRotation() { return rotation; }
 
 	/// <summary>
 	/// 大きさの取得
@@ -227,18 +227,18 @@ public:
 	/// 左右反転フラグの取得
 	/// </summary>
 	/// <returns>左右反転フラグ</returns>
-	const bool GetIsFlipX() { return isFlipX; }
+	const bool& GetIsFlipX() { return isFlipX; }
 
 	/// <summary>
 	/// 上下反転フラグの取得
 	/// </summary>
 	/// <returns>左右反転フラグ</returns>
-	const bool GetIsFlipY() { return isFlipY; }
+	const bool& GetIsFlipY() { return isFlipY; }
 
 	/// <summary>
 	/// テクスチャのセット
 	/// </summary>
-	void SetTexNumber(std::string _name) { this->name = _name; };
+	void SetTexNumber(const std::string& _name) { this->name = _name; };
 
 	/// <summary>
 	/// 座標の入力
@@ -248,7 +248,7 @@ public:
 	/// <summary>
 	/// 回転角の入力
 	/// </summary>
-	void SetRotation(float _rotation) { this->rotation = _rotation; }
+	void SetRotation(const float& _rotation) { this->rotation = _rotation; }
 
 	/// <summary>
 	/// 大きさの入力
@@ -278,10 +278,10 @@ public:
 	/// <summary>
 	/// 左右反転フラグの入力
 	/// </summary>
-	void SetIsFlipX(bool _isFlipX) { this->isFlipX = _isFlipX; };
+	void SetIsFlipX(const bool& _isFlipX) { this->isFlipX = _isFlipX; };
 
 	/// <summary>
 	/// 上下反転フラグの入力
 	/// </summary>
-	void SetIsFlipY(bool _isFlipY) { this->isFlipY = _isFlipY; };
+	void SetIsFlipY(const bool& _isFlipY) { this->isFlipY = _isFlipY; };
 };

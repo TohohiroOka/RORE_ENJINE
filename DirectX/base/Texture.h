@@ -21,7 +21,7 @@ public:
 	/// </summary>
 	/// <param name="_fileName">ファイル名</param>
 	/// <param name="_cmdList">ddsファイル時はcmdListを持ってくる</param>
-	static std::unique_ptr<Texture> Create(const std::string _fileName, ID3D12GraphicsCommandList* _cmdList = nullptr);
+	static std::unique_ptr<Texture> Create(const std::string& _fileName, ID3D12GraphicsCommandList* _cmdList = nullptr);
 
 public:
 
@@ -39,14 +39,14 @@ public:
 	/// テクスチャの読み込み
 	/// </summary>
 	/// <param name="_fileName">画像ファイルの名前</param
-	void LoadTexture(const std::string _fileName);
+	void LoadTexture(const std::string& _fileName);
 
 	/// <summary>
 	/// ddsファイルの読み込み
 	/// </summary>
 	/// <param name="_fileName">画像ファイルの名前</param>
 	/// <param name="_cmdList">コマンドリスト</param>
-	void LoadTextureFromDDSFile(const std::string _fileName, ID3D12GraphicsCommandList* _cmdList);
+	void LoadTextureFromDDSFile(const std::string& _fileName, ID3D12GraphicsCommandList* _cmdList);
 
 private:
 	

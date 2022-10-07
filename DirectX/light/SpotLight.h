@@ -51,7 +51,7 @@ public: // メンバ関数
 		this->lightFactorAngleCos.y = cosf(DirectX::XMConvertToRadians(_lightFactorAngle.y));}
 	inline const XMFLOAT2& GetLightFactorAngleCos() { return lightFactorAngleCos; }
 
-	inline void SetActive(bool _active) { this->active = _active; }
+	inline void SetActive(const bool& _active) { this->active = _active; }
 	inline bool IsActive() { return active; }
 
 private: // メンバ変数

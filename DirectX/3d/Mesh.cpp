@@ -33,12 +33,12 @@ void Mesh::AddVertex(const VERTEX& _vertex)
 	vertices.emplace_back(_vertex);
 }
 
-void Mesh::AddIndex(unsigned long _index)
+void Mesh::AddIndex(const unsigned long& _index)
 {
 	indices.emplace_back(_index);
 }
 
-void Mesh::AddSmoothData(unsigned long _indexPosition, unsigned long _indexVertex)
+void Mesh::AddSmoothData(const unsigned long& _indexPosition, const unsigned long& _indexVertex)
 {
 	smoothData[_indexPosition].emplace_back(_indexVertex);
 }

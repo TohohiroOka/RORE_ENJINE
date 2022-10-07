@@ -54,42 +54,42 @@ public: //メンバ関数
 	/// </summary>
 	/// <param name = "_keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>押されているか</returns>
-	bool PushKey(BYTE _keyNumber);
+	bool PushKey(const BYTE& _keyNumber);
 
 	/// <summary>
 	/// キーのトリガーをチェック
 	/// </summary>
 	/// <param name = "_keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>トリガーか</returns>
-	bool TriggerKey(BYTE _keyNumber);
+	bool TriggerKey(const BYTE& _keyNumber);
 
 	/// <summary>
 	/// キーを離したかチェック
 	/// </summary>
 	/// <param name = "_keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>離したか</returns>
-	bool ReleaseKey(BYTE _keyNumber);
+	bool ReleaseKey(const BYTE& _keyNumber);
 
 	/// <summary>
 	/// マウスボタンの押下をチェック
 	/// </summary>
 	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>押されているか</returns>
-	bool PushMouseButton(const int _mouseButton);
+	bool PushMouseButton(const int& _mouseButton);
 
 	/// <summary>
 	/// マウスボタンのトリガーをチェック
 	/// </summary>
 	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>トリガーか</returns>
-	bool TriggerMouseButton(const int _mouseButton);
+	bool TriggerMouseButton(const int& _mouseButton);
 
 	/// <summary>
 	/// マウスボタンを離したかチェック
 	/// </summary>
 	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>離したか</returns>
-	bool ReleaseMouseButton(const int _mouseButton);
+	bool ReleaseMouseButton(const int& _mouseButton);
 
 	/// <summary>
 	/// マウスポインターの座標を取得

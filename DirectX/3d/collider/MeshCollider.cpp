@@ -88,7 +88,7 @@ void MeshCollider::MinMax(const std::vector<Mesh::VERTEX>* _vertices)
 	max = minmax[0];
 }
 
-int MeshCollider::OctreeSet(XMFLOAT3 _pos)
+int MeshCollider::OctreeSet(const XMFLOAT3& _pos)
 {
 	int octtreenum[2] = {};
 	for (int i = 0; i < 8; i++)

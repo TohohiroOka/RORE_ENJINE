@@ -35,7 +35,7 @@ private://静的メンバ関数
 	/// <param name="_startPoint">始点</param>
 	/// <param name="_endPoint">終点</param>
 	/// <returns>二点間の角度</returns>
-	float GetAngle(XMFLOAT3 _startPoint, XMFLOAT3 _endPoint);
+	float GetAngle(const XMFLOAT3& _startPoint, const XMFLOAT3& _endPoint);
 
 public://静的メンバ関数
 
@@ -60,7 +60,7 @@ public://静的メンバ関数
 	/// Objectの生成
 	/// </summary>
 	/// <param name="_lineNum">線の本数</param>
-	static std::unique_ptr<DrawLine3D> Create(UINT _lineNum);
+	static std::unique_ptr<DrawLine3D> Create(const int& _lineNum);
 
 	/// <summary>
 	/// カメラのセット
@@ -85,7 +85,7 @@ public://静的メンバ関数
 	/// パイプラインの設定
 	/// </summary>
 	/// <param name="_pipeline"></param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { DrawLine3D::pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { DrawLine3D::pipeline = _pipeline; }
 
 public://メンバ関数
 
@@ -93,7 +93,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <returns>成否</returns>
-	bool Initialize(UINT _lineNum);
+	bool Initialize(const int& _lineNum);
 
 	/// <summary>
 	/// 更新
@@ -106,12 +106,12 @@ public://メンバ関数
 	/// <param name="_startPoint">始点</param>
 	/// <param name="_endPoint">終点</param>
 	/// <param name="_width">線の幅</param>
-	void SetLine(XMFLOAT3 _startPoint[], XMFLOAT3 _endPoint[], float _width);
+	void SetLine(XMFLOAT3 _startPoint[], XMFLOAT3 _endPoint[], const float& _width);
 
 	/// <summary>
 	/// 色の変更
 	/// </summary>
-	void SetColor(XMFLOAT4 _color) { this->color = _color; }
+	void SetColor(const XMFLOAT4& _color) { this->color = _color; }
 
 	/// <summary>
 	/// //描画

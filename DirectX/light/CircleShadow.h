@@ -38,7 +38,7 @@ public: // メンバ関数
 	inline void SetCasterPos(const XMFLOAT3& _casterPos) { this->casterPos = _casterPos; }
 	inline const XMFLOAT3& GetCasterPos() { return casterPos; }
 
-	inline void SetDistanceCasterLight(float _distanceCasterLight) { this->distanceCasterLight = _distanceCasterLight; }
+	inline void SetDistanceCasterLight(const float& _distanceCasterLight) { this->distanceCasterLight = _distanceCasterLight; }
 	inline float GetDistanceCasterLight() { return distanceCasterLight; }
 
 	inline void SetAtten(const XMFLOAT3& _atten) { this->atten = _atten; }
@@ -49,7 +49,7 @@ public: // メンバ関数
 		this->factorAngleCos.y = cosf(DirectX::XMConvertToRadians(_factorAngle.y));}
 	inline const XMFLOAT2& GetFactorAngleCos() { return factorAngleCos; }
 
-	inline void SetActive(bool _active) { this->active = _active; }
+	inline void SetActive(const bool& _active) { this->active = _active; }
 	inline bool IsActive() { return active; }
 
 private: // メンバ変数

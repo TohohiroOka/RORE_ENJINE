@@ -30,7 +30,7 @@ void XInputManager::Update()
 	controllers.dwResult = XInputGetState(0, &controllers.state);
 }
 
-bool XInputManager::PushButton(XInputManager::PUD_BUTTON _button)
+bool XInputManager::PushButton(const XInputManager::PUD_BUTTON& _button)
 {
 	bool check = false;
 	if (_button == PUD_BUTTON::PAD_A &&
@@ -101,7 +101,7 @@ bool XInputManager::PushButton(XInputManager::PUD_BUTTON _button)
 	return check;
 }
 
-bool XInputManager::TriggerButton(PUD_BUTTON _button)
+bool XInputManager::TriggerButton(const PUD_BUTTON& _button)
 {
 	bool check = false;
 	if (_button == PUD_BUTTON::PAD_A &&
@@ -178,7 +178,7 @@ bool XInputManager::TriggerButton(PUD_BUTTON _button)
 	return check;
 }
 
-bool XInputManager::LeftStickX(bool _leftRight)
+bool XInputManager::LeftStickX(const bool& _leftRight)
 {
 	if (_leftRight == true && controllers.state.Gamepad.sThumbLX < -INPUT_DEADZONE)
 	{
@@ -189,7 +189,7 @@ bool XInputManager::LeftStickX(bool _leftRight)
 	} else { return false; }
 }
 
-bool XInputManager::LeftStickY(bool _upDown)
+bool XInputManager::LeftStickY(const bool& _upDown)
 {
 	if (_upDown == true && controllers.state.Gamepad.sThumbLY > INPUT_DEADZONE)
 	{
@@ -200,7 +200,7 @@ bool XInputManager::LeftStickY(bool _upDown)
 	} else { return false; }
 }
 
-bool XInputManager::RightStickX(bool _leftRight)
+bool XInputManager::RightStickX(const bool& _leftRight)
 {
 	if (_leftRight == true && controllers.state.Gamepad.sThumbRX < -INPUT_DEADZONE)
 	{
@@ -211,7 +211,7 @@ bool XInputManager::RightStickX(bool _leftRight)
 	} else { return false; }
 }
 
-bool XInputManager::RightStickY(bool _upDown)
+bool XInputManager::RightStickY(const bool& _upDown)
 {
 	if (_upDown == true && controllers.state.Gamepad.sThumbRY > INPUT_DEADZONE)
 	{
@@ -222,7 +222,7 @@ bool XInputManager::RightStickY(bool _upDown)
 	} else { return false; }
 }
 
-bool XInputManager::TriggerLeftStickX(bool _leftRight)
+bool XInputManager::TriggerLeftStickX(const bool& _leftRight)
 {
 	if (_leftRight == true && controllers.state.Gamepad.sThumbLX < -INPUT_DEADZONE &&
 		controllers.lastState.Gamepad.sThumbLX >= -INPUT_DEADZONE)
@@ -235,7 +235,7 @@ bool XInputManager::TriggerLeftStickX(bool _leftRight)
 	} else { return false; }
 }
 
-bool XInputManager::TriggerLeftStickY(bool _upDown)
+bool XInputManager::TriggerLeftStickY(const bool& _upDown)
 {
 	if (_upDown == true && controllers.state.Gamepad.sThumbLY > INPUT_DEADZONE &&
 		controllers.lastState.Gamepad.sThumbLY <= INPUT_DEADZONE)
@@ -248,7 +248,7 @@ bool XInputManager::TriggerLeftStickY(bool _upDown)
 	} else { return false; }
 }
 
-bool XInputManager::TriggerRightStickX(bool _leftRight)
+bool XInputManager::TriggerRightStickX(const bool& _leftRight)
 {
 	if (_leftRight == true && controllers.state.Gamepad.sThumbRX < -INPUT_DEADZONE &&
 		controllers.lastState.Gamepad.sThumbRX >= -INPUT_DEADZONE)
@@ -261,7 +261,7 @@ bool XInputManager::TriggerRightStickX(bool _leftRight)
 	} else { return false; }
 }
 
-bool XInputManager::TriggerRightStickY(bool _upDown)
+bool XInputManager::TriggerRightStickY(const bool& _upDown)
 {
 	if (_upDown == true && controllers.state.Gamepad.sThumbRY > INPUT_DEADZONE &&
 		controllers.lastState.Gamepad.sThumbRY <= INPUT_DEADZONE)
@@ -323,7 +323,7 @@ float XInputManager::GetPadRStickAngle()
 	return radian;
 }
 
-void XInputManager::StartVibration(STRENGTH _strength)
+void XInputManager::StartVibration(const STRENGTH& _strength)
 {
 	controllers.vibration.wLeftMotorSpeed = _strength;
 	controllers.vibration.wRightMotorSpeed = _strength;

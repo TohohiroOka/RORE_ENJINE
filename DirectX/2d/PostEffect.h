@@ -82,7 +82,7 @@ public://メンバ関数
 	/// パイプラインのセット
 	/// </summary>
 	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
 
 private://静的メンバ変数
 

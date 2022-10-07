@@ -45,7 +45,8 @@ private:
 	std::unique_ptr<Model> model = nullptr;
 	std::unique_ptr<Object3d> object = nullptr;
 
-	XMFLOAT3 position = { 1250,50,0 };
+	XMFLOAT3 position = { 1905,50,25 };
+	XMFLOAT3 move = {};
 
 	//カメラ角度
 	float cameraAngle;
@@ -66,5 +67,5 @@ public:
 	/// カメラの角度セット
 	/// </summary>
 	/// <param name="cameraAngle">カメラ角度</param>
-	void SetCameraAngle(float cameraAngle) { this->cameraAngle = cameraAngle; }
+	void SetCameraAngle(const float& cameraAngle) { this->cameraAngle = cameraAngle; }
 };

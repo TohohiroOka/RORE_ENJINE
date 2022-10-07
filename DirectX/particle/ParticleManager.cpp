@@ -30,7 +30,7 @@ const DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& _lhs, const DirectX::
 	return result;
 }
 
-void ParticleManager::LoadTexture(const std::string _keepName, const std::string _filename, const bool _isDelete)
+void ParticleManager::LoadTexture(const std::string& _keepName, const std::string& _filename, const bool& _isDelete)
 {
 	// nullptrチェック
 	assert(device);
@@ -81,7 +81,7 @@ void ParticleManager::Initialize()
 	if (FAILED(result)) { assert(0); }
 }
 
-std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string _name)
+std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string& _name)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	ParticleManager* instance = new ParticleManager();
@@ -94,8 +94,8 @@ std::unique_ptr<ParticleManager> ParticleManager::Create(const std::string _name
 	return std::unique_ptr<ParticleManager>(instance);
 }
 
-void ParticleManager::Add(int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity,
-	XMFLOAT3 _accel, float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor)
+void ParticleManager::Add(const int& _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
+	const XMFLOAT3& _accel, const float& _startScale, const float& _endScale, const XMFLOAT4& _startColor, const XMFLOAT4& _endColor)
 {
 	//リストに要素を追加
 	particle.emplace_front();

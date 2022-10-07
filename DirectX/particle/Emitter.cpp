@@ -1,7 +1,7 @@
 #include "Emitter.h"
 #include "Camera.h"
 
-std::unique_ptr<Emitter> Emitter::Create(const std::string _name)
+std::unique_ptr<Emitter> Emitter::Create(const std::string& _name)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Emitter* instance = new Emitter();
@@ -11,8 +11,8 @@ std::unique_ptr<Emitter> Emitter::Create(const std::string _name)
 	return std::unique_ptr<Emitter>(instance);
 }
 
-void Emitter::InEmitter(int _maxCount, int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity,
-	XMFLOAT3 _accel, float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor)
+void Emitter::InEmitter(const int& _maxCount, const int& _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
+	const XMFLOAT3& _accel, const float& _startScale, const float& _endScale, const XMFLOAT4& _startColor, const XMFLOAT4& _endColor)
 {
 	if (_maxCount > count)
 	{

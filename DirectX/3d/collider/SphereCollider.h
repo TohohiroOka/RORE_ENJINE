@@ -38,7 +38,7 @@ public:
 
 	inline float GetRadius() { return radius; }
 
-	inline void SetRadius(float _radius) { this->radius = _radius; }
+	inline void SetRadius(const float& _radius) { this->radius = _radius; }
 
 private:
 	// オブジェクト中心からのオフセット

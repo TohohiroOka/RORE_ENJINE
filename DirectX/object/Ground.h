@@ -9,8 +9,8 @@ public:
 	/// オブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static std::unique_ptr<Ground> Create(const std::string heightmapFilename,
-		const std::string filename1 = "null", const std::string filename2 = "null");
+	static std::unique_ptr<Ground> Create(const std::string& heightmapFilename,
+		const std::string& filename1 = "null", const std::string& filename2 = "null");
 
 	/// <summary>
 	/// 初期化

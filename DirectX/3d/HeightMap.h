@@ -31,8 +31,8 @@ public://メンバ関数
 	/// <param name="_filename">ファイル名1</param>
 	/// <param name="_filename2">ファイル名2</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<HeightMap> Create(const std::string _heightmapFilename,
-		const std::string _filename1 = "null", const std::string _filename2 = "null");
+	static std::unique_ptr<HeightMap> Create(const std::string& _heightmapFilename,
+		const std::string& _filename1 = "null", const std::string& _filename2 = "null");
 
 	/// <summary>
 	/// 描画前処理
@@ -46,14 +46,14 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="_filename">ファイル名</param>
 	/// <returns>成功か</returns>
-	bool HeightMapLoad(const std::string _filename);
+	bool HeightMapLoad(const std::string& _filename);
 
 	/// <summary
 	/// テクスチャ読み込み
 	/// </summary>
 	/// <param name="_filename1">ファイル名1</param>
 	/// <param name="_filename2">ファイル名2</param>
-	void LoadTexture(const std::string _filename1, const std::string _filename2);
+	void LoadTexture(const std::string& _filename1, const std::string& _filename2);
 
 	/// <summary>
 	/// 初期化
@@ -74,7 +74,7 @@ public:
 	/// パイプラインのセット
 	/// </summary>
 	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { HeightMap::pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { HeightMap::pipeline = _pipeline; }
 
 private:
 

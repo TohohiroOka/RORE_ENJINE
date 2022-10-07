@@ -18,7 +18,7 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="_name">テクスチャ名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Emitter> Create(const std::string _name);
+	static std::unique_ptr<Emitter> Create(const std::string& _name);
 
 public://メンバ関数
 
@@ -44,8 +44,8 @@ public://メンバ関数
 	/// <param name="_endScale">最終サイズ</param>
 	/// <param name="_startColor">初期カラー</param>
 	/// <param name="_endColor">最終カラー</param>
-	void InEmitter(int _maxCount, int _maxFrame, XMFLOAT3 _position, XMFLOAT3 _velocity,
-		XMFLOAT3 _accel, float _startScale, float _endScale, XMFLOAT4 _startColor, XMFLOAT4 _endColor);
+	void InEmitter(const int& _maxCount, const int& _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
+		const XMFLOAT3& _accel, const float& _startScale, const float& _endScale, const XMFLOAT4& _startColor, const XMFLOAT4& _endColor);
 
 	/// <summary>
 	/// 更新

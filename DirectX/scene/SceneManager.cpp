@@ -134,7 +134,7 @@ void SceneManager::CreatePipeline()
 		inPepeline.stateNum = 3;
 		inPepeline.rtvNum = 3;
 
-		graphicsPipeline->CreatePipeline("OBJ", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
 		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
 	}
 	//CUBE_BOX
@@ -154,7 +154,7 @@ void SceneManager::CreatePipeline()
 		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 1;
 
-		graphicsPipeline->CreatePipeline("CUBE_BOX", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("CUBE_BOX", inPepeline, inSignature);
 		CubeMap::SetPipeline(graphicsPipeline->graphicsPipeline["CUBE_BOX"]);
 	}
 	//HEIGHT_MAP
@@ -178,7 +178,7 @@ void SceneManager::CreatePipeline()
 		inSignature.textureNum = 3;
 		inSignature.light = true;
 
-		graphicsPipeline->CreatePipeline("HEIGHT_MAP", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("HEIGHT_MAP", inPepeline, inSignature);
 		HeightMap::SetPipeline(graphicsPipeline->graphicsPipeline["HEIGHT_MAP"]);
 	}
 	//DRAW_LINE_3D
@@ -203,7 +203,7 @@ void SceneManager::CreatePipeline()
 		inSignature.textureNum = 0;
 		inSignature.light = false;
 
-		graphicsPipeline->CreatePipeline("DRAW_LINE_3D", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("DRAW_LINE_3D", inPepeline, inSignature);
 		DrawLine3D::SetPipeline(graphicsPipeline->graphicsPipeline["DRAW_LINE_3D"]);
 	}
 	//PrimitiveObject3D
@@ -228,10 +228,9 @@ void SceneManager::CreatePipeline()
 		inSignature.textureNum = 0;
 		inSignature.light = false;
 
-		graphicsPipeline->CreatePipeline("PrimitiveObject3D", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("PrimitiveObject3D", inPepeline, inSignature);
 		PrimitiveObject3D::SetPipeline(graphicsPipeline->graphicsPipeline["PrimitiveObject3D"]);
 	}
-
 	//SPRITE
 	{
 		inPepeline.object2d = true;
@@ -253,7 +252,7 @@ void SceneManager::CreatePipeline()
 		inSignature.textureNum = 1;
 		inSignature.light = false;
 
-		graphicsPipeline->CreatePipeline("SPRITE", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("SPRITE", inPepeline, inSignature);
 		Sprite::SetPipeline(graphicsPipeline->graphicsPipeline["SPRITE"]);
 	}
 	//POST_EFFECT
@@ -276,7 +275,7 @@ void SceneManager::CreatePipeline()
 		inSignature.light = false;
 		inSignature.textureNum = 4;
 
-		graphicsPipeline->CreatePipeline("POST_EFFECT", &inPepeline, &inSignature);
+		graphicsPipeline->CreatePipeline("POST_EFFECT", inPepeline, inSignature);
 		PostEffect::SetPipeline(graphicsPipeline->graphicsPipeline["POST_EFFECT"]);
 	}
 }

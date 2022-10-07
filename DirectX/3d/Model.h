@@ -39,7 +39,7 @@ public: // 静的メンバ関数
 	/// <param name="_modelname">モデル名</param>
 	/// <param name="_smoothing">エッジ平滑化フラグ</param>
 	/// <returns>生成されたモデル</returns>
-	static std::unique_ptr<Model> CreateFromOBJ(const std::string& _modelname, bool _smoothing = false);
+	static std::unique_ptr<Model> CreateFromOBJ(const std::string& _modelname, const bool& _smoothing = false);
 
 public: // メンバ関数
 	/// <summary>
@@ -52,7 +52,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="_modelname">モデル名</param>
 	/// <param name="_smoothing">エッジ平滑化フラグ</param>
-	void Initialize(const std::string& _modelname, bool _smoothing);
+	void Initialize(const std::string& _modelname, const bool& _smoothing);
 
 	/// <summary>
 	/// 描画
@@ -95,7 +95,7 @@ private: // メンバ関数
 	/// </summary>
 	/// <param name="_modelname">モデル名</param>
 	/// <param name="_smoothing">エッジ平滑化フラグ</param>
-	void LoadModel(const std::string& _modelname, bool _smoothing);
+	void LoadModel(const std::string& _modelname, const bool& _smoothing);
 
 	/// <summary>
 	/// マテリアル読み込み

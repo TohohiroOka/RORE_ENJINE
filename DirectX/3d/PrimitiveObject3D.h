@@ -32,7 +32,7 @@ public://静的メンバ関数
 	/// パイプラインのセット
 	/// </summary>
 	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(GraphicsPipelineManager::GRAPHICS_PIPELINE _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
+	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
 
 public://メンバ関数
 
@@ -79,5 +79,5 @@ public:
 	/// 頂点のセット
 	/// </summary>
 	/// <param name="_vertex">頂点</param>
-	void SetVertex(XMFLOAT3 _vertex) { this->vertices.push_back(_vertex); }
+	void SetVertex(const XMFLOAT3& _vertex) { this->vertices.push_back(_vertex); }
 };
