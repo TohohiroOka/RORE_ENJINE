@@ -182,3 +182,56 @@ void CollisionManager::QuerySphere(const Sphere& _sphere, QueryCallback* _callba
 		}
 	}
 }
+
+bool CollisionManager::QueryCapsule(const Capsule& _capsule, const unsigned short& _attribute, RAYCAST_HIT* _hitInfo, const float& _maxDistance)
+{
+	bool result = false;
+	std::forward_list<BaseCollider*>::iterator it;
+	std::forward_list<BaseCollider*>::iterator it_hit;
+	float distance = _maxDistance;
+	XMVECTOR inter;
+
+	// 全てのコライダーと総当りチェック
+	it = colliders.begin();
+	for (; it != colliders.end(); ++it) {
+		BaseCollider* colA = *it;
+
+		// 属性が合わなければスキップ
+		if (!(colA->attribute & _attribute)) {
+			continue;
+		}
+
+		if (colA->GetShapeType() == COLLISIONSHAPE_SPHERE) {
+			Sphere* sphere = dynamic_cast<Sphere*>(colA);
+
+			float tempDistance;
+
+			if (!Collision::CheckSphereCapsule(*sphere, _capsule, &tempDistance)) continue;
+			//if (tempDistance >= distance) continue;
+			result = true;
+			distance = tempDistance;
+			inter = {};
+			it_hit = it;
+		} else if (colA->GetShapeType() == COLLISIONSHAPE_MESH) {
+			MeshCollider* meshCollider = dynamic_cast<MeshCollider*>(colA);
+
+			float tempDistance;
+			if (!meshCollider->CheckCollisionCapsule(_capsule, &tempDistance, nullptr)) continue;
+			//if (tempDistance >= distance) continue;
+
+			result = true;
+			distance = tempDistance;
+			inter = {};
+			it_hit = it;
+		}
+	}
+
+	if (result && _hitInfo) {
+		_hitInfo->distance = distance;
+		_hitInfo->inter = inter;
+		_hitInfo->collider = *it_hit;
+		_hitInfo->object = _hitInfo->collider->GetObject3d();
+	}
+
+	return result;
+}

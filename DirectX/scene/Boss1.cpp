@@ -76,11 +76,11 @@ void Boss1::Draw()
 
 	InterfaceObject3d::SetCmdList(cmdList);
 
-	//HeightMap::PreDraw();
-	//for (int i = 0; i < ground_num; i++)
-	//{
-	//	ground[i]->Draw();
-	//}
+	HeightMap::PreDraw();
+	for (int i = 0; i < ground_num; i++)
+	{
+		ground[i]->Draw();
+	}
 
 	Object3d::PreDraw();
 	player->Draw();
@@ -91,8 +91,8 @@ void Boss1::Draw()
 	}
 	enemy->Draw();
 
-	PrimitiveObject3D::PreDraw();
-	ground[0]->CDraw();
+	//PrimitiveObject3D::PreDraw();
+	//ground[0]->CDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
 

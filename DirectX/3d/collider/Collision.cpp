@@ -142,7 +142,9 @@ bool Collision::CheckSphere2Triangle(const Sphere& _sphere, const Triangle& _tri
 	//（同じベクトル同士の内積は三平方の定理のルート内部の式と一致する）
 	float distanceSquare = XMVector3Dot(v, v).m128_f32[0];
 	// 球と三角形の距離が半径以下なら当たっていない
-	if (distanceSquare > _sphere.radius * _sphere.radius)	return false;
+	if (distanceSquare > _sphere.radius * _sphere.radius) {
+		return false;
+	}
 	// 擬似交点を計算
 	if (_inter) {
 		// 三角形上の最近接点pを疑似交点とする
@@ -269,4 +271,113 @@ bool Collision::CheckRay2Sphere(const Ray & lay, const Sphere & sphere, float*di
 	}
 
 	return true;
+}
+
+bool Collision::CheckSphereCapsule(const Sphere& sphere, const Capsule& capsule, float* distance)
+{
+	//1.カプセル内の線分のスタート位置からエンド位置へのベクトルを作る
+	Vector3 vStartToEnd = capsule.endPosition - capsule.startPosition;
+
+	//2.1.のベクトルを単位ベクトル(normalize)し、用意する
+	Vector3 n = vStartToEnd;
+	n.normalize();
+
+	Vector3 sCenter = { sphere.center.m128_f32[0],sphere.center.m128_f32[1] ,sphere.center.m128_f32[2] };
+
+	//3.Ps->Pcへのベクトルと2.で求めたnとの内積を計算する
+	//nを何倍すれば	ベクトルPs->Pnになるか、倍率(t)が求まる
+	float t = (sCenter - capsule.startPosition).length() / n.length();
+
+	//4.Ps->Pnベクトルを求めておく、また、Pnの座標を求めておく
+	Vector3 vPsPn = n * t;
+	Vector3 posPn = vPsPn + capsule.startPosition;
+
+	//5.比率 t/(Ps->Peの長さ)を求める
+	float lengthRate = t / vStartToEnd.length();
+
+	//6.場合分け
+	//0.0以下
+	if (lengthRate < 0.0f)
+	{
+		*distance = (sCenter - capsule.startPosition).length();
+	}
+	//0.0f <= lengthRate <= 1.0f
+	else if (lengthRate <= 1.0f)
+	{
+		*distance = (sCenter - posPn).length();
+	}
+	//1.0f < lengthRate
+	else
+	{
+		*distance = (sCenter - capsule.endPosition).length();
+	}
+
+	return *distance < capsule.radius + sphere.radius;
+}
+
+bool Collision::CheckCapsuleCapsule(const Capsule& capsule1, const Capsule& capsule2)
+{
+	//線分と線分の距離を調べる ※結果は距離の二乗の値である
+	float sqDistance = sqDistanceSegmentSegment(capsule1.startPosition, capsule1.endPosition, capsule2.startPosition, capsule2.endPosition);
+
+	//2つのカプセルの半径の和
+	float r = capsule1.radius + capsule2.radius;
+
+	//衝突判定
+	return (sqDistance < r* r);
+}
+
+float Collision::sqDistanceSegmentSegment(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2)
+{
+	Vector3 d1 = q1 - p1;//p1->q1のベクトル
+	Vector3 d2 = q2 - p2;//p2->q2のベクトル
+
+	Vector3 r = p1 - p2;
+
+	float a = d1.dot(d1);//a = d1・d1
+	float b = d1.dot(d2);//b = d1・d2
+	float e = d2.dot(d2);//e = d2・d2
+
+	float c = d1.dot(r);//c = d1・r
+	float f = d2.dot(r);//f = d2・r
+
+	float s = 0.0f;
+	float t = 0.0f;
+
+	float denominator = a * e - b * b;//分母
+
+	//sの値を求める
+	//2つの線分が平行でない
+	if (denominator != 0.0f)
+	{
+		s = (b * f - c * e) / denominator;
+		s = clamp(s, 0.00f, 1.0f);
+	}
+
+	//2つの線分が平行
+	else
+	{
+		s = 0.0f;
+	}
+
+	//tの値
+	t = (b * s + f) / e;
+
+	//tが[0.0,1.0]の範囲外で再計算
+	if (t < 0.0f)
+	{
+		t = 0.0f;
+		s = clamp(-c / a, 0.0f, 1.0f);
+	} else if (t > 1.0f)
+	{
+		s = clamp((b - c) / a, 0.0f, 1.0f);
+		t = 1.0f;
+	}
+
+	//各線分内の座標c1とc2
+	Vector3 c1 = p1 + d1 * s;
+	Vector3 c2 = p2 + d2 * t;
+
+	//2点間(c1とc2)の距離の2乗
+	return (c1 - c2).dot(c1 - c2);
 }

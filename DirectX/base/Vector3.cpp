@@ -42,6 +42,14 @@ Vector3 Vector3::cross(const Vector3& v) const {
 	return temp;
 }
 
+Vector3 Vector3::DirectXVector3Transform(const DirectX::XMMATRIX& v) const
+{
+	DirectX::XMVECTOR XMv = { this->x,this->y,this->z };
+	DirectX::XMVECTOR transv = DirectX::XMVector3Transform(XMv, v);
+
+	return Vector3(transv.m128_f32[0], transv.m128_f32[1], transv.m128_f32[2]);
+}
+
 //’P€‰‰Zq+‚Ì’Ç‰Á
 Vector3 Vector3::operator+() const {
 	return *this;

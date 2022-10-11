@@ -59,7 +59,7 @@ private:
 	//’n–Ê‚É‚Â‚¢‚Ä‚¢‚é‚©
 	bool onGround;
 	//ˆê‰ñ‚Éo‚·’e‚Ì—Ê
-	const int bulletNum = 1;
+	const int bulletNum = 10;
 
 public:
 

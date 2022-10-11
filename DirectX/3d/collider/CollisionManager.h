@@ -63,6 +63,14 @@ public:// メンバ関数
 	/// <param name="_attribute">対象の衝突属性</param>
 	void QuerySphere(const Sphere& _sphere, QueryCallback* _callback, const unsigned short& _attribute = (unsigned short)0xffffffff);
 
+	/// <summary>
+	/// カプセルによる衝突全検索
+	/// </summary>
+	/// <param name="_sphere">カプセル</param>
+	/// <param name="_hitInfo">衝突情報</param>
+	/// <param name="_maxDistance">最大距離</param>
+	bool QueryCapsule(const Capsule& _capsule, const unsigned short& _attribute, RAYCAST_HIT* _hitInfo = nullptr, const float& _maxDistance = D3D12_FLOAT32_MAX);
+
 private:
 	CollisionManager() = default;
 	CollisionManager(const CollisionManager&) = delete;

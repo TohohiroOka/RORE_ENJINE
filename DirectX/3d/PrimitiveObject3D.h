@@ -80,4 +80,18 @@ public:
 	/// </summary>
 	/// <param name="_vertex">頂点</param>
 	void SetVertex(const XMFLOAT3& _vertex) { this->vertices.push_back(_vertex); }
+
+	/// <summary>
+	/// 頂点のリセット
+	/// </summary>
+	void ResetVertex() { 
+		this->vertices.clear();
+		this->vertices.resize(0);
+	}
+
+	/// <summary>
+	/// 頂点の数
+	/// </summary>
+	int VertexNum() { return int(vertices.size()); }
+
 };

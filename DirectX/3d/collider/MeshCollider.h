@@ -6,6 +6,8 @@
 #include <DirectXMath.h>
 #include "PrimitiveObject3D.h"
 
+#include "Vector3.h"
+
 /// <summary>
 /// メッシュ衝突判定オブジェクト
 /// </summary>
@@ -18,6 +20,27 @@ public:
 		// メッシュ形状をセット
 		shapeType = COLLISIONSHAPE_MESH;
 	}
+
+	struct ONE_MESH {
+		Triangle triangle;
+		Sphere sphere;
+	};
+
+	/// <summary>
+	/// 三次元空間の二点間の距離を求める
+	/// </summary>
+	/// <param name="pos1">座標1</param>
+	/// <param name="pos2">座標2</param>
+	/// <returns>二点間の距離</returns>
+	float DistanceTwoPoints(const Vector3& _pos1, const Vector3& _pos2);
+
+	/// <summary>
+	/// 三角形から外接円を求める
+	/// </summary>
+	/// <param name="pos1">三角形の頂点1</param>
+	/// <param name="pos2">三角形の頂点2</param>
+	/// <param name="pos3">三角形の頂点3</param>
+	void SetCircumscribedCircle(const DirectX::XMFLOAT3& _pos1, const DirectX::XMFLOAT3& _pos2, const DirectX::XMFLOAT3& _pos3, Sphere& _sphere);
 
 	/// <summary>
 	/// 八分木の最大最小の保存
@@ -77,14 +100,23 @@ public:
 	/// <param name="_distance">距離（出力用）</param>
 	/// <param name="_inter">交点（出力用）</param>
 	/// <returns>交差しているか否か</returns>
-	bool CheckCollisionRay(const Ray& _ray, float* _distance = nullptr, DirectX::XMVECTOR* _inter = nullptr);
+	bool CheckCollisionRay(const Ray& _ray, float* _distance, DirectX::XMVECTOR* _inter);
+
+	/// <summary>
+	/// カプセルとの当たり判定
+	/// </summary>
+	/// <param name="_capsule">カプセル</param>
+	/// <param name="_distance">距離（出力用）</param>
+	/// <param name="_inter">交点（出力用）</param>
+	/// <returns>交差しているか否か</returns>
+	bool CheckCollisionCapsule(const Capsule& _capsule, float* _distance, DirectX::XMVECTOR* _inter);
 
 private:
 
 	//八分木分割個数
 	static const int octtreeSplit = 64;
-	//判定用三角形
-	std::array<std::vector<Triangle>, octtreeSplit> triangles;
+	//判定用メッシュの情報
+	std::array<std::vector<ONE_MESH>, octtreeSplit> colliderMeshes;
 	//八分木の最小値
 	DirectX::XMFLOAT3 min = {};
 	//八分木の最大値

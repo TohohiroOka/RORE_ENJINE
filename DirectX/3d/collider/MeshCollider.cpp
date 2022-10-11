@@ -1,8 +1,78 @@
 ﻿#include "MeshCollider.h"
 #include "Collision.h"
 #include <bitset>
+#include "Matrix4.h"
 
 using namespace DirectX;
+
+float MeshCollider::DistanceTwoPoints(const Vector3& _pos1, const Vector3& _pos2)
+{
+	float returnNum = 0;
+
+	float x = 0, y = 0, z = 0;
+	x = _pos2.x - _pos1.x;
+	y = _pos2.y - _pos1.y;
+	z = _pos2.z - _pos1.z;
+
+	returnNum = sqrtf(x * x + y * y + z * z);
+
+	return returnNum;
+}
+
+void MeshCollider::SetCircumscribedCircle(const XMFLOAT3& _pos1, const XMFLOAT3& _pos2, const XMFLOAT3& _pos3, Sphere& _sphere)
+{
+	const Vector3 point1 = { _pos1.x,_pos1.y,_pos1.z };
+	const Vector3 point2 = { _pos2.x,_pos2.y,_pos2.z };
+	const Vector3 point3 = { _pos3.x,_pos3.y,_pos3.z };
+
+	//pos2->pos3のベクトル
+	Vector3 p2_p3 = point3 - point2;
+
+	// 鈍角を探します
+	 // 鈍角三角形の場合はその対辺の中点が球の中心で両頂点までの距離が半径。
+	float dot0 = (point2 - point1).dot(point3 - point1);
+	if (dot0 <= 0.0f) {
+		Vector3 center = (point2 + point3) / 2.0f;
+		_sphere.center = { center.x,center.y,center.z };
+		_sphere.radius = ((point2 - point3) / 2.0f).length();
+		return;
+	}
+	float dot1 = (point1 - point2).dot(point3 - point2);
+	if (dot1 <= 0.0f) {
+		Vector3 center = (point1 + point3) / 2.0f;
+		_sphere.center = { center.x,center.y,center.z };
+		_sphere.radius = ((point1 - point3) / 2.0f).length();
+	}
+	float dot2 = (point1 - point3).dot(point2 - point3);
+	if (dot2 <= 0.0f) {
+		Vector3 center = (point1 + point2) / 2.0f;
+		_sphere.center = { center.x,center.y,center.z };
+		_sphere.radius = ((point1 - point2) / 2.0f).length();
+	}
+
+	// 鋭角三角形でした
+	// 3頂点から等距離にある点が中心。連立方程式を解きます。
+	Vector3 N = {};
+	N = (point2 - point1).cross(point3 - point1);
+	Vector3 v0 = {}, v1 = {}, e0 = {}, e1 = {};
+	v0 = (point3 - point2).cross(N);
+	v1 = (point3 - point1).cross(N);
+	e0 = (point3 + point2) * 0.5f;
+	e1 = (point3 + point1) * 0.5f;
+	float a = v0.dot(v1);
+	float b = v0.dot(v0);
+	float c = -(e1 - e0).dot(v0);
+	float d = v1.dot(v1);
+	float e = -(e1 - e0).dot(v1);
+
+	float div = -a * a + b * d;
+	float t = (-a * c + b * e) / div;
+	float s = (-c * d + a * e) / div;
+
+	Vector3 center = e0 + s * v0;
+	_sphere.center = { center.x,center.y,center.z };
+	_sphere.radius = (center - point1).length();
+}
 
 void MeshCollider::MinMax(Model* _model)
 {
@@ -131,7 +201,7 @@ void MeshCollider::ConstructTriangles(Model* _model)
 
 	for (int i = 0; i < octtreeSplit; i++)
 	{
-		triangles[i].clear();
+		colliderMeshes[i].clear();
 	}
 	const std::vector<Mesh*>& meshes = _model->GetMeshes();
 
@@ -157,42 +227,44 @@ void MeshCollider::ConstructTriangles(Model* _model)
 
 		for (int i = 0; i < triangleNum; i++)
 		{
-			Triangle tri;
+			ONE_MESH addMesh;
 			int idx0 = indices[i * 3 + 0];
 			int idx1 = indices[i * 3 + 1];
 			int idx2 = indices[i * 3 + 2];
 
-			tri.p0 = {
+			addMesh.triangle.p0 = {
 				vertices[idx0].pos.x,
 				vertices[idx0].pos.y,
 				vertices[idx0].pos.z,
 				1 };
-			tri.p1 = {
+			addMesh.triangle.p1 = {
 				vertices[idx1].pos.x,
 				vertices[idx1].pos.y,
 				vertices[idx1].pos.z,
 				1 };
 
-			tri.p2 = {
+			addMesh.triangle.p2 = {
 				vertices[idx2].pos.x,
 				vertices[idx2].pos.y,
 				vertices[idx2].pos.z,
 				1 };
 
-			tri.ComputeNormal();
+			addMesh.triangle.ComputeNormal();
+
+			SetCircumscribedCircle(vertices[idx0].pos, vertices[idx1].pos, vertices[idx2].pos, addMesh.sphere);
 
 			int Octree1 = OctreeSet(vertices[idx0].pos);
 			int Octree2 = OctreeSet(vertices[idx1].pos);
 			int Octree3 = OctreeSet(vertices[idx2].pos);
 
-			triangles[Octree1].emplace_back(tri);
+			colliderMeshes[Octree1].emplace_back(addMesh);
 			if (Octree1 != Octree2)
 			{
-				triangles[Octree2].emplace_back(tri);
+				colliderMeshes[Octree2].emplace_back(addMesh);
 			}
 			if (Octree1 != Octree3 && Octree2 != Octree3)
 			{
-				triangles[Octree3].emplace_back(tri);
+				colliderMeshes[Octree3].emplace_back(addMesh);
 			}
 
 			object->SetVertex(vertices[idx0].pos);
@@ -212,7 +284,7 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 
 	for (int i = 0; i < octtreeSplit; i++)
 	{
-		triangles[i].clear();
+		colliderMeshes[i].clear();
 	}
 
 	int start = 0;
@@ -232,44 +304,46 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 
 	size_t triangleNum = indices.size() / 3;
 
-	for (int i = 0; i < triangleNum; i++) {
-
-		Triangle tri;
+	for (int i = 0; i < triangleNum; i++)
+	{
+		ONE_MESH addMesh;
 		int idx0 = indices[i * 3 + 0];
 		int idx1 = indices[i * 3 + 1];
 		int idx2 = indices[i * 3 + 2];
 
-		tri.p0 = {
+		addMesh.triangle.p0 = {
 			vertices[idx0].pos.x,
 			vertices[idx0].pos.y,
 			vertices[idx0].pos.z,
 			1 };
-		tri.p1 = {
+		addMesh.triangle.p1 = {
 			vertices[idx1].pos.x,
 			vertices[idx1].pos.y,
 			vertices[idx1].pos.z,
 			1 };
 
-		tri.p2 = {
+		addMesh.triangle.p2 = {
 			vertices[idx2].pos.x,
 			vertices[idx2].pos.y,
 			vertices[idx2].pos.z,
 			1 };
 
-		tri.ComputeNormal();
+		addMesh.triangle.ComputeNormal();
+
+		SetCircumscribedCircle(vertices[idx0].pos, vertices[idx1].pos, vertices[idx2].pos, addMesh.sphere);
 
 		int Octree1 = OctreeSet(vertices[idx0].pos);
 		int Octree2 = OctreeSet(vertices[idx1].pos);
 		int Octree3 = OctreeSet(vertices[idx2].pos);
 
-		triangles[Octree1].emplace_back(tri);
+		colliderMeshes[Octree1].emplace_back(addMesh);
 		if (Octree1 != Octree2)
 		{
-			triangles[Octree2].emplace_back(tri);
+			colliderMeshes[Octree2].emplace_back(addMesh);
 		}
 		if (Octree1 != Octree3 && Octree2 != Octree3)
 		{
-			triangles[Octree3].emplace_back(tri);
+			colliderMeshes[Octree3].emplace_back(addMesh);
 		}
 
 		object->SetVertex(vertices[idx0].pos);
@@ -300,30 +374,48 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& _sphere, DirectX::XMVECTOR
 	// オブジェクトのローカル座標系での球を得る（半径はXスケールを参照)
 	Sphere localSphere;
 	localSphere.center = XMVector3Transform(_sphere.center, invMatWorld);
-	localSphere.radius *= XMVector3Length(invMatWorld.r[0]).m128_f32[0];
+	localSphere.radius = XMVector3Length(invMatWorld.r[0]).m128_f32[0];
 
-	for (auto& itr : triangles)
+	XMVECTOR vecmax = { max.x,max.y ,max.z,1 };
+	XMVECTOR vecmin = { min.x,min.y ,min.z,1 };
+	XMVECTOR worldmax = XMVector3Transform(vecmax, matWorld);
+	XMVECTOR worldmin = XMVector3Transform(vecmin, matWorld);
+
+	if (_sphere.center.m128_f32[0] < worldmin.m128_f32[0] || _sphere.center.m128_f32[0] > worldmax.m128_f32[0] ||
+		_sphere.center.m128_f32[2] <  worldmin.m128_f32[2] || _sphere.center.m128_f32[2] >  worldmax.m128_f32[2])
 	{
-		std::vector<Triangle>::const_iterator it = itr.cbegin();
+		return false;
+	}
 
-		for (; it != itr.cend(); ++it) {
-			const Triangle& triangle = *it;
+	//プレイヤーの八分木位置
+	const int Octree = OctreeSet({ localSphere.center.m128_f32[0],localSphere.center.m128_f32[1],localSphere.center.m128_f32[2] });
 
-			if (Collision::CheckSphere2Triangle(localSphere, triangle, _inter, _reject)) {
-				if (_inter) {
-					const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+	std::vector<ONE_MESH>::const_iterator it = colliderMeshes[Octree].cbegin();
+	for (; it != colliderMeshes[Octree].cend(); ++it) {
+		const ONE_MESH& mesh = *it;
 
-					*_inter = XMVector3Transform(*_inter, matWorld);
-				}
-				if (_reject) {
-					const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+		DirectX::XMVECTOR* inter = {};
+		DirectX::XMVECTOR* reject = {};
+		////レイより軽い処理の円と円の当たり判定で遠いオブジェクトをスキップする
+		//if (!Collision::CheckSphere2Sphere(localSphere, mesh.sphere, inter, reject)){
+		//	continue;
+		//}
 
-					*_reject = XMVector3TransformNormal(*_reject, matWorld);
-				}
-				return true;
+		if (Collision::CheckSphere2Triangle(localSphere, mesh.triangle, _inter, _reject)) {
+			if (_inter) {
+				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+
+				*_inter = XMVector3Transform(*_inter, matWorld);
 			}
+			if (_reject) {
+				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+
+				*_reject = XMVector3TransformNormal(*_reject, matWorld);
+			}
+			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -348,14 +440,21 @@ bool MeshCollider::CheckCollisionRay(const Ray& _ray, float* _distance, DirectX:
 	//プレイヤーの八分木位置
 	const int Octree = OctreeSet({ localRay.start.m128_f32[0],localRay.start.m128_f32[1],localRay.start.m128_f32[2] });
 
-	std::vector<Triangle>::const_iterator it = triangles[Octree].cbegin();
+	std::vector<ONE_MESH>::const_iterator it = colliderMeshes[Octree].cbegin();
 
-	for (; it != triangles[Octree].cend(); ++it) {
-		const Triangle& triangle = *it;
+	for (; it != colliderMeshes[Octree].cend(); ++it) {
+		const ONE_MESH& mesh = *it;
 
 		XMVECTOR tempInter;
 
-		if (Collision::CheckRay2Triangle(localRay, triangle, nullptr, &tempInter)) {
+		float* distance = {};
+		DirectX::XMVECTOR* inter = {};
+		////レイより軽い処理の円と円の当たり判定で遠いオブジェクトをスキップする
+		//if (!Collision::CheckRay2Sphere(localRay, mesh.sphere, distance, inter)) {
+		//	continue;
+		//}
+
+		if (Collision::CheckRay2Triangle(localRay, mesh.triangle, nullptr, &tempInter)) {
 
 			const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
 
@@ -374,5 +473,62 @@ bool MeshCollider::CheckCollisionRay(const Ray& _ray, float* _distance, DirectX:
 		}
 	}
 
+	return false;
+}
+
+bool MeshCollider::CheckCollisionCapsule(const Capsule& _capsule, float* _distance, DirectX::XMVECTOR* _inter)
+{
+	// オブジェクトのローカル座標系での球を得る（半径はXスケールを参照)
+	Capsule localCapsule;
+	localCapsule.startPosition = _capsule.startPosition.DirectXVector3Transform(invMatWorld);
+	localCapsule.endPosition = _capsule.endPosition.DirectXVector3Transform(invMatWorld);
+	localCapsule.radius *= XMVector3Length(invMatWorld.r[0]).m128_f32[0];
+
+	XMVECTOR vecmax = { max.x,max.y ,max.z,1 };
+	XMVECTOR vecmin = { min.x,min.y ,min.z,1 };
+	XMVECTOR worldmax = XMVector3Transform(vecmax, matWorld);
+	XMVECTOR worldmin = XMVector3Transform(vecmin, matWorld);
+
+	if (_capsule.startPosition.x < worldmin.m128_f32[0] || _capsule.startPosition.x > worldmax.m128_f32[0] ||
+		_capsule.startPosition.z <  worldmin.m128_f32[2] || _capsule.startPosition.z >  worldmax.m128_f32[2]||
+		_capsule.endPosition.x < worldmin.m128_f32[0] || _capsule.endPosition.x > worldmax.m128_f32[0] ||
+		_capsule.endPosition.z <  worldmin.m128_f32[2] || _capsule.endPosition.z >  worldmax.m128_f32[2])
+	{
+		return false;
+	}
+
+	//プレイヤーの八分木位置
+
+	const int Octree[2] = {
+		OctreeSet({ localCapsule.startPosition.x,localCapsule.startPosition.y,localCapsule.startPosition.z }),
+		OctreeSet({ localCapsule.endPosition.x,localCapsule.endPosition.y,localCapsule.endPosition.z })
+	};
+
+	const int roopNum = 1 + Octree[0] != Octree[1];
+
+	for (int i=0;i< roopNum;i++)
+	{
+		std::vector<ONE_MESH>::const_iterator it = colliderMeshes[i].cbegin();;
+
+		for (; it != colliderMeshes[i].end(); ++it) {
+			const ONE_MESH& mesh = *it;
+
+			float distance;
+
+			if (Collision::CheckSphereCapsule(mesh.sphere, localCapsule, &distance)) {
+				//if (_inter) {
+				//	const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+
+				//	*_inter = XMVector3Transform(*_inter, matWorld);
+				//}
+				//if (_reject) {
+				//	const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+
+				//	*_reject = XMVector3TransformNormal(*_reject, matWorld);
+				//}
+				return true;
+			}
+		}
+	}
 	return false;
 }

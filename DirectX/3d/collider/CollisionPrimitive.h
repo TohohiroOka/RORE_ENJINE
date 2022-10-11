@@ -67,17 +67,10 @@ struct Ray
 /// </summary>
 struct Capsule
 {
-	Vector3 startPosition;
-	Vector3 endPosition;
-	float radius;//半径
-
-	unsigned color;//表示色
-
-	//コンストラクタ
-	Capsule(const Vector3 startPosition, const Vector3 endPosition, float radius, unsigned color);
-
-	//描画
-	void draw();
-	//球の表示
-	void drawInfo(int x, int y, unsigned color);
+	//始点
+	Vector3 startPosition = { 0,0,0 };
+	//終点
+	Vector3 endPosition = { 0,0,0 };
+	// 半径
+	float radius = 1.0f;
 };

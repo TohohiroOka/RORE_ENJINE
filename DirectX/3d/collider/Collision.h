@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CollisionPrimitive.h"
+#include "Vector3.h"
 
 /// <summary>
 /// 当たり判定ヘルパークラス
@@ -66,7 +67,7 @@ public:
 	/// </summary>
 	/// <param name="_lay">レイ</param>
 	/// <param name="_plane">平面</param>
-	/// <param name="_inter">距離（出力用）</param>
+	/// <param name="_distance">距離（出力用）</param>
 	/// <param name="_inter">交点（出力用）</param>
 	/// <returns>交差しているか否か</returns>
 	static bool CheckRay2Plane(const Ray& _lay,
@@ -77,7 +78,7 @@ public:
 	/// </summary>
 	/// <param name="_lay">レイ</param>
 	/// <param name="_triangle">三角形</param>
-	/// <param name="_inter">距離（出力用）</param>
+	/// <param name="_distance">距離（出力用）</param>
 	/// <param name="_inter">交点（出力用）</param>
 	/// <returns>交差しているか否か</returns>
 	static bool CheckRay2Triangle(const Ray& _lay,
@@ -93,4 +94,39 @@ public:
 	/// <returns>交差しているか否か</returns>
 	static bool CheckRay2Sphere(const Ray& _lay,
 		const Sphere& _sphere, float* _distance = nullptr, DirectX::XMVECTOR* _inter = nullptr);
+
+	/// <summary>
+	/// 球とカプセル
+	/// </summary>
+	/// <param name="sphere">球</param>
+	/// <param name="capsule">カプセル</param>
+	/// <param name="_distance">距離（出力用）</param>
+	/// <returns></returns>
+	static bool CheckSphereCapsule(const Sphere& sphere, const Capsule& capsule, float* distance);
+
+	/// <summary>
+	/// カプセルとカプセル
+	/// </summary>
+	/// <param name="capsule1">カプセル</param>
+	/// <param name="capsule2">カプセル</param>
+	/// <returns></returns>
+	static bool CheckCapsuleCapsule(const Capsule& capsule1, const Capsule& capsule2);
+
+	/// <summary>
+	/// 線分と線分の距離の二乗を求める
+	/// </summary>
+	/// <param name="p1">線分1start</param>
+	/// <param name="q1">線分1end</param>
+	/// <param name="p2">線分2start</param>
+	/// <param name="q2">線分2end</param>
+	/// <returns></returns>
+	static float sqDistanceSegmentSegment(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2);
+
+	//値を範囲内に収める[low, high]
+	static float clamp(float x, float low, float high)
+	{
+		x = (x < low) ? low : x;
+		x = (x < high) ? high : x;
+		return x;
+	}
 };
