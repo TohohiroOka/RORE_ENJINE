@@ -113,6 +113,14 @@ public:
 	static bool CheckCapsuleCapsule(const Capsule& capsule1, const Capsule& capsule2);
 
 	/// <summary>
+	/// 三角形とカプセルの当たり判定
+	/// </summary>
+	/// <param name="_triangle">三角形</param>
+	/// <param name="_capsule">カプセル</param>
+	/// <returns>交差しているか否か</returns>
+	static bool CheckTriangleCapsule(const Triangle& _triangle, const Capsule& _capsule);
+
+	/// <summary>
 	/// 線分と線分の距離の二乗を求める
 	/// </summary>
 	/// <param name="p1">線分1start</param>
@@ -121,6 +129,18 @@ public:
 	/// <param name="q2">線分2end</param>
 	/// <returns></returns>
 	static float sqDistanceSegmentSegment(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2);
+
+	/// <summary>
+	/// 線分と線分の当たり判定
+	/// </summary>
+	/// <param name="p1">線分1start</param>
+	/// <param name="q1">線分1end</param>
+	/// <param name="p2">線分2start</param>
+	/// <param name="q2">線分2end</param>
+	/// <returns></returns>
+	static bool CheckSegmentSegment(const DirectX::XMVECTOR& p1, const DirectX::XMVECTOR& q1,
+		const DirectX::XMVECTOR& p2, const DirectX::XMVECTOR& q2,
+		float* pOut_dist = nullptr, DirectX::XMVECTOR* pOut_pos1 = nullptr, DirectX::XMVECTOR* pOut_pos2 = nullptr);
 
 	//値を範囲内に収める[low, high]
 	static float clamp(float x, float low, float high)

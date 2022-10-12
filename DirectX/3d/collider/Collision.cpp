@@ -327,11 +327,49 @@ bool Collision::CheckCapsuleCapsule(const Capsule& capsule1, const Capsule& caps
 	return (sqDistance < r* r);
 }
 
+bool Collision::CheckTriangleCapsule(const Triangle& _triangle, const Capsule& _capsule)
+{
+	//三角形の頂点
+	XMVECTOR cStart = { _capsule.startPosition.x,_capsule.startPosition.y,_capsule.startPosition.z };
+	XMVECTOR cEnd = { _capsule.endPosition.x,_capsule.endPosition.y,_capsule.endPosition.z };
+
+	//線分と線分の距離を調べる
+	float distance[3];
+	CheckSegmentSegment(cStart, cEnd, _triangle.p0, _triangle.p1, &distance[0]);
+	CheckSegmentSegment(cStart, cEnd, _triangle.p1, _triangle.p2, &distance[1]);
+	CheckSegmentSegment(cStart, cEnd, _triangle.p2, _triangle.p0, &distance[2]);
+
+	bool isHit = false;
+	if (distance[0] < distance[1] && distance[0] < distance[2])
+	{
+		if (distance[0] < _capsule.radius * 4.0f)
+		{
+			isHit = true;
+		}
+	}
+	else if (distance[1] < distance[0] && distance[1] < distance[2])
+
+	{
+		if (distance[1] < _capsule.radius * 4.0f)
+		{
+			isHit = true;
+		}
+	}
+	else
+	{
+		if (distance[2] < _capsule.radius * 4.0f)
+		{
+			isHit = true;
+		}
+	}
+
+	return isHit;
+}
+
 float Collision::sqDistanceSegmentSegment(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2)
 {
 	Vector3 d1 = q1 - p1;//p1->q1のベクトル
 	Vector3 d2 = q2 - p2;//p2->q2のベクトル
-
 	Vector3 r = p1 - p2;
 
 	float a = d1.dot(d1);//a = d1・d1
@@ -380,4 +418,51 @@ float Collision::sqDistanceSegmentSegment(const Vector3& p1, const Vector3& q1, 
 
 	//2点間(c1とc2)の距離の2乗
 	return (c1 - c2).dot(c1 - c2);
+}
+
+bool Collision::CheckSegmentSegment(const XMVECTOR& p1, const XMVECTOR& q1,const XMVECTOR& p2, const XMVECTOR& q2,
+	float* pOut_dist, XMVECTOR* pOut_pos1, XMVECTOR* pOut_pos2)
+{
+	//線の方向ベクトル
+	XMVECTOR pv1 = q1 - p1;
+	XMVECTOR pv2 = q2 - p2;
+
+	XMVECTOR n1 = XMVector3Normalize(pv1);
+	XMVECTOR n2 = XMVector3Normalize(pv2);
+
+	//線と線の間のベクトル
+	XMVECTOR p1_p2 = p2 - p1;
+
+	float D1 = XMVector3Dot(p1_p2, n1).m128_f32[0];
+	float D2 = XMVector3Dot(p1_p2, n2).m128_f32[0];
+
+	XMVECTOR cross = XMVector3Cross(n1, n2);
+	float cDv = XMVector3LengthSq(cross).m128_f32[0];
+
+	if (cDv < 0.000001f) {
+		if (pOut_dist) {
+			XMVECTOR v = XMVector3Cross(p1_p2, n1);
+			*pOut_dist = XMVector3LengthSq(v).m128_f32[0];
+		}
+		return false;
+	}
+
+	float Dv = XMVector3Dot(n1, n2).m128_f32[0];
+	float t1 = (D1 - D2 * Dv) / (1.0f - Dv * Dv);
+	float t2 = (D2 - D1 * Dv) / (Dv * Dv - 1.0f);
+
+	XMVECTOR Q1 = p1 + t1 * n1;
+	XMVECTOR Q2 = p2 + t2 * n2;
+
+	if (pOut_dist){
+		*pOut_dist = XMVector3LengthSq(Q2 - Q1).m128_f32[0];
+	}
+	if (pOut_pos1) {
+		*pOut_pos1 = Q1;
+	}
+	if (pOut_pos2) {
+		*pOut_pos2 = Q2;
+	}
+
+	return true;
 }

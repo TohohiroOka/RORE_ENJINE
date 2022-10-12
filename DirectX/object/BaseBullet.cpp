@@ -6,3 +6,8 @@ void BaseBullet::StaticInitialize()
 {
 	model = Model::CreateFromOBJ("Square");//ƒvƒŒƒCƒ„[‚Ì’e
 }
+
+void BaseBullet::Finalize()
+{
+	model.reset();
+}

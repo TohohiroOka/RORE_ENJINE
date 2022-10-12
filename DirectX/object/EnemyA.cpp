@@ -4,6 +4,8 @@
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
 
+#include "DirectInput.h"
+
 using namespace DirectX;
 
 std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos)
@@ -46,15 +48,20 @@ void EnemyA::Update()
 {
 	timer++;
 
-	if (timer % 50 == 1)
+	//if (timer % 50 == 1)
+	//{
+	//	float angle = 360.0f / float(bulletNum);
+	//	for (int i = 0; i < bulletNum; i++)
+	//	{
+	//		float nowAngle = angle * i;
+	//		float radiun = XMConvertToRadians(nowAngle);
+	//		BulletManager::SetEnemyABullet(pos, { cos(radiun),0.0f,sin(radiun) });
+	//	}
+	//}
+
+	if (DirectInput::GetInstance()->TriggerKey(DIK_P))
 	{
-		float angle = 360.0f / float(bulletNum);
-		for (int i = 0; i < bulletNum; i++)
-		{
-			float nowAngle = angle * i;
-			float radiun = XMConvertToRadians(nowAngle);
-			BulletManager::SetEnemyABullet(pos, { cos(radiun),0.0f,sin(radiun) });
-		}
+		BulletManager::SetEnemyABullet(pos, { 1,0,0 });
 	}
 
 	const float speed = 1.0f;

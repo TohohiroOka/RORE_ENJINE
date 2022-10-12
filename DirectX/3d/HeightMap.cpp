@@ -389,6 +389,7 @@ HeightMap::~HeightMap()
 	{
 		texture[i].reset();
 	}
+	safe_delete(model);
 }
 
 void HeightMap::Draw()

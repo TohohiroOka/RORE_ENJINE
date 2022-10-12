@@ -6,3 +6,8 @@ void BaseEnemy::StaticInitialize()
 {
 	model = Model::CreateFromOBJ("Square2");//ƒvƒŒƒCƒ„[‚Ì’e
 }
+
+void BaseEnemy::Finalize()
+{
+	model.reset();
+}

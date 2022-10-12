@@ -27,6 +27,9 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 
+	static void Finalize();
+
+
 protected:
 
 	//ƒ‚ƒfƒ‹

@@ -118,9 +118,9 @@ private:
 	//判定用メッシュの情報
 	std::array<std::vector<ONE_MESH>, octtreeSplit> colliderMeshes;
 	//八分木の最小値
-	DirectX::XMFLOAT3 min = {};
+	DirectX::XMVECTOR min = {};
 	//八分木の最大値
-	DirectX::XMFLOAT3 max = {};
+	DirectX::XMVECTOR max = {};
 	//八分木の分割範囲
 	DirectX::XMFLOAT3 octtreeRange[9] = {};
 	// ワールド行列

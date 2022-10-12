@@ -10,6 +10,9 @@ private:
 
 public:
 
+	BulletManager() {};
+	~BulletManager();
+
 	/// <summary>
 	/// ¶¬
 	/// </summary>
@@ -30,6 +33,11 @@ public:
 	/// –ˆƒtƒŒ[ƒ€ˆ—
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// •`‰æ
+	/// </summary>
+	void DLDraw();
 
 	/// <summary>
 	/// ‰Šú‰»

@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseBullet.h"
+#include "DrawLine3D.h"
 
 class EnemyABullet : public BaseBullet
 {
@@ -33,6 +34,11 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// •`‰æ
+	/// </summary>
+	void DLDraw();
+
 private:
 
 	std::unique_ptr<Object3d> object;
@@ -44,6 +50,8 @@ private:
 	XMFLOAT3 moveVec;
 	//‘å‚«‚³
 	float scale;
+	//“–‚½‚è”»’è—p
+	std::unique_ptr<DrawLine3D> hitObject;
 
 public:
 

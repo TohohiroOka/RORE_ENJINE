@@ -115,8 +115,8 @@ void MeshCollider::MinMax(Model* _model)
 		}
 	}
 
-	min = minmax[1];
-	max = minmax[0];
+	min = { minmax[1].x,minmax[1].y,minmax[1].z };
+	max = { minmax[0].x,minmax[0].y,minmax[0].z };
 }
 
 void MeshCollider::MinMax(const std::vector<Mesh::VERTEX>* _vertices)
@@ -154,8 +154,8 @@ void MeshCollider::MinMax(const std::vector<Mesh::VERTEX>* _vertices)
 		}
 	}
 
-	min = minmax[1];
-	max = minmax[0];
+	min = { minmax[1].x,minmax[1].y,minmax[1].z };
+	max = { minmax[0].x,minmax[0].y,minmax[0].z };
 }
 
 int MeshCollider::OctreeSet(const XMFLOAT3& _pos)
@@ -208,8 +208,13 @@ void MeshCollider::ConstructTriangles(Model* _model)
 	int start = 0;
 
 	MinMax(_model);
+	
+	XMFLOAT3 minmaxRange = { 
+		max.m128_f32[0] - min.m128_f32[0],
+		max.m128_f32[1] - min.m128_f32[1],
+		max.m128_f32[2] - min.m128_f32[2]
+	};
 
-	XMFLOAT3 minmaxRange = { max.x - min.x,max.y - min.y,max.z - min.z };
 	for (int i = 0; i < 9; i++)
 	{
 		octtreeRange[i].x = minmaxRange.x / 8 * i;
@@ -291,7 +296,11 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 
 	MinMax(_vertices);
 
-	XMFLOAT3 minmaxRange = { max.x - min.x,max.y - min.y,max.z - min.z };
+	XMFLOAT3 minmaxRange = {
+		max.m128_f32[0] - min.m128_f32[0],
+		max.m128_f32[1] - min.m128_f32[1],
+		max.m128_f32[2] - min.m128_f32[2]
+	};
 	for (int i = 0; i < 9; i++)
 	{
 		octtreeRange[i].x = minmaxRange.x / 8 * i;
@@ -374,12 +383,10 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& _sphere, DirectX::XMVECTOR
 	// オブジェクトのローカル座標系での球を得る（半径はXスケールを参照)
 	Sphere localSphere;
 	localSphere.center = XMVector3Transform(_sphere.center, invMatWorld);
-	localSphere.radius = XMVector3Length(invMatWorld.r[0]).m128_f32[0];
+	localSphere.radius *= XMVector3Length(invMatWorld.r[0]).m128_f32[0];
 
-	XMVECTOR vecmax = { max.x,max.y ,max.z,1 };
-	XMVECTOR vecmin = { min.x,min.y ,min.z,1 };
-	XMVECTOR worldmax = XMVector3Transform(vecmax, matWorld);
-	XMVECTOR worldmin = XMVector3Transform(vecmin, matWorld);
+	XMVECTOR worldmax = XMVector3Transform(max, matWorld);
+	XMVECTOR worldmin = XMVector3Transform(min, matWorld);
 
 	if (_sphere.center.m128_f32[0] < worldmin.m128_f32[0] || _sphere.center.m128_f32[0] > worldmax.m128_f32[0] ||
 		_sphere.center.m128_f32[2] <  worldmin.m128_f32[2] || _sphere.center.m128_f32[2] >  worldmax.m128_f32[2])
@@ -393,13 +400,6 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& _sphere, DirectX::XMVECTOR
 	std::vector<ONE_MESH>::const_iterator it = colliderMeshes[Octree].cbegin();
 	for (; it != colliderMeshes[Octree].cend(); ++it) {
 		const ONE_MESH& mesh = *it;
-
-		DirectX::XMVECTOR* inter = {};
-		DirectX::XMVECTOR* reject = {};
-		////レイより軽い処理の円と円の当たり判定で遠いオブジェクトをスキップする
-		//if (!Collision::CheckSphere2Sphere(localSphere, mesh.sphere, inter, reject)){
-		//	continue;
-		//}
 
 		if (Collision::CheckSphere2Triangle(localSphere, mesh.triangle, _inter, _reject)) {
 			if (_inter) {
@@ -426,10 +426,8 @@ bool MeshCollider::CheckCollisionRay(const Ray& _ray, float* _distance, DirectX:
 	localRay.start = XMVector3Transform(_ray.start, invMatWorld);
 	localRay.dir = XMVector3TransformNormal(_ray.dir, invMatWorld);
 
-	XMVECTOR vecmax = { max.x,max.y ,max.z,1 };
-	XMVECTOR vecmin = { min.x,min.y ,min.z,1 };
-	XMVECTOR worldmax = XMVector3Transform(vecmax, matWorld);
-	XMVECTOR worldmin = XMVector3Transform(vecmin, matWorld);
+	XMVECTOR worldmax = XMVector3Transform(max, matWorld);
+	XMVECTOR worldmin = XMVector3Transform(min, matWorld);
 
 	if (_ray.start.m128_f32[0] < worldmin.m128_f32[0] || _ray.start.m128_f32[0] > worldmax.m128_f32[0] ||
 		_ray.start.m128_f32[2] <  worldmin.m128_f32[2] || _ray.start.m128_f32[2] >  worldmax.m128_f32[2])
@@ -446,14 +444,6 @@ bool MeshCollider::CheckCollisionRay(const Ray& _ray, float* _distance, DirectX:
 		const ONE_MESH& mesh = *it;
 
 		XMVECTOR tempInter;
-
-		float* distance = {};
-		DirectX::XMVECTOR* inter = {};
-		////レイより軽い処理の円と円の当たり判定で遠いオブジェクトをスキップする
-		//if (!Collision::CheckRay2Sphere(localRay, mesh.sphere, distance, inter)) {
-		//	continue;
-		//}
-
 		if (Collision::CheckRay2Triangle(localRay, mesh.triangle, nullptr, &tempInter)) {
 
 			const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
@@ -484,10 +474,8 @@ bool MeshCollider::CheckCollisionCapsule(const Capsule& _capsule, float* _distan
 	localCapsule.endPosition = _capsule.endPosition.DirectXVector3Transform(invMatWorld);
 	localCapsule.radius *= XMVector3Length(invMatWorld.r[0]).m128_f32[0];
 
-	XMVECTOR vecmax = { max.x,max.y ,max.z,1 };
-	XMVECTOR vecmin = { min.x,min.y ,min.z,1 };
-	XMVECTOR worldmax = XMVector3Transform(vecmax, matWorld);
-	XMVECTOR worldmin = XMVector3Transform(vecmin, matWorld);
+	XMVECTOR worldmax = XMVector3Transform(max, matWorld);
+	XMVECTOR worldmin = XMVector3Transform(min, matWorld);
 
 	if (_capsule.startPosition.x < worldmin.m128_f32[0] || _capsule.startPosition.x > worldmax.m128_f32[0] ||
 		_capsule.startPosition.z <  worldmin.m128_f32[2] || _capsule.startPosition.z >  worldmax.m128_f32[2]||
@@ -498,7 +486,6 @@ bool MeshCollider::CheckCollisionCapsule(const Capsule& _capsule, float* _distan
 	}
 
 	//プレイヤーの八分木位置
-
 	const int Octree[2] = {
 		OctreeSet({ localCapsule.startPosition.x,localCapsule.startPosition.y,localCapsule.startPosition.z }),
 		OctreeSet({ localCapsule.endPosition.x,localCapsule.endPosition.y,localCapsule.endPosition.z })
@@ -508,24 +495,15 @@ bool MeshCollider::CheckCollisionCapsule(const Capsule& _capsule, float* _distan
 
 	for (int i=0;i< roopNum;i++)
 	{
-		std::vector<ONE_MESH>::const_iterator it = colliderMeshes[i].cbegin();;
+		std::vector<ONE_MESH>::const_iterator it = colliderMeshes[Octree[i]].cbegin();;
 
-		for (; it != colliderMeshes[i].end(); ++it) {
+		for (; it != colliderMeshes[Octree[i]].cend(); ++it) {
 			const ONE_MESH& mesh = *it;
 
 			float distance;
-
-			if (Collision::CheckSphereCapsule(mesh.sphere, localCapsule, &distance)) {
-				//if (_inter) {
-				//	const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
-
-				//	*_inter = XMVector3Transform(*_inter, matWorld);
-				//}
-				//if (_reject) {
-				//	const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
-
-				//	*_reject = XMVector3TransformNormal(*_reject, matWorld);
-				//}
+			if (Collision::CheckSphereCapsule(mesh.sphere, localCapsule, &distance))
+			/*if (!Collision::CheckSphereCapsule(mesh.sphere, localCapsule, &distance))continue;
+			if (Collision::CheckTriangleCapsule(mesh.triangle, localCapsule))*/{
 				return true;
 			}
 		}

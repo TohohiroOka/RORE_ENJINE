@@ -36,11 +36,14 @@ void EnemyABullet::Initialize(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
 	object->SetScale({ scale ,scale ,scale });
 
 	object->Update();
+
+	hitObject = DrawLine3D::Create(1);
+	hitObject->SetColor({ 1,1,1,1 });
 }
 
 void EnemyABullet::Update()
 {
-	const float speed = 1.0f;
+	const float speed = 10.0f;
 
 	SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(object->GetCollider());
 	assert(sphereCollider);
@@ -82,53 +85,18 @@ void EnemyABullet::Update()
 	pos.y += callback.move.m128_f32[1];
 	pos.z += callback.move.m128_f32[2];
 
-	Ray ray;
-	ray.start = { pos.x,pos.y,pos.z,1 };
-	ray.dir = { moveVec.x,moveVec.y,moveVec.z,0 };
-	RAYCAST_HIT raycastHit;
-	//地形に当たっていたら生存フラグを消す
-	if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, scale))
+	Capsule cupsule;
+	cupsule.startPosition = { pos.x,pos.y,pos.z };
+	cupsule.endPosition = { pos.x + moveVec.x * speed,pos.y + moveVec.y * speed,pos.z + moveVec.z * speed };
+	cupsule.radius = scale;
+
+	XMFLOAT3 movepos = { cupsule.endPosition.x,cupsule.endPosition.y,cupsule.endPosition.z };
+	hitObject->SetLine(&pos, &movepos, 2.0f);
+
+	if (CollisionManager::GetInstance()->QueryCapsule(cupsule, COLLISION_ATTR_LANDSHAPE, nullptr, scale))
 	{
-		//XMFLOAT3 hitPos = { raycastHit.inter.m128_f32[0], raycastHit.inter.m128_f32[1], raycastHit.inter.m128_f32[2] };
-		//float x = powf(hitPos.x - pos.x, 2);
-		//float y = powf(hitPos.y - pos.y, 2);
-		//float z = powf(hitPos.z - pos.z, 2);
-		//float eneTobul1 = sqrt(x + y + z);
-
-		//x = powf(pos.x + moveVec.x * speed, 2);
-		//y = powf(pos.y + moveVec.y * speed, 2);
-		//z = powf(pos.z + moveVec.z * speed, 2);
-		//float eneTobul2 = sqrt(x + y + z);
-
-		//if (eneTobul1 < eneTobul2)
-		//{
-			isAlive = false;
-		//}
+		isAlive = false;
 	}
-
-	//Capsule cupsule;
-	//cupsule.startPosition = { pos.x,pos.y,pos.z };
-	//cupsule.endPosition = { pos.x - moveVec.x,pos.y - moveVec.y,pos.z - moveVec.z };
-	//cupsule.radius = scale / 2.0f;
-
-	//if (CollisionManager::GetInstance()->QueryCapsule(cupsule, COLLISION_ATTR_LANDSHAPE))
-	//{
-	//	//XMFLOAT3 hitPos = { raycastHit.inter.m128_f32[0], raycastHit.inter.m128_f32[1], raycastHit.inter.m128_f32[2] };
-	//	//float x = powf(hitPos.x - pos.x, 2);
-	//	//float y = powf(hitPos.y - pos.y, 2);
-	//	//float z = powf(hitPos.z - pos.z, 2);
-	//	//float eneTobul1 = sqrt(x + y + z);
-
-	//	//x = powf(pos.x + moveVec.x * speed, 2);
-	//	//y = powf(pos.y + moveVec.y * speed, 2);
-	//	//z = powf(pos.z + moveVec.z * speed, 2);
-	//	//float eneTobul2 = sqrt(x + y + z);
-
-	//	//if (eneTobul1 < eneTobul2)
-	//	//{
-	//	isAlive = false;
-	//	//}
-	//}
 	
 	//最大値にいったら生存フラグを消す
 	if (pos.y > 500 || pos.z < 0.0f) {
@@ -147,4 +115,11 @@ void EnemyABullet::Draw()
 {
 	if (!isAlive) { return; }
 	object->Draw();
+}
+
+void EnemyABullet::DLDraw()
+{
+	if (!isAlive) { return; }
+	hitObject->Update();
+	hitObject->Draw();
 }

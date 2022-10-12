@@ -20,7 +20,6 @@ void Boss1::Initialize()
 
 	//’nŒ`
 	ground[0] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
-	ground[1] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
 
 	bullet = BulletManager::Create();
 	FixedTurret::StaticInitialize();
@@ -54,10 +53,10 @@ void Boss1::Update()
 	enemy->Update(player->GetPosition());
 	enemy->CheckCollision(player->GetPosition());
 
-	for (auto& i : fixedTurret)
-	{
-		i->Update();
-	}
+	//for (auto& i : fixedTurret)
+	//{
+	//	i->Update();
+	//}
 
 	for (int i = 0; i < ground_num; i++)
 	{
@@ -76,25 +75,29 @@ void Boss1::Draw()
 
 	InterfaceObject3d::SetCmdList(cmdList);
 
-	HeightMap::PreDraw();
-	for (int i = 0; i < ground_num; i++)
-	{
-		ground[i]->Draw();
-	}
+	//HeightMap::PreDraw();
+	//for (int i = 0; i < ground_num; i++)
+	//{
+	//	ground[i]->Draw();
+	//}
 
 	Object3d::PreDraw();
 	player->Draw();
 	bullet->Draw();
-	for (auto& i : fixedTurret)
-	{
-		i->Draw();
-	}
+	//for (auto& i : fixedTurret)
+	//{
+	//	i->Draw();
+	//}
 	enemy->Draw();
 
-	//PrimitiveObject3D::PreDraw();
-	//ground[0]->CDraw();
+	PrimitiveObject3D::PreDraw();
+	ground[0]->CDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
+
+	//DrawLine3D::PreDraw(cmdList);
+	//bullet->DLDraw();
+	//DrawLine3D::PostDraw();
 
 	Sprite::PreDraw(cmdList);
 	DebugText::GetInstance()->DrawAll();

@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Boss1.h"
+#include "Title.h"
 #include "PostEffect.h"
 
 std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
@@ -104,9 +105,9 @@ void SceneManager::Initialize()
 	light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
 
 	//Å‰‚ÌƒV[ƒ“Ý’è
-	Boss1* firstScene = new Boss1();
+	Title* firstScene = new Title();
 	firstScene->Initialize();
-	scene = std::unique_ptr<Boss1>(firstScene);
+	scene = std::unique_ptr<Title>(firstScene);
 }
 
 void SceneManager::CreatePipeline()

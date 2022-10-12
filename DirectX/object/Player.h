@@ -15,6 +15,9 @@ public:
 	static std::unique_ptr<Player> Create();
 public:
 
+	Player() {};
+	~Player() {};
+
 	/// <summary>
 	/// 初期化
 	/// </summary>

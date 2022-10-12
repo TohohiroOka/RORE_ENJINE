@@ -38,14 +38,5 @@ public:
 
 private:
 
-	//ƒJƒƒ‰‚Ì‰ñ“]xz•½–Ê
-	float cameraAngle = 100;
-	//ƒJƒƒ‰‚Ì‚‚³
-	float cameraY = 0.0f;
-
-	////‰~ƒ‚ƒfƒ‹
-	//std::unique_ptr<FbxModel> SpherePBRModel = nullptr;
-
-	////‰~
-	//std::unique_ptr<Fbx> circle = nullptr;
+	std::unique_ptr<Sprite> sp;
 };

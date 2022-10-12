@@ -9,6 +9,9 @@ private:
 
 public:
 
+	EnemyManager() {};
+	~EnemyManager();
+
 	/// <summary>
 	/// ¶¬
 	/// </summary>

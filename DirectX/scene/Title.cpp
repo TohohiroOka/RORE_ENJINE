@@ -10,70 +10,29 @@ using namespace DirectX;
 
 void Title::Initialize()
 {
-	////円モデル読み込み
-	//SpherePBRModel = FbxModel::Create("SpherePBR");
-
-	//circle = Fbx::Create(SpherePBRModel.get());
-	//circle->SetPosition({ 0,0,0 });
-	//circle->SetScale({ 5,5,5 });
+	Sprite::LoadTexture("amm", "Resources/amm.jpg", true);
+	sp = Sprite::Create("amm");
 }
 
 void Title::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	if (input->PushKey(DIK_LEFT))
-	{
-		cameraAngle++;
-	} else if (input->PushKey(DIK_RIGHT))
-	{
-		cameraAngle--;
-	}
-
-	float UP_DOWN_MAX = 50.0f;
-	if (input->PushKey(DIK_UP))
-	{
-		cameraY++;
-		if (cameraY > UP_DOWN_MAX)
-		{
-			cameraY = UP_DOWN_MAX;
-		}
-	} else if (input->PushKey(DIK_DOWN))
-	{
-		cameraY--;
-		if (cameraY < -UP_DOWN_MAX)
-		{
-			cameraY = -UP_DOWN_MAX;
-		}
-	}
-
 	camera->SetTarget({ 0,0,0 });
-
-	float radian = XMConvertToRadians(cameraAngle);
-	XMFLOAT3 eye = {};
-	eye.x = cosf(radian) * 30.0f;
-	eye.y = cameraY;
-	eye.z = sinf(radian) * 30.0f;
-
-	//カメラ初期化
-	camera->SetEye(eye);
 
 	//シーンの移行
 	if (input->TriggerKey(DIK_0))
 	{
 		Boss1* nextScene = new Boss1();
-		nextScene->Initialize();
 		SceneManager::SetNextScene(nextScene);
 	}
-
-	//circle->Update();
 }
 
 void Title::Draw()
 {
-	//Fbx::PreDraw(cmdList);
-	//circle->Draw();
-	//Fbx::PostDraw();
+	Sprite::PreDraw(cmdList);
+	sp->Draw();
+	Sprite::PostDraw();
 }
 
 void Title::Finalize()

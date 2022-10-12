@@ -5,6 +5,9 @@ class Ground
 {
 public:
 
+	Ground() {};
+	~Ground() {};
+
 	/// <summary>
 	/// オブジェクト生成
 	/// </summary>

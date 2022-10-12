@@ -15,6 +15,15 @@ XMFLOAT3(3000.0f,50.0f,1905.0f),
 XMFLOAT3(810.0f,50.0f,1905.0f),
 };
 
+EnemyManager::~EnemyManager()
+{
+	//固定砲台の弾
+	enemyA.clear();
+	std::vector<std::unique_ptr<EnemyA>>().swap(enemyA);
+
+	BaseEnemy::Finalize();
+}
+
 std::unique_ptr<EnemyManager> EnemyManager::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
@@ -33,18 +42,19 @@ void EnemyManager::Initialize()
 {
 	BaseEnemy::StaticInitialize();
 	timer = 0;
+	enemyA.emplace_back(EnemyA::Create(popPos[1]));
 }
 
 void EnemyManager::Update(const XMFLOAT3& _pos)
 {
 	timer++;
 
-	//敵追加
-	if (timer % 100 == 1 && enemyA.size() < 20)
-	{
-		int randN = rand() % 4;
-		enemyA.emplace_back(EnemyA::Create(popPos[randN]));
-	}
+	////敵追加
+	//if (timer % 100 == 1 && enemyA.size() < 20)
+	//{
+	//	int randN = rand() % 4;
+	//	enemyA.emplace_back(EnemyA::Create(popPos[randN]));
+	//}
 
 	for (auto& i : enemyA)
 	{

@@ -8,6 +8,18 @@
 std::vector<std::unique_ptr<FixedTurretBullet>> BulletManager::fixedTurretBullet;
 std::vector<std::unique_ptr<EnemyABullet>> BulletManager::enemyABullet;
 
+BulletManager::~BulletManager()
+{
+	//固定砲台の弾
+	fixedTurretBullet.clear();
+	std::vector<std::unique_ptr<FixedTurretBullet>>().swap(fixedTurretBullet);
+	//エネミーAの弾
+	enemyABullet.clear();
+	std::vector<std::unique_ptr<EnemyABullet>>().swap(enemyABullet);
+
+	BaseBullet::Finalize();
+}
+
 std::unique_ptr<BulletManager> BulletManager::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
@@ -21,7 +33,6 @@ std::unique_ptr<BulletManager> BulletManager::Create()
 
 	return std::unique_ptr<BulletManager>(instance);
 }
-
 
 void BulletManager::Initialize()
 {
@@ -71,6 +82,14 @@ void BulletManager::Draw()
 	for (auto& i : enemyABullet)
 	{
 		i->Draw();
+	}
+}
+
+void BulletManager::DLDraw()
+{
+	for (auto& i : enemyABullet)
+	{
+		i->DLDraw();
 	}
 }
 

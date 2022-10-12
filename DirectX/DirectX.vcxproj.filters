@@ -343,6 +343,7 @@
     <ClCompile Include="base\Vector2.cpp">
       <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\USERS\ROZE1\APPDATA\LOCAL\TEMP\TMPFAEB.TMP.CPP" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
