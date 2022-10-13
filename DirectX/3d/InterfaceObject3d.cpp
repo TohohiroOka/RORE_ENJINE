@@ -78,7 +78,7 @@ void InterfaceObject3d::Update()
 	if (SUCCEEDED(result)) {
 		if (camera)
 		{
-			constMap->viewproj = camera->GetView() * camera->GetProjection();;
+			constMap->viewproj = camera->GetView() * camera->GetProjection();
 			constMap->cameraPos = camera->GetEye();;
 		}
 		else
