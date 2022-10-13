@@ -90,8 +90,12 @@ void EnemyABullet::Update()
 	ray.dir = { moveVec.x,moveVec.y,moveVec.z,0 };
 	RAYCAST_HIT raycastHit;
 
+	//レイの距離
+	XMFLOAT3 moveSp = { moveVec.x + speed,moveVec.y + speed,moveVec.z + speed };
+	float distance = sqrtf(moveSp.x * moveSp.x + moveSp.y * moveSp.y + moveSp.z + moveSp.z);
+
 	//レイ
-	if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, scale))
+	if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, distance))
 	{
 		XMFLOAT3 hitPos = { raycastHit.inter.m128_f32[0], raycastHit.inter.m128_f32[1], raycastHit.inter.m128_f32[2] };
 		float x = powf(hitPos.x - pos.x, 2);
@@ -127,7 +131,7 @@ void EnemyABullet::Update()
 	}
 
 	//最大値にいったら生存フラグを消す
-	if (pos.y > 500 || pos.z < 0.0f) {
+	if (pos.x < 0.0f||pos.y > 500 || pos.z < 0.0f) {
 		isAlive = false;
 	}
 

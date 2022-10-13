@@ -48,21 +48,21 @@ void EnemyA::Update()
 {
 	timer++;
 
-	//if (timer % 50 == 1)
-	//{
-	//	float angle = 360.0f / float(bulletNum);
-	//	for (int i = 0; i < bulletNum; i++)
-	//	{
-	//		float nowAngle = angle * i;
-	//		float radiun = XMConvertToRadians(nowAngle);
-	//		BulletManager::SetEnemyABullet(pos, { cos(radiun),0.0f,sin(radiun) });
-	//	}
-	//}
-
-	if (DirectInput::GetInstance()->TriggerKey(DIK_P))
+	if (timer % 50 == 1)
 	{
-		BulletManager::SetEnemyABullet(pos, { 1,0,0 });
+		float angle = 360.0f / float(bulletNum);
+		for (int i = 0; i < bulletNum; i++)
+		{
+			float nowAngle = angle * i;
+			float radiun = XMConvertToRadians(nowAngle);
+			BulletManager::SetEnemyABullet(pos, { cos(radiun),0.0f,sin(radiun) });
+		}
 	}
+
+	//if (DirectInput::GetInstance()->TriggerKey(DIK_P))
+	//{
+	//	BulletManager::SetEnemyABullet(pos, { 1,0,0 });
+	//}
 
 	const float speed = 1.0f;
 	pos.x += moveVec.x * speed;

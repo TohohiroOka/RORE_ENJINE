@@ -53,10 +53,10 @@ void Boss1::Update()
 	enemy->Update(player->GetPosition());
 	enemy->CheckCollision(player->GetPosition());
 
-	//for (auto& i : fixedTurret)
-	//{
-	//	i->Update();
-	//}
+	for (auto& i : fixedTurret)
+	{
+		i->Update();
+	}
 
 	for (int i = 0; i < ground_num; i++)
 	{
