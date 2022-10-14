@@ -53,5 +53,11 @@ private:
 	static std::vector<std::unique_ptr<EnemyA>> enemyA;
 	//èoåªà íu
 	static const std::array<XMFLOAT3, 4> popPos;
+
+public:
+
+	std::vector<std::unique_ptr<EnemyA>>& GetEnemyA() {
+		return enemyA;
+	}
 };
 

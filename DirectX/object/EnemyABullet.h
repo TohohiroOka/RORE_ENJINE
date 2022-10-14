@@ -1,12 +1,16 @@
 #pragma once
 #include "BaseBullet.h"
-#include "DrawLine3D.h"
 
 class EnemyABullet : public BaseBullet
 {
 public:
 
-	EnemyABullet() {};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="_pos">座標</param>
+	/// <param name="_moveVec">移動量</param>
+	EnemyABullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
 	~EnemyABullet() {};
 
 	/// <summary>
@@ -22,42 +26,5 @@ public:
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <param name="_moveVec">移動量</param>
-	void Initialize(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update() override;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw() override;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void DLDraw();
-
-private:
-
-	std::unique_ptr<Object3d> object;
-	//生存フラグ
-	bool isAlive;
-	//座標
-	XMFLOAT3 pos;
-	//移動ベクトル
-	XMFLOAT3 moveVec;
-	//大きさ
-	float scale;
-	//当たり判定用
-	std::unique_ptr<DrawLine3D> hitObject;
-
-public:
-
-	void SetIsAlive(const bool& _isAlive) { isAlive = _isAlive; }
-	bool GetIsAlive() { return isAlive; }
-	XMFLOAT3 GetPosition() { return pos; }
-	float GetScale() { return scale; }
+	void Initialize() override;
 };
-

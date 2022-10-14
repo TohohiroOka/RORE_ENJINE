@@ -46,26 +46,9 @@ private:
 
 	//タイマー
 	int timer;
-	//オブジェクト
-	std::unique_ptr<Object3d> object;
-	//生存フラグ
-	bool isAlive;
-	//座標
-	XMFLOAT3 pos;
-	//移動ベクトル
-	XMFLOAT3 moveVec;
-	//大きさ
-	float scale;
 	//地面についているか
 	bool onGround;
 	//一回に出す弾の量
 	const int bulletNum = 10;
-
-public:
-
-	bool GetIsAlive() { return isAlive; }
-	XMFLOAT3 GetPosition() { return pos; }
-	float GetScale() { return scale; }
-	void SetIsAlive(const bool& _isAlive) { isAlive = _isAlive; }
 };
 

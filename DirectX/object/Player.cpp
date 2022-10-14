@@ -4,6 +4,7 @@
 #include "SphereCollider.h"
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
+#include "BulletManager.h"
 
 using namespace DirectX;
 
@@ -128,6 +129,11 @@ void Player::Update()
 	object->SetPosition(position);
 	object->Update();
 
+	if (input->TriggerKey(DIK_SPACE))
+	{
+		SetBullet();
+	}
+
 	input = nullptr;
 
 	DebugText* text = DebugText::GetInstance();
@@ -250,4 +256,25 @@ void Player::Collider()
 			position.z += a;
 		}
 	}
+}
+
+void Player::SetBullet()
+{
+	float radiusUD = XMConvertToRadians(cameraAngle);
+	XMFLOAT3 vecPt = {};
+	vecPt.x = -cosf(radiusUD);
+	vecPt.y = 0.0f;
+	vecPt.z = -sinf(radiusUD);
+
+	//正規化
+	float x = powf(vecPt.x, 2);
+	float y = powf(vecPt.y, 2);
+	float z = powf(vecPt.z, 2);
+	float dist = sqrt(x + y + z);
+	dist = 1.0f / dist;
+	vecPt.x *= dist;
+	vecPt.y *= dist;
+	vecPt.z *= dist;
+
+	BulletManager::SetPlayerBullet(position, vecPt);
 }

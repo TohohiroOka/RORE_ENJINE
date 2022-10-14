@@ -6,52 +6,42 @@
 
 using namespace DirectX;
 
-bool GameCollision::CheckBulletToEnemy(std::vector<std::unique_ptr<BaseBullet>>* bullet, BaseEnemy* enemy)
+bool GameCollision::CheckBulletToEnemy(BaseBullet* _bullet, BaseEnemy* _enemy)
 {
-	//Õ“Ë—p‚ÉÀ•W‚Æ”¼Œa‚Ì‘å‚«‚³‚ðŽØ‚è‚é
-	XMFLOAT3 enemyPos = enemy->GetPosition();
-	float enemySize = enemy->GetScale().x;
-	bool hit = false;
-	for (auto& itr : *bullet)
-	{
-		if (!itr->GetIsAlive()) { continue; }
+	//“Gî•ñ
+	XMFLOAT3 ePos = _enemy->GetPosition();
 
-		//’eî•ñ
-		XMFLOAT3 bulletPos = itr->GetPosition();
-		float bulletSize = itr->GetScale().x;
+	//’eî•ñ
+	XMFLOAT3 bPos = _bullet->GetPosition();
+	XMFLOAT3 bVec = _bullet->GetMoveVec();
 
-		//“G‚Æ’e‚ªÕ“Ëó‘Ô‚Å‚È‚¢‚È‚ç”²‚¯‚é
-		XMFLOAT3 vec = itr->GetVecMove();
+	//’e‚©‚ç‚ÌƒŒƒC
+	Ray ray;
+	ray.start = { bPos.x,bPos.y,bPos.z,0 };
+	ray.dir = { bVec.x,bVec.y,bVec.z,0 };
 
-		//’e‚©‚ç‚ÌƒŒƒC
-		Ray ray;
-		ray.start = { bulletPos.x,bulletPos.y,bulletPos.z,0 };
-		ray.dir = { vec.x,vec.y,vec.z,0 };
+	//“G“–‚½‚è”»’è
+	Sphere sphere;
+	sphere.center = { ePos.x,ePos.y,ePos.z,0 };
+	sphere.radius = _enemy->GetScale() / 2.0f;
 
-		//“G“–‚½‚è”»’è
-		Sphere sphere;
-		sphere.center = { enemyPos.x,enemyPos.y,enemyPos.z,0 };
-		sphere.radius = enemySize * 10.0f;
-		if (Collision::CheckRay2Sphere(ray, sphere))
-		{
-			float x = powf(enemyPos.x - bulletPos.x, 2);
-			float y = powf(enemyPos.y - bulletPos.y, 2);
-			float z = powf(enemyPos.z - bulletPos.z, 2);
+	//Õ“Ë”»’è
+	if (!Collision::CheckRay2Sphere(ray, sphere)) { return false; }
 
-			float eneTobul1 = sqrt(x + y + z);
-			XMFLOAT3 beforepos = itr->GetMove();
-			x = powf(bulletPos.x - beforepos.x - bulletPos.x, 2);
-			y = powf(bulletPos.y - beforepos.y - bulletPos.y, 2);
-			z = powf(bulletPos.z - beforepos.z - bulletPos.z, 2);
+	//“G‚Æ’e‚Ì‹——£
+	float x = powf(ePos.x - bPos.x, 2);
+	float y = powf(ePos.y - bPos.y, 2);
+	float z = powf(ePos.z - bPos.z, 2);
+	float eneTobul = sqrt(x + y + z);
 
-			float eneTobul2 = sqrt(x + y + z);
+	//’e‚Ì‚PƒtƒŒ[ƒ€Œã‚Ì‚Ü‚Å‚Ì‹——£
+	XMFLOAT3 bMove = _bullet->GetMove();
+	x = powf(bMove.x, 2);
+	y = powf(bMove.y, 2);
+	z = powf(bMove.z, 2);
+	float bBulTobul = sqrt(x + y + z);
 
-			if (eneTobul1 < eneTobul2)
-			{
-				hit = true;
-			}
-		}
-	}
+	if (!(eneTobul < bBulTobul)) { return false; }
 
-	return hit;
+	return true;
 }

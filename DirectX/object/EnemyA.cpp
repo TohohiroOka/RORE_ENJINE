@@ -34,6 +34,7 @@ void EnemyA::Initialize(const XMFLOAT3& _pos)
 	object->GetCollider()->SetAttribute(COLLISION_ATTR_ENEMYS);
 
 	isAlive = true;
+	hp = 10;
 	pos = _pos;
 	object->SetPosition(pos);
 	moveVec = { 0,0,0 };

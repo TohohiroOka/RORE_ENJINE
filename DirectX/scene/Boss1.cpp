@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <memory>
 
+#include "GameCollision.h"
+
 using namespace DirectX;
 
 void Boss1::Initialize()
@@ -48,10 +50,23 @@ void Boss1::Update()
 	player->Update();
 
 	bullet->Update();
-	bullet->CheckCollision(player->GetPosition());
+	bullet->CheckEnemyBCollision(player->GetPosition());
 
 	enemy->Update(player->GetPosition());
 	enemy->CheckCollision(player->GetPosition());
+
+	auto& pBullet = bullet->GetPlayerBullet();
+	auto& enemyA = enemy->GetEnemyA();
+	for (auto& b : pBullet)
+	{
+		for (auto& e : enemyA)
+		{
+			//当たらなかったらスキップ
+			if (!GameCollision::CheckBulletToEnemy(b.get(), e.get())) {continue;}
+			b->SetIsAlive(false);
+			e->Damage();
+		}
+	}
 
 	for (auto& i : fixedTurret)
 	{
@@ -84,10 +99,10 @@ void Boss1::Draw()
 	Object3d::PreDraw();
 	player->Draw();
 	bullet->Draw();
-	//for (auto& i : fixedTurret)
-	//{
-	//	i->Draw();
-	//}
+	for (auto& i : fixedTurret)
+	{
+		i->Draw();
+	}
 	enemy->Draw();
 
 	PrimitiveObject3D::PreDraw();

@@ -37,7 +37,6 @@ void FixedTurret::Initialize(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
 	isAddSub = rand() % 2;
 
 	timer = 0;
-
 }
 
 void FixedTurret::Update()

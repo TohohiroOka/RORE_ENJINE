@@ -45,14 +45,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)external\FBX_SDK\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\Imgui;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\FBX_SDK\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\Imgui;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)engine\external\FBX_SDK\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)external\FBX_SDK\include;$(SolutionDir)external\DirectXTex;$(SolutionDir)external\Imgui;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\FBX_SDK\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\Imgui;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)engine\external\FBX_SDK\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)3d\collider;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)camera;$(ProjectDir)easing;$(ProjectDir)external;$(ProjectDir)input;$(ProjectDir)light;$(ProjectDir)object;$(ProjectDir)particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\base\input;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -81,7 +81,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)3d\collider;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)camera;$(ProjectDir)easing;$(ProjectDir)external;$(ProjectDir)input;$(ProjectDir)light;$(ProjectDir)object;$(ProjectDir)particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\base\input;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -97,50 +97,53 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2d\DebugText.cpp" />
-    <ClCompile Include="2d\PostEffect.cpp" />
-    <ClCompile Include="2d\Sprite.cpp" />
-    <ClCompile Include="3d\collider\Collision.cpp" />
-    <ClCompile Include="3d\collider\CollisionManager.cpp" />
-    <ClCompile Include="3d\collider\CollisionPrimitive.cpp" />
-    <ClCompile Include="3d\collider\MeshCollider.cpp" />
-    <ClCompile Include="3d\collider\SphereCollider.cpp" />
-    <ClCompile Include="3d\CubeMap.cpp" />
-    <ClCompile Include="3d\DrawLine3D.cpp" />
-    <ClCompile Include="3d\HeightMap.cpp" />
-    <ClCompile Include="3d\InterfaceObject3d.cpp" />
-    <ClCompile Include="3d\Material.cpp" />
-    <ClCompile Include="3d\Mesh.cpp" />
-    <ClCompile Include="3d\Model.cpp" />
-    <ClCompile Include="3d\Object3d.cpp" />
-    <ClCompile Include="3d\PrimitiveObject3D.cpp" />
-    <ClCompile Include="audio\Audio.cpp" />
-    <ClCompile Include="base\ComputeShaderManager.cpp" />
-    <ClCompile Include="base\Csv.cpp" />
-    <ClCompile Include="base\DescriptorHeapManager.cpp" />
-    <ClCompile Include="base\DirectXCommon.cpp" />
-    <ClCompile Include="base\FrameRateKeep.cpp" />
-    <ClCompile Include="base\GraphicsPipelineManager.cpp" />
-    <ClCompile Include="base\MainEngine.cpp" />
-    <ClCompile Include="base\Matrix4.cpp" />
-    <ClCompile Include="base\ShaderManager.cpp" />
-    <ClCompile Include="base\Singleton.cpp" />
-    <ClCompile Include="base\Texture.cpp" />
-    <ClCompile Include="base\Vector2.cpp" />
-    <ClCompile Include="base\Vector3.cpp" />
-    <ClCompile Include="base\WindowApp.cpp" />
-    <ClCompile Include="camera\Camera.cpp" />
-    <ClCompile Include="easing\Easing.cpp" />
-    <ClCompile Include="external\Imgui\imgui.cpp" />
-    <ClCompile Include="external\Imgui\imgui_demo.cpp" />
-    <ClCompile Include="external\Imgui\imgui_draw.cpp" />
-    <ClCompile Include="external\Imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="external\Imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="external\Imgui\imgui_tables.cpp" />
-    <ClCompile Include="external\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="input\DirectInput.cpp" />
-    <ClCompile Include="input\XInputManager.cpp" />
-    <ClCompile Include="light\LightGroup.cpp" />
+    <ClCompile Include="engine\2d\DebugText.cpp" />
+    <ClCompile Include="engine\2d\PostEffect.cpp" />
+    <ClCompile Include="engine\2d\Sprite.cpp" />
+    <ClCompile Include="engine\3d\collider\Collision.cpp" />
+    <ClCompile Include="engine\3d\collider\CollisionManager.cpp" />
+    <ClCompile Include="engine\3d\collider\CollisionPrimitive.cpp" />
+    <ClCompile Include="engine\3d\collider\MeshCollider.cpp" />
+    <ClCompile Include="engine\3d\collider\SphereCollider.cpp" />
+    <ClCompile Include="engine\3d\CubeMap.cpp" />
+    <ClCompile Include="engine\3d\DrawLine3D.cpp" />
+    <ClCompile Include="engine\3d\HeightMap.cpp" />
+    <ClCompile Include="engine\3d\InterfaceObject3d.cpp" />
+    <ClCompile Include="engine\3d\Material.cpp" />
+    <ClCompile Include="engine\3d\Mesh.cpp" />
+    <ClCompile Include="engine\3d\Model.cpp" />
+    <ClCompile Include="engine\3d\Object3d.cpp" />
+    <ClCompile Include="engine\3d\PrimitiveObject3D.cpp" />
+    <ClCompile Include="engine\audio\Audio.cpp" />
+    <ClCompile Include="engine\base\ComputeShaderManager.cpp" />
+    <ClCompile Include="engine\base\Csv.cpp" />
+    <ClCompile Include="engine\base\DescriptorHeapManager.cpp" />
+    <ClCompile Include="engine\base\DirectXCommon.cpp" />
+    <ClCompile Include="engine\base\FrameRateKeep.cpp" />
+    <ClCompile Include="engine\base\GraphicsPipelineManager.cpp" />
+    <ClCompile Include="engine\base\input\DirectInput.cpp" />
+    <ClCompile Include="engine\base\input\XInputManager.cpp" />
+    <ClCompile Include="engine\base\MainEngine.cpp" />
+    <ClCompile Include="engine\base\Matrix4.cpp" />
+    <ClCompile Include="engine\base\ShaderManager.cpp" />
+    <ClCompile Include="engine\base\Singleton.cpp" />
+    <ClCompile Include="engine\base\Texture.cpp" />
+    <ClCompile Include="engine\base\Vector2.cpp" />
+    <ClCompile Include="engine\base\Vector3.cpp" />
+    <ClCompile Include="engine\base\WindowApp.cpp" />
+    <ClCompile Include="engine\camera\Camera.cpp" />
+    <ClCompile Include="engine\easing\Easing.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui_demo.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui_draw.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui_tables.cpp" />
+    <ClCompile Include="engine\external\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="engine\light\LightGroup.cpp" />
+    <ClCompile Include="engine\particle\Emitter.cpp" />
+    <ClCompile Include="engine\particle\ParticleManager.cpp" />
+    <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -153,13 +156,12 @@
     <ClCompile Include="object\EnemyManager.cpp" />
     <ClCompile Include="object\FixedTurret.cpp" />
     <ClCompile Include="object\FixedTurretBullet.cpp" />
+    <ClCompile Include="object\GameCollision.cpp" />
     <ClCompile Include="object\Ground.cpp" />
     <ClCompile Include="object\Player.cpp" />
+    <ClCompile Include="object\PlayerBullet.cpp" />
     <ClCompile Include="object\TouchableObject.cpp" />
-    <ClCompile Include="particle\Emitter.cpp" />
-    <ClCompile Include="particle\ParticleManager.cpp" />
     <ClCompile Include="scene\Title.cpp" />
-    <ClCompile Include="scene\SceneManager.cpp" />
     <ClCompile Include="scene\Boss1.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -309,63 +311,67 @@
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2d\DebugText.h" />
-    <ClInclude Include="2d\PostEffect.h" />
-    <ClInclude Include="2d\Sprite.h" />
-    <ClInclude Include="3d\collider\BaseCollider.h" />
-    <ClInclude Include="3d\collider\Collision.h" />
-    <ClInclude Include="3d\collider\CollisionAttribute.h" />
-    <ClInclude Include="3d\collider\CollisionInfo.h" />
-    <ClInclude Include="3d\collider\CollisionManager.h" />
-    <ClInclude Include="3d\collider\CollisionPrimitive.h" />
-    <ClInclude Include="3d\collider\CollisionTypes.h" />
-    <ClInclude Include="3d\collider\MeshCollider.h" />
-    <ClInclude Include="3d\collider\QueryCallback.h" />
-    <ClInclude Include="3d\collider\RaycastHit.h" />
-    <ClInclude Include="3d\collider\SphereCollider.h" />
-    <ClInclude Include="3d\CubeMap.h" />
-    <ClInclude Include="3d\DrawLine3D.h" />
-    <ClInclude Include="3d\HeightMap.h" />
-    <ClInclude Include="3d\InterfaceObject3d.h" />
-    <ClInclude Include="3d\Material.h" />
-    <ClInclude Include="3d\Mesh.h" />
-    <ClInclude Include="3d\Model.h" />
-    <ClInclude Include="3d\Object3d.h" />
-    <ClInclude Include="3d\PrimitiveObject3D.h" />
-    <ClInclude Include="audio\Audio.h" />
-    <ClInclude Include="base\ComputeShaderManager.h" />
-    <ClInclude Include="base\Csv.h" />
-    <ClInclude Include="base\DescriptorHeapManager.h" />
-    <ClInclude Include="base\DirectXCommon.h" />
-    <ClInclude Include="base\FrameRateKeep.h" />
-    <ClInclude Include="base\GraphicsPipelineManager.h" />
-    <ClInclude Include="base\Matrix4.h" />
-    <ClInclude Include="base\PipelineHelpar.h" />
-    <ClInclude Include="base\MainEngine.h" />
-    <ClInclude Include="base\SafeDelete.h" />
-    <ClInclude Include="base\ShaderManager.h" />
-    <ClInclude Include="base\Singleton.h" />
-    <ClInclude Include="base\Texture.h" />
-    <ClInclude Include="base\Vector2.h" />
-    <ClInclude Include="base\Vector3.h" />
-    <ClInclude Include="base\WindowApp.h" />
-    <ClInclude Include="camera\Camera.h" />
-    <ClInclude Include="easing\Easing.h" />
-    <ClInclude Include="external\Imgui\imconfig.h" />
-    <ClInclude Include="external\Imgui\imgui.h" />
-    <ClInclude Include="external\Imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="external\Imgui\imgui_impl_win32.h" />
-    <ClInclude Include="external\Imgui\imgui_internal.h" />
-    <ClInclude Include="external\Imgui\imstb_rectpack.h" />
-    <ClInclude Include="external\Imgui\imstb_textedit.h" />
-    <ClInclude Include="external\Imgui\imstb_truetype.h" />
-    <ClInclude Include="input\DirectInput.h" />
-    <ClInclude Include="input\XInputManager.h" />
-    <ClInclude Include="light\CircleShadow.h" />
-    <ClInclude Include="light\DirectionalLight.h" />
-    <ClInclude Include="light\LightGroup.h" />
-    <ClInclude Include="light\PointLight.h" />
-    <ClInclude Include="light\SpotLight.h" />
+    <ClInclude Include="engine\2d\DebugText.h" />
+    <ClInclude Include="engine\2d\PostEffect.h" />
+    <ClInclude Include="engine\2d\Sprite.h" />
+    <ClInclude Include="engine\3d\collider\BaseCollider.h" />
+    <ClInclude Include="engine\3d\collider\Collision.h" />
+    <ClInclude Include="engine\3d\collider\CollisionAttribute.h" />
+    <ClInclude Include="engine\3d\collider\CollisionInfo.h" />
+    <ClInclude Include="engine\3d\collider\CollisionManager.h" />
+    <ClInclude Include="engine\3d\collider\CollisionPrimitive.h" />
+    <ClInclude Include="engine\3d\collider\CollisionTypes.h" />
+    <ClInclude Include="engine\3d\collider\MeshCollider.h" />
+    <ClInclude Include="engine\3d\collider\QueryCallback.h" />
+    <ClInclude Include="engine\3d\collider\RaycastHit.h" />
+    <ClInclude Include="engine\3d\collider\SphereCollider.h" />
+    <ClInclude Include="engine\3d\CubeMap.h" />
+    <ClInclude Include="engine\3d\DrawLine3D.h" />
+    <ClInclude Include="engine\3d\HeightMap.h" />
+    <ClInclude Include="engine\3d\InterfaceObject3d.h" />
+    <ClInclude Include="engine\3d\Material.h" />
+    <ClInclude Include="engine\3d\Mesh.h" />
+    <ClInclude Include="engine\3d\Model.h" />
+    <ClInclude Include="engine\3d\Object3d.h" />
+    <ClInclude Include="engine\3d\PrimitiveObject3D.h" />
+    <ClInclude Include="engine\audio\Audio.h" />
+    <ClInclude Include="engine\base\ComputeShaderManager.h" />
+    <ClInclude Include="engine\base\Csv.h" />
+    <ClInclude Include="engine\base\DescriptorHeapManager.h" />
+    <ClInclude Include="engine\base\DirectXCommon.h" />
+    <ClInclude Include="engine\base\FrameRateKeep.h" />
+    <ClInclude Include="engine\base\GraphicsPipelineManager.h" />
+    <ClInclude Include="engine\base\input\DirectInput.h" />
+    <ClInclude Include="engine\base\input\XInputManager.h" />
+    <ClInclude Include="engine\base\MainEngine.h" />
+    <ClInclude Include="engine\base\Matrix4.h" />
+    <ClInclude Include="engine\base\PipelineHelpar.h" />
+    <ClInclude Include="engine\base\SafeDelete.h" />
+    <ClInclude Include="engine\base\ShaderManager.h" />
+    <ClInclude Include="engine\base\Singleton.h" />
+    <ClInclude Include="engine\base\Texture.h" />
+    <ClInclude Include="engine\base\Vector2.h" />
+    <ClInclude Include="engine\base\Vector3.h" />
+    <ClInclude Include="engine\base\WindowApp.h" />
+    <ClInclude Include="engine\camera\Camera.h" />
+    <ClInclude Include="engine\easing\Easing.h" />
+    <ClInclude Include="engine\external\imgui\imconfig.h" />
+    <ClInclude Include="engine\external\imgui\imgui.h" />
+    <ClInclude Include="engine\external\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="engine\external\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="engine\external\imgui\imgui_internal.h" />
+    <ClInclude Include="engine\external\imgui\imstb_rectpack.h" />
+    <ClInclude Include="engine\external\imgui\imstb_textedit.h" />
+    <ClInclude Include="engine\external\imgui\imstb_truetype.h" />
+    <ClInclude Include="engine\light\CircleShadow.h" />
+    <ClInclude Include="engine\light\DirectionalLight.h" />
+    <ClInclude Include="engine\light\LightGroup.h" />
+    <ClInclude Include="engine\light\PointLight.h" />
+    <ClInclude Include="engine\light\SpotLight.h" />
+    <ClInclude Include="engine\particle\Emitter.h" />
+    <ClInclude Include="engine\particle\ParticleManager.h" />
+    <ClInclude Include="engine\scene\InterfaceScene.h" />
+    <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="object\BaseBullet.h" />
     <ClInclude Include="object\BaseEnemy.h" />
     <ClInclude Include="object\BulletManager.h" />
@@ -374,18 +380,16 @@
     <ClInclude Include="object\EnemyManager.h" />
     <ClInclude Include="object\FixedTurret.h" />
     <ClInclude Include="object\FixedTurretBullet.h" />
+    <ClInclude Include="object\GameCollision.h" />
     <ClInclude Include="object\Ground.h" />
     <ClInclude Include="object\Player.h" />
+    <ClInclude Include="object\PlayerBullet.h" />
     <ClInclude Include="object\TouchableObject.h" />
-    <ClInclude Include="particle\Emitter.h" />
-    <ClInclude Include="particle\ParticleManager.h" />
     <ClInclude Include="scene\Title.h" />
-    <ClInclude Include="scene\InterfaceScene.h" />
-    <ClInclude Include="scene\SceneManager.h" />
     <ClInclude Include="scene\Boss1.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="external\DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj">
+    <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
   </ItemGroup>

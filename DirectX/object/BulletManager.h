@@ -1,6 +1,7 @@
 #pragma once
 #include "FixedTurretBullet.h"
 #include "EnemyABullet.h"
+#include "PlayerBullet.h"
 
 class BulletManager
 {
@@ -35,11 +36,6 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// 描画
-	/// </summary>
-	void DLDraw();
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Reset();
@@ -48,7 +44,14 @@ public:
 	/// 弾と地形、プレイヤーとの当たり判定
 	/// </summary>
 	/// <param name="_pos">プレイヤー座標</param>
-	bool CheckCollision(const XMFLOAT3& _pos);
+	bool CheckEnemyBCollision(const XMFLOAT3& _pos);
+
+	/// <summary>
+	/// 弾と地形、エネミーとの当たり判定
+	/// </summary>
+	/// <param name="_pos">プレイヤー座標</param>
+	/// <param name="_scale">大きさ</param>
+	bool CheckPlayerBCollision(const XMFLOAT3& _pos, float _scale);
 
 private:
 
@@ -56,7 +59,8 @@ private:
 	static std::vector<std::unique_ptr<FixedTurretBullet>> fixedTurretBullet;
 	//エネミーAの弾
 	static std::vector<std::unique_ptr<EnemyABullet>> enemyABullet;
-
+	//プレイヤーの弾
+	static std::vector<std::unique_ptr<PlayerBullet>> playerBullet;
 
 public:
 
@@ -70,4 +74,12 @@ public:
 		enemyABullet.emplace_back(EnemyABullet::Create(_pos, _moveVec));
 	}
 
+	//弾セット
+	static void SetPlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
+		playerBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec));
+	}
+
+	std::vector<std::unique_ptr<PlayerBullet>>& GetPlayerBullet() {
+		return playerBullet;
+	}
 };

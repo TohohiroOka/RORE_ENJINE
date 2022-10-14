@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Ground.h"
-#include "Player.h"
 #include "BulletManager.h"
+#include "EnemyManager.h"
 #include "Collision.h"
 
 /// <summary>
@@ -11,20 +10,11 @@
 class GameCollision
 {
 public:
-	/// <summary>
-	/// “G‚Ì“–‚½‚è”»’è
-	/// </summary>
-	/// <param name="player">ƒvƒŒƒCƒ„[</param>
-	/// <param name="enemy">“G</param>
-	/// <returns>Õ“Ë‚µ‚Ä‚¢‚é‚©”Û‚©</returns>
-	static bool CheckBullet(Ground* _ground, Player* _player, BulletManager* _bullet);
 
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚Æ“G‚Ì“–‚½‚è”»’è
+	/// ’e‚Æ“G‚Ì“–‚½‚è”»’è
 	/// </summary>
-	/// <param name="player">ƒvƒŒƒCƒ„[</param>
-	/// <param name="enemy">“G</param>
-	/// <returns>Õ“Ë‚µ‚Ä‚¢‚é‚©”Û‚©</returns>
-	static bool CheckPlayerToEnemy(Player* player, BaseBullet* enemy);
-
+	/// <param name="_bullet">’e</param>
+	/// <param name="_enemy">“G</param>
+	static bool CheckBulletToEnemy(BaseBullet* _bullet, BaseEnemy* _enemy);
 };

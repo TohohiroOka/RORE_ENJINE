@@ -43,6 +43,11 @@ public:
 	/// </summary>
 	void Collider();
 
+	/// <summary>
+	/// 弾のセット
+	/// </summary>
+	void SetBullet();
+
 private:
 
 	std::unique_ptr<Model> model = nullptr;
@@ -70,5 +75,5 @@ public:
 	/// カメラの角度セット
 	/// </summary>
 	/// <param name="cameraAngle">カメラ角度</param>
-	void SetCameraAngle(const float& cameraAngle) { this->cameraAngle = cameraAngle; }
+	void SetCameraAngle(float cameraAngle) { this->cameraAngle = cameraAngle; }
 };
