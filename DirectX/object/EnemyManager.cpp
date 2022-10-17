@@ -43,18 +43,21 @@ void EnemyManager::Initialize()
 	BaseEnemy::StaticInitialize();
 	timer = 0;
 	enemyA.emplace_back(EnemyA::Create(popPos[1]));
+
+	isKillEnemyA = false;
 }
 
 void EnemyManager::Update(const XMFLOAT3& _pos)
 {
 	timer++;
+	isKillEnemyA = false;
 
-	////敵追加
-	//if (timer % 100 == 1 && enemyA.size() < 20)
-	//{
-	//	int randN = rand() % 4;
-	//	enemyA.emplace_back(EnemyA::Create(popPos[randN]));
-	//}
+	//敵追加
+	if (timer % 100 == 1 && enemyA.size() < 20)
+	{
+		int randN = rand() % 4;
+		enemyA.emplace_back(EnemyA::Create(popPos[randN]));
+	}
 
 	for (auto& i : enemyA)
 	{
@@ -69,6 +72,7 @@ void EnemyManager::Update(const XMFLOAT3& _pos)
 		if (!enemyA[i]->GetIsAlive())
 		{
 			enemyA.erase(enemyA.begin() + i);
+			isKillEnemyA = true;
 			break;
 		}
 	}
@@ -96,16 +100,14 @@ bool EnemyManager::CheckCollision(const XMFLOAT3& _pos)
 
 	bool isHit = false;
 
-	//弾とプレイヤーが衝突状態でないなら抜ける
+	//プレイヤーが衝突状態でないなら抜ける
 	for (auto& i : enemyA)
 	{
 		if (!i->GetIsAlive()) { continue; }
 
-		//プレイヤーと当たっていたら消す
+		//プレイヤーと当たっていたら押し戻し
 		if (Collision::CheckCircle2Circle(
 			i->GetPosition(), i->GetScale(), playerPos, playerSize)) {
-			isHit = true;
-			i->SetIsAlive(false);
 		}
 	}
 

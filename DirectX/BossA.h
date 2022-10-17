@@ -1,19 +1,19 @@
 #pragma once
 #include "BaseEnemy.h"
 
-class EnemyA : public BaseEnemy
+class BossA : public BaseEnemy
 {
 public:
 
-	EnemyA(const XMFLOAT3& _pos);
-	~EnemyA() {};
+	BossA(const XMFLOAT3& _pos);
+	~BossA() {};
 
 	/// <summary>
 	/// 生成
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <returns></returns>
-	static std::unique_ptr<EnemyA> Create(const XMFLOAT3& _pos);
+	static std::unique_ptr<BossA> Create(const XMFLOAT3& _pos);
 
 	/// <summary>
 	/// 更新
@@ -24,7 +24,8 @@ private:
 
 	//タイマー
 	int timer;
+	//地面についているか
+	bool onGround;
 	//一回に出す弾の量
 	const int bulletNum = 10;
 };
-

@@ -8,6 +8,7 @@
 #include "BulletManager.h"
 #include "FixedTurret.h"
 #include "EnemyManager.h"
+#include "BossA.h"
 
 class Boss1 : public InterfaceScene
 {
@@ -66,4 +67,8 @@ private:
 
 	//“G
 	std::unique_ptr<EnemyManager> enemy;
+
+	//ƒ{ƒX
+	std::unique_ptr<BossA> boss;
+	
 };

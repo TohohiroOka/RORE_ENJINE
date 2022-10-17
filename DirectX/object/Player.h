@@ -26,7 +26,8 @@ public:
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update();
+	/// <param name="cameraAngle">カメラ角度</param>
+	void Update(float _cameraAngle);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -70,10 +71,4 @@ public:
 	/// 大きさ取得
 	/// </summary>
 	XMFLOAT3 GetScale() { return object->GetScale(); }
-
-	/// <summary>
-	/// カメラの角度セット
-	/// </summary>
-	/// <param name="cameraAngle">カメラ角度</param>
-	void SetCameraAngle(float cameraAngle) { this->cameraAngle = cameraAngle; }
 };

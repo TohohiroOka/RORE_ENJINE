@@ -352,6 +352,7 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>エンジンシステム\Base\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="BossA.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -682,5 +683,6 @@
     <ClInclude Include="engine\scene\InterfaceScene.h">
       <Filter>エンジンシステム\Base\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="BossA.h" />
   </ItemGroup>
 </Project>

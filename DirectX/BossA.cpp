@@ -1,11 +1,10 @@
-#include "EnemyA.h"
+#include "BossA.h"
 #include "BulletManager.h"
-
-#include "DirectInput.h"
+#include "DebugText.h"
 
 using namespace DirectX;
 
-EnemyA::EnemyA(const XMFLOAT3& _pos)
+BossA::BossA(const XMFLOAT3& _pos)
 {
 	//タイマー
 	timer = 0;
@@ -22,14 +21,14 @@ EnemyA::EnemyA(const XMFLOAT3& _pos)
 	object->SetPosition(pos);
 
 	//大きさセット
-	scale = 3.0f;
+	scale = 10.0f;
 	object->SetScale({ scale ,scale ,scale });
 }
 
-std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos)
+std::unique_ptr<BossA> BossA::Create(const XMFLOAT3& _pos)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	EnemyA* instance = new EnemyA(_pos);
+	BossA* instance = new BossA(_pos);
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -37,10 +36,10 @@ std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos)
 	// 初期化
 	instance->Initialize();
 
-	return std::unique_ptr<EnemyA>(instance);
+	return std::unique_ptr<BossA>(instance);
 }
 
-void EnemyA::Update()
+void BossA::Update()
 {
 	timer++;
 
@@ -56,4 +55,9 @@ void EnemyA::Update()
 	}
 
 	BaseEnemy::Update();
+
+	DebugText* text = DebugText::GetInstance();
+	std::string bossHp = std::to_string(hp);
+	text->Print("Boss hp : " + bossHp, 100, 200);
+	text = nullptr;
 }

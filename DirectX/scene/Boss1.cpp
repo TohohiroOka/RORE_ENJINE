@@ -31,6 +31,8 @@ void Boss1::Initialize()
 	fixedTurret[3] = FixedTurret::Create({ 810,50,1905 }, { 1.0f,0.2f,0.0f });//x座標向き
 
 	enemy = EnemyManager::Create();
+
+	boss = BossA::Create({ 3825.0f / 2.0f ,10.0f ,3825.0f / 2.0f });
 }
 
 void Boss1::Update()
@@ -38,23 +40,19 @@ void Boss1::Update()
 	DirectInput* input = DirectInput::GetInstance();
 	XInputManager* xinput = XInputManager::GetInstance();
 
-	//シーンの移行
-	if (input->TriggerKey(DIK_0))
-	{
-		Title* nextScene = new Title();
-		nextScene->Initialize();
-		SceneManager::SetNextScene(nextScene);
-	}
+	player->Update(cameraAngle);
 
-	player->SetCameraAngle(cameraAngle);
-	player->Update();
+	XMFLOAT3 playerPos = player->GetPosition();
 
+	//弾更新
 	bullet->Update();
-	bullet->CheckEnemyBCollision(player->GetPosition());
+	bullet->CheckEnemyBCollision(playerPos);
 
-	enemy->Update(player->GetPosition());
-	enemy->CheckCollision(player->GetPosition());
+	//敵更新
+	enemy->Update(playerPos);
+	enemy->CheckCollision(playerPos);
 
+	//敵と弾の当たり判定
 	auto& pBullet = bullet->GetPlayerBullet();
 	auto& enemyA = enemy->GetEnemyA();
 	for (auto& b : pBullet)
@@ -68,17 +66,39 @@ void Boss1::Update()
 		}
 	}
 
+	//固定砲台更新
 	for (auto& i : fixedTurret)
 	{
 		i->Update();
 	}
 
+	//地形更新
 	for (int i = 0; i < ground_num; i++)
 	{
 		ground[i]->Update();
 	}
 
+	//ボス更新
+	boss->SetMove(playerPos);
+	boss->Update();
+	for (auto& b : pBullet)
+	{
+		//当たらなかったらスキップ
+		if (!GameCollision::CheckBulletToEnemy(b.get(), boss.get())) { continue; }
+		b->SetIsAlive(false);
+		boss->Damage();
+	}
+
+	//カメラ更新
 	CameraUpdate();
+
+	//ボスが倒されたのでフロア終わり
+	if (!boss->GetIsAlive())
+	{
+		Title* nextScene = new Title();
+		nextScene->Initialize();
+		SceneManager::SetNextScene(nextScene);
+	}
 
 	input = nullptr;
 	xinput = nullptr;
@@ -104,6 +124,7 @@ void Boss1::Draw()
 		i->Draw();
 	}
 	enemy->Draw();
+	boss->Draw();
 
 	PrimitiveObject3D::PreDraw();
 	ground[0]->CDraw();

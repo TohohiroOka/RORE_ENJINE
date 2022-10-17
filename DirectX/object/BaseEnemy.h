@@ -18,14 +18,30 @@ public:
 	static void StaticInitialize();
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	virtual void Initialize();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
-	virtual void Update() = 0;
+	virtual void Update();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual void Draw();
+
+	/// <summary>
+	/// 敵の移動方向セット
+	/// </summary>
+	/// <param name="_pos">プレイヤー座標</param>
+	void SetMove(const XMFLOAT3& _pos);
+
+	/// <summary>
+	/// 押し戻し有の当たり判定
+	/// </summary>
+	void MapCollider();
 
 	/// <summary>
 	/// delete処理
@@ -49,8 +65,12 @@ protected:
 	XMFLOAT3 pos;
 	//移動ベクトル
 	XMFLOAT3 moveVec;
+	//移動速度
+	float speed;
 	//大きさ
 	float scale;
+	//地面についているか
+	bool onGround;
 
 public:
 
@@ -58,5 +78,8 @@ public:
 	XMFLOAT3 GetPosition() { return pos; }
 	float GetScale() { return scale; }
 	void SetIsAlive(bool _isAlive) { isAlive = _isAlive; }
-	void Damage() { hp--; }
+	void Damage() { 
+		hp--;
+		isAlive = hp == 0;
+	}
 };

@@ -63,13 +63,14 @@ void Player::Initialize()
 	object->SetScale({ 1,1,1 });
 }
 
-void Player::Update()
+void Player::Update(float _cameraAngle)
 {
 	DirectInput* input = DirectInput::GetInstance();
 
 	//速度
 	float Pspeed = 5.0f;
 	//ラジアン変換
+	cameraAngle = _cameraAngle;
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
 	float radiusUD = XMConvertToRadians(cameraAngle);
 

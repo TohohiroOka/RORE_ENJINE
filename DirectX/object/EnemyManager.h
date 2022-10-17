@@ -53,11 +53,17 @@ private:
 	static std::vector<std::unique_ptr<EnemyA>> enemyA;
 	//出現位置
 	static const std::array<XMFLOAT3, 4> popPos;
+	//敵Aが現フレームで倒されたかどうか
+	bool isKillEnemyA;
 
 public:
 
 	std::vector<std::unique_ptr<EnemyA>>& GetEnemyA() {
 		return enemyA;
+	}
+
+	bool GetKillBoss() {
+		return isKillEnemyA;
 	}
 };
 
