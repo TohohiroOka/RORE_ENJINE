@@ -122,8 +122,15 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 	//2D描画なら上書きモードに設定
 	if (_pepelineDescSet.object2d)
 	{
-		gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		gpipeline.DepthStencilState.DepthEnable = true;
+		if (_pepelineDescSet.particl)
+		{
+			gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		}
+		else
+		{
+			gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+			gpipeline.DepthStencilState.DepthEnable = true;
+		}
 	}
 
 	gpipeline.InputLayout.pInputElementDescs = _pepelineDescSet.inputLayout;
@@ -145,6 +152,7 @@ void GraphicsPipelineManager::CreateRootSignature(const SIGNATURE_DESC& _signatu
 	std::vector<CD3DX12_ROOT_PARAMETER> rootparams(rootparam_num);
 	// CBV（座標変換行列用）
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
 
 	//2d描画
 	if (_signatureDescSet.object2d)

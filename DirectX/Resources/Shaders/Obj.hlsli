@@ -1,5 +1,6 @@
 cbuffer cbuff0 : register(b0)
 {
+	float3 baseColor;
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）

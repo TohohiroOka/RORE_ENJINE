@@ -68,6 +68,24 @@ void SetLayout(D3D12_INPUT_ELEMENT_DESC* inputLayout, GraphicsPipelineManager::I
 				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 			};
 		}
+		//スケール
+		else if (layoutNumber == LAYOUT::SCALE)
+		{
+			inputLayout[i] = {
+				"SCALE", 0, DXGI_FORMAT_R32_FLOAT, 0,
+				D3D12_APPEND_ALIGNED_ELEMENT,
+				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+			};
+		}
+		//色
+		else if (layoutNumber == LAYOUT::COLOR)
+		{
+			inputLayout[i] = {
+				"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
+				D3D12_APPEND_ALIGNED_ELEMENT,
+				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+		}
+
 	}
 }
 
@@ -256,11 +274,39 @@ void SceneManager::CreatePipeline()
 		graphicsPipeline->CreatePipeline("SPRITE", inPepeline, inSignature);
 		Sprite::SetPipeline(graphicsPipeline->graphicsPipeline["SPRITE"]);
 	}
+	//PARTICLE
+	{
+		inPepeline.object2d = true;
+		inPepeline.vertShader = "PARTICLE";
+		inPepeline.pixelShader = "PARTICLE";
+		inPepeline.geometryShader = "PARTICLE";
+		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
+			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::SCALE,GraphicsPipelineManager::COLOR };
+		//配列サイズ
+		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
+
+		inPepeline.layoutNum = arrayNum;
+		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
+		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		inPepeline.inputLayout = inputLayout;
+		inPepeline.stateNum = 1;
+		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
+		inPepeline.particl = true;
+
+		inSignature.object2d = true;
+		inSignature.textureNum = 1;
+		inSignature.light = false;
+
+		graphicsPipeline->CreatePipeline("PARTICLE", inPepeline, inSignature);
+		ParticleManager::SetPipeline(graphicsPipeline->graphicsPipeline["PARTICLE"]);
+	}
 	//POST_EFFECT
 	{
 		inPepeline.object2d = true;
 		inPepeline.vertShader = "POST_EFFECT";
 		inPepeline.pixelShader = "POST_EFFECT";
+		inPepeline.geometryShader = "null";
 		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
 			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::TEXCOORD_2D };
 		//配列サイズ
@@ -271,14 +317,18 @@ void SceneManager::CreatePipeline()
 		SetLayout(inputLayout, inputLayoutType, arrayNum);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
+		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
+		inPepeline.particl = false;
 
 		inSignature.object2d = true;
-		inSignature.light = false;
 		inSignature.textureNum = 4;
+		inSignature.light = false;
 
 		graphicsPipeline->CreatePipeline("POST_EFFECT", inPepeline, inSignature);
 		PostEffect::SetPipeline(graphicsPipeline->graphicsPipeline["POST_EFFECT"]);
 	}
+
 }
 
 void SceneManager::Update()

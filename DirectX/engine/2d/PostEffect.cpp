@@ -7,7 +7,7 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 const float PostEffect::clearColor[2][4] = {
-	{ 0.1f,0.1f,0.7f,0.0f },
+	{ 0.0f,0.0f,0.0f,0.0f },
 	{ 0.0f,0.0f,0.0f,0.0f }
 };
 GraphicsPipelineManager::GRAPHICS_PIPELINE PostEffect::pipeline;

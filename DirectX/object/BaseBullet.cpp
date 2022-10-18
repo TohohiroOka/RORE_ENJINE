@@ -22,6 +22,8 @@ void BaseBullet::Initialize()
 	isAlive = true;
 	scale = 3;
 
+	object->SetBloom(true);
+
 	object->SetScale({ scale ,scale ,scale });
 	object->SetPosition(pos);
 	object->Update();
@@ -30,49 +32,51 @@ void BaseBullet::Initialize()
 void BaseBullet::Update()
 {
 	//最大値にいったら生存フラグを消す
-	if (pos.x < 0.0f || pos.x>3825.0f || pos.y > 500 || pos.z < 0.0f || pos.z>3825.0f) {
+	if (pos.x < 0.0f || pos.x>3825.0f || pos.y > 500 || pos.y < -1.0f || pos.z < 0.0f || pos.z>3825.0f) {
 		isAlive = false;
 	}
 
-	SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(object->GetCollider());
-	assert(sphereCollider);
-
-	// クエリーコールバッククラス
-	class PlayerQueryCallback : public QueryCallback
 	{
-	public:
-		PlayerQueryCallback(Sphere* sphere) : sphere(sphere) {};
+		//SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(object->GetCollider());
+		//assert(sphereCollider);
 
-		// 衝突時コールバック関数
-		bool OnQueryHit(const QUERY_HIT& info) {
+		//// クエリーコールバッククラス
+		//class PlayerQueryCallback : public QueryCallback
+		//{
+		//public:
+		//	PlayerQueryCallback(Sphere* sphere) : sphere(sphere) {};
 
-			const XMVECTOR up = { 0,1,0,0 };
+		//	// 衝突時コールバック関数
+		//	bool OnQueryHit(const QUERY_HIT& info) {
 
-			XMVECTOR rejectDir = XMVector3Normalize(info.reject);
-			float cos = XMVector3Dot(rejectDir, up).m128_f32[0];
+		//		const XMVECTOR up = { 0,1,0,0 };
 
-			// 地面判定しきい値
-			const float threshold = cosf(XMConvertToRadians(90.0f));
+		//		XMVECTOR rejectDir = XMVector3Normalize(info.reject);
+		//		float cos = XMVector3Dot(rejectDir, up).m128_f32[0];
 
-			if (-threshold < cos && cos < threshold) {
-				sphere->center += info.reject;
-				move += info.reject;
-			}
+		//		// 地面判定しきい値
+		//		const float threshold = cosf(XMConvertToRadians(90.0f));
 
-			return true;
-		}
+		//		if (-threshold < cos && cos < threshold) {
+		//			sphere->center += info.reject;
+		//			move += info.reject;
+		//		}
 
-		Sphere* sphere = nullptr;
-		DirectX::XMVECTOR move = {};
-	};
-	PlayerQueryCallback callback(sphereCollider);
+		//		return true;
+		//	}
 
-	// 球と地形の交差を全検索
-	CollisionManager::GetInstance()->QuerySphere(*sphereCollider, &callback, COLLISION_ATTR_LANDSHAPE);
-	// 交差による排斥分動かす
-	pos.x += callback.move.m128_f32[0];
-	pos.y += callback.move.m128_f32[1];
-	pos.z += callback.move.m128_f32[2];
+		//	Sphere* sphere = nullptr;
+		//	DirectX::XMVECTOR move = {};
+		//};
+		//PlayerQueryCallback callback(sphereCollider);
+
+		//// 球と地形の交差を全検索
+		//CollisionManager::GetInstance()->QuerySphere(*sphereCollider, &callback, COLLISION_ATTR_LANDSHAPE);
+		//// 交差による排斥分動かす
+		//pos.x += callback.move.m128_f32[0];
+		//pos.y += callback.move.m128_f32[1];
+		//pos.z += callback.move.m128_f32[2];
+	}
 
 	Ray ray;
 	ray.start = { pos.x,pos.y,pos.z,1 };

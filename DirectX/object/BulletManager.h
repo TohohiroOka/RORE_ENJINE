@@ -8,6 +8,7 @@ class BulletManager
 private:
 
 	using XMFLOAT3 = DirectX::XMFLOAT3;
+	using XMFLOAT4 = DirectX::XMFLOAT4;
 
 public:
 
@@ -70,8 +71,8 @@ public:
 	}
 
 	//弾セット
-	static void SetEnemyABullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
-		enemyABullet.emplace_back(EnemyABullet::Create(_pos, _moveVec));
+	static void SetEnemyABullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
+		enemyABullet.emplace_back(EnemyABullet::Create(_pos, _moveVec, _color));
 	}
 
 	//弾セット

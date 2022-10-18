@@ -45,6 +45,9 @@ void ParticleManager::LoadTexture(const std::string& _keepName, const std::strin
 
 void ParticleManager::Initialize()
 {
+	assert(pipeline.pipelineState);
+	assert(pipeline.rootSignature);
+
 	HRESULT result = S_FALSE;
 
 	// 頂点バッファ生成

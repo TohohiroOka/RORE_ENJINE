@@ -30,6 +30,7 @@ protected:// サブクラス
 	// 定数バッファ用データ構造体B0
 	struct CONST_BUFFER_DATA_B0
 	{
+		XMFLOAT3 baseColor;//ベースカラー
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
@@ -151,6 +152,8 @@ protected:
 	ComPtr<ID3D12Resource> constBuffB1;
 	//定数バッファに渡す変数
 	CONST_BUFFER_DATA_B1 constBufferB1Num;
+	//ベースカラー
+	XMFLOAT3 baseColor = { 1,1,1 };
 	//ブルームの有無
 	bool isBloom = false;
 	//トゥーンの有無
@@ -211,6 +214,12 @@ public:
 	/// </summary>
 	/// <param name="_scale">スケール</param>
 	void SetScale(const XMFLOAT3& _scale) { this->scale = _scale; }
+
+	/// <summary>
+	/// スケールの設定
+	/// </summary>
+	/// <param name="_color">色</param>
+	void SetColor(const XMFLOAT3& _color) { this->baseColor = _color; }
 
 	/// <summary>
 	/// ブルームのセット

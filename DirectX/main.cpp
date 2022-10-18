@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	const int window_height = 720;// 縦幅
 
 	//ゲーム名
-	const wchar_t* gameName = L"DirectX";
+	const wchar_t* gameName = L"ダンマク";
 
 	//ウィンドウ初期化
 	WindowApp* winApp = new WindowApp();

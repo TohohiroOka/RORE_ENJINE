@@ -61,14 +61,13 @@ private:
 	//’e
 	std::unique_ptr<BulletManager> bullet;
 	
-	//ŒÅ’è–C‘ä
-	static const int fixed_turret_num = 4;
-	std::array<std::unique_ptr<FixedTurret>, fixed_turret_num> fixedTurret;
+	////ŒÅ’è–C‘ä
+	//static const int fixed_turret_num = 4;
+	//std::array<std::unique_ptr<FixedTurret>, fixed_turret_num> fixedTurret;
 
 	//“G
 	std::unique_ptr<EnemyManager> enemy;
 
 	//ƒ{ƒX
 	std::unique_ptr<BossA> boss;
-	
 };

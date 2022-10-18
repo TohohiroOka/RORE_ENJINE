@@ -18,7 +18,7 @@ PSOutput main(VSOutput input) : SV_TARGET
 	// テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
 
-	float4 color = float4(m_baseColor.rgb, 1.0f);
+	float4 color = float4(baseColor.rgb, 1.0f);
 
 	// 光沢度
 	const float shininess = 4.0f;
@@ -160,7 +160,7 @@ PSOutput main(VSOutput input) : SV_TARGET
 
 
 	// シェーディングによる色で描画
-	float4 mainColor = shadecolor * texcolor;
+	float4 mainColor = shadecolor * texcolor * color;
 	PSOutput output;
 	output.target0 = float4(mainColor.rgb, color.w);
 	output.target1 = bloom;

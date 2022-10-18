@@ -24,11 +24,11 @@ void Boss1::Initialize()
 	ground[0] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
 
 	bullet = BulletManager::Create();
-	FixedTurret::StaticInitialize();
-	fixedTurret[0] = FixedTurret::Create({ 1905,50,3000 }, { 0.0f,0.2f,-1.0f });//-z座標向き
-	fixedTurret[1] = FixedTurret::Create({ 1905,50,810 }, { 0.0f,0.2f,1.0f });//z座標向き
-	fixedTurret[2] = FixedTurret::Create({ 3000,50,1905 }, { -1.0f,0.2f,0.0f });//-x座標向き
-	fixedTurret[3] = FixedTurret::Create({ 810,50,1905 }, { 1.0f,0.2f,0.0f });//x座標向き
+	//FixedTurret::StaticInitialize();
+	//fixedTurret[0] = FixedTurret::Create({ 1905,50,3000 }, { 0.0f,0.2f,-1.0f });//-z座標向き
+	//fixedTurret[1] = FixedTurret::Create({ 1905,50,810 }, { 0.0f,0.2f,1.0f });//z座標向き
+	//fixedTurret[2] = FixedTurret::Create({ 3000,50,1905 }, { -1.0f,0.2f,0.0f });//-x座標向き
+	//fixedTurret[3] = FixedTurret::Create({ 810,50,1905 }, { 1.0f,0.2f,0.0f });//x座標向き
 
 	enemy = EnemyManager::Create();
 
@@ -48,29 +48,29 @@ void Boss1::Update()
 	bullet->Update();
 	bullet->CheckEnemyBCollision(playerPos);
 
-	//敵更新
-	enemy->Update(playerPos);
-	enemy->CheckCollision(playerPos);
+	////敵更新
+	//enemy->Update(playerPos);
+	//enemy->CheckCollision(playerPos);
 
 	//敵と弾の当たり判定
 	auto& pBullet = bullet->GetPlayerBullet();
-	auto& enemyA = enemy->GetEnemyA();
-	for (auto& b : pBullet)
-	{
-		for (auto& e : enemyA)
-		{
-			//当たらなかったらスキップ
-			if (!GameCollision::CheckBulletToEnemy(b.get(), e.get())) {continue;}
-			b->SetIsAlive(false);
-			e->Damage();
-		}
-	}
+	//auto& enemyA = enemy->GetEnemyA();
+	//for (auto& b : pBullet)
+	//{
+	//	for (auto& e : enemyA)
+	//	{
+	//		//当たらなかったらスキップ
+	//		if (!GameCollision::CheckBulletToEnemy(b.get(), e.get())) {continue;}
+	//		b->SetIsAlive(false);
+	//		e->Damage();
+	//	}
+	//}
 
-	//固定砲台更新
-	for (auto& i : fixedTurret)
-	{
-		i->Update();
-	}
+	////固定砲台更新
+	//for (auto& i : fixedTurret)
+	//{
+	//	i->Update();
+	//}
 
 	//地形更新
 	for (int i = 0; i < ground_num; i++)
@@ -119,11 +119,11 @@ void Boss1::Draw()
 	Object3d::PreDraw();
 	player->Draw();
 	bullet->Draw();
-	for (auto& i : fixedTurret)
-	{
-		i->Draw();
-	}
-	enemy->Draw();
+	//for (auto& i : fixedTurret)
+	//{
+	//	i->Draw();
+	//}
+	//enemy->Draw();
 	boss->Draw();
 
 	PrimitiveObject3D::PreDraw();

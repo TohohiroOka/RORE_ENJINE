@@ -18,8 +18,9 @@ public:
 	/// </summary>
 	/// <param name="_pos">À•W</param>
 	/// <param name="_moveVec">ˆÚ“®—Ê</param>
+	/// <param name="_color">F</param>
 	/// <returns></returns>
-	static std::unique_ptr<EnemyABullet> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
+	static std::unique_ptr<EnemyABullet> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color);
 
 	/// <summary>
 	/// ‰Šú‰»

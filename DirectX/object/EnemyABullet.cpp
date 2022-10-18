@@ -8,7 +8,7 @@ EnemyABullet::EnemyABullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
 	moveVec = _moveVec;
 }
 
-std::unique_ptr<EnemyABullet> EnemyABullet::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
+std::unique_ptr<EnemyABullet> EnemyABullet::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	EnemyABullet* instance = new EnemyABullet(_pos, _moveVec);
@@ -18,7 +18,7 @@ std::unique_ptr<EnemyABullet> EnemyABullet::Create(const XMFLOAT3& _pos, const X
 
 	// 初期化
 	instance->Initialize();
-
+	instance->object->SetColor(_color);
 	return std::unique_ptr<EnemyABullet>(instance);
 }
 

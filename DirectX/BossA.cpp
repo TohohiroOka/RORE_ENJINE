@@ -43,14 +43,31 @@ void BossA::Update()
 {
 	timer++;
 
-	if (timer % 50 == 1)
+	if (timer % 5 == 1)
 	{
-		float angle = 360.0f / float(bulletNum);
+		angleXZ += 10.0f;
+		float radiunXZ = XMConvertToRadians(angleXZ);
 		for (int i = 0; i < bulletNum; i++)
 		{
-			float nowAngle = angle * i;
+			float ratio = float(i) / float(bulletNum);
+			float nowAngle = ratio * 360.0f;
 			float radiun = XMConvertToRadians(nowAngle);
-			BulletManager::SetEnemyABullet(pos, { cos(radiun),0.0f,sin(radiun) });
+			XMFLOAT3 color = {};
+			if (int(angleXZ) % 3 == 0)
+			{
+				color = { 0.9f,0.2f,0.2f };
+			}
+			else if (int(angleXZ) % 3 == 1)
+			{
+				color = { 0.2f,0.9f,0.2f };
+			}
+			else
+			{
+				color = { 0.2f,0.2f,0.9f };
+			}
+
+			BulletManager::SetEnemyABullet(pos,
+				{ cos(radiun) * cos(radiunXZ),cos(radiun) * sin(radiunXZ),sin(radiun) }, color);
 		}
 	}
 

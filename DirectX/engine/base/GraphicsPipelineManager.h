@@ -43,6 +43,8 @@ public://メンバenum
 		TEXCOORD_3D,
 		BONEINDICES,
 		BONEWEIGHTS,
+		SCALE,
+		COLOR,
 	};
 
 	//パイプライン設定
@@ -50,6 +52,8 @@ public://メンバenum
 	{
 		//2D描画か
 		bool object2d = false;
+		//パーティクル描画か
+		bool particl = false;
 		//頂点シェーダー
 		std::string vertShader = "null";
 		//ピクセルシェーダー
