@@ -1,6 +1,6 @@
 cbuffer cbuff0 : register(b0)
 {
-	float3 baseColor;
+	float4 baseColor;
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
@@ -8,6 +8,7 @@ cbuffer cbuff0 : register(b0)
 	uint isBloom;//ブルームの有無
 	uint isToon;//トゥーンの有無
 	uint isOutline;//アウトラインの有無
+	uint isLight;
 };
 
 cbuffer cbuff1 : register(b1)

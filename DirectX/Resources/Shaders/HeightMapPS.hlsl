@@ -7,6 +7,7 @@ SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
 float4 main(VSOutput input) : SV_TARGET
 {
+	float4 m_baseColor = float4(baseColor.rgb,1.0);
 	float3 m_ambient = float3(0.5, 0.5, 0.5);
 	float3 m_diffuse = float3(0.5, 0.5, 0.5);
 	float3 m_specular = float3(0.5, 0.5, 0.5);

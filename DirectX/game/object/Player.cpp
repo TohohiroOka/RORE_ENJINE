@@ -61,6 +61,8 @@ void Player::Initialize()
 
 	//SetToon(true);
 	object->SetScale({ 1,1,1 });
+
+	hp = 10;
 }
 
 void Player::Update(float _cameraAngle)
@@ -141,7 +143,9 @@ void Player::Update(float _cameraAngle)
 	std::string strX = std::to_string(position.x);
 	std::string strY = std::to_string(position.y);
 	std::string strZ = std::to_string(position.z);
+	std::string strHP = std::to_string(hp);
 	text->Print("1 :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 100);
+	text->Print("playerHP : " + strHP, 100, 150);
 	text = nullptr;
 
 	move = { 0,0,0 };

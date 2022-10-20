@@ -60,6 +60,9 @@ private:
 	//カメラ角度
 	float cameraAngle;
 
+	//HP
+	int hp;
+
 public:
 
 	/// <summary>
@@ -71,4 +74,12 @@ public:
 	/// 大きさ取得
 	/// </summary>
 	XMFLOAT3 GetScale() { return object->GetScale(); }
+
+	void Damage() {
+		hp--;
+	}
+	bool GetIsAlive(){
+		return hp > 0;
+	}
+
 };

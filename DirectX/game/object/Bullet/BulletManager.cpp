@@ -5,18 +5,14 @@
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
 
-std::vector<std::unique_ptr<FixedTurretBullet>> BulletManager::fixedTurretBullet;
-std::vector<std::unique_ptr<EnemyABullet>> BulletManager::enemyABullet;
-std::vector<std::unique_ptr<PlayerBullet>> BulletManager::playerBullet;
+std::list<std::unique_ptr<PlayerBullet>> BulletManager::playerBullet;
+std::list<std::unique_ptr<BaseBullet>> BulletManager::bossBullet;
 
 BulletManager::~BulletManager()
 {
 	//固定砲台の弾
-	fixedTurretBullet.clear();
-	std::vector<std::unique_ptr<FixedTurretBullet>>().swap(fixedTurretBullet);
-	//エネミーAの弾
-	enemyABullet.clear();
-	std::vector<std::unique_ptr<EnemyABullet>>().swap(enemyABullet);
+	bossBullet.clear();
+	std::list<std::unique_ptr<BaseBullet>>().swap(bossBullet);
 
 	BaseBullet::Finalize();
 }
@@ -42,12 +38,11 @@ void BulletManager::Initialize()
 
 void BulletManager::Update()
 {
-	for (auto& i : fixedTurretBullet)
+	int aa = -1;
+	for (auto& i : bossBullet)
 	{
-		i->Update();
-	}
-	for (auto& i : enemyABullet)
-	{
+		aa++;
+		if (!i->GetIsAlive()) { continue; }
 		i->Update();
 	}
 	for (auto& i : playerBullet)
@@ -57,31 +52,29 @@ void BulletManager::Update()
 
 	//停止した弾を随時消去
 	{
-		const int ft_size = int(fixedTurretBullet.size());
-		for (int i = 0; i < ft_size; i++)
+		for (auto it = bossBullet.begin(); it != bossBullet.end();)
 		{
-			if (!fixedTurretBullet[i]->GetIsAlive())
+			if (!it->get()->GetIsAlive())
 			{
-				fixedTurretBullet.erase(fixedTurretBullet.begin() + i);
-				break;
+				// 削除された要素の次を指すイテレータが返される。
+				it = bossBullet.erase(it);
 			}
-		}
-		const int eA_size = int(enemyABullet.size());
-		for (int i = 0; i < eA_size; i++)
-		{
-			if (!enemyABullet[i]->GetIsAlive())
-			{
-				enemyABullet.erase(enemyABullet.begin() + i);
-				break;
+			// 要素削除をしない場合に、イテレータを進める
+			else {
+				++it;
 			}
 		}
 		const int p_size = int(playerBullet.size());
-		for (int i = 0; i < p_size; i++)
+		for (auto it = playerBullet.begin(); it != playerBullet.end();)
 		{
-			if (!playerBullet[i]->GetIsAlive())
+			if (!it->get()->GetIsAlive())
 			{
-				playerBullet.erase(playerBullet.begin() + i);
-				break;
+				// 削除された要素の次を指すイテレータが返される。
+				it = playerBullet.erase(it);
+			}
+			// 要素削除をしない場合に、イテレータを進める
+			else {
+				++it;
 			}
 		}
 	}
@@ -89,23 +82,21 @@ void BulletManager::Update()
 
 void BulletManager::Draw()
 {
-	for (auto& i : fixedTurretBullet)
+	for (auto& i : bossBullet)
 	{
-		i->Draw();
-	}
-	for (auto& i : enemyABullet)
-	{
+		if (!i->GetIsAlive()) { continue; }
 		i->Draw();
 	}
 	for (auto& i : playerBullet)
 	{
+		if (!i->GetIsAlive()) { continue; }
 		i->Draw();
 	}
 }
 
 void BulletManager::Reset()
 {
-	fixedTurretBullet.clear();
+	bossBullet.clear();
 }
 
 bool BulletManager::CheckEnemyBCollision(const XMFLOAT3& _pos)
@@ -118,7 +109,7 @@ bool BulletManager::CheckEnemyBCollision(const XMFLOAT3& _pos)
 	bool isHit = false;
 
 	//弾とプレイヤーが衝突状態でないなら抜ける
-	for (auto& i : fixedTurretBullet)
+	for (auto& i : bossBullet)
 	{
 		if (!i->GetIsAlive()) { continue; }
 
@@ -129,18 +120,6 @@ bool BulletManager::CheckEnemyBCollision(const XMFLOAT3& _pos)
 			i->SetIsAlive(false);
 		}
 	}
-	for (auto& i : enemyABullet)
-	{
-		if (!i->GetIsAlive()) { continue; }
-
-		//プレイヤーと当たっていたら消す
-		if (Collision::CheckCircle2Circle(
-			i->GetPosition(), i->GetScale(), playerPos, playerSize)) {
-			isHit = true;
-			i->SetIsAlive(false);
-		}
-	}
-
 	return isHit;
 }
 

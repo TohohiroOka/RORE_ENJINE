@@ -6,7 +6,6 @@
 #include <array>
 
 #include "BulletManager.h"
-#include "FixedTurret.h"
 #include "EnemyManager.h"
 #include "BossA.h"
 
@@ -61,10 +60,6 @@ private:
 	//’e
 	std::unique_ptr<BulletManager> bullet;
 	
-	////ŒÅ’è–C‘ä
-	//static const int fixed_turret_num = 4;
-	//std::array<std::unique_ptr<FixedTurret>, fixed_turret_num> fixedTurret;
-
 	//“G
 	std::unique_ptr<EnemyManager> enemy;
 

@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -81,7 +81,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -97,7 +97,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BossA.cpp" />
     <ClCompile Include="engine\2d\DebugText.cpp" />
     <ClCompile Include="engine\2d\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -126,6 +125,7 @@
     <ClCompile Include="engine\base\input\XInputManager.cpp" />
     <ClCompile Include="engine\base\MainEngine.cpp" />
     <ClCompile Include="engine\base\Matrix4.cpp" />
+    <ClCompile Include="engine\base\Quaternion.cpp" />
     <ClCompile Include="engine\base\ShaderManager.cpp" />
     <ClCompile Include="engine\base\Singleton.cpp" />
     <ClCompile Include="engine\base\Texture.cpp" />
@@ -145,25 +145,27 @@
     <ClCompile Include="engine\particle\Emitter.cpp" />
     <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
+    <ClCompile Include="game\GameCollision.cpp" />
+    <ClCompile Include="game\object\BossBeam.cpp" />
+    <ClCompile Include="game\object\Bullet\BaseBullet.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletA.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletB.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletBB.cpp" />
+    <ClCompile Include="game\object\Bullet\BulletManager.cpp" />
+    <ClCompile Include="game\object\Bullet\PlayerBullet.cpp" />
+    <ClCompile Include="game\object\Enemy\BaseEnemy.cpp" />
+    <ClCompile Include="game\object\Enemy\BossA.cpp" />
+    <ClCompile Include="game\object\Enemy\EnemyA.cpp" />
+    <ClCompile Include="game\object\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="game\object\Ground.cpp" />
+    <ClCompile Include="game\object\Player.cpp" />
+    <ClCompile Include="game\object\TouchableObject.cpp" />
+    <ClCompile Include="game\scene\Boss1.cpp" />
+    <ClCompile Include="game\scene\Title.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="object\BaseBullet.cpp" />
-    <ClCompile Include="object\BaseEnemy.cpp" />
-    <ClCompile Include="object\BulletManager.cpp" />
-    <ClCompile Include="object\EnemyA.cpp" />
-    <ClCompile Include="object\EnemyABullet.cpp" />
-    <ClCompile Include="object\EnemyManager.cpp" />
-    <ClCompile Include="object\FixedTurret.cpp" />
-    <ClCompile Include="object\FixedTurretBullet.cpp" />
-    <ClCompile Include="object\GameCollision.cpp" />
-    <ClCompile Include="object\Ground.cpp" />
-    <ClCompile Include="object\Player.cpp" />
-    <ClCompile Include="object\PlayerBullet.cpp" />
-    <ClCompile Include="object\TouchableObject.cpp" />
-    <ClCompile Include="scene\Title.cpp" />
-    <ClCompile Include="scene\Boss1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
@@ -312,7 +314,6 @@
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BossA.h" />
     <ClInclude Include="engine\2d\DebugText.h" />
     <ClInclude Include="engine\2d\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -348,6 +349,7 @@
     <ClInclude Include="engine\base\MainEngine.h" />
     <ClInclude Include="engine\base\Matrix4.h" />
     <ClInclude Include="engine\base\PipelineHelpar.h" />
+    <ClInclude Include="engine\base\Quaternion.h" />
     <ClInclude Include="engine\base\SafeDelete.h" />
     <ClInclude Include="engine\base\ShaderManager.h" />
     <ClInclude Include="engine\base\Singleton.h" />
@@ -374,21 +376,23 @@
     <ClInclude Include="engine\particle\ParticleManager.h" />
     <ClInclude Include="engine\scene\InterfaceScene.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
-    <ClInclude Include="object\BaseBullet.h" />
-    <ClInclude Include="object\BaseEnemy.h" />
-    <ClInclude Include="object\BulletManager.h" />
-    <ClInclude Include="object\EnemyA.h" />
-    <ClInclude Include="object\EnemyABullet.h" />
-    <ClInclude Include="object\EnemyManager.h" />
-    <ClInclude Include="object\FixedTurret.h" />
-    <ClInclude Include="object\FixedTurretBullet.h" />
-    <ClInclude Include="object\GameCollision.h" />
-    <ClInclude Include="object\Ground.h" />
-    <ClInclude Include="object\Player.h" />
-    <ClInclude Include="object\PlayerBullet.h" />
-    <ClInclude Include="object\TouchableObject.h" />
-    <ClInclude Include="scene\Title.h" />
-    <ClInclude Include="scene\Boss1.h" />
+    <ClInclude Include="game\GameCollision.h" />
+    <ClInclude Include="game\object\BossBeam.h" />
+    <ClInclude Include="game\object\Bullet\BaseBullet.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletA.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletB.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletBB.h" />
+    <ClInclude Include="game\object\Bullet\BulletManager.h" />
+    <ClInclude Include="game\object\Bullet\PlayerBullet.h" />
+    <ClInclude Include="game\object\Enemy\BaseEnemy.h" />
+    <ClInclude Include="game\object\Enemy\BossA.h" />
+    <ClInclude Include="game\object\Enemy\EnemyA.h" />
+    <ClInclude Include="game\object\Enemy\EnemyManager.h" />
+    <ClInclude Include="game\object\Ground.h" />
+    <ClInclude Include="game\object\Player.h" />
+    <ClInclude Include="game\object\TouchableObject.h" />
+    <ClInclude Include="game\scene\Boss1.h" />
+    <ClInclude Include="game\scene\Title.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj">

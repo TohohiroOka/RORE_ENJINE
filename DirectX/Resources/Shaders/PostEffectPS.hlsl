@@ -58,7 +58,7 @@ float Gaussian(float2 drawUV, float2 pickUV, float sigma)
 float4 SetBloom(float2 uv)
 {
 	float totalWeight = 0;
-	float sigma = 0.005;
+	float sigma = 0.01;
 	float stepWidth = 0.001;
 	float4 color = { 0, 0, 0, 0 };
 

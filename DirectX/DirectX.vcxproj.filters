@@ -65,9 +65,6 @@
     <Filter Include="シェーダーファイル\PostEffect">
       <UniqueIdentifier>{bcc09153-9725-4d08-aad7-fe6fcebe4240}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ゲームシステム\TouchableObject">
-      <UniqueIdentifier>{6255b243-2811-4e38-8770-7b4529e36078}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\Scene">
       <UniqueIdentifier>{8677fbf2-e109-497b-99fb-14bb695dc881}</UniqueIdentifier>
     </Filter>
@@ -152,63 +149,21 @@
     <Filter Include="ゲームシステム\object\Bullet">
       <UniqueIdentifier>{6e14a1ca-e053-469a-9e2d-6dc1f9574b93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ゲームシステム\object\FixedTurret">
-      <UniqueIdentifier>{bc3d5065-f718-4dff-9ead-9faeadb1eb4a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\object\Enemy">
       <UniqueIdentifier>{5254ab8a-bd70-46e2-b059-23696d304e03}</UniqueIdentifier>
     </Filter>
     <Filter Include="エンジンシステム\Base\Scene">
       <UniqueIdentifier>{f22beb32-3746-4c9a-99e6-f06cfe08ba98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ゲームシステム\object\Beam">
+      <UniqueIdentifier>{62db2f1e-94c3-44e6-b572-e684262e0ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ゲームシステム\object\TouchableObject">
+      <UniqueIdentifier>{6255b243-2811-4e38-8770-7b4529e36078}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>ゲームシステム</Filter>
-    </ClCompile>
-    <ClCompile Include="object\Ground.cpp">
-      <Filter>ゲームシステム\object\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="object\Player.cpp">
-      <Filter>ゲームシステム\object\player</Filter>
-    </ClCompile>
-    <ClCompile Include="object\TouchableObject.cpp">
-      <Filter>ゲームシステム\TouchableObject</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\Boss1.cpp">
-      <Filter>ゲームシステム\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\Title.cpp">
-      <Filter>ゲームシステム\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="object\BaseBullet.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="object\BulletManager.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="object\FixedTurret.cpp">
-      <Filter>ゲームシステム\object\FixedTurret</Filter>
-    </ClCompile>
-    <ClCompile Include="object\FixedTurretBullet.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="object\EnemyA.cpp">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="object\EnemyManager.cpp">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="object\BaseEnemy.cpp">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="object\EnemyABullet.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="object\PlayerBullet.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="object\GameCollision.cpp">
       <Filter>ゲームシステム</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\collider\MeshCollider.cpp">
@@ -352,7 +307,60 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>エンジンシステム\Base\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="BossA.cpp" />
+    <ClCompile Include="engine\base\Quaternion.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="game\GameCollision.cpp">
+      <Filter>ゲームシステム</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\Title.cpp">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\TouchableObject.cpp">
+      <Filter>ゲームシステム\object\TouchableObject</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Ground.cpp">
+      <Filter>ゲームシステム\object\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Player.cpp">
+      <Filter>ゲームシステム\object\player</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Enemy\EnemyManager.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Enemy\BaseEnemy.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Enemy\BossA.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Enemy\EnemyA.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletB.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletBB.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BulletManager.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\PlayerBullet.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BaseBullet.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletA.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\BossBeam.cpp">
+      <Filter>ゲームシステム\object\Beam</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\Boss1.cpp">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -455,51 +463,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="object\Ground.h">
-      <Filter>ゲームシステム\object\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="object\Player.h">
-      <Filter>ゲームシステム\object\player</Filter>
-    </ClInclude>
-    <ClInclude Include="object\TouchableObject.h">
-      <Filter>ゲームシステム\TouchableObject</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\Boss1.h">
-      <Filter>ゲームシステム\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\Title.h">
-      <Filter>ゲームシステム\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="object\BaseBullet.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="object\BulletManager.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="object\FixedTurret.h">
-      <Filter>ゲームシステム\object\FixedTurret</Filter>
-    </ClInclude>
-    <ClInclude Include="object\FixedTurretBullet.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="object\EnemyA.h">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="object\EnemyManager.h">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="object\BaseEnemy.h">
-      <Filter>ゲームシステム\object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="object\EnemyABullet.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="object\PlayerBullet.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="object\GameCollision.h">
-      <Filter>ゲームシステム</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\collider\CollisionTypes.h">
       <Filter>エンジンシステム\Object\3d\collider</Filter>
     </ClInclude>
@@ -683,6 +646,59 @@
     <ClInclude Include="engine\scene\InterfaceScene.h">
       <Filter>エンジンシステム\Base\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BossA.h" />
+    <ClInclude Include="engine\base\Quaternion.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="game\GameCollision.h">
+      <Filter>ゲームシステム</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\Title.h">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\TouchableObject.h">
+      <Filter>ゲームシステム\object\TouchableObject</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Ground.h">
+      <Filter>ゲームシステム\object\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Player.h">
+      <Filter>ゲームシステム\object\player</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Enemy\EnemyA.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Enemy\EnemyManager.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Enemy\BaseEnemy.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Enemy\BossA.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletB.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletBB.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BulletManager.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\PlayerBullet.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BaseBullet.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletA.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\BossBeam.h">
+      <Filter>ゲームシステム\object\Beam</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\Boss1.h">
+      <Filter>ゲームシステム\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

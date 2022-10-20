@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseBullet.h"
 
-class EnemyABullet : public BaseBullet
+class BossBulletA : public BaseBullet
 {
 public:
 
@@ -10,8 +10,8 @@ public:
 	/// </summary>
 	/// <param name="_pos">ç¿ïW</param>
 	/// <param name="_moveVec">à⁄ìÆó </param>
-	EnemyABullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
-	~EnemyABullet() {};
+	BossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
+	~BossBulletA() {};
 
 	/// <summary>
 	/// ê∂ê¨
@@ -20,7 +20,7 @@ public:
 	/// <param name="_moveVec">à⁄ìÆó </param>
 	/// <param name="_color">êF</param>
 	/// <returns></returns>
-	static std::unique_ptr<EnemyABullet> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color);
+	static std::unique_ptr<BossBulletA> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color);
 
 	/// <summary>
 	/// èâä˙âª

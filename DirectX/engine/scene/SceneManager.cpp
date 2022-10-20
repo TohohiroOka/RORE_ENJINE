@@ -152,6 +152,7 @@ void SceneManager::CreatePipeline()
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 3;
 		inPepeline.rtvNum = 3;
+		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
 
 		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
 		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
@@ -192,6 +193,7 @@ void SceneManager::CreatePipeline()
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 3;
+		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 
 		inSignature.object2d = false;
 		inSignature.textureNum = 3;

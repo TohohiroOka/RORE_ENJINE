@@ -92,6 +92,7 @@ void InterfaceObject3d::Update()
 		constMap->isBloom = isBloom;
 		constMap->isToon = isToon;
 		constMap->isOutline = isOutline;
+		constMap->isLight = true;
 		constBuffB0->Unmap(0, nullptr);
 	}
 

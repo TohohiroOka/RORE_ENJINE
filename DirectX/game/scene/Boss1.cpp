@@ -21,18 +21,16 @@ void Boss1::Initialize()
 	player = Player::Create();
 
 	//地形
-	ground[0] = Ground::Create("heightmap03.bmp", "jimen.png", "kabe.png");
+	ground[0] = Ground::Create("heightmap01.bmp", "jimen.png", "kabe.png");
 
+	//弾マネージャー
 	bullet = BulletManager::Create();
-	//FixedTurret::StaticInitialize();
-	//fixedTurret[0] = FixedTurret::Create({ 1905,50,3000 }, { 0.0f,0.2f,-1.0f });//-z座標向き
-	//fixedTurret[1] = FixedTurret::Create({ 1905,50,810 }, { 0.0f,0.2f,1.0f });//z座標向き
-	//fixedTurret[2] = FixedTurret::Create({ 3000,50,1905 }, { -1.0f,0.2f,0.0f });//-x座標向き
-	//fixedTurret[3] = FixedTurret::Create({ 810,50,1905 }, { 1.0f,0.2f,0.0f });//x座標向き
 
+	//敵マネージャー
 	enemy = EnemyManager::Create();
 
-	boss = BossA::Create({ 3825.0f / 2.0f ,10.0f ,3825.0f / 2.0f });
+	//ボス
+	boss = BossA::Create({ 3825.0f / 2.0f ,100.0f ,3825.0f / 2.0f });
 }
 
 void Boss1::Update()
@@ -46,7 +44,10 @@ void Boss1::Update()
 
 	//弾更新
 	bullet->Update();
-	bullet->CheckEnemyBCollision(playerPos);
+	if (bullet->CheckEnemyBCollision(playerPos))
+	{
+		player->Damage();
+	}
 
 	////敵更新
 	//enemy->Update(playerPos);
@@ -66,12 +67,6 @@ void Boss1::Update()
 	//	}
 	//}
 
-	////固定砲台更新
-	//for (auto& i : fixedTurret)
-	//{
-	//	i->Update();
-	//}
-
 	//地形更新
 	for (int i = 0; i < ground_num; i++)
 	{
@@ -79,7 +74,7 @@ void Boss1::Update()
 	}
 
 	//ボス更新
-	boss->SetMove(playerPos);
+	//boss->SetMove(playerPos);
 	boss->Update();
 	for (auto& b : pBullet)
 	{
@@ -100,6 +95,14 @@ void Boss1::Update()
 		SceneManager::SetNextScene(nextScene);
 	}
 
+	//プレイヤーのhpが0になったので終了
+	if (!player->GetIsAlive())
+	{
+		Title* nextScene = new Title();
+		nextScene->Initialize();
+		SceneManager::SetNextScene(nextScene);
+	}
+
 	input = nullptr;
 	xinput = nullptr;
 }
@@ -110,30 +113,22 @@ void Boss1::Draw()
 
 	InterfaceObject3d::SetCmdList(cmdList);
 
-	//HeightMap::PreDraw();
-	//for (int i = 0; i < ground_num; i++)
-	//{
-	//	ground[i]->Draw();
-	//}
+	HeightMap::PreDraw();
+	for (int i = 0; i < ground_num; i++)
+	{
+		ground[i]->Draw();
+	}
 
 	Object3d::PreDraw();
 	player->Draw();
 	bullet->Draw();
-	//for (auto& i : fixedTurret)
-	//{
-	//	i->Draw();
-	//}
 	//enemy->Draw();
 	boss->Draw();
 
-	PrimitiveObject3D::PreDraw();
-	ground[0]->CDraw();
+	//PrimitiveObject3D::PreDraw();
+	//ground[0]->CDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
-
-	//DrawLine3D::PreDraw(cmdList);
-	//bullet->DLDraw();
-	//DrawLine3D::PostDraw();
 
 	Sprite::PreDraw(cmdList);
 	DebugText::GetInstance()->DrawAll();

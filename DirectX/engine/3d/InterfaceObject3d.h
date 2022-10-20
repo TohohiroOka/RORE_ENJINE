@@ -30,7 +30,7 @@ protected:// サブクラス
 	// 定数バッファ用データ構造体B0
 	struct CONST_BUFFER_DATA_B0
 	{
-		XMFLOAT3 baseColor;//ベースカラー
+		XMFLOAT4 baseColor;//ベースカラー
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
@@ -38,6 +38,7 @@ protected:// サブクラス
 		unsigned int isBloom;//ブルームの有無
 		unsigned int isToon;//トゥーンの有無
 		unsigned int isOutline;//アウトラインの有無
+		unsigned int isLight;//ライティングの有無
 	};
 
 	// 定数バッファ用データ構造体B1
@@ -153,7 +154,7 @@ protected:
 	//定数バッファに渡す変数
 	CONST_BUFFER_DATA_B1 constBufferB1Num;
 	//ベースカラー
-	XMFLOAT3 baseColor = { 1,1,1 };
+	XMFLOAT4 baseColor = { 1,1,1,1 };
 	//ブルームの有無
 	bool isBloom = false;
 	//トゥーンの有無
@@ -162,6 +163,8 @@ protected:
 	bool isOutline = false;
 	//スキニング
 	bool isSkinning = false;
+	//ライティング
+	bool isLight = true;
 	// モデル
 	Model* model = nullptr;
 	// コライダー
@@ -219,7 +222,7 @@ public:
 	/// スケールの設定
 	/// </summary>
 	/// <param name="_color">色</param>
-	void SetColor(const XMFLOAT3& _color) { this->baseColor = _color; }
+	void SetColor(const XMFLOAT4& _color) { this->baseColor = _color; }
 
 	/// <summary>
 	/// ブルームのセット
@@ -232,6 +235,12 @@ public:
 	/// </summary>
 	/// <param name="_isToon">トゥーン有->true / 無->false</param>
 	void SetToon(bool _isToon) { this->isToon = _isToon; }
+
+	/// <summary>
+	/// ライティングのセット
+	/// </summary>
+	/// <param name="_isLight">ライティング有->true / 無->false</param>
+	void SetLight(bool _isLight) { this->isLight = _isLight; }
 
 	/// <summary>
 	/// アウトラインのセット

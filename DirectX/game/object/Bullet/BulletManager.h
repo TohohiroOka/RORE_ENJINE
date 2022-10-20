@@ -1,7 +1,8 @@
 #pragma once
-#include "FixedTurretBullet.h"
-#include "EnemyABullet.h"
 #include "PlayerBullet.h"
+#include "BossBulletA.h"
+#include "BossBulletB.h"
+#include "BossBulletBB.h"
 
 class BulletManager
 {
@@ -56,31 +57,34 @@ public:
 
 private:
 
-	//固定砲台の弾
-	static std::vector<std::unique_ptr<FixedTurretBullet>> fixedTurretBullet;
-	//エネミーAの弾
-	static std::vector<std::unique_ptr<EnemyABullet>> enemyABullet;
 	//プレイヤーの弾
-	static std::vector<std::unique_ptr<PlayerBullet>> playerBullet;
+	static std::list<std::unique_ptr<PlayerBullet>> playerBullet;
+	//弾配列
+	static std::list<std::unique_ptr<BaseBullet>> bossBullet;
 
 public:
 
 	//弾セット
-	static void SetFixedTurretBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec){
-		fixedTurretBullet.emplace_back(FixedTurretBullet::Create(_pos, _moveVec));
-	}
-
-	//弾セット
-	static void SetEnemyABullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
-		enemyABullet.emplace_back(EnemyABullet::Create(_pos, _moveVec, _color));
-	}
-
-	//弾セット
 	static void SetPlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
-		playerBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec));
+		bossBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec));
 	}
 
-	std::vector<std::unique_ptr<PlayerBullet>>& GetPlayerBullet() {
+	//弾セット
+	static void SetBossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletA::Create(_pos, _moveVec, _color));
+	}
+
+	//弾セット
+	static void SetBossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletB::Create(_pos, _moveVec, _color));
+	}
+
+	//弾セット
+	static void SetBossBulletBB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletBB::Create(_pos, _moveVec, _color));
+	}
+
+	std::list<std::unique_ptr<PlayerBullet>>& GetPlayerBullet() {
 		return playerBullet;
 	}
 };
