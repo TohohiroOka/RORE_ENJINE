@@ -11,6 +11,8 @@ private:
 		CIRCLE,//円状に出る
 		FIREWORKE,//花火的なもの
 		BAEM,//ビーム
+		HOMING,//ホーミング
+		SNAKE,//うねうね動く
 		NUM,//合計
 	};
 

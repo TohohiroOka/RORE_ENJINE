@@ -24,6 +24,12 @@ Quaternion normalize(const Quaternion& q);
 //共役四元数を求める
 Quaternion conjugate(const Quaternion& q);
 
+//ベクトル方向を向くクオータニオンを求める
+Quaternion LookRotation(const Vector3& v);
+
+//クオータニオンからオイラー角に変換
+Vector3 EulerAngles(const Quaternion& q);
+
 //単項演算子オーバーロード
 Quaternion operator + (const Quaternion& q);
 Quaternion operator - (const Quaternion& q);

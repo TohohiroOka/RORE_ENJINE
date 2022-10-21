@@ -98,14 +98,8 @@
     <Filter Include="エンジンシステム\Base\MainEngine">
       <UniqueIdentifier>{d363d3f2-8b0d-4d98-b20d-8210587ec264}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Base\Singleton">
-      <UniqueIdentifier>{436617b7-49ce-48ec-902c-d3b0bc7ea860}</UniqueIdentifier>
-    </Filter>
     <Filter Include="エンジンシステム\Base\ShaderManager">
       <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="エンジンシステム\Base\FrameRateKeep">
-      <UniqueIdentifier>{31f81314-112e-490b-815e-a28a447dffdb}</UniqueIdentifier>
     </Filter>
     <Filter Include="エンジンシステム\Base\GraphicsPipelineManager">
       <UniqueIdentifier>{9e796eba-af2b-476b-bf30-138d92a52ee6}</UniqueIdentifier>
@@ -134,9 +128,6 @@
     <Filter Include="エンジンシステム\Base\CSV">
       <UniqueIdentifier>{89695aff-10b9-4ffc-a805-fceb5d716a93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Easing">
-      <UniqueIdentifier>{dcc10f48-e82b-48b9-b179-b571095ffe54}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\object">
       <UniqueIdentifier>{d9aada42-7d56-457d-bb40-6ec31093798e}</UniqueIdentifier>
     </Filter>
@@ -160,6 +151,15 @@
     </Filter>
     <Filter Include="ゲームシステム\object\TouchableObject">
       <UniqueIdentifier>{6255b243-2811-4e38-8770-7b4529e36078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Helpar\Easing">
+      <UniqueIdentifier>{dcc10f48-e82b-48b9-b179-b571095ffe54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Helpar\FrameRateKeep">
+      <UniqueIdentifier>{31f81314-112e-490b-815e-a28a447dffdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\Helpar\Singleton">
+      <UniqueIdentifier>{436617b7-49ce-48ec-902c-d3b0bc7ea860}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -242,7 +242,7 @@
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\FrameRateKeep.cpp">
-      <Filter>エンジンシステム\Base\FrameRateKeep</Filter>
+      <Filter>エンジンシステム\Base\Helpar\FrameRateKeep</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Matrix4.cpp">
       <Filter>エンジンシステム\Base\Helpar</Filter>
@@ -251,7 +251,7 @@
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Singleton.cpp">
-      <Filter>エンジンシステム\Base\Singleton</Filter>
+      <Filter>エンジンシステム\Base\Helpar\Singleton</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Texture.cpp">
       <Filter>エンジンシステム\Base\Texture</Filter>
@@ -281,7 +281,7 @@
       <Filter>エンジンシステム\Audio</Filter>
     </ClCompile>
     <ClCompile Include="engine\easing\Easing.cpp">
-      <Filter>エンジンシステム\Easing</Filter>
+      <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
     </ClCompile>
     <ClCompile Include="engine\external\imgui\imgui_demo.cpp">
       <Filter>Imgui</Filter>
@@ -322,9 +322,6 @@
     <ClCompile Include="game\object\Ground.cpp">
       <Filter>ゲームシステム\object\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Player.cpp">
-      <Filter>ゲームシステム\object\player</Filter>
-    </ClCompile>
     <ClCompile Include="game\object\Enemy\EnemyManager.cpp">
       <Filter>ゲームシステム\object\Enemy</Filter>
     </ClCompile>
@@ -361,6 +358,13 @@
     <ClCompile Include="game\scene\Boss1.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="game\object\Player.cpp">
+      <Filter>ゲームシステム\object\player</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletC.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="BossBulletD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -559,9 +563,6 @@
     <ClInclude Include="engine\base\ComputeShaderManager.h">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\SafeDelete.h">
-      <Filter>エンジンシステム\Base</Filter>
-    </ClInclude>
     <ClInclude Include="engine\base\DescriptorHeapManager.h">
       <Filter>エンジンシステム\Base\DescriptorHeapManager</Filter>
     </ClInclude>
@@ -572,7 +573,7 @@
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\FrameRateKeep.h">
-      <Filter>エンジンシステム\Base\FrameRateKeep</Filter>
+      <Filter>エンジンシステム\Base\Helpar\FrameRateKeep</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Matrix4.h">
       <Filter>エンジンシステム\Base\Helpar</Filter>
@@ -584,7 +585,7 @@
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Singleton.h">
-      <Filter>エンジンシステム\Base\Singleton</Filter>
+      <Filter>エンジンシステム\Base\Helpar\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Texture.h">
       <Filter>エンジンシステム\Base\Texture</Filter>
@@ -614,7 +615,7 @@
       <Filter>エンジンシステム\Audio</Filter>
     </ClInclude>
     <ClInclude Include="engine\easing\Easing.h">
-      <Filter>エンジンシステム\Easing</Filter>
+      <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
     </ClInclude>
     <ClInclude Include="engine\external\imgui\imgui_impl_dx12.h">
       <Filter>Imgui</Filter>
@@ -661,9 +662,6 @@
     <ClInclude Include="game\object\Ground.h">
       <Filter>ゲームシステム\object\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Player.h">
-      <Filter>ゲームシステム\object\player</Filter>
-    </ClInclude>
     <ClInclude Include="game\object\Enemy\EnemyA.h">
       <Filter>ゲームシステム\object\Enemy</Filter>
     </ClInclude>
@@ -700,5 +698,18 @@
     <ClInclude Include="game\scene\Boss1.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="game\object\Player.h">
+      <Filter>ゲームシステム\object\player</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\SafeDelete.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="game\GameHelper.h">
+      <Filter>ゲームシステム</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletC.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="BossBulletD.h" />
   </ItemGroup>
 </Project>

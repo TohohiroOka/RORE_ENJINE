@@ -118,11 +118,11 @@ Vector3 transform(const Vector3& v, const Matrix4& m) {
 //	return m1;
 //}
 
-//2項演算子*のオーバーロード関数(行列と行列の積)
-Matrix4 operator*(const Matrix4& m1, const Matrix4& m2) {
-	Matrix4 result = m1;
-	return result *= m2;
-}
+////2項演算子*のオーバーロード関数(行列と行列の積)
+//Matrix4 operator*(const Matrix4& m1, const Matrix4& m2) {
+//	Matrix4 result = m1;
+//	return result *= m2;
+//}
 
 //2項演算子*のオーバーロード関数(ベクトルと行列の積)
 Vector3 operator*(const Vector3& v, const Matrix4& m) {

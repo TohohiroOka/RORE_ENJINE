@@ -42,6 +42,23 @@ Vector3 Vector3::cross(const Vector3& v) const {
 	return temp;
 }
 
+float Vector3::angle(const Vector3& v) const
+{
+	//　※ベクトルの長さが0だと答えが出ませんので注意してください。
+	
+	//ベクトルAとBの長さを計算する
+	float length_A = powf((this->x * this->x) + (this->y * this->y) + (this->z * this->z), 0.5);
+	float length_B = powf((v.x * v.x) + (v.y * v.y) + (v.z * v.z), 0.5);
+
+	//内積とベクトル長さを使ってcosθを求める
+	float cos_sita = this->dot(v) / (length_A * length_B);
+
+	//cosθからθを求める
+	float radian = acos(cos_sita);
+
+	return DirectX::XMConvertToDegrees(radian);
+}
+
 Vector3 Vector3::DirectXVector3Transform(const DirectX::XMMATRIX& v) const
 {
 	DirectX::XMVECTOR XMv = { this->x,this->y,this->z };

@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "WindowApp.h"
+#include "GameHelper.h"
 
 using namespace DirectX;
 
@@ -36,8 +37,8 @@ void Camera::Update()
 
 void Camera::StartCameraShake(int _strength)
 {
-	int x = (rand() % _strength * 2) - _strength;
-	int y = (rand() % _strength * 2) - _strength;
+	int x = int(Randomfloat(_strength * 2)) - _strength;
+	int y = int(Randomfloat(_strength * 2)) - _strength;
 
 	ShakeDifference = { (float)x ,(float)y,0.0f };
 }

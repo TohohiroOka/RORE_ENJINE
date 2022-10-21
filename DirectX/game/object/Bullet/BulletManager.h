@@ -3,6 +3,8 @@
 #include "BossBulletA.h"
 #include "BossBulletB.h"
 #include "BossBulletBB.h"
+#include "BossBulletC.h"
+#include "BossBulletD.h"
 
 class BulletManager
 {
@@ -30,7 +32,8 @@ public:
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update();
+	/// <param name="_pos">プレイヤー座標</param>
+	void Update(const XMFLOAT3& _playerPos);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -45,15 +48,14 @@ public:
 	/// <summary>
 	/// 弾と地形、プレイヤーとの当たり判定
 	/// </summary>
-	/// <param name="_pos">プレイヤー座標</param>
-	bool CheckEnemyBCollision(const XMFLOAT3& _pos);
+	bool CheckEnemyBulletToPlayerCollision();
 
 	/// <summary>
 	/// 弾と地形、エネミーとの当たり判定
 	/// </summary>
 	/// <param name="_pos">プレイヤー座標</param>
 	/// <param name="_scale">大きさ</param>
-	bool CheckPlayerBCollision(const XMFLOAT3& _pos, float _scale);
+	bool CheckPlayerBulletToEnemyCollision(const XMFLOAT3& _pos, float _scale);
 
 private:
 
@@ -61,12 +63,14 @@ private:
 	static std::list<std::unique_ptr<PlayerBullet>> playerBullet;
 	//弾配列
 	static std::list<std::unique_ptr<BaseBullet>> bossBullet;
+	//プレイヤー座標
+	static XMFLOAT3 playerPos;
 
 public:
 
 	//弾セット
 	static void SetPlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
-		bossBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec));
+		playerBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec));
 	}
 
 	//弾セット
@@ -84,7 +88,13 @@ public:
 		bossBullet.emplace_back(BossBulletBB::Create(_pos, _moveVec, _color));
 	}
 
-	std::list<std::unique_ptr<PlayerBullet>>& GetPlayerBullet() {
-		return playerBullet;
+	//弾セット
+	static void SetBossBulletC(const XMFLOAT3& _pos, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletC::Create(_pos, playerPos, _color));
+	}
+
+	//弾セット
+	static void SetBossBulletD(const XMFLOAT3& _pos, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletD::Create(_pos, _color));
 	}
 };

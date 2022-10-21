@@ -2,6 +2,7 @@
 #include "BulletManager.h"
 #include "DebugText.h"
 #include "DirectInput.h"
+#include "GameHelper.h"
 
 using namespace DirectX;
 
@@ -23,7 +24,7 @@ BossA::BossA(const XMFLOAT3& _pos)
 	object->SetPosition(pos);
 
 	//‘å‚«‚³ƒZƒbƒg
-	scale = 10.0f;
+	scale = 30.0f;
 	object->SetScale({ scale ,scale ,scale });
 
 	baem = BossBeam::Create();
@@ -87,8 +88,8 @@ void BossA::Update()
 	{
 		if (timer % 10 == 1)
 		{
-			float radiunXY = XMConvertToRadians(float(rand() % 360));
-			float radiunXZ = XMConvertToRadians(float(rand() % 360));
+			float radiunXY = XMConvertToRadians(Randomfloat(360));
+			float radiunXZ = XMConvertToRadians(Randomfloat(360));
 			BulletManager::SetBossBulletB(pos,
 				{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) },
 				{ 0.9f,0.1f,0.9f });
@@ -97,6 +98,16 @@ void BossA::Update()
 	else if (kind == int(BULLET_KIND::BAEM))
 	{
 		baem->Update(pos, { 0.9f,0.0f,0.9f });
+	}
+	else if (kind == int(BULLET_KIND::HOMING))
+	{
+		XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+		BulletManager::SetBossBulletC(pos, color);
+	}
+	else if (kind == int(BULLET_KIND::RAIN))
+	{
+		XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+		BulletManager::SetBossBulletD(pos, color);
 	}
 
 	if (kind != int(BULLET_KIND::BAEM))

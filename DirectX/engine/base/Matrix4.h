@@ -29,5 +29,5 @@ Vector3 transform(const Vector3& v, const Matrix4& m);
 //Matrix4& operator *= (Matrix4& m1, const Matrix4& m2);
 
 // 2項演算子オーバーロード
-Matrix4 operator * (const Matrix4& m1, const Matrix4& m2);
+//Matrix4 operator * (const Matrix4& m1, const Matrix4& m2);
 Vector3 operator * (const Vector3& v, const Matrix4& m);

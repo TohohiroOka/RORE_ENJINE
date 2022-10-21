@@ -49,6 +49,18 @@ private:
 	float cameraAngle = -90;
 	//カメラの高さ
 	const float cameraY = 30.0f;
+	//ターゲット
+	bool isTarget;
+	//ターゲット時のイージング
+	bool isTageEase;
+	//イージングタイマー
+	float easeTimer;
+	//イージング初期角度
+	float startAngle;
+	//イージング初期値点
+	XMFLOAT3 startTarget;
+	//イージング初期値点
+	XMFLOAT3 startPos;
 
 	//プレイヤー
 	std::unique_ptr<Player> player = nullptr;

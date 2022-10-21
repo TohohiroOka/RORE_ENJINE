@@ -7,6 +7,7 @@
 
 std::list<std::unique_ptr<PlayerBullet>> BulletManager::playerBullet;
 std::list<std::unique_ptr<BaseBullet>> BulletManager::bossBullet;
+DirectX::XMFLOAT3 BulletManager::playerPos;
 
 BulletManager::~BulletManager()
 {
@@ -33,11 +34,14 @@ std::unique_ptr<BulletManager> BulletManager::Create()
 
 void BulletManager::Initialize()
 {
+	playerPos = { 0,0,0 };
 	BaseBullet::StaticInitialize();
 }
 
-void BulletManager::Update()
+void BulletManager::Update(const XMFLOAT3& _playerPos)
 {
+	playerPos = _playerPos;
+
 	int aa = -1;
 	for (auto& i : bossBullet)
 	{
@@ -99,10 +103,9 @@ void BulletManager::Reset()
 	bossBullet.clear();
 }
 
-bool BulletManager::CheckEnemyBCollision(const XMFLOAT3& _pos)
+bool BulletManager::CheckEnemyBulletToPlayerCollision()
 {
 	//è’ìÀópÇ…ç¿ïWÇ∆îºåaÇÃëÂÇ´Ç≥ÇéÿÇËÇÈ
-	XMFLOAT3 playerPos = _pos;
 	playerPos.y += 10.0f;
 	float playerSize = 5;
 
@@ -123,7 +126,7 @@ bool BulletManager::CheckEnemyBCollision(const XMFLOAT3& _pos)
 	return isHit;
 }
 
-bool BulletManager::CheckPlayerBCollision(const XMFLOAT3& _pos, float _scale)
+bool BulletManager::CheckPlayerBulletToEnemyCollision(const XMFLOAT3& _pos, float _scale)
 {
 	XMFLOAT3 enemyPos = _pos;
 	bool hit = false;

@@ -11,6 +11,7 @@ public:
 	Vector3& normalize();
 	float dot(const Vector3& v) const;
 	Vector3 cross(const Vector3& v) const;
+	float angle(const Vector3& v) const;
 
 	//XMVECTORŒn‚Ì•ÏŠ·ŠÖ”
 	Vector3 DirectXVector3Transform(const DirectX::XMMATRIX& v) const;

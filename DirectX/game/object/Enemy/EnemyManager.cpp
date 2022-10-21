@@ -4,6 +4,7 @@
 #include "ParticleManager.h"
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
+#include "GameHelper.h"
 
 using namespace DirectX;
 
@@ -55,7 +56,7 @@ void EnemyManager::Update(const XMFLOAT3& _pos)
 	//“G’Ç‰Á
 	if (timer % 100 == 1 && enemyA.size() < 20)
 	{
-		int randN = rand() % 4;
+		int randN = int(Randomfloat(4));
 		enemyA.emplace_back(EnemyA::Create(popPos[randN]));
 	}
 

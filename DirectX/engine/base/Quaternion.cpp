@@ -1,6 +1,7 @@
 #include "Quaternion.h"
 #include "Matrix4.h"
 #include <cmath>
+#include <math.h>
 
 //成分を指定して、クオータニオンを作成
 Quaternion quaternion(float x, float y, float z, float w)
@@ -54,6 +55,97 @@ Quaternion conjugate(const Quaternion& q)
 	Quaternion result = { -q.x, -q.y, -q.z, q.w };
 
 	return result;
+}
+
+Quaternion LookRotation(const Vector3& v)
+{
+	Vector3 target = v;
+	Vector3 targetN = target.normalize(); //正規化
+	Vector3 norm = { 0, 0, 1 }; //デフォルトの方向
+	float dot = target.dot(norm); //内積
+	float theta = acosf(dot);//角度の算出
+	Vector3 cross = target.cross(norm); //外積
+
+	cross = cross.normalize();
+	theta = theta / 2;
+	Quaternion q;
+	q.x = cross.x * sinf(theta);
+	q.y = cross.y * sinf(theta);
+	q.z = cross.z * sinf(theta);
+	q.w = cosf(theta);
+
+	return q;
+}
+
+Vector3 EulerAngles(const Quaternion& q)
+{
+	Quaternion r = q;
+	float x = r.x;
+	float y = r.y;
+	float z = r.z;
+	float w = r.w;
+
+	float x2 = x * x;
+	float y2 = y * y;
+	float z2 = z * z;
+
+	float xy = x * y;
+	float xz = x * z;
+	float yz = y * z;
+	float wx = w * x;
+	float wy = w * y;
+	float wz = w * z;
+
+	// 1 - 2y^2 - 2z^2
+	float m00 = 1.0f - (2.0f * y2) - (2.0f * z2);
+
+	// 2xy + 2wz
+	float m01 = (2.0f * xy) + (2.0f * wz);
+
+	// 2xy - 2wz
+	float m10 = (2.0f * xy) - (2.0f * wz);
+
+	// 1 - 2x^2 - 2z^2
+	float m11 = 1.0f - (2.0f * x2) - (2.0f * z2);
+
+	// 2xz + 2wy
+	float m20 = (2.0f * xz) + (2.0f * wy);
+
+	// 2yz+2wx
+	float m21 = (2.0f * yz) - (2.0f * wx);
+
+	// 1 - 2x^2 - 2y^2
+	float m22 = 1.0f - (2.0f * x2) - (2.0f * y2);
+
+
+	Vector3 t = { 0,0,0 };
+
+	const float epsilon = 1.0e-5f;	// 誤差吸収用の微小な値
+
+	if (fabs(m21 - 1.0f) < epsilon)
+	{
+		t.x = DirectX::XM_PI / 2.0f;
+		t.y = 0;
+		t.z = atan2(m10, m00);
+	}
+	else if (fabs(m21 + 1.0f) < epsilon)
+	{
+		t.x = -DirectX::XM_PI / 2.0f;
+		t.y = 0;
+		t.z = atan2(m10, m00);
+	}
+	else
+	{
+		t.x = asin(-m21);
+		t.y = atan2(m20, m22);
+		t.z = atan2(m01, m11);
+	}
+
+	t.x = DirectX::XMConvertToDegrees(t.x);
+	t.y = DirectX::XMConvertToDegrees(t.y);
+	t.z = DirectX::XMConvertToDegrees(t.z);
+
+	return t;
 }
 
 //単項演算子 + のオーバーロード

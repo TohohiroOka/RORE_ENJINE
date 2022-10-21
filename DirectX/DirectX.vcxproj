@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -81,7 +81,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BossBulletD.cpp" />
     <ClCompile Include="engine\2d\DebugText.cpp" />
     <ClCompile Include="engine\2d\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="game\object\Bullet\BossBulletA.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletB.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletBB.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletC.cpp" />
     <ClCompile Include="game\object\Bullet\BulletManager.cpp" />
     <ClCompile Include="game\object\Bullet\PlayerBullet.cpp" />
     <ClCompile Include="game\object\Enemy\BaseEnemy.cpp" />
@@ -314,6 +316,7 @@
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BossBulletD.h" />
     <ClInclude Include="engine\2d\DebugText.h" />
     <ClInclude Include="engine\2d\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -377,11 +380,13 @@
     <ClInclude Include="engine\scene\InterfaceScene.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="game\GameCollision.h" />
+    <ClInclude Include="game\GameHelper.h" />
     <ClInclude Include="game\object\BossBeam.h" />
     <ClInclude Include="game\object\Bullet\BaseBullet.h" />
     <ClInclude Include="game\object\Bullet\BossBulletA.h" />
     <ClInclude Include="game\object\Bullet\BossBulletB.h" />
     <ClInclude Include="game\object\Bullet\BossBulletBB.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletC.h" />
     <ClInclude Include="game\object\Bullet\BulletManager.h" />
     <ClInclude Include="game\object\Bullet\PlayerBullet.h" />
     <ClInclude Include="game\object\Enemy\BaseEnemy.h" />

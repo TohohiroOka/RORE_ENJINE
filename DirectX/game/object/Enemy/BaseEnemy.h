@@ -80,6 +80,6 @@ public:
 	void SetIsAlive(bool _isAlive) { isAlive = _isAlive; }
 	void Damage() { 
 		hp--;
-		isAlive = hp == 0;
+		isAlive = hp != 0;
 	}
 };
