@@ -30,5 +30,10 @@ public:
 
 private:
 
+	static const float scale;
 	std::unique_ptr<HeightMap> object = nullptr;
+
+public:
+
+	static float GetScale() { return scale; }
 };

@@ -76,7 +76,7 @@ public: // メンバ関数
 	inline const XMFLOAT3& GetTarget() { return target; }
 
 	/// <summary>
-	/// 上方向ベクトルの取得
+	/// カメラの傾きの取得
 	/// </summary>
 	/// <returns>上方向ベクトル</returns>
 	inline const XMFLOAT3& GetUp() { return up; }
@@ -92,6 +92,13 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="position">注視点座標</param>
 	void SetTarget(const XMFLOAT3& _target) { this->target = _target; }
+
+	/// <summary>
+	/// カメラの傾きのセット
+	/// </summary>
+	/// <param name="_up">カメラの傾き</param>
+	void SetUp(const XMFLOAT3& _up) { up = _up; }
+
 
 protected: // メンバ変数
 	// ビュー行列

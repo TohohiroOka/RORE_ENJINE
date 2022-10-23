@@ -364,7 +364,12 @@
     <ClCompile Include="game\object\Bullet\BossBulletC.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="BossBulletD.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletD.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletE.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -710,6 +715,11 @@
     <ClInclude Include="game\object\Bullet\BossBulletC.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="BossBulletD.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletD.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletE.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

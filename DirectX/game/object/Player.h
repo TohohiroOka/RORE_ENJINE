@@ -8,14 +8,20 @@ private:
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 
 public:
+	
 	/// <summary>
 	/// 3Dオブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static std::unique_ptr<Player> Create();
+	static std::unique_ptr<Player> Create(const XMFLOAT3& _pos);
+
 public:
 
-	Player() {};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="pos">座標</param>
+	Player(const XMFLOAT3& _pos);
 	~Player() {};
 
 	/// <summary>
@@ -54,8 +60,11 @@ private:
 	std::unique_ptr<Model> model = nullptr;
 	std::unique_ptr<Object3d> object = nullptr;
 
-	XMFLOAT3 position = { 1905,50,25 };
-	XMFLOAT3 move = {};
+	XMFLOAT3 position;
+	XMFLOAT3 move;
+
+	//移動時のオブジェクトの回転角
+	XMFLOAT3 moveObjAngle;
 
 	//カメラ角度
 	float cameraAngle;
@@ -81,5 +90,11 @@ public:
 	bool GetIsAlive(){
 		return hp > 0;
 	}
+
+	/// <summary>
+	/// オブジェクトの正規化傾き
+	/// </summary>
+	/// <returns></returns>
+	XMFLOAT3 GetObjAngle() { return { moveObjAngle.x / 45.0f, moveObjAngle.y / 45.0f, moveObjAngle.z / 45.0f }; }
 
 };

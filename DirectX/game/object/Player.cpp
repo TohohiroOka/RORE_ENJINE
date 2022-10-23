@@ -23,16 +23,24 @@ float GetDistance(XMFLOAT2 startPoint, XMFLOAT2 endPoint) {
 	return sqrt(x + y);
 }
 
-std::unique_ptr<Player> Player::Create()
+Player::Player(const XMFLOAT3& _pos)
+{
+	position = _pos;
+	move = { 0,0,0 };
+	hp = 10;
+	moveObjAngle = { 0,0,0 };
+}
+
+std::unique_ptr<Player> Player::Create(const XMFLOAT3& _pos)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Player* instance = new Player();
+	Player* instance = new Player(_pos);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	//モデル読み込み
-	instance->model = Model::CreateFromOBJ("uma");
+	instance->model = Model::CreateFromOBJ("drone2");
 
 	// 初期化
 	instance->object = Object3d::Create(instance->model.get());
@@ -60,9 +68,7 @@ void Player::Initialize()
 	object->SetPosition(position);
 
 	//SetToon(true);
-	object->SetScale({ 1,1,1 });
-
-	hp = 10;
+	object->SetScale({1,1,1 });
 }
 
 void Player::Update(float _cameraAngle)
@@ -123,9 +129,32 @@ void Player::Update(float _cameraAngle)
 	position.y += move.y;
 	position.z += move.z;
 
-	object->SetPosition(position);
-	object->Update();
+	//角度の変更
+	if (isSpeed[0] == true != isSpeed[1] == true)
+	{
+		float Aspeed = 0.5f;
+		if (fabs(moveObjAngle.z) < 45.0f)
+		{
+			moveObjAngle.z -= float(isSpeed[0]) * Aspeed;
+			moveObjAngle.z += float(isSpeed[1]) * Aspeed;
+		}
+	}
+	//角度を戻す
+	else if (isSpeed[0] == true == isSpeed[1] == true && moveObjAngle.z != 0) {
+		char sign = char(moveObjAngle.z < 0) + char(moveObjAngle.z > 0) * (-1);
+		moveObjAngle.z += sign * fabs(moveObjAngle.z) / 10.0f;
+		if (fabs(moveObjAngle.z) < 5.0f)
+		{
+			moveObjAngle.z = 0;
+		}
+	}
 
+	//y軸の回転・オブジェクトの向き
+	moveObjAngle.y = -cameraAngle + 90.0f;
+
+	object->SetPosition(position);
+	object->SetRotation(moveObjAngle);
+	object->Update();
 	//当たり判定
 	Collider();
 

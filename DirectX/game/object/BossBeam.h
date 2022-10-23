@@ -52,11 +52,13 @@ protected:
 
 	//モデル
 	static std::unique_ptr<Model> model;
+	//オブジェクトの数
+	static const int objNum = 5;
 
 protected:
 
 	//オブジェクト
-	std::unique_ptr<Object3d> object;
+	std::array<std::unique_ptr<Object3d>, objNum> object;
 	//生存フラグ
 	bool isAlive;
 	//座標

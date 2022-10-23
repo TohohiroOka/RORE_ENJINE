@@ -8,6 +8,11 @@
 #include <random>
 #include <cstdlib>
 
+#include "Ground.h"
+
+static const float mapX = 255.0f * Ground::GetScale();
+static const float mapZ = 255.0f * Ground::GetScale();
+
 static unsigned GetDigit(unsigned num) {
 	return unsigned(std::to_string(num).length());
 }

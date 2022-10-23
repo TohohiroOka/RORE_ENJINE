@@ -29,11 +29,16 @@ void BossBeam::Initialize()
 	scale = 1000;
 	angle = { 0.0f,0.0f };
 
-	object = Object3d::Create(model.get());
-	object->SetBloom(true);
-	object->SetScale({ 10.0f,10.0f ,scale });
-	object->SetRotation({ 0,angle.x,angle.y });
-	object->Update();
+	for (int i = 0; i < objNum; i++)
+	{
+		object[i] = Object3d::Create(model.get());
+		object[i]->SetBloom(true);
+		float sizeXY = float(i) / float(objNum);
+		object[i]->SetScale({ 10.0f * sizeXY,10.0f * sizeXY ,scale });
+		object[i]->SetRotation({ 0,angle.x,angle.y });
+		object[i]->SetColor({ 0.2f,0.2f,0.2f,0.1f });
+		object[i]->Update();
+	}
 }
 
 void BossBeam::Update(const XMFLOAT3& _pos, const XMFLOAT3& _color)
@@ -49,16 +54,21 @@ void BossBeam::Update(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 		_pos.y - sin(radiunZY) * scale * 1.01f,
 		_pos.z + cos(radiunZY) * cos(radiunXZ) * scale * 1.01f };
 
-	object->SetColor({ 1.0f,1.0f,1.0f,0.1f });
-	object->SetPosition(pos);
-	object->SetRotation({ angle.x,angle.y,0 });
-	object->Update();
+	for (auto& i : object)
+	{
+		i->SetPosition(pos);
+		i->SetRotation({ angle.x,angle.y,0 });
+		i->Update();
+	}
 }
 
 void BossBeam::Draw()
 {
 	if (!isAlive) { return; }
-	object->Draw();
+	for (auto& i : object)
+	{
+		i->Draw();
+	}
 }
 
 void BossBeam::Finalize()

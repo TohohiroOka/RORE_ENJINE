@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseEnemy.h"
 #include "BossBeam.h"
+#include <array>
 
 class BossA : public BaseEnemy
 {
@@ -10,9 +11,10 @@ private:
 	{
 		CIRCLE,//円状に出る
 		FIREWORKE,//花火的なもの
-		BAEM,//ビーム
+		//BAEM,//ビーム
 		HOMING,//ホーミング
 		SNAKE,//うねうね動く
+		HOMING_LINE,//追従線
 		NUM,//合計
 	};
 
@@ -38,6 +40,16 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
+
+private:
+
+	//一回にできる攻撃の種類
+	static const int kindNum = 2;
+
 private:
 
 	//タイマー
@@ -49,7 +61,11 @@ private:
 	//xz平面角度
 	float angleXZ;
 	//弾の種類
-	int kind = int(BULLET_KIND::CIRCLE);
+	std::array<int, kindNum> kind;
+	//1前フレームの弾の種類
+	std::array<int, kindNum> oldKind;
 	//ビーム
 	std::unique_ptr<BossBeam> baem;
+	//HOMING_LINE用の座標
+	std::array<XMFLOAT3, kindNum> HOMING_LINEpos;
 };

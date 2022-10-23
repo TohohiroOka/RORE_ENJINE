@@ -2,6 +2,7 @@
 #include "SphereCollider.h"
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
+#include "GameHelper.h"
 
 using namespace DirectX;
 
@@ -32,7 +33,7 @@ void BaseBullet::Initialize()
 void BaseBullet::Update()
 {
 	//Å‘å’l‚É‚¢‚Á‚½‚ç¶‘¶ƒtƒ‰ƒO‚ğÁ‚·
-	if (pos.x < 0.0f || pos.x>3825.0f || pos.y > 500 || pos.y < -1.0f || pos.z < 0.0f || pos.z>3825.0f) {
+	if (pos.x < 0.0f || pos.x>mapX || pos.y > 500 || pos.y < -1.0f || pos.z < 0.0f || pos.z>mapZ) {
 		isAlive = false;
 	}
 

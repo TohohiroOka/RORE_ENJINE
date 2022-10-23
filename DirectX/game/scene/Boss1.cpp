@@ -5,7 +5,6 @@
 #include "XInputManager.h"
 #include "DebugText.h"
 #include "Easing.h"
-#include "GameHelper.h"
 
 #include <imgui.h>
 #include <iomanip>
@@ -15,15 +14,17 @@
 #include <memory>
 
 #include "GameCollision.h"
+#include "GameHelper.h"
 
 using namespace DirectX;
 
 void Boss1::Initialize()
 {
-	player = Player::Create();
+	//プレイヤー
+	player = Player::Create({ mapX / 2.0f ,250.0f,mapX / 5.0f });
 
 	//地形
-	ground[0] = Ground::Create("heightmap01.bmp", "jimen.png", "kabe.png");
+	ground[0] = Ground::Create("heightmap05.bmp", "jimen.png", "kabe.png");
 
 	//弾マネージャー
 	bullet = BulletManager::Create();
@@ -32,7 +33,8 @@ void Boss1::Initialize()
 	enemy = EnemyManager::Create();
 
 	//ボス
-	boss = BossA::Create({ 3825.0f / 2.0f ,100.0f ,3825.0f / 2.0f });
+
+	boss = BossA::Create({ mapX / 2.0f ,100.0f ,mapZ / 2.0f });
 
 	//ターゲット
 	isTarget = false;
@@ -121,7 +123,6 @@ void Boss1::Draw()
 	Object3d::PreDraw();
 	player->Draw();
 	bullet->Draw();
-	//enemy->Draw();
 	boss->Draw();
 
 	//PrimitiveObject3D::PreDraw();
@@ -283,6 +284,10 @@ void Boss1::CameraUpdate()
 	cameraAngle = float(int(cameraAngle) % 360);
 	camera->SetTarget(target);
 	camera->SetEye(eye);
+
+	//カメラの傾き
+	XMFLOAT3 playerTilt = player->GetObjAngle();
+	camera->SetUp({ playerTilt.z,1,0 });
 
 	DebugText* text = DebugText::GetInstance();
 	std::string strCameraA = std::to_string(cameraAngle);

@@ -3,8 +3,7 @@
 #include "Boss1.h"
 #include "DirectInput.h"
 #include <imgui.h>
-#include "Easing.h"
-#include "WindowApp.h"
+#include "DebugText.h"
 
 using namespace DirectX;
 
@@ -21,17 +20,22 @@ void Title::Update()
 	camera->SetTarget({ 0,0,0 });
 
 	//ƒV[ƒ“‚ÌˆÚs
-	if (input->TriggerKey(DIK_0))
+	if (input->TriggerKey(DIK_RETURN))
 	{
 		Boss1* nextScene = new Boss1();
 		SceneManager::SetNextScene(nextScene);
 	}
+
+	DebugText* text = DebugText::GetInstance();
+	text->Print("push enter", 100, 200, 5.0f);
+	text = nullptr;
 }
 
 void Title::Draw()
 {
 	Sprite::PreDraw(cmdList);
 	sp->Draw();
+	DebugText::GetInstance()->DrawAll();
 	Sprite::PostDraw();
 }
 

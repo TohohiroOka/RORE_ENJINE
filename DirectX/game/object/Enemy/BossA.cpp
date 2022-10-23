@@ -28,6 +28,11 @@ BossA::BossA(const XMFLOAT3& _pos)
 	object->SetScale({ scale ,scale ,scale });
 
 	baem = BossBeam::Create();
+
+	kind = { int(BULLET_KIND::FIREWORKE),int(BULLET_KIND::CIRCLE) };
+	oldKind = kind;
+
+	HOMING_LINEpos = { XMFLOAT3{0,0,0},XMFLOAT3{0,0,0} };
 }
 
 std::unique_ptr<BossA> BossA::Create(const XMFLOAT3& _pos)
@@ -48,78 +53,31 @@ void BossA::Update()
 {
 	timer++;
 
-	if (DirectInput::GetInstance()->TriggerKey(DIK_K))
+	//if (DirectInput::GetInstance()->TriggerKey(DIK_K))
+	//{
+	//	kind[0]++;
+	//	kind[0] = kind[0] % int(BULLET_KIND::NUM);
+	//}
+
+	if (timer % 300 == 1)
 	{
-		kind++;
-		kind = kind % int(BULLET_KIND::NUM);
+		kind[0]++;
+		kind[1]++;
+		kind[0] = kind[0] % int(BULLET_KIND::NUM);
+		kind[1] = kind[1] % int(BULLET_KIND::NUM);
 	}
 
-	if (kind == int(BULLET_KIND::CIRCLE))
-	{
-		if (timer % 5 == 1)
-		{
-			angleXZ += 10.0f;
-			float radiunXZ = XMConvertToRadians(angleXZ);
-			for (int i = 0; i < bulletNum; i++)
-			{
-				float ratio = float(i) / float(bulletNum);
-				float nowAngle = ratio * 360.0f;
-				float radiun = XMConvertToRadians(nowAngle);
-				XMFLOAT3 color = {};
-				if (int(angleXZ) % 3 == 0)
-				{
-					color = { 0.9f,0.2f,0.2f };
-				}
-				else if (int(angleXZ) % 3 == 1)
-				{
-					color = { 0.2f,0.9f,0.2f };
-				}
-				else
-				{
-					color = { 0.2f,0.2f,0.9f };
-				}
-
-				BulletManager::SetBossBulletA(pos,
-					{ cos(radiun) * cos(radiunXZ),cos(radiun) * sin(radiunXZ),sin(radiun) }, color);
-			}
-		}
-	}
-	else if (kind == int(BULLET_KIND::FIREWORKE))
-	{
-		if (timer % 10 == 1)
-		{
-			float radiunXY = XMConvertToRadians(Randomfloat(360));
-			float radiunXZ = XMConvertToRadians(Randomfloat(360));
-			BulletManager::SetBossBulletB(pos,
-				{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) },
-				{ 0.9f,0.1f,0.9f });
-		}
-	}
-	else if (kind == int(BULLET_KIND::BAEM))
-	{
-		baem->Update(pos, { 0.9f,0.0f,0.9f });
-	}
-	else if (kind == int(BULLET_KIND::HOMING))
-	{
-		XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
-		BulletManager::SetBossBulletC(pos, color);
-	}
-	else if (kind == int(BULLET_KIND::RAIN))
-	{
-		XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
-		BulletManager::SetBossBulletD(pos, color);
-	}
-
-	if (kind != int(BULLET_KIND::BAEM))
-	{
-		baem->SetIsAlive(false);
-	}
+	Attack();
 
 	BaseEnemy::Update();
 
 	DebugText* text = DebugText::GetInstance();
 	std::string bossHp = std::to_string(hp);
+	std::string bossAttack1= std::to_string(kind[0]);
+	std::string bossAttack2 = std::to_string(kind[1]);
 	text->Print("Boss hp : " + bossHp, 100, 200);
+	text->Print("Boss Attack1 : " + bossAttack1+ " Boss Attack2 : " + bossAttack2, 100, 225);
+
 	text = nullptr;
 }
 
@@ -129,4 +87,71 @@ void BossA::Draw()
 
 	if (!baem->GetIsAlive()) { return; }
 	baem->Draw();
+}
+
+void BossA::Attack()
+{
+	for (int i = 0; i < kindNum; i++)
+	{
+		if (kind[i] == int(BULLET_KIND::CIRCLE))
+		{
+			if (timer % 3 == 1)
+			{
+				angleXZ += 10.0f;
+				float radiunXZ = XMConvertToRadians(angleXZ);
+				for (int i = 0; i < bulletNum; i++)
+				{
+					float ratio = float(i) / float(bulletNum);
+					float nowAngle = ratio * 360.0f;
+					float radiun = XMConvertToRadians(nowAngle);
+					BulletManager::SetBossBulletA(pos,
+						{ cos(radiun) * cos(radiunXZ),cos(radiun) * sin(radiunXZ),sin(radiun) });
+				}
+			}
+		}
+		else if (kind[i] == int(BULLET_KIND::FIREWORKE))
+		{
+			if (timer % 10 == 1)
+			{
+				float radiunXY = XMConvertToRadians(Randomfloat(360));
+				float radiunXZ = XMConvertToRadians(Randomfloat(360));
+				BulletManager::SetBossBulletB(pos,
+					{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) },
+					{ 0.9f,0.1f,0.9f });
+			}
+		}
+		//else if (kind[i] == int(BULLET_KIND::BAEM))
+		//{
+		//	baem->Update(pos, { 0.9f,0.0f,0.9f });
+		//}
+		else if (kind[i] == int(BULLET_KIND::HOMING))
+		{
+			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+			BulletManager::SetBossBulletC(pos, color);
+		}
+		else if (kind[i] == int(BULLET_KIND::SNAKE))
+		{
+			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+			BulletManager::SetBossBulletD(pos, color);
+		}
+		else if (kind[i] == int(BULLET_KIND::HOMING_LINE))
+		{
+			//前準備
+			if (oldKind[i] != int(BULLET_KIND::HOMING_LINE))
+			{
+				HOMING_LINEpos[i] = pos;
+			}
+
+			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+			BulletManager::SetBossBulletE(HOMING_LINEpos[i], 3.0f, color);
+		}
+
+		//if (kind[i] != int(BULLET_KIND::BAEM))
+		//{
+		//	baem->SetIsAlive(false);
+		//}
+
+		//前フレームの集類を保存
+		oldKind[i] = kind[i];
+	}
 }
