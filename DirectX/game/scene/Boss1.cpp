@@ -33,8 +33,10 @@ void Boss1::Initialize()
 	enemy = EnemyManager::Create();
 
 	//ボス
-
 	boss = BossA::Create({ mapX / 2.0f ,100.0f ,mapZ / 2.0f });
+
+	//UI
+	ui = UiManager::Create(boss->GetMaxHp());
 
 	//ターゲット
 	isTarget = false;
@@ -86,6 +88,9 @@ void Boss1::Update()
 	//カメラ更新
 	CameraUpdate();
 
+	//ui更新
+	ui->Update(boss->GetHp());
+
 	//------更新以外の処理--------//
 
 	//ボスが倒されたのでフロア終わり
@@ -131,6 +136,7 @@ void Boss1::Draw()
 	InterfaceObject3d::ReleaseCmdList();
 
 	Sprite::PreDraw(cmdList);
+	ui->Draw();
 	DebugText::GetInstance()->DrawAll();
 	Sprite::PostDraw();
 }

@@ -9,6 +9,8 @@
 #include "EnemyManager.h"
 #include "BossA.h"
 
+#include "UiManager.h"
+
 class Boss1 : public InterfaceScene
 {
 public:
@@ -77,4 +79,7 @@ private:
 
 	//É{ÉX
 	std::unique_ptr<BossA> boss;
+
+	//UI
+	std::unique_ptr<UiManager> ui;
 };

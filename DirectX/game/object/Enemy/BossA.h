@@ -51,6 +51,8 @@ private:
 
 	//一回にできる攻撃の種類
 	static const int kindNum = 2;
+	//ボスの最大体力
+	const int maxHp = 400;
 
 private:
 
@@ -70,4 +72,9 @@ private:
 	std::unique_ptr<BossBeam> baem;
 	//HOMING_LINE用の座標
 	std::array<XMFLOAT3, kindNum> HOMING_LINEpos;
+
+public:
+
+	int GetMaxHp() { return maxHp; }
+	int GetHp() { return hp; }
 };

@@ -12,7 +12,7 @@ BossA::BossA(const XMFLOAT3& _pos)
 	//タイマー
 	timer = 0;
 	//HP
-	hp = 10;
+	hp = maxHp;
 	//地面についているか
 	onGround = false;
 	//移動速度
@@ -53,19 +53,19 @@ void BossA::Update()
 {
 	timer++;
 
-	if (DirectInput::GetInstance()->TriggerKey(DIK_K))
-	{
-		kind[0]++;
-		kind[0] = kind[0] % int(BULLET_KIND::NUM);
-	}
-
-	//if (timer % 300 == 1)
+	//if (DirectInput::GetInstance()->TriggerKey(DIK_K))
 	//{
 	//	kind[0]++;
-	//	kind[1]++;
 	//	kind[0] = kind[0] % int(BULLET_KIND::NUM);
-	//	kind[1] = kind[1] % int(BULLET_KIND::NUM);
 	//}
+
+	if (timer % 300 == 1)
+	{
+		kind[0]++;
+		kind[1]++;
+		kind[0] = kind[0] % int(BULLET_KIND::NUM);
+		kind[1] = kind[1] % int(BULLET_KIND::NUM);
+	}
 
 	Attack();
 
@@ -91,7 +91,7 @@ void BossA::Draw()
 
 void BossA::Attack()
 {
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < kindNum; i++)
 	{
 		if (kind[i] == int(BULLET_KIND::CIRCLE) && timer % 10 == 1)
 		{

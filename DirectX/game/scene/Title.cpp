@@ -11,6 +11,11 @@ void Title::Initialize()
 {
 	Sprite::LoadTexture("amm", "Resources/amm.jpg", true);
 	sp = Sprite::Create("amm");
+	sp->SetPosition({ 500,500 });
+	sp->SetTexSize({ 1000, 1000 });
+	sp->SetSize({ 100,100 });
+	sp->Update();
+
 }
 
 void Title::Update()

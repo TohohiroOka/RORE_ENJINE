@@ -25,10 +25,13 @@ float GetDistance(XMFLOAT2 startPoint, XMFLOAT2 endPoint) {
 
 Player::Player(const XMFLOAT3& _pos)
 {
+	isDraw = true;
 	position = _pos;
 	move = { 0,0,0 };
 	hp = 100;
 	moveObjAngle = { 0,0,0 };
+	isDamageStaging = false;;
+	damageTimer = 0;
 }
 
 std::unique_ptr<Player> Player::Create(const XMFLOAT3& _pos)
@@ -182,6 +185,27 @@ void Player::Update(float _cameraAngle)
 
 void Player::Draw()
 {
+	if (isDamageStaging) {
+		damageTimer++;
+		if (damageTimer % 5) {
+			if (isDraw)
+			{
+				isDraw = false;
+			}
+			else
+			{
+				isDraw = true;
+			}
+		}
+		if (damageTimer > 50)
+		{
+			isDamageStaging = false;
+			isDraw = true;
+			damageTimer = 0;
+		}
+	}
+
+	if (!isDraw) { return; }
 	object->Draw();
 }
 

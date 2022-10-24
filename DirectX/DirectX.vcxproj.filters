@@ -161,6 +161,9 @@
     <Filter Include="エンジンシステム\Base\Helpar\Singleton">
       <UniqueIdentifier>{436617b7-49ce-48ec-902c-d3b0bc7ea860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ゲームシステム\ui">
+      <UniqueIdentifier>{8dc139d4-0190-4bcb-8e9d-eb8d45c139bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -372,6 +375,15 @@
     </ClCompile>
     <ClCompile Include="game\object\Bullet\BossBulletNormal.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="UiManager.cpp">
+      <Filter>ゲームシステム\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseUi.cpp">
+      <Filter>ゲームシステム\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="BossHpUi.cpp">
+      <Filter>ゲームシステム\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -726,6 +738,15 @@
     </ClInclude>
     <ClInclude Include="game\object\Bullet\BossBulletF.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="UiManager.h">
+      <Filter>ゲームシステム\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseUi.h">
+      <Filter>ゲームシステム\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="BossHpUi.h">
+      <Filter>ゲームシステム\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

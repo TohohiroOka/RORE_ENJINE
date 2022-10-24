@@ -97,6 +97,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseUi.cpp" />
+    <ClCompile Include="BossHpUi.cpp" />
     <ClCompile Include="engine\2d\DebugText.cpp" />
     <ClCompile Include="engine\2d\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -170,6 +172,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="UiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
@@ -318,6 +321,8 @@
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseUi.h" />
+    <ClInclude Include="BossHpUi.h" />
     <ClInclude Include="engine\2d\DebugText.h" />
     <ClInclude Include="engine\2d\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -402,6 +407,7 @@
     <ClInclude Include="game\object\TouchableObject.h" />
     <ClInclude Include="game\scene\Boss1.h" />
     <ClInclude Include="game\scene\Title.h" />
+    <ClInclude Include="UiManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

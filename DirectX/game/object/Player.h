@@ -63,6 +63,9 @@ private:
 	XMFLOAT3 position;
 	XMFLOAT3 move;
 
+	//描画するか否か
+	bool isDraw;
+
 	//移動時のオブジェクトの回転角
 	XMFLOAT3 moveObjAngle;
 
@@ -71,6 +74,10 @@ private:
 
 	//HP
 	int hp;
+
+	//ダメージ演出
+	bool isDamageStaging;
+	int damageTimer;
 
 public:
 
@@ -85,6 +92,8 @@ public:
 	XMFLOAT3 GetScale() { return object->GetScale(); }
 
 	void Damage() {
+		damageTimer = 0;
+		isDamageStaging = true;
 		hp--;
 	}
 	bool GetIsAlive(){
