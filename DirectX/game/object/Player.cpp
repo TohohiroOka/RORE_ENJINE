@@ -27,7 +27,7 @@ Player::Player(const XMFLOAT3& _pos)
 {
 	position = _pos;
 	move = { 0,0,0 };
-	hp = 10;
+	hp = 100;
 	moveObjAngle = { 0,0,0 };
 }
 

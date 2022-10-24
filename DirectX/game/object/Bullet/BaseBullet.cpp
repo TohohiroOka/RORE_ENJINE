@@ -25,6 +25,7 @@ void BaseBullet::Initialize()
 
 	object->SetBloom(true);
 
+	object->SetLight(false);
 	object->SetScale({ scale ,scale ,scale });
 	object->SetPosition(pos);
 	object->Update();

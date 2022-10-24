@@ -130,9 +130,9 @@ void Boss1::Draw()
 
 	InterfaceObject3d::ReleaseCmdList();
 
-	Sprite::PreDraw(cmdList);
-	DebugText::GetInstance()->DrawAll();
-	Sprite::PostDraw();
+	//Sprite::PreDraw(cmdList);
+	//DebugText::GetInstance()->DrawAll();
+	//Sprite::PostDraw();
 }
 
 void Boss1::Finalize()

@@ -10,6 +10,7 @@ private:
 	enum class BULLET_KIND
 	{
 		CIRCLE,//円状に出る
+		CIRCLE_ROTATE,//円状に出る回転あり
 		FIREWORKE,//花火的なもの
 		//BAEM,//ビーム
 		HOMING,//ホーミング

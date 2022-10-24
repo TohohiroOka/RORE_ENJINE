@@ -29,7 +29,7 @@ BossA::BossA(const XMFLOAT3& _pos)
 
 	baem = BossBeam::Create();
 
-	kind = { int(BULLET_KIND::FIREWORKE),int(BULLET_KIND::CIRCLE) };
+	kind = { int(BULLET_KIND::SNAKE),int(BULLET_KIND::CIRCLE) };
 	oldKind = kind;
 
 	HOMING_LINEpos = { XMFLOAT3{0,0,0},XMFLOAT3{0,0,0} };
@@ -86,14 +86,35 @@ void BossA::Draw()
 	BaseEnemy::Draw();
 
 	if (!baem->GetIsAlive()) { return; }
-	baem->Draw();
+	//baem->Draw();
 }
 
 void BossA::Attack()
 {
 	for (int i = 0; i < kindNum; i++)
 	{
-		if (kind[i] == int(BULLET_KIND::CIRCLE))
+		if (kind[i] == int(BULLET_KIND::CIRCLE) && timer % 10 == 1)
+		{
+			float _angleXZ = 5.0f;
+			for (int j = 0; j < 36; j++)
+			{
+				_angleXZ += 10.0f;
+				float radiunXZ = XMConvertToRadians(_angleXZ);
+				float cosXZ = cosf(radiunXZ);
+				float sonXZ = sinf(radiunXZ);
+
+				for (int i = 0; i < 8; i++)
+				{
+					float ratio = float(i) / 8.0f;
+					float nowAngle = ratio * 360.0f;
+					float radiun = XMConvertToRadians(nowAngle);
+
+					BulletManager::SetBossBulletA(pos,
+						{ cos(radiun) * cosXZ,cos(radiun) * sonXZ,sin(radiun) });
+				}
+			}
+		}
+		else if (kind[i] == int(BULLET_KIND::CIRCLE_ROTATE))
 		{
 			if (timer % 3 == 1)
 			{
