@@ -150,10 +150,11 @@
     <ClCompile Include="game\object\Bullet\BaseBullet.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletA.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletB.cpp" />
-    <ClCompile Include="game\object\Bullet\BossBulletBB.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletC.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletD.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletE.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletF.cpp" />
+    <ClCompile Include="game\object\Bullet\BossBulletNormal.cpp" />
     <ClCompile Include="game\object\Bullet\BulletManager.cpp" />
     <ClCompile Include="game\object\Bullet\PlayerBullet.cpp" />
     <ClCompile Include="game\object\Enemy\BaseEnemy.cpp" />
@@ -385,10 +386,11 @@
     <ClInclude Include="game\object\Bullet\BaseBullet.h" />
     <ClInclude Include="game\object\Bullet\BossBulletA.h" />
     <ClInclude Include="game\object\Bullet\BossBulletB.h" />
-    <ClInclude Include="game\object\Bullet\BossBulletBB.h" />
     <ClInclude Include="game\object\Bullet\BossBulletC.h" />
     <ClInclude Include="game\object\Bullet\BossBulletD.h" />
     <ClInclude Include="game\object\Bullet\BossBulletE.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletF.h" />
+    <ClInclude Include="game\object\Bullet\BossBulletNormal.h" />
     <ClInclude Include="game\object\Bullet\BulletManager.h" />
     <ClInclude Include="game\object\Bullet\PlayerBullet.h" />
     <ClInclude Include="game\object\Enemy\BaseEnemy.h" />

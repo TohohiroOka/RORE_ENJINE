@@ -53,19 +53,19 @@ void BossA::Update()
 {
 	timer++;
 
-	//if (DirectInput::GetInstance()->TriggerKey(DIK_K))
-	//{
-	//	kind[0]++;
-	//	kind[0] = kind[0] % int(BULLET_KIND::NUM);
-	//}
-
-	if (timer % 300 == 1)
+	if (DirectInput::GetInstance()->TriggerKey(DIK_K))
 	{
 		kind[0]++;
-		kind[1]++;
 		kind[0] = kind[0] % int(BULLET_KIND::NUM);
-		kind[1] = kind[1] % int(BULLET_KIND::NUM);
 	}
+
+	//if (timer % 300 == 1)
+	//{
+	//	kind[0]++;
+	//	kind[1]++;
+	//	kind[0] = kind[0] % int(BULLET_KIND::NUM);
+	//	kind[1] = kind[1] % int(BULLET_KIND::NUM);
+	//}
 
 	Attack();
 
@@ -91,7 +91,7 @@ void BossA::Draw()
 
 void BossA::Attack()
 {
-	for (int i = 0; i < kindNum; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		if (kind[i] == int(BULLET_KIND::CIRCLE) && timer % 10 == 1)
 		{
@@ -149,6 +149,17 @@ void BossA::Attack()
 		{
 			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
 			BulletManager::SetBossBulletC(pos, color);
+		}
+		else if (kind[i] == int(BULLET_KIND::BOMB_HOMING))
+		{
+			if (timer % 3 == 1)
+			{
+				XMFLOAT2 _angle = { Randomfloat(360),Randomfloat(360) };
+				XMFLOAT2 radiun = { XMConvertToRadians(_angle.x),XMConvertToRadians(_angle.y) };
+
+				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+				BulletManager::SetBossBulletF(pos, { cos(radiun.x) * cos(radiun.y),cos(radiun.x) * sin(radiun.y),sin(radiun.x) }, color);
+			}
 		}
 		else if (kind[i] == int(BULLET_KIND::SNAKE))
 		{

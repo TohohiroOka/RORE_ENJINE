@@ -5,6 +5,8 @@
 #include "CollisionManager.h"
 #include "CollisionAttribute.h"
 
+#include "GameHelper.h"
+
 std::list<std::unique_ptr<PlayerBullet>> BulletManager::playerBullet;
 std::list<std::unique_ptr<BaseBullet>> BulletManager::bossBullet;
 DirectX::XMFLOAT3 BulletManager::playerPos;
@@ -172,4 +174,12 @@ bool BulletManager::CheckPlayerBulletToEnemyCollision(const XMFLOAT3& _pos, floa
 	}
 
 	return hit;
+}
+
+void BulletManager::SetBossBulletFF(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
+{
+	XMFLOAT3 rand = { Randomfloat(300) - 150.0f,Randomfloat(300) - 150.0f ,Randomfloat(300) - 150.0f };
+	Vector3 moveVec = { rand.x + playerPos.x - _pos.x,rand.y + playerPos.y - _pos.y ,rand.z + playerPos.z - _pos.z };
+	moveVec = moveVec.normalize();
+	bossBullet.emplace_back(BossBulletNormal::Create(_pos, { moveVec.x,moveVec.y,moveVec.z }, _speed, _color));
 }

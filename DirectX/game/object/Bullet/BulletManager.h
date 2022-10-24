@@ -1,12 +1,13 @@
 #pragma once
 #include "Vector3.h"
 #include "PlayerBullet.h"
+#include "BossBulletNormal.h"
 #include "BossBulletA.h"
 #include "BossBulletB.h"
-#include "BossBulletBB.h"
 #include "BossBulletC.h"
 #include "BossBulletD.h"
 #include "BossBulletE.h"
+#include "BossBulletF.h"
 
 class BulletManager
 {
@@ -76,6 +77,12 @@ public:
 	}
 
 	//弾セット
+	static void SetBossBulletNormal(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec,
+		const float _speed, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletNormal::Create(_pos, _moveVec, _speed, _color));
+	}
+
+	//弾セット
 	static void SetBossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
 		bossBullet.emplace_back(BossBulletA::Create(_pos, _moveVec));
 	}
@@ -83,11 +90,6 @@ public:
 	//弾セット
 	static void SetBossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
 		bossBullet.emplace_back(BossBulletB::Create(_pos, _moveVec, _color));
-	}
-
-	//弾セット
-	static void SetBossBulletBB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
-		bossBullet.emplace_back(BossBulletBB::Create(_pos, _moveVec, _color));
 	}
 
 	//弾セット
@@ -109,5 +111,13 @@ public:
 		_pos.y += moveVec.y * speed;
 		_pos.z += moveVec.z * speed;
 	}
+
+	//弾セット
+	static void SetBossBulletF(XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletF::Create(_pos, _moveVec, _color));
+	}
+
+	//弾セット
+	static void SetBossBulletFF(const XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color);
 
 };

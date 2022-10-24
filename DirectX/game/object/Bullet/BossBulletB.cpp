@@ -53,8 +53,8 @@ void BossBulletB::Update()
 			float radiunXY = XMConvertToRadians(nowAngleXY);
 			float radiunXZ = XMConvertToRadians(nowAngleXZ);
 
-			BulletManager::SetBossBulletBB(pos,
-				{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) },
+			BulletManager::SetBossBulletNormal(pos,
+				{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) }, 8.0f,
 				{ float(i % 10) / 10.0f, float(i / bulletNum), float(i) / 10.0f });
 		}
 		isAlive = false;

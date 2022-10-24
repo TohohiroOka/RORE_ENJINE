@@ -337,9 +337,6 @@
     <ClCompile Include="game\object\Bullet\BossBulletB.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletBB.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="game\object\Bullet\BulletManager.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
@@ -368,6 +365,12 @@
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="game\object\Bullet\BossBulletE.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletF.cpp">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Bullet\BossBulletNormal.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
@@ -682,9 +685,6 @@
     <ClInclude Include="game\object\Bullet\BossBulletB.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletBB.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="game\object\Bullet\BulletManager.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
@@ -719,6 +719,12 @@
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="game\object\Bullet\BossBulletE.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletNormal.h">
+      <Filter>ゲームシステム\object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Bullet\BossBulletF.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
   </ItemGroup>

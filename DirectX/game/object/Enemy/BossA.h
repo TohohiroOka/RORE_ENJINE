@@ -14,6 +14,7 @@ private:
 		FIREWORKE,//花火的なもの
 		//BAEM,//ビーム
 		HOMING,//ホーミング
+		BOMB_HOMING,//爆破してから追従
 		SNAKE,//うねうね動く
 		HOMING_LINE,//追従線
 		NUM,//合計

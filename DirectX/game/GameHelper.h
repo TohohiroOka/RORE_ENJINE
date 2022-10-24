@@ -9,6 +9,7 @@
 #include <cstdlib>
 
 #include "Ground.h"
+#include "Player.h"
 
 static const float mapX = 255.0f * Ground::GetScale();
 static const float mapZ = 255.0f * Ground::GetScale();
