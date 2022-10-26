@@ -165,8 +165,29 @@ bool BulletManager::CheckPlayerBulletToEnemyCollision(const XMFLOAT3& _pos, floa
 	return hit;
 }
 
+void BulletManager::SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color,const int _progress)
+{
+	//弾追加
+	bossBullet.emplace_back(BossBulletE::Create(_pos, _color));
+
+	//0ならボス側で移動
+	if (_progress == 0) { return; }
+
+	//プレイヤーの周りに行くようにする
+	Vector3 randPos = { _pos.x,_pos.y,_pos.z };
+	randPos = randPos + Vector3(Randomfloat(100) - 50.0f, Randomfloat(100) - 50.0f, Randomfloat(100) - 50.0f);
+
+	//次の位置を決める
+	Vector3 moveVec = { playerPos.x - randPos.x,playerPos.y - randPos.y ,playerPos.z - randPos.z };
+	moveVec = moveVec.normalize();
+	_pos.x += moveVec.x * speed;
+	_pos.y += moveVec.y * speed;
+	_pos.z += moveVec.z * speed;
+}
+
 void BulletManager::SetBossBulletFF(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
 {
+	//球状に出す
 	XMFLOAT3 rand = { Randomfloat(300) - 150.0f,Randomfloat(300) - 150.0f ,Randomfloat(300) - 150.0f };
 	Vector3 moveVec = { rand.x + playerPos.x - _pos.x,rand.y + playerPos.y - _pos.y ,rand.z + playerPos.z - _pos.z };
 	moveVec = moveVec.normalize();

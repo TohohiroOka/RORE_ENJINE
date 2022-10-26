@@ -16,8 +16,24 @@ private:
 		HOMING,//ホーミング
 		BOMB_HOMING,//爆破してから追従
 		SNAKE,//うねうね動く
-		HOMING_LINE,//追従線
-		NUM,//合計
+		HOMING_LINE1,//追従線(円形に出る)
+		HOMING_LINE2,//追従線(追従する)
+		SIZE,//合計
+	};
+
+	static const int homing_line_num = 6;
+
+	//一回分の攻撃情報
+	struct BULLET_INFO
+	{
+		//弾の種類
+		int kind;
+		//1前フレームの弾の種類
+		int oldKind;
+		//HOMING_LINE用の座標
+		XMFLOAT3 HOMING_LINEpos[homing_line_num];
+		//角度ホーミング線用角度
+		XMFLOAT2 radiun[homing_line_num];
 	};
 
 public:
@@ -64,14 +80,10 @@ private:
 	const int bulletNum = 36;
 	//xz平面角度
 	float angleXZ;
-	//弾の種類
-	std::array<int, kindNum> kind;
-	//1前フレームの弾の種類
-	std::array<int, kindNum> oldKind;
+	//一回分の攻撃情報
+	std::array<BULLET_INFO, kindNum> attack;
 	//ビーム
 	std::unique_ptr<BossBeam> baem;
-	//HOMING_LINE用の座標
-	std::array<XMFLOAT3, kindNum> HOMING_LINEpos;
 
 public:
 

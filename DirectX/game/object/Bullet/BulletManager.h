@@ -103,14 +103,7 @@ public:
 	}
 
 	//弾セット
-	static void SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color) {
-		bossBullet.emplace_back(BossBulletE::Create(_pos, _color));
-		Vector3 moveVec = { playerPos.x - _pos.x,playerPos.y - _pos.y ,playerPos.z - _pos.z };
-		moveVec = moveVec.normalize();
-		_pos.x += moveVec.x * speed;
-		_pos.y += moveVec.y * speed;
-		_pos.z += moveVec.z * speed;
-	}
+	static void SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color, const int _progress);
 
 	//弾セット
 	static void SetBossBulletF(XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
