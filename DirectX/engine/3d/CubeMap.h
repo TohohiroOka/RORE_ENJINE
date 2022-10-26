@@ -28,7 +28,7 @@ private: // エイリアス
 	//定数バッファの構造体
 	struct CONST_BUFFER_DATA {
 		XMMATRIX viewproj; // ビュープロジェクション行列
-		XMMATRIX world; // ワールド行列
+		XMMATRIX matWorld; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
 	};
 

@@ -132,13 +132,17 @@ void Boss1::Draw()
 
 	Object3d::PreDraw();
 	player->Draw();
-	bullet->Draw();
 	boss->Draw();
 
 	//PrimitiveObject3D::PreDraw();
 	//ground[0]->CDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
+
+	
+	InstanceObject::PreDraw(cmdList);
+	bullet->Draw();
+	InstanceObject::PostDraw();
 }
 
 void Boss1::Finalize()

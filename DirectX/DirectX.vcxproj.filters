@@ -164,6 +164,9 @@
     <Filter Include="ゲームシステム\ui">
       <UniqueIdentifier>{8dc139d4-0190-4bcb-8e9d-eb8d45c139bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダーファイル\InstanceObject">
+      <UniqueIdentifier>{7fc18359-a4db-42fb-957c-579db00601d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -385,6 +388,9 @@
     <ClCompile Include="game\ui\BaseUi.cpp">
       <Filter>ゲームシステム\ui</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\InstanceObject.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -453,6 +459,12 @@
     <FxCompile Include="Resources\Shaders\HeightMapVS.hlsl">
       <Filter>シェーダーファイル\HeightMap</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\InstanceObjectPS.hlsl">
+      <Filter>シェーダーファイル\InstanceObject</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\InstanceObjectVS.hlsl">
+      <Filter>シェーダーファイル\InstanceObject</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite.hlsli">
@@ -484,6 +496,9 @@
     </None>
     <None Include="Resources\Shaders\HeightMap.hlsli">
       <Filter>シェーダーファイル\HeightMap</Filter>
+    </None>
+    <None Include="Resources\Shaders\InstanceObject.hlsli">
+      <Filter>シェーダーファイル\InstanceObject</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -747,6 +762,9 @@
     </ClInclude>
     <ClInclude Include="game\ui\UiManager.h">
       <Filter>ゲームシステム\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\InstanceObject.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

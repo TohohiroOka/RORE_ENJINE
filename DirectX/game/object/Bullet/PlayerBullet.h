@@ -20,9 +20,4 @@ public:
 	/// <param name="_moveVec">ˆÚ“®—Ê</param>
 	/// <returns></returns>
 	static std::unique_ptr<PlayerBullet> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
-
-	/// <summary>
-	/// ‰Šú‰»
-	/// </summary>
-	void Initialize() override;
 };

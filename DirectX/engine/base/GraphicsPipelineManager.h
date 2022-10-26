@@ -81,6 +81,8 @@ public://メンバenum
 		bool object2d = false;
 		//マテリアルデータの有無
 		bool materialData = true;
+		//インスタンシング描画
+		bool instanceDraw = false;
 		//テクスチャ数
 		int textureNum = 1;
 		//ライト有無

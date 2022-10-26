@@ -22,6 +22,7 @@ private: // エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 public: // サブクラス
+
 	// 頂点データ構造体（テクスチャあり）
 	struct VERTEX
 	{
@@ -131,7 +132,9 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="_cmdList">命令発行先コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* _cmdList);
+	/// <param name="_shaderResourceView">シェーダーリソースビュー番号</param>
+	/// <param name="_instanceDrawNum">インスタンシング描画個数</param>
+	void Draw(ID3D12GraphicsCommandList* _cmdList, const int _shaderResourceView, const int _instanceDrawNum);
 
 	/// <summary>
 	/// 描画

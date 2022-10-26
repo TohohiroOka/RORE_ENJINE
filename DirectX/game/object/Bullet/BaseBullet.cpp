@@ -7,32 +7,32 @@
 using namespace DirectX;
 
 std::unique_ptr<Model> BaseBullet::model;
+std::array<std::unique_ptr<InstanceObject>, BaseBullet::object_max_num> BaseBullet::object;
+int BaseBullet::usingNum = 0;
 
 void BaseBullet::StaticInitialize()
 {
 	model = Model::CreateFromOBJ("Square");//プレイヤーの弾
+
+	for (auto& i : object)
+	{
+		i = InstanceObject::Create(model.get());
+		i->SetBloom(true);
+		i->SetLight(false);
+	}
 }
 
 void BaseBullet::Initialize()
 {
-	// コライダーの追加
-	float radius = 3.0f;
-	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
-	object->GetCollider()->SetAttribute(COLLISION_ATTR_ALLIES);
-
 	isAlive = true;
 	scale = 3;
-
-	object->SetBloom(true);
-
-	object->SetLight(false);
-	object->SetScale({ scale ,scale ,scale });
-	object->SetPosition(pos);
-	object->Update();
+	rotate = { 0,0,0 };
 }
 
 void BaseBullet::Update()
 {
+	if (!isAlive) { return; }
+
 	//最大値にいったら生存フラグを消す
 	if (pos.x < 0.0f || pos.x>mapX || pos.y > 500 || pos.y < -1.0f || pos.z < 0.0f || pos.z>mapZ) {
 		isAlive = false;
@@ -74,14 +74,20 @@ void BaseBullet::Update()
 	pos.y += move.y;
 	pos.z += move.z;
 
-	object->SetPosition(pos);
-	object->Update();
+	for (auto& i : object)
+	{
+		if (!i->GetInstanceDrawCheck()) { continue; }
+		i->DrawInstance(pos, { scale,scale,scale }, rotate, { color.x,color.y,color.z,0.5f });
+		return;
+	}
 }
 
 void BaseBullet::Draw()
 {
-	if (!isAlive) { return; }
-	object->Draw();
+	for (auto& i : object) {
+		if (i->GetInstanceDrawNum() == 0) { continue; }
+		i->Draw();
+	}
 }
 
 void BaseBullet::Finalize()

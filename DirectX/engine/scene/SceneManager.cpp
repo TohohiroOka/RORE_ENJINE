@@ -7,8 +7,13 @@ std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
 InterfaceScene* SceneManager::nextScene = nullptr;
 
 void SetLayout(D3D12_INPUT_ELEMENT_DESC* inputLayout, GraphicsPipelineManager::INPUT_LAYOUT_NUMBER* inputLayoutType,
-	int layoutNum)
+	int layoutNum, bool instance)
 {
+	D3D12_INPUT_CLASSIFICATION input = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
+	if (instance)
+	{
+		input = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA;
+	}
 	using LAYOUT = GraphicsPipelineManager::INPUT_LAYOUT_NUMBER;
 	// 頂点レイアウトの設定
 	for (int i = 0; i < layoutNum; i++)
@@ -19,73 +24,57 @@ void SetLayout(D3D12_INPUT_ELEMENT_DESC* inputLayout, GraphicsPipelineManager::I
 		{
 			inputLayout[i] = {
 				"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,
-				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//法線
 		else if (layoutNumber == LAYOUT::NORMAL)
 		{
 			inputLayout[i] = {
 			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//2Duv座標
 		else if (layoutNumber == LAYOUT::TEXCOORD_2D)
 		{
 			inputLayout[i] = {
 			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//3Duv座標
 		else if (layoutNumber == LAYOUT::TEXCOORD_3D)
 		{
 			inputLayout[i] = {
 			"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//ボーン番号
 		else if (layoutNumber == LAYOUT::BONEINDICES)
 		{
 			inputLayout[i] = {
 				"BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,
-				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//ボーン影響度
 		else if (layoutNumber == LAYOUT::BONEWEIGHTS)
 		{
 			inputLayout[i] = {
 				"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,
-				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//スケール
 		else if (layoutNumber == LAYOUT::SCALE)
 		{
 			inputLayout[i] = {
 				"SCALE", 0, DXGI_FORMAT_R32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,
-				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-			};
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
 		//色
 		else if (layoutNumber == LAYOUT::COLOR)
 		{
 			inputLayout[i] = {
 				"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,
-				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
 		}
-
 	}
 }
 
@@ -148,14 +137,37 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
+		inPepeline.inputLayout = inputLayout;
+		inPepeline.stateNum = 3;
+		inPepeline.rtvNum = 3;
+
+		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
+		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
+	}
+	//InstanceObject
+	{
+		inPepeline.object2d = false;
+		inPepeline.vertShader = "InstanceObject";
+		inPepeline.pixelShader = "InstanceObject";
+		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
+			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::NORMAL,GraphicsPipelineManager::TEXCOORD_2D };
+
+		//配列サイズ
+		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
+
+		inPepeline.layoutNum = arrayNum;
+		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 3;
 		inPepeline.rtvNum = 3;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
 
-		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
-		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
+		inSignature.instanceDraw = true;
+
+		graphicsPipeline->CreatePipeline("InstanceObject", inPepeline, inSignature);
+		InstanceObject::SetPipeline(graphicsPipeline->graphicsPipeline["InstanceObject"]);
 	}
 	//CUBE_BOX
 	{
@@ -169,10 +181,12 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 1;
+
+		inSignature.instanceDraw = false;
 
 		graphicsPipeline->CreatePipeline("CUBE_BOX", inPepeline, inSignature);
 		CubeMap::SetPipeline(graphicsPipeline->graphicsPipeline["CUBE_BOX"]);
@@ -189,7 +203,7 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 3;
@@ -214,7 +228,7 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 1;
@@ -239,7 +253,7 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
@@ -264,7 +278,7 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -289,7 +303,7 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
@@ -316,7 +330,7 @@ void SceneManager::CreatePipeline()
 
 		inPepeline.layoutNum = arrayNum;
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum);
+		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -355,6 +369,7 @@ void SceneManager::Update()
 
 	//カメラのセット
 	InterfaceObject3d::SetCamera(camera.get());
+	InstanceObject::SetCamera(camera.get());
 	//Fbx::SetCamera(camera.get());
 	DrawLine3D::SetCamera(camera.get());
 	//ParticleManager::SetCamera(camera.get());
@@ -367,6 +382,7 @@ void SceneManager::Update()
 	scene->SetLight(light.get());
 
 	// 3Dオブエクトにライトをセット
+	InstanceObject::SetLightGroup(light.get());
 	InterfaceObject3d::SetLightGroup(light.get());
 	//Fbx::SetLightGroup(light.get());
 	HeightMap::SetLightGroup(light.get());

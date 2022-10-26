@@ -79,6 +79,9 @@ void ShaderManager::LoadShader()
 	//Obj
 	shaderObjectVS["OBJ"] = CompileShader(L"ObjVS.hlsl", vsModel);
 	shaderObjectPS["OBJ"] = CompileShader(L"ObjPS.hlsl", psModel);
+	//HeightMap
+	shaderObjectVS["InstanceObject"] = CompileShader(L"InstanceObjectVS.hlsl", vsModel);
+	shaderObjectPS["InstanceObject"] = CompileShader(L"InstanceObjectPS.hlsl", psModel);
 	//Fbx
 	shaderObjectVS["FBX"] = CompileShader(L"FbxVS.hlsl", vsModel);
 	shaderObjectPS["FBX"] = CompileShader(L"FbxPS.hlsl", psModel);

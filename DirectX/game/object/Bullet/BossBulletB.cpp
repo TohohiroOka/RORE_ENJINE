@@ -3,36 +3,27 @@
 
 using namespace DirectX;
 
-BossBulletB::BossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
+BossBulletB::BossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color)
 {
 	timer = 0;
 	pos = _pos;
 	moveVec = _moveVec;
+	color = _color;
+	const float speed = 8.0f;
+	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
 }
 
 std::unique_ptr<BossBulletB> BossBulletB::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletB* instance = new BossBulletB(_pos, _moveVec);
+	BossBulletB* instance = new BossBulletB(_pos, _moveVec, _color);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
-	// 初期化
 	instance->Initialize();
-	instance->object->SetColor({ _color.x,_color.y,_color.z,1.0f });
 
 	return std::unique_ptr<BossBulletB>(instance);
-}
-
-void BossBulletB::Initialize()
-{
-	object = Object3d::Create(model.get());
-
-	BaseBullet::Initialize();
-
-	const float speed = 8.0f;
-	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
 }
 
 void BossBulletB::Update()

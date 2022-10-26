@@ -10,7 +10,8 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="_pos">座標</param>
-	BossBulletE(const XMFLOAT3& _pos);
+	/// <param name="_color">色</param>
+	BossBulletE(const XMFLOAT3& _pos, const XMFLOAT3& _color);
 	~BossBulletE() {};
 
 	/// <summary>
@@ -20,13 +21,6 @@ public:
 	/// <param name="_color">色</param>
 	/// <returns></returns>
 	static std::unique_ptr<BossBulletE> Create(const XMFLOAT3& _pos, const XMFLOAT3& _color);
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="_pos">座標</param>
-	/// <param name="_moveVec">移動量</param>
-	void Initialize() override;
 
 	/// <summary>
 	/// 更新

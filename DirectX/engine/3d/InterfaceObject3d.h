@@ -41,20 +41,6 @@ protected:// サブクラス
 		unsigned int isLight;//ライティングの有無
 	};
 
-	// 定数バッファ用データ構造体B1
-	struct CONST_BUFFER_DATA_B1
-	{
-		XMFLOAT3 baseColor = { 1,1,1 };//ベースカラ―
-		float pad1; // パディング
-		XMFLOAT3 ambient; // アンビエント係数
-		float pad2; // パディング
-		XMFLOAT3 diffuse; // ディフューズ係数
-		float metalness; // 金属度(0 or 1)
-		float specular; // 鏡面反射度
-		float roughness; // 粗さ
-		float alpha;	// アルファ
-	};
-
 public:
 
 	/// <summary>
@@ -151,8 +137,6 @@ protected:
 	ComPtr<ID3D12Resource> constBuffB0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
-	//定数バッファに渡す変数
-	CONST_BUFFER_DATA_B1 constBufferB1Num;
 	//ベースカラー
 	XMFLOAT4 baseColor = { 1,1,1,1 };
 	//ブルームの有無

@@ -2,7 +2,7 @@
 #include "GameHelper.h"
 using namespace DirectX;
 
-BossBulletD::BossBulletD(const XMFLOAT3& _pos)
+BossBulletD::BossBulletD(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 {
 	timer = 0;
 	divideNum = int(Randomfloat(50)) + 10;
@@ -11,27 +11,21 @@ BossBulletD::BossBulletD(const XMFLOAT3& _pos)
 	moveVec = { 0,0,0 };
 	angle = float((Randomfloat(360 * 2) - 360));
 	velocity = 2.0f;
+	color = _color;
 }
 
-std::unique_ptr<BossBulletD> BossBulletD::Create(const XMFLOAT3& _pos,const XMFLOAT3& _color)
+std::unique_ptr<BossBulletD> BossBulletD::Create(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletD* instance = new BossBulletD(_pos);
+	BossBulletD* instance = new BossBulletD(_pos, _color);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	// 初期化
 	instance->Initialize();
-	instance->object->SetColor({ _color.x,_color.y,_color.z,1.0f });
+
 	return std::unique_ptr<BossBulletD>(instance);
-}
-
-void BossBulletD::Initialize()
-{
-	object = Object3d::Create(model.get());
-
-	BaseBullet::Initialize();
 }
 
 void BossBulletD::Update()

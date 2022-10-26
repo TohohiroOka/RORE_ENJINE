@@ -5,7 +5,7 @@
 
 using namespace DirectX;
 
-BossBulletC::BossBulletC(const XMFLOAT3& _pos, const XMFLOAT3& _targetPos)
+BossBulletC::BossBulletC(const XMFLOAT3& _pos, const XMFLOAT3& _targetPos, const XMFLOAT3& _color)
 {
 	const int randMax = 50;
 	pos = _pos;
@@ -24,20 +24,12 @@ BossBulletC::BossBulletC(const XMFLOAT3& _pos, const XMFLOAT3& _targetPos)
 std::unique_ptr<BossBulletC> BossBulletC::Create(const XMFLOAT3& _pos, const XMFLOAT3& _targetPos, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletC* instance = new BossBulletC(_pos, _targetPos);
+	BossBulletC* instance = new BossBulletC(_pos, _targetPos, _color);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
-	// 初期化
 	instance->Initialize();
-	instance->object->SetColor({ _color.x,_color.y,_color.z,1.0f });
+
 	return std::unique_ptr<BossBulletC>(instance);
-}
-
-void BossBulletC::Initialize()
-{
-	object = Object3d::Create(model.get());
-
-	BaseBullet::Initialize();
 }

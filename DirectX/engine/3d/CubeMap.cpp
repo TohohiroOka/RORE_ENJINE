@@ -199,7 +199,7 @@ void CubeMap::Update()
 	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
 	assert(SUCCEEDED(result));
 	constMap->viewproj = matViewProjection;
-	constMap->world = matWorld;
+	constMap->matWorld = matWorld;
 	constMap->cameraPos = cameraPos;
 	constBuff->Unmap(0, nullptr);
 }

@@ -44,10 +44,8 @@ void BulletManager::Update(const XMFLOAT3& _playerPos)
 {
 	playerPos = _playerPos;
 
-	int aa = -1;
 	for (auto& i : bossBullet)
 	{
-		aa++;
 		if (!i->GetIsAlive()) { continue; }
 		i->Update();
 	}
@@ -88,16 +86,7 @@ void BulletManager::Update(const XMFLOAT3& _playerPos)
 
 void BulletManager::Draw()
 {
-	for (auto& i : bossBullet)
-	{
-		if (!i->GetIsAlive()) { continue; }
-		i->Draw();
-	}
-	for (auto& i : playerBullet)
-	{
-		if (!i->GetIsAlive()) { continue; }
-		i->Draw();
-	}
+	BaseBullet::Draw();
 }
 
 void BulletManager::Reset()

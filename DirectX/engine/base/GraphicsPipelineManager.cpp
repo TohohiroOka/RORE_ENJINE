@@ -147,7 +147,8 @@ void GraphicsPipelineManager::CreateRootSignature(const SIGNATURE_DESC& _signatu
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc;
 
 	// ルートパラメータ
-	const int rootparam_num = 1 + (_signatureDescSet.materialData + _signatureDescSet.light) + _signatureDescSet.textureNum;
+	const int rootparam_num = 1 + (_signatureDescSet.materialData + _signatureDescSet.light +
+		_signatureDescSet.instanceDraw) + _signatureDescSet.textureNum;
 
 	std::vector<CD3DX12_ROOT_PARAMETER> rootparams(rootparam_num);
 	// CBV（座標変換行列用）
@@ -189,6 +190,12 @@ void GraphicsPipelineManager::CreateRootSignature(const SIGNATURE_DESC& _signatu
 		{
 			// CBV (ライト)
 			rootparams[rootNum].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
+			rootNum++;
+		}
+		if (_signatureDescSet.instanceDraw)
+		{
+			// インスタンシング描画用情報
+			rootparams[rootNum].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
 			rootNum++;
 		}
 

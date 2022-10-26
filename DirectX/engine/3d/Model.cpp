@@ -390,11 +390,11 @@ void Model::LoadTextures()
 	}
 }
 
-void Model::Draw(ID3D12GraphicsCommandList* _cmdList)
+void Model::Draw(ID3D12GraphicsCommandList* _cmdList, const int _shaderResourceView, const int _instanceDrawNum)
 {
 	// 全メッシュを描画
 	for (auto& mesh : meshes) {
-		mesh->Draw(_cmdList);
+		mesh->Draw(_cmdList, _shaderResourceView, _instanceDrawNum);
 	}
 }
 

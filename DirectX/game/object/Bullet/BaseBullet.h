@@ -1,5 +1,5 @@
 #pragma once
-#include "Object3d.h"
+#include "InstanceObject.h"
 
 class BaseBullet
 {
@@ -30,7 +30,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw();
+	static void Draw();
 
 	/// <summary>
 	/// delete処理
@@ -41,11 +41,15 @@ protected:
 
 	//モデル
 	static std::unique_ptr<Model> model;
+	//オブジェクトの最大値
+	static const int object_max_num = 10;
+	//オブジェクト
+	static std::array<std::unique_ptr<InstanceObject>, object_max_num> object;
+	//現在の使用個数
+	static int usingNum;
 
 protected:
 
-	//オブジェクト
-	std::unique_ptr<Object3d> object;
 	//生存フラグ
 	bool isAlive;
 	//座標
@@ -56,6 +60,10 @@ protected:
 	XMFLOAT3 move;
 	//大きさ
 	float scale;
+	//角度
+	XMFLOAT3 rotate;
+	//色
+	XMFLOAT3 color = { 1,1,1 };
 
 public:
 

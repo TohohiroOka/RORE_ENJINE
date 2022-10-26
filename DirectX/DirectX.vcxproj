@@ -108,6 +108,7 @@
     <ClCompile Include="engine\3d\CubeMap.cpp" />
     <ClCompile Include="engine\3d\DrawLine3D.cpp" />
     <ClCompile Include="engine\3d\HeightMap.cpp" />
+    <ClCompile Include="engine\3d\InstanceObject.cpp" />
     <ClCompile Include="engine\3d\InterfaceObject3d.cpp" />
     <ClCompile Include="engine\3d\Material.cpp" />
     <ClCompile Include="engine\3d\Mesh.cpp" />
@@ -200,6 +201,18 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\HeightMapVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\InstanceObjectPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\InstanceObjectVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -311,6 +324,7 @@
   <ItemGroup>
     <None Include="Resources\Shaders\CubeBox.hlsli" />
     <None Include="Resources\Shaders\HeightMap.hlsli" />
+    <None Include="Resources\Shaders\InstanceObject.hlsli" />
     <None Include="Resources\Shaders\NormalMap.hlsli" />
     <None Include="Resources\Shaders\DrawLine2D.hlsli" />
     <None Include="Resources\Shaders\DrawLine3D.hlsli" />
@@ -338,6 +352,7 @@
     <ClInclude Include="engine\3d\CubeMap.h" />
     <ClInclude Include="engine\3d\DrawLine3D.h" />
     <ClInclude Include="engine\3d\HeightMap.h" />
+    <ClInclude Include="engine\3d\InstanceObject.h" />
     <ClInclude Include="engine\3d\InterfaceObject3d.h" />
     <ClInclude Include="engine\3d\Material.h" />
     <ClInclude Include="engine\3d\Mesh.h" />

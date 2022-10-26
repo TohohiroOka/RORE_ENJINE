@@ -58,7 +58,9 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="_cmdList">命令発行先コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* _cmdList);
+	/// <param name="_shaderResourceView">シェーダーリソースビュー番号</param>
+	/// <param name="_instanceDrawNum">インスタンシング描画個数</param>
+	void Draw(ID3D12GraphicsCommandList* _cmdList, const int _shaderResourceView = 3, const int _instanceDrawNum = 1);
 
 	/// <summary>
 	/// メッシュコンテナを取得

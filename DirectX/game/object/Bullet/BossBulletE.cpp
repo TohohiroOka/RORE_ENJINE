@@ -4,34 +4,27 @@
 
 using namespace DirectX;
 
-BossBulletE::BossBulletE(const XMFLOAT3& _pos)
+BossBulletE::BossBulletE(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 {
 	pos = _pos;
 	move = { 0,0,0 };
 	timer = 0;
 	isMove = false;
+	color = _color;
 }
 
 std::unique_ptr<BossBulletE> BossBulletE::Create(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletE* instance = new BossBulletE(_pos);
+	BossBulletE* instance = new BossBulletE(_pos, _color);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	// 初期化
 	instance->Initialize();
-	instance->object->SetColor({ _color.x,_color.y,_color.z,1.0f });
 
 	return std::unique_ptr<BossBulletE>(instance);
-}
-
-void BossBulletE::Initialize()
-{
-	object = Object3d::Create(model.get());
-
-	BaseBullet::Initialize();
 }
 
 void BossBulletE::Update()

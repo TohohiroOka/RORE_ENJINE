@@ -1,5 +1,6 @@
 #include "MainEngine.h"
 //#include "DrawLine.h"
+#include "InstanceObject.h"
 #include "DrawLine3D.h"
 #include "InterfaceObject3d.h"
 #include "Sprite.h"
@@ -43,6 +44,7 @@ void MainEngine::Initialize()
 	xinput->Initialize();
 
 	//ObjectŒn‚Ì‰Šú‰»
+	InstanceObject::StaticInitialize(dXCommon->GetDevice());
 	Texture::StaticInitialize(dXCommon->GetDevice());
 	GraphicsPipelineManager::SetDevice(dXCommon->GetDevice());
 	InterfaceObject3d::StaticInitialize(dXCommon->GetDevice());

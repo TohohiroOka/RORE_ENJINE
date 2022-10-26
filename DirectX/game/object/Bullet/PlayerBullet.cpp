@@ -19,13 +19,3 @@ std::unique_ptr<PlayerBullet> PlayerBullet::Create(const XMFLOAT3& _pos, const X
 
 	return std::unique_ptr<PlayerBullet>(instance);
 }
-
-void PlayerBullet::Initialize()
-{
-	object = Object3d::Create(model.get());
-
-	const float speed = 10.0f;
-	move = { moveVec.x * speed,moveVec.y * speed,moveVec.z * speed };
-
-	BaseBullet::Initialize();
-}

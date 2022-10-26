@@ -125,21 +125,21 @@ void Mesh::CreateBuffers()
 	ibView.SizeInBytes = sizeIB;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList* _cmdList)
+void Mesh::Draw(ID3D12GraphicsCommandList* _cmdList,const int _shaderResourceView, const int _instanceDrawNum)
 {
 	// 頂点バッファをセット
 	_cmdList->IASetVertexBuffers(0, 1, &vbView);
 	// インデックスバッファをセット
 	_cmdList->IASetIndexBuffer(&ibView);
 	// シェーダリソースビューをセット
-	_cmdList->SetGraphicsRootDescriptorTable(3, material->GetGpuHandle());
+	_cmdList->SetGraphicsRootDescriptorTable(_shaderResourceView, material->GetGpuHandle());
 
-	//// マテリアルの定数バッファをセット
-	//ID3D12Resource* constBuff = material->GetConstantBuffer();
-	//_cmdList->SetGraphicsRootConstantBufferView(1, constBuff->GetGPUVirtualAddress());
+	// マテリアルの定数バッファをセット
+	ID3D12Resource* constBuff = material->GetConstantBuffer();
+	_cmdList->SetGraphicsRootConstantBufferView(1, constBuff->GetGPUVirtualAddress());
 
 	// 描画コマンド
-	_cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
+	_cmdList->DrawIndexedInstanced((UINT)indices.size(), _instanceDrawNum, 0, 0, 0);
 }
 
 void Mesh::VIDraw(ID3D12GraphicsCommandList* _cmdList)

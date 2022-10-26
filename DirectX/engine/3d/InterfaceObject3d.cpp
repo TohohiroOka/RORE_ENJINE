@@ -56,16 +56,6 @@ void InterfaceObject3d::Initialize()
 		nullptr,
 		IID_PPV_ARGS(&constBuffB0));
 	if (FAILED(result)) { assert(0); }
-
-	// 定数バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B1) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuffB1));
-	if (FAILED(result)) { assert(0); }
 }
 
 void InterfaceObject3d::Update()
@@ -96,18 +86,6 @@ void InterfaceObject3d::Update()
 		constBuffB0->Unmap(0, nullptr);
 	}
 
-	CONST_BUFFER_DATA_B1* constMapB1 = nullptr;
-	result = constBuffB1->Map(0, nullptr, (void**)&constMapB1);//マッピング
-	if (SUCCEEDED(result)) {
-		constMapB1->baseColor = constBufferB1Num.baseColor;
-		constMapB1->ambient = constBufferB1Num.ambient;
-		constMapB1->diffuse = constBufferB1Num.diffuse;
-		constMapB1->metalness = constBufferB1Num.metalness;
-		constMapB1->specular = constBufferB1Num.specular;
-		constMapB1->roughness = constBufferB1Num.roughness;
-		constMapB1->alpha = constBufferB1Num.alpha;;
-		constBuffB1->Unmap(0, nullptr);
-	}
 	// 当たり判定更新
 	if (collider) {
 		collider->Update();
@@ -118,7 +96,6 @@ void InterfaceObject3d::Draw()
 {
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
-	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
 
 	// ライトの描画
 	light->Draw(cmdList, 2);

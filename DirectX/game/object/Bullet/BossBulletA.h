@@ -22,13 +22,6 @@ public:
 	static std::unique_ptr<BossBulletA> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
 
 	/// <summary>
-	/// ‰Šú‰»
-	/// </summary>
-	/// <param name="_pos">À•W</param>
-	/// <param name="_moveVec">ˆÚ“®—Ê</param>
-	void Initialize() override;
-
-	/// <summary>
 	/// F•ÏŠ·
 	/// </summary>
 	static void ColorChange();

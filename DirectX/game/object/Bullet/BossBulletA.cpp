@@ -9,6 +9,10 @@ BossBulletA::BossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
 {
 	pos = _pos;
 	moveVec = _moveVec;
+	const float speed = 15.0f;
+	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
+	color = circleColor;
+	ColorChange();
 }
 
 std::unique_ptr<BossBulletA> BossBulletA::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
@@ -19,22 +23,9 @@ std::unique_ptr<BossBulletA> BossBulletA::Create(const XMFLOAT3& _pos, const XMF
 		return nullptr;
 	}
 
-	// ‰Šú‰»
 	instance->Initialize();
-	instance->object->SetColor({ circleColor.x,circleColor.y,circleColor.z,1.0f });
-	ColorChange();
 
 	return std::unique_ptr<BossBulletA>(instance);
-}
-
-void BossBulletA::Initialize()
-{
-	object = Object3d::Create(model.get());
-
-	BaseBullet::Initialize();
-
-	const float speed = 15.0f;
-	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
 }
 
 void BossBulletA::ColorChange()
