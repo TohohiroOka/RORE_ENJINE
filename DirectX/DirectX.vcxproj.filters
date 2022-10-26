@@ -376,13 +376,13 @@
     <ClCompile Include="game\object\Bullet\BossBulletNormal.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="UiManager.cpp">
+    <ClCompile Include="game\ui\BossHpUi.cpp">
       <Filter>ゲームシステム\ui</Filter>
     </ClCompile>
-    <ClCompile Include="BaseUi.cpp">
+    <ClCompile Include="game\ui\UiManager.cpp">
       <Filter>ゲームシステム\ui</Filter>
     </ClCompile>
-    <ClCompile Include="BossHpUi.cpp">
+    <ClCompile Include="game\ui\BaseUi.cpp">
       <Filter>ゲームシステム\ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -739,13 +739,13 @@
     <ClInclude Include="game\object\Bullet\BossBulletF.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="UiManager.h">
+    <ClInclude Include="game\ui\BaseUi.h">
       <Filter>ゲームシステム\ui</Filter>
     </ClInclude>
-    <ClInclude Include="BaseUi.h">
+    <ClInclude Include="game\ui\BossHpUi.h">
       <Filter>ゲームシステム\ui</Filter>
     </ClInclude>
-    <ClInclude Include="BossHpUi.h">
+    <ClInclude Include="game\ui\UiManager.h">
       <Filter>ゲームシステム\ui</Filter>
     </ClInclude>
   </ItemGroup>

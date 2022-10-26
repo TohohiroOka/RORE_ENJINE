@@ -134,9 +134,9 @@ void Mesh::Draw(ID3D12GraphicsCommandList* _cmdList)
 	// シェーダリソースビューをセット
 	_cmdList->SetGraphicsRootDescriptorTable(3, material->GetGpuHandle());
 
-	// マテリアルの定数バッファをセット
-	ID3D12Resource* constBuff = material->GetConstantBuffer();
-	_cmdList->SetGraphicsRootConstantBufferView(1, constBuff->GetGPUVirtualAddress());
+	//// マテリアルの定数バッファをセット
+	//ID3D12Resource* constBuff = material->GetConstantBuffer();
+	//_cmdList->SetGraphicsRootConstantBufferView(1, constBuff->GetGPUVirtualAddress());
 
 	// 描画コマンド
 	_cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);

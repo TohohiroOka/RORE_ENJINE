@@ -117,6 +117,11 @@ void Boss1::Draw()
 {
 	assert(cmdList);
 
+	Sprite::PreDraw(cmdList);
+	ui->Draw();
+	DebugText::GetInstance()->DrawAll();
+	Sprite::PostDraw();
+
 	InterfaceObject3d::SetCmdList(cmdList);
 
 	HeightMap::PreDraw();
@@ -134,11 +139,6 @@ void Boss1::Draw()
 	//ground[0]->CDraw();
 
 	InterfaceObject3d::ReleaseCmdList();
-
-	Sprite::PreDraw(cmdList);
-	ui->Draw();
-	DebugText::GetInstance()->DrawAll();
-	Sprite::PostDraw();
 }
 
 void Boss1::Finalize()

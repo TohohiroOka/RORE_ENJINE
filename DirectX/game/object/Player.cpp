@@ -30,7 +30,8 @@ Player::Player(const XMFLOAT3& _pos)
 	move = { 0,0,0 };
 	hp = 100;
 	moveObjAngle = { 0,0,0 };
-	isDamageStaging = false;;
+	cameraAngle = 0.0f;
+	isDamageStaging = false;
 	damageTimer = 0;
 }
 
@@ -64,10 +65,10 @@ void Player::Initialize()
 
 	//SetBloom(true);
 
-	object->SetOutline(true);
-	object->SetOutlineWidth(0.002f);
-	object->SetOutlineColor({ 1,1,1,1 });
+	Object3d::SetOutlineWidth(0.002f);
+	Object3d::SetOutlineColor({ 1,1,1,1 });
 
+	object->SetOutline(true);
 	object->SetPosition(position);
 
 	//SetToon(true);
