@@ -183,12 +183,11 @@ void CollisionManager::QuerySphere(const Sphere& _sphere, QueryCallback* _callba
 	}
 }
 
-bool CollisionManager::QueryCapsule(const Capsule& _capsule, const unsigned short& _attribute, RAYCAST_HIT* _hitInfo, float _maxDistance)
+bool CollisionManager::QueryCapsule(const Capsule& _capsule, const unsigned short& _attribute)
 {
 	bool result = false;
 	std::forward_list<BaseCollider*>::iterator it;
 	std::forward_list<BaseCollider*>::iterator it_hit;
-	float distance = _maxDistance;
 	XMVECTOR inter;
 
 	// 全てのコライダーと総当りチェック
@@ -209,7 +208,6 @@ bool CollisionManager::QueryCapsule(const Capsule& _capsule, const unsigned shor
 			if (!Collision::CheckSphereCapsule(*sphere, _capsule, &tempDistance)) continue;
 			//if (tempDistance >= distance) continue;
 			result = true;
-			distance = tempDistance;
 			inter = {};
 			it_hit = it;
 		} else if (colA->GetShapeType() == COLLISIONSHAPE_MESH) {
@@ -220,17 +218,9 @@ bool CollisionManager::QueryCapsule(const Capsule& _capsule, const unsigned shor
 			//if (tempDistance >= distance) continue;
 
 			result = true;
-			distance = tempDistance;
 			inter = {};
 			it_hit = it;
 		}
-	}
-
-	if (result && _hitInfo) {
-		_hitInfo->distance = distance;
-		_hitInfo->inter = inter;
-		_hitInfo->collider = *it_hit;
-		_hitInfo->object = _hitInfo->collider->GetObject3d();
 	}
 
 	return result;

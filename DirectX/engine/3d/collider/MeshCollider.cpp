@@ -199,7 +199,7 @@ void MeshCollider::ConstructTriangles(Model* _model)
 		isInit = true;
 	}
 
-	for (int i = 0; i < octtreeSplit; i++)
+	for (int i = 0; i < octreeSplit; i++)
 	{
 		colliderMeshes[i].clear();
 	}
@@ -287,7 +287,7 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices
 		isInit = true;
 	}
 
-	for (int i = 0; i < octtreeSplit; i++)
+	for (int i = 0; i < octreeSplit; i++)
 	{
 		colliderMeshes[i].clear();
 	}

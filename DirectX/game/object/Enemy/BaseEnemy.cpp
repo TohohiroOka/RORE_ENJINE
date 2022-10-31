@@ -5,11 +5,19 @@
 
 using namespace DirectX;
 
-std::unique_ptr<Model> BaseEnemy::model;
+std::unique_ptr<Model> BaseEnemy::bossModel;
+std::unique_ptr<Model> BaseEnemy::enemyAModel;
+XMFLOAT3 BaseEnemy::playerPos;
 
 void BaseEnemy::StaticInitialize()
 {
-	model = Model::CreateFromOBJ("Square2");//プレイヤーの弾
+	bossModel = Model::CreateFromOBJ("Square");//ボス
+	enemyAModel = Model::CreateFromOBJ("enemyA");//敵A
+}
+
+void BaseEnemy::StaticUpdate(const XMFLOAT3& _playerPos)
+{
+	playerPos = _playerPos;
 }
 
 void BaseEnemy::Initialize()
@@ -45,7 +53,8 @@ void BaseEnemy::Draw()
 
 void BaseEnemy::Finalize()
 {
-	model.reset();
+	bossModel.reset();
+	enemyAModel.reset();
 }
 
 void BaseEnemy::SetMove(const XMFLOAT3& _pos)

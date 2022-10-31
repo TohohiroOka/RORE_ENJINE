@@ -152,7 +152,7 @@ void Sprite::Update()
 	HRESULT result = this->constBuff->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result)) {
 		constMap->color = this->color;
-		constMap->mat = this->matWorld * matProjection;	// s—ñ‚Ì‡¬	
+		constMap->mat = this->matWorld * matProjection;	// s—ñ‚Ì‡¬
 		this->constBuff->Unmap(0, nullptr);
 	}
 }

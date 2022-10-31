@@ -62,7 +62,7 @@ void ComputeShaderManager::Initialize()
 	prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	prop.CreationNodeMask = 1;
 	prop.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-	prop.Type = D3D12_HEAP_TYPE_CUSTOM;
+	prop.Type = D3D12_HEAP_TYPE_DEFAULT;
 	prop.VisibleNodeMask = 1;
 	//サイズは定数バッファと同じように指定
 	D3D12_RESOURCE_DESC desc{};

@@ -68,7 +68,6 @@ void BulletManager::Update(const XMFLOAT3& _playerPos)
 				++it;
 			}
 		}
-		const int p_size = int(playerBullet.size());
 		for (auto it = playerBullet.begin(); it != playerBullet.end();)
 		{
 			if (!it->get()->GetIsAlive())
@@ -163,6 +162,13 @@ bool BulletManager::CheckPlayerBulletToEnemyCollision(const XMFLOAT3& _pos, floa
 	}
 
 	return hit;
+}
+
+void BulletManager::SetEnemyBullet(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
+{
+	Vector3 moveV = { playerPos.x - _pos.x,playerPos.y - _pos.y,playerPos.z - _pos.z };
+	Vector3 moveVn = moveV.normalize();
+	bossBullet.emplace_back(BossBulletNormal::Create(_pos, moveVn, _speed, _color));
 }
 
 void BulletManager::SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color,const int _progress)

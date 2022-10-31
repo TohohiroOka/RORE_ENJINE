@@ -11,14 +11,24 @@
 #include "Ground.h"
 #include "Player.h"
 
-static const float mapX = 255.0f * Ground::GetScale();
-static const float mapZ = 255.0f * Ground::GetScale();
+static const float mapSize = 255.0f * Ground::GetScale();
 
+/// <summary>
+/// 桁数取得
+/// </summary>
+/// <param name="num"></param>
+/// <returns></returns>
 static unsigned GetDigit(unsigned num) {
 	return unsigned(std::to_string(num).length());
 }
 
-static float GetAngle(const DirectX::XMFLOAT3& _startPoint, const DirectX::XMFLOAT3& _endPoint)
+/// <summary>
+/// 二点間の角度取得
+/// </summary>
+/// <param name="_startPoint">座標1</param>
+/// <param name="_endPoint">座標2</param>
+/// <returns></returns>
+static float GetAngle(const DirectX::XMFLOAT2& _startPoint, const DirectX::XMFLOAT2& _endPoint)
 {
 	float radian = atan2f(_endPoint.y - _startPoint.y, _endPoint.x - _startPoint.x);
 	return DirectX::XMConvertToDegrees(radian);

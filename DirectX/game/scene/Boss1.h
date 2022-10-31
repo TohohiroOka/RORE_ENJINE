@@ -50,26 +50,13 @@ private:
 	//カメラの回転
 	float cameraAngle = -90;
 	//カメラの高さ
-	const float cameraY = 30.0f;
-	//ターゲット
-	bool isTarget;
-	//ターゲット時のイージング
-	bool isTageEase;
-	//イージングタイマー
-	float easeTimer;
-	//イージング初期角度
-	float startAngle;
-	//イージング初期値点
-	XMFLOAT3 startTarget;
-	//イージング初期値点
-	XMFLOAT3 startPos;
+	const float cameraY = 5.0f;
 
 	//プレイヤー
 	std::unique_ptr<Player> player = nullptr;
 
 	//地形
-	static const int ground_num = 1;
-	std::array<std::unique_ptr<Ground>, ground_num> ground;
+	std::unique_ptr<Ground> ground;
 
 	//弾
 	std::unique_ptr<BulletManager> bullet;

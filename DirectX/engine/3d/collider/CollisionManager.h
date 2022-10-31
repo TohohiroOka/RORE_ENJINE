@@ -69,7 +69,7 @@ public:// メンバ関数
 	/// <param name="_sphere">カプセル</param>
 	/// <param name="_hitInfo">衝突情報</param>
 	/// <param name="_maxDistance">最大距離</param>
-	bool QueryCapsule(const Capsule& _capsule, const unsigned short& _attribute, RAYCAST_HIT* _hitInfo = nullptr, float _maxDistance = D3D12_FLOAT32_MAX);
+	bool QueryCapsule(const Capsule& _capsule, const unsigned short& _attribute);
 
 private:
 	CollisionManager() = default;

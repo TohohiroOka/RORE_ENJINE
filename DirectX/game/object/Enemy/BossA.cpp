@@ -3,6 +3,7 @@
 #include "DebugText.h"
 #include "DirectInput.h"
 #include "GameHelper.h"
+#include "EnemyManager.h"
 
 using namespace DirectX;
 
@@ -18,7 +19,7 @@ BossA::BossA(const XMFLOAT3& _pos)
 	//移動速度
 	speed = 1.0f;
 	//オブジェクトの生成
-	object = Object3d::Create(model.get());
+	object = Object3d::Create(bossModel.get());
 	//座標セット
 	pos = _pos;
 	object->SetPosition(pos);
@@ -27,8 +28,17 @@ BossA::BossA(const XMFLOAT3& _pos)
 	scale = 30.0f;
 	object->SetScale({ scale ,scale ,scale });
 
+	//ブルーム等
+	object->SetBloom(true);
+	object->SetOutline(true);
+
+	//敵召喚カウント
+	summonEnemyCount = 0;
+
+	//ビーム
 	baem = BossBeam::Create();
 
+	//攻撃初期化
 	attack[0].kind = int(BULLET_KIND::CIRCLE);
 	attack[1].kind = int(BULLET_KIND::BOMB_HOMING);
 	for (auto& i : attack)
@@ -57,20 +67,38 @@ void BossA::Update()
 
 	//if (DirectInput::GetInstance()->TriggerKey(DIK_K))
 	//{
-	//	kind[0]++;
-	//	kind[0] = kind[0] % int(BULLET_KIND::NUM);
+	//	attack[0].kind++;
+	//	attack[0].kind = attack[0].kind % int(BULLET_KIND::SIZE);
 	//}
 
-	if (timer % 300 == 1)
+	//攻撃の更新
+	if (summonEnemyCount <= 5)
 	{
-		for (auto& i : attack)
+		if (timer % 300 == 1)
 		{
-			i.kind++;
-			i.kind = i.kind % int(BULLET_KIND::SIZE);
+			for (auto& i : attack)
+			{
+				i.kind++;
+				i.kind = i.kind % int(BULLET_KIND::SIZE);
+				i.rota = { 0,0,0 };
+			}
+			summonEnemyCount++;
+		}
+
+		//攻撃
+		Attack();
+	}
+	//敵の召喚
+	else {
+		if (timer % 30 == 1)
+		{
+			EnemyManager::SetEnemyA(pos);
+		}
+		if (timer % 300 == 0)
+		{
+			summonEnemyCount = 0;
 		}
 	}
-
-	Attack();
 
 	BaseEnemy::Update();
 
@@ -78,8 +106,10 @@ void BossA::Update()
 	std::string bossHp = std::to_string(hp);
 	std::string bossAttack1= std::to_string(attack[0].kind);
 	std::string bossAttack2 = std::to_string(attack[1].kind);
+	std::string stdSummonEnemyCount = std::to_string(summonEnemyCount);
 	text->Print("Boss hp : " + bossHp, 100, 200);
 	text->Print("Boss Attack1 : " + bossAttack1+ " Boss Attack2 : " + bossAttack2, 100, 225);
+	text->Print("summonEnemyCount : " + stdSummonEnemyCount, 100, 250);
 
 	text = nullptr;
 }
@@ -122,8 +152,8 @@ void BossA::Attack()
 		{
 			if (timer % 3 == 1)
 			{
-				angleXZ += 10.0f;
-				float radiunXZ = XMConvertToRadians(angleXZ);
+				attack[i].rota.y += 10.0f;
+				float radiunXZ = XMConvertToRadians(attack[i].rota.y);
 				for (int i = 0; i < bulletNum; i++)
 				{
 					float ratio = float(i) / float(bulletNum);
@@ -132,17 +162,6 @@ void BossA::Attack()
 					BulletManager::SetBossBulletA(pos,
 						{ cos(radiun) * cos(radiunXZ),cos(radiun) * sin(radiunXZ),sin(radiun) });
 				}
-			}
-		}
-		else if (attack[i].kind == int(BULLET_KIND::FIREWORKE))
-		{
-			if (timer % 10 == 1)
-			{
-				float radiunXY = XMConvertToRadians(Randomfloat(360));
-				float radiunXZ = XMConvertToRadians(Randomfloat(360));
-				BulletManager::SetBossBulletB(pos,
-					{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) },
-					{ 0.9f,0.1f,0.9f });
 			}
 		}
 		//else if (kind[i] == int(BULLET_KIND::BAEM))

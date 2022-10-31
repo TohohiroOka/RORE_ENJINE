@@ -286,4 +286,8 @@ public:
 	/// <returns></returns>
 	XMFLOAT3 GetWorldPosition();
 
+	/// <summary>
+	/// 親オブジェクトのセット
+	/// </summary>
+	void SetParent(InterfaceObject3d* _parent) { parent = _parent; }
 };

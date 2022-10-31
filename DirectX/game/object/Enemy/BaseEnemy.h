@@ -18,6 +18,11 @@ public:
 	static void StaticInitialize();
 
 	/// <summary>
+	/// 静的初期化
+	/// </summary>
+	static void StaticUpdate(const XMFLOAT3& _playerPos);
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	virtual void Initialize();
@@ -50,8 +55,12 @@ public:
 
 protected:
 
-	//モデル
-	static std::unique_ptr<Model> model;
+	//ボスモデル
+	static std::unique_ptr<Model> bossModel;
+	//enemyAモデル
+	static std::unique_ptr<Model> enemyAModel;
+	//プレイヤー座標
+	static XMFLOAT3 playerPos;
 
 protected:
 

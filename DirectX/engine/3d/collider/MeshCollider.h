@@ -114,9 +114,9 @@ public:
 private:
 
 	//八分木分割個数
-	static const int octtreeSplit = 64;
+	static const int octreeSplit = 64;
 	//判定用メッシュの情報
-	std::array<std::vector<ONE_MESH>, octtreeSplit> colliderMeshes;
+	std::array<std::vector<ONE_MESH>, octreeSplit> colliderMeshes;
 	//八分木の最小値
 	DirectX::XMVECTOR min = {};
 	//八分木の最大値

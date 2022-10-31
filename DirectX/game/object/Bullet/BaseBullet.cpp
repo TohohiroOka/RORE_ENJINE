@@ -12,7 +12,8 @@ int BaseBullet::usingNum = 0;
 
 void BaseBullet::StaticInitialize()
 {
-	model = Model::CreateFromOBJ("Square");//プレイヤーの弾
+	//弾
+	model = Model::CreateFromOBJ("Square1");
 
 	for (auto& i : object)
 	{
@@ -34,7 +35,7 @@ void BaseBullet::Update()
 	if (!isAlive) { return; }
 
 	//最大値にいったら生存フラグを消す
-	if (pos.x < 0.0f || pos.x>mapX || pos.y > 500 || pos.y < -1.0f || pos.z < 0.0f || pos.z>mapZ) {
+	if (pos.x < 0.0f || pos.x>mapSize || pos.y > 710 || pos.y < -1.0f || pos.z < 0.0f || pos.z>mapSize) {
 		isAlive = false;
 	}
 
@@ -46,28 +47,14 @@ void BaseBullet::Update()
 	//レイの距離
 	float distance = sqrtf(move.x * move.x + move.y * move.y + move.z + move.z);
 
-	//レイ
-	if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, distance))
+	//カプセル
+	Capsule capsule;
+	capsule.startPosition = { pos.x,pos.y,pos.z };
+	capsule.endPosition = { pos.x + move.x,pos.y + move.y,pos.z + move.z };
+	capsule.radius = scale;
+	if (CollisionManager::GetInstance()->QueryCapsule(capsule, COLLISION_ATTR_LANDSHAPE))
 	{
-		XMFLOAT3 hitPos = { raycastHit.inter.m128_f32[0], raycastHit.inter.m128_f32[1], raycastHit.inter.m128_f32[2] };
-		float x = powf(hitPos.x - pos.x, 2);
-		float y = powf(hitPos.y - pos.y, 2);
-		float z = powf(hitPos.z - pos.z, 2);
-		float eneTobul1 = sqrt(x + y + z);
-
-		//x = powf(move.x, 2);
-		//y = powf(move.y, 2);
-		//z = powf(move.z, 2);
-		x = powf(pos.x + move.x, 2);
-		y = powf(pos.y + move.y, 2);
-		z = powf(pos.z + move.z, 2);
-
-		float eneTobul2 = sqrt(x + y + z);
-
-		if (eneTobul1 < eneTobul2)
-		{
-			isAlive = false;
-		}
+		isAlive = false;
 	}
 
 	pos.x += move.x;
@@ -77,7 +64,7 @@ void BaseBullet::Update()
 	for (auto& i : object)
 	{
 		if (!i->GetInstanceDrawCheck()) { continue; }
-		i->DrawInstance(pos, { scale,scale,scale }, rotate, { color.x,color.y,color.z,0.5f });
+		i->DrawInstance(pos, { scale,scale,scale }, rotate, { color.x,color.y,color.z,1.0f });
 		return;
 	}
 }

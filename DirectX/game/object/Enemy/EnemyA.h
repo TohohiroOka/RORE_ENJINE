@@ -24,7 +24,6 @@ private:
 
 	//タイマー
 	int timer;
-	//一回に出す弾の量
-	const int bulletNum = 10;
+	//回転角
+	float angle;
 };
-

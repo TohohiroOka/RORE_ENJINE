@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "HeightMap.h"
+#include "Object3d.h"
 
 class Ground
 {
@@ -26,10 +27,16 @@ public:
 
 	void CDraw();
 
+	void CubeDraw();
+
 	void SetPos(DirectX::XMFLOAT3 pos);
 
 private:
 
+	//マップを覆うキューブ
+	std::array<std::unique_ptr<Model>, 2> cubeModel;
+	std::array<std::unique_ptr<Object3d> ,2> cubeObject;
+	//マップ
 	static const float scale;
 	std::unique_ptr<HeightMap> object = nullptr;
 

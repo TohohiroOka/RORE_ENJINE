@@ -114,7 +114,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	//カリング（現在は両面描画に設定）
-	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	//gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
 	// 図形の形状設定
 	gpipeline.PrimitiveTopologyType = _pepelineDescSet.topologyType;
@@ -128,8 +128,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 		}
 		else
 		{
-			gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-			gpipeline.DepthStencilState.DepthEnable = true;
+			//gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+			//gpipeline.DepthStencilState.DepthEnable = true;
 		}
 	}
 
@@ -153,7 +153,6 @@ void GraphicsPipelineManager::CreateRootSignature(const SIGNATURE_DESC& _signatu
 	std::vector<CD3DX12_ROOT_PARAMETER> rootparams(rootparam_num);
 	// CBV（座標変換行列用）
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-
 
 	//2d描画
 	if (_signatureDescSet.object2d)

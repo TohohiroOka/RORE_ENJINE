@@ -44,7 +44,7 @@ std::unique_ptr<Player> Player::Create(const XMFLOAT3& _pos)
 	}
 
 	//モデル読み込み
-	instance->model = Model::CreateFromOBJ("drone2");
+	instance->model = Model::CreateFromOBJ("drone");
 
 	// 初期化
 	instance->object = Object3d::Create(instance->model.get());

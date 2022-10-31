@@ -26,8 +26,8 @@ public:
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	/// <param name="_pos">プレイヤー座標</param>
-	void Update(const XMFLOAT3& _pos);
+	/// <param name="_player">プレイヤー座標</param>
+	void Update(const XMFLOAT3& _playerPos);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -42,28 +42,23 @@ public:
 	/// <summary>
 	/// 弾と地形、プレイヤーとの当たり判定
 	/// </summary>
-	/// <param name="_player">プレイヤー座標</param>
-	bool CheckCollision(const XMFLOAT3& _player);
+	bool CheckCollision();
 
 private:
 
-	//タイマー
-	int timer;
 	//敵A
-	static std::vector<std::unique_ptr<EnemyA>> enemyA;
-	//出現位置
-	static const std::array<XMFLOAT3, 4> popPos;
-	//敵Aが現フレームで倒されたかどうか
-	bool isKillEnemyA;
+	static std::list<std::unique_ptr<EnemyA>> enemyA;
+	//プレイヤー座標
+	static XMFLOAT3 playerPos;
 
 public:
 
-	std::vector<std::unique_ptr<EnemyA>>& GetEnemyA() {
-		return enemyA;
+	static void SetEnemyA(const XMFLOAT3& _pos) {
+		enemyA.emplace_back(EnemyA::Create(_pos));
 	}
 
-	bool GetKillBoss() {
-		return isKillEnemyA;
+	std::list<std::unique_ptr<EnemyA>>::iterator& GetEnemyA() {
+		return enemyA.begin();
 	}
 };
 

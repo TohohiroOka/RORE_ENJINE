@@ -229,6 +229,7 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* _cmdList)
 	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->outlineColor = InterfaceObject3d::GetOutlineColor();
 	constMap->outlineWidth = InterfaceObject3d::GetOutlineWidth();
+	constMap->isFog = isFog;
 	constBuff->Unmap(0, nullptr);
 
 	// パイプラインステートの設定

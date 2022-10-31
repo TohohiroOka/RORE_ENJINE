@@ -10,6 +10,7 @@ public: // サブクラス
 	{
 		XMFLOAT4 outlineColor;//アウトラインの色
 		float outlineWidth;//アウトラインの太さ
+		unsigned int isFog;//フォグの有無
 	};
 
 	enum TEX_TYPE
@@ -99,4 +100,12 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
+	//フォグ
+	bool isFog;
+
+public:
+
+	void SetFog(bool _isFog) {
+		isFog = _isFog;
+	}
 };

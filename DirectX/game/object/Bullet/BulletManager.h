@@ -77,6 +77,9 @@ public:
 	}
 
 	//弾セット
+	static void SetEnemyBullet(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color);
+
+	//弾セット
 	static void SetBossBulletNormal(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec,
 		const float _speed, const XMFLOAT3& _color) {
 		bossBullet.emplace_back(BossBulletNormal::Create(_pos, _moveVec, _speed, _color));

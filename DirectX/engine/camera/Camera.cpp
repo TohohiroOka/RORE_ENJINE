@@ -12,7 +12,7 @@ Camera::Camera()
 	matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(60.0f),
 		aspectRatio,
-		0.1f, 2400.0f//奥行/手前,最奥
+		0.1f, 1200.0f//奥行/手前,最奥
 	);
 }
 

@@ -64,6 +64,8 @@ void MainEngine::Initialize()
 
 	fps = FrameRateKeep::Create();
 
+	postEffect->SetFog(true);
+
 	//cubemap = CubeMap::Create(dXCommon->GetCmdList());
 }
 
