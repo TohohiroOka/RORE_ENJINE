@@ -94,6 +94,8 @@ void InterfaceObject3d::Update()
 
 void InterfaceObject3d::Draw()
 {
+	Update();
+
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
 

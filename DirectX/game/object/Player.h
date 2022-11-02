@@ -62,6 +62,7 @@ private:
 
 	XMFLOAT3 position;
 	XMFLOAT3 move;
+	XMFLOAT3 speed;
 
 	//描画するか否か
 	bool isDraw;

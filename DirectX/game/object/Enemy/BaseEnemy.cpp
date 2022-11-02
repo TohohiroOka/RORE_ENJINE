@@ -38,11 +38,9 @@ void BaseEnemy::Update()
 	pos.z += moveVec.z * speed;
 
 	object->SetPosition(pos);
-	object->Update();
 
 	MapCollider();
 	object->SetPosition(pos);
-	object->Update();
 }
 
 void BaseEnemy::Draw()

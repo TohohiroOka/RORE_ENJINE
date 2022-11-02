@@ -47,6 +47,11 @@ public:
 	virtual void Update() = 0;
 
 	/// <summary>
+	/// 更新
+	/// </summary>
+	virtual void CameraUpdate(Camera* camera) {};
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	virtual void Draw() = 0;
@@ -73,12 +78,6 @@ public:
 	void SetCmdList(ID3D12GraphicsCommandList* inCmdList) { cmdList = inCmdList; }
 
 	/// <summary>
-	/// カメラのセット
-	/// </summary>
-	/// <param name="camera">カメラクラスのインスタンス</param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
-
-	/// <summary>
 	/// ライトのセット
 	/// </summary>
 	/// <param name="light">ライトクラスのインスタンス</param>
@@ -88,8 +87,6 @@ protected:
 
 	//コマンドリスト
 	ID3D12GraphicsCommandList* cmdList = nullptr;
-	//カメラ
-	Camera* camera = nullptr;
 	//ライト
 	LightGroup* light = nullptr;
 };

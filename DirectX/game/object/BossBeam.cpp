@@ -37,7 +37,6 @@ void BossBeam::Initialize()
 		object[i]->SetScale({ 10.0f * sizeXY,10.0f * sizeXY ,scale });
 		object[i]->SetRotation({ 0,angle.x,angle.y });
 		object[i]->SetColor({ 0.2f,0.2f,0.2f,0.1f });
-		object[i]->Update();
 	}
 }
 
@@ -58,7 +57,6 @@ void BossBeam::Update(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 	{
 		i->SetPosition(pos);
 		i->SetRotation({ angle.x,angle.y,0 });
-		i->Update();
 	}
 }
 

@@ -17,6 +17,11 @@ public:
 	void Update() override;
 
 	/// <summary>
+	/// XV
+	/// </summary>
+	void CameraUpdate(Camera* camera) override {};
+
+	/// <summary>
 	///	•`‰æ
 	/// </summary>
 	void Draw() override;

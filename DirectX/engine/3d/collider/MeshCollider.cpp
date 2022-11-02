@@ -374,7 +374,6 @@ void MeshCollider::Update()
 void MeshCollider::Draw()
 {
 	object->SetMatWorld(GetObject3d()->GetMatWorld());
-	object->Update();
 	object->Draw();
 }
 

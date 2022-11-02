@@ -22,8 +22,6 @@ void Title::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	camera->SetTarget({ 0,0,0 });
-
 	//ƒV[ƒ“‚ÌˆÚs
 	if (input->TriggerKey(DIK_RETURN))
 	{

@@ -21,14 +21,24 @@ public:
 	/// </summary>
 	void Initialize();
 
-	void Update();
-
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 判定描画
+	/// </summary>
 	void CDraw();
 
+	/// <summary>
+	/// 囲い描画
+	/// </summary>
 	void CubeDraw();
 
+	/// <summary>
+	/// 座標セット
+	/// </summary>
 	void SetPos(DirectX::XMFLOAT3 pos);
 
 private:

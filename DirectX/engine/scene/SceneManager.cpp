@@ -367,13 +367,20 @@ void SceneManager::Update()
 		scene->Initialize();
 	}
 
-	//カメラのセット
+	//シーン更新
+	scene->Update();
+
+	//シーンでのカメラ更新
+	scene->CameraUpdate(camera.get());
+
+	//カメラ更新
+	camera->Update();
+
 	InterfaceObject3d::SetCamera(camera.get());
 	InstanceObject::SetCamera(camera.get());
 	//Fbx::SetCamera(camera.get());
 	DrawLine3D::SetCamera(camera.get());
 	//ParticleManager::SetCamera(camera.get());
-	scene->SetCamera(camera.get());
 	CubeMap::SetCamera(camera.get());
 	HeightMap::SetCamera(camera.get());
 
@@ -386,9 +393,6 @@ void SceneManager::Update()
 	InterfaceObject3d::SetLightGroup(light.get());
 	//Fbx::SetLightGroup(light.get());
 	HeightMap::SetLightGroup(light.get());
-
-	camera->Update();
-	scene->Update();
 }
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)

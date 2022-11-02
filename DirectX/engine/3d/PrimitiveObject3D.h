@@ -34,17 +34,19 @@ public://静的メンバ関数
 	/// <param name="_pipeline">パイプライン</param>
 	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
 
+private:
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
 public://メンバ関数
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize() override;
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update() override;
 
 	/// <summary>
 	/// //描画

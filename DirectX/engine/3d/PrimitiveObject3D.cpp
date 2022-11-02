@@ -128,6 +128,8 @@ void PrimitiveObject3D::PreDraw()
 
 void PrimitiveObject3D::Draw()
 {
+	Update();
+
 	//インデックスバッファの設定
 	cmdList->IASetIndexBuffer(&ibView);
 

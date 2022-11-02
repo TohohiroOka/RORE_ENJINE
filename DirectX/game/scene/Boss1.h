@@ -26,6 +26,11 @@ public:
 	void Update() override;
 
 	/// <summary>
+	/// 更新
+	/// </summary>
+	void CameraUpdate(Camera* camera) override;
+
+	/// <summary>
 	///	描画
 	/// </summary>
 	void Draw() override;
@@ -39,11 +44,6 @@ public:
 	/// imguiの表示
 	/// </summary>
 	void ImguiDraw() override;
-
-	/// <summary>
-	/// カメラの更新
-	/// </summary>
-	void CameraUpdate();
 
 private:
 

@@ -28,6 +28,7 @@ Player::Player(const XMFLOAT3& _pos)
 	isDraw = true;
 	position = _pos;
 	move = { 0,0,0 };
+	speed = { 0,0,0 };
 	hp = 100;
 	moveObjAngle = { 0,0,0 };
 	cameraAngle = 0.0f;
@@ -79,8 +80,6 @@ void Player::Update(float _cameraAngle)
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	//速度
-	float Pspeed = 5.0f;
 	//ラジアン変換
 	cameraAngle = _cameraAngle;
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
@@ -90,27 +89,59 @@ void Player::Update(float _cameraAngle)
 	std::array<bool, 4> isSpeed = { false,false, false, false };
 	//左
 	if (input->PushKey(DIK_A)) {
-		move.x -= Pspeed * cosf(radiusLR);
-		move.z -= Pspeed * sinf(radiusLR);
+		move.x += speed.x * cosf(radiusLR);
+		move.z += speed.x * sinf(radiusLR);
+		speed.x -= 0.2f;
+		if (speed.x < -3.0f) {
+			speed.x = -3.0f;
+		}
 		isSpeed[0] = true;
 	}
 	//右
-	if (input->PushKey(DIK_D)) {
-		move.x += Pspeed * cosf(radiusLR);
-		move.z += Pspeed * sinf(radiusLR);
+	else if (input->PushKey(DIK_D)) {
+		move.x += speed.x * cosf(radiusLR);
+		move.z += speed.x * sinf(radiusLR);
+		speed.x += 0.2f;
+		if (speed.x > 3.0f) {
+			speed.x = 3.0f;
+		}
 		isSpeed[1] = true;
+	}
+	//キー入力が無ければ減速
+	else if (fabs(speed.x) > 0) {
+		int sign = int(speed.x < 0) + int(speed.x > 0) * (-1);
+		speed.x += float(sign) * (fabs(speed.x) / 10.0f);
+		if (fabs(speed.x) < 0.5f) {
+			speed.x = 0.0f;
+		}
 	}
 	//前
 	if (input->PushKey(DIK_W)) {
-		move.x -= Pspeed * cosf(radiusUD);
-		move.z -= Pspeed * sinf(radiusUD);
+		move.x += speed.z * cosf(radiusUD);
+		move.z += speed.z * sinf(radiusUD);
+		speed.z -= 0.2f;
+		if (speed.z < -3.0f) {
+			speed.z = -3.0f;
+		}
 		isSpeed[2] = true;
 	}
 	//後
-	if (input->PushKey(DIK_S)) {
-		move.x += Pspeed * cosf(radiusUD);
-		move.z += Pspeed * sinf(radiusUD);
+	else if (input->PushKey(DIK_S)) {
+		move.x += speed.z * cosf(radiusUD);
+		move.z += speed.z * sinf(radiusUD);
+		speed.z += 0.2f;
+		if (speed.z > 3.0f) {
+			speed.z = 3.0f;
+		}
 		isSpeed[3] = true;
+	}
+	//キー入力が無ければ減速
+	else if (fabs(speed.z) > 0) {
+		int sign = int(speed.z < 0) + int(speed.z > 0) * (-1);
+		speed.z += float(sign) / (fabs(speed.z) / 10.0f);
+		if (fabs(speed.z) < 0.5f) {
+			speed.z = 0.0f;
+		}
 	}
 	//上
 	if (input->PushKey(DIK_UP)) {
@@ -158,12 +189,10 @@ void Player::Update(float _cameraAngle)
 
 	object->SetPosition(position);
 	object->SetRotation(moveObjAngle);
-	object->Update();
 	//当たり判定
 	Collider();
 
 	object->SetPosition(position);
-	object->Update();
 
 	if (input->TriggerKey(DIK_SPACE))
 	{
@@ -176,8 +205,12 @@ void Player::Update(float _cameraAngle)
 	std::string strX = std::to_string(position.x);
 	std::string strY = std::to_string(position.y);
 	std::string strZ = std::to_string(position.z);
+	std::string strMoveX = std::to_string(speed.x);
+	std::string strMoveY = std::to_string(speed.y);
+	std::string strMoveZ = std::to_string(speed.z);
 	std::string strHP = std::to_string(hp);
-	text->Print("1 :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 100);
+	text->Print("Upos :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 100);
+	//text->Print("speed :: x : " + strMoveX + "y : " + strMoveY + "z : " + strMoveZ, 100, 125);
 	text->Print("playerHP : " + strHP, 100, 150);
 	text = nullptr;
 

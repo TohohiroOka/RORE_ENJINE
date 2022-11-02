@@ -70,12 +70,6 @@ void Boss1::Update()
 		boss->Damage();
 	}
 
-	//地形更新
-	ground->Update();
-
-	//カメラ更新
-	CameraUpdate();
-
 	//ui更新
 	ui->Update(boss->GetHp());
 
@@ -104,6 +98,13 @@ void Boss1::Update()
 void Boss1::Draw()
 {
 	assert(cmdList);
+
+	XMFLOAT3 position = player->GetPosition();
+	std::string strX = std::to_string(position.x);
+	std::string strY = std::to_string(position.y);
+	std::string strZ = std::to_string(position.z);
+	DebugText::GetInstance()->Print("Upos :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 125);
+
 
 	Sprite::PreDraw(cmdList);
 	ui->Draw();
@@ -176,7 +177,7 @@ void Boss1::ImguiDraw()
 	//light->SetDirLightActive(2, lightAct3);
 }
 
-void Boss1::CameraUpdate()
+void Boss1::CameraUpdate(Camera* camera)
 {
 	DirectInput* input = DirectInput::GetInstance();
 

@@ -51,14 +51,6 @@ void Ground::Initialize()
 	collider->SetAttribute(COLLISION_ATTR_LANDSHAPE);
 }
 
-void Ground::Update()
-{
-	for (auto& i : cubeObject) {
-		i->Update();
-	}
-	object->Update();
-}
-
 void Ground::Draw()
 {
 	object->Draw();
