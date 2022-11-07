@@ -17,6 +17,7 @@ private:
 
 	enum class SCENE {
 		SET,//準備
+		SET_FROM_PLAY,//準備からゲームプレイまでの移行
 		PLAY,//ゲームプレイ
 		HOME,//ホーム画面
 	};
@@ -58,9 +59,13 @@ private:
 	//シーン
 	SCENE scene;
 	//カメラの回転
-	float cameraAngle = -90;
+	float cameraAngle;
 	//カメラの高さ
-	const float cameraY = 5.0f;
+	const float cameraY = 8.0f;
+	//タイマー
+	int timer;
+	//カメラの一番奥
+	float cameraBack;
 
 	//プレイヤー
 	std::unique_ptr<Player> player;

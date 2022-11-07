@@ -289,8 +289,8 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 	CD3DX12_RECT scissorRects[break_num];
 	for (int i = 0; i < break_num; i++)
 	{
-		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowApp::GetWindowWidth(), (FLOAT)WindowApp::GetWindowHeight());
-		scissorRects[i] = CD3DX12_RECT(0, 0, (LONG)WindowApp::GetWindowWidth(), (LONG)WindowApp::GetWindowHeight());
+		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, FLOAT(WindowApp::GetWindowWidth()), FLOAT(WindowApp::GetWindowHeight()));
+		scissorRects[i] = CD3DX12_RECT(0, 0, LONG(WindowApp::GetWindowWidth()), LONG(WindowApp::GetWindowHeight()));
 	}
 
 	cmdList->RSSetViewports(1, viewports);

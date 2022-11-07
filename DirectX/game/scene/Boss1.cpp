@@ -25,6 +25,10 @@ void Boss1::Initialize()
 	scene = SCENE::SET;
 	//カメラの回転
 	cameraAngle = -90;
+	//タイマー
+	timer = 0;
+	//カメラの一番奥
+	cameraBack = 4000.0f;
 
 	//Jsonファイル読み込みで使用するオブジェクト名配列
 	std::vector<std::string> objectName = {
@@ -59,7 +63,7 @@ void Boss1::Initialize()
 		enemy->SetTutorialEnemy(i.pos);
 	}
 	//enemy1
-	const int moveNum = (int)jData->objects[objectName[2]].size();
+	const int moveNum = int(jData->objects[objectName[2]].size());
 	for (int i = 0; i < moveNum;i++) {
 		enemy->SetEnemyA(jData->objects[objectName[2]][i].pos, i);
 	}
@@ -80,50 +84,75 @@ void Boss1::Update()
 	XInputManager* xinput = XInputManager::GetInstance();
 
 	//------オブジェクトの更新--------//
-
-	player->Update(cameraAngle);
-
 	XMFLOAT3 playerPos = player->GetPosition();
 
-	//弾更新
-	bullet->Update(playerPos);
-	if (bullet->CheckEnemyBulletToPlayerCollision())
+	//基礎的な更新
+	player->Update(cameraAngle);
+
+
+	if (scene == SCENE::SET)
 	{
-		player->Damage();
+		timer++;
+		const float maxTime = 300.0f;
+		float ratio = float(timer) / maxTime;
+		ground->SetRatio(ratio);
+		if (ratio >= 1.0f) {
+			ground->SetRatio(1.0f);
+			scene = SCENE::SET_FROM_PLAY;
+			timer = 0;
+		}
 	}
-
-	//敵の更新
-	enemy->Update(playerPos);
-	enemy->CheckCollision();
-
-	//ボス更新
-	//boss->SetMove(playerPos);
-	boss->Update();
-
-	//ボスとプレイヤー弾の判定
-	if (bullet->CheckPlayerBulletToEnemyCollision(boss->GetPosition(),boss->GetScale())) {
-		boss->Damage();
-	}
-
-	//ui更新
-	ui->Update(boss->GetHp());
-
-	//------更新以外の処理--------//
-
-	//ボスが倒されたのでフロア終わり
-	if (!boss->GetIsAlive())
+	else if (scene == SCENE::SET_FROM_PLAY)
 	{
-		Title* nextScene = new Title();
-		nextScene->Initialize();
-		SceneManager::SetNextScene(nextScene);
+		timer++;
+		const float maxTime = 100.0f;
+		if (timer >= maxTime) {
+			timer = 0;
+			scene = SCENE::PLAY;
+		}
 	}
-
-	//プレイヤーのhpが0になったので終了
-	if (!player->GetIsAlive())
+	else if (scene == SCENE::PLAY)
 	{
-		Title* nextScene = new Title();
-		nextScene->Initialize();
-		SceneManager::SetNextScene(nextScene);
+		//弾更新
+		bullet->Update(playerPos);
+		if (bullet->CheckEnemyBulletToPlayerCollision())
+		{
+			player->Damage();
+		}
+
+		//敵の更新
+		enemy->Update(playerPos);
+		enemy->CheckCollision();
+
+		//ボス更新
+		//boss->SetMove(playerPos);
+		boss->Update();
+
+		//ボスとプレイヤー弾の判定
+		if (bullet->CheckPlayerBulletToEnemyCollision(boss->GetPosition(), boss->GetScale())) {
+			boss->Damage();
+		}
+
+		//ui更新
+		ui->Update(boss->GetHp());
+
+		//------更新以外の処理--------//
+
+		//ボスが倒されたのでフロア終わり
+		if (!boss->GetIsAlive())
+		{
+			Title* nextScene = new Title();
+			nextScene->Initialize();
+			SceneManager::SetNextScene(nextScene);
+		}
+
+		//プレイヤーのhpが0になったので終了
+		if (!player->GetIsAlive())
+		{
+			Title* nextScene = new Title();
+			nextScene->Initialize();
+			SceneManager::SetNextScene(nextScene);
+		}
 	}
 
 	input = nullptr;
@@ -150,8 +179,11 @@ void Boss1::Draw()
 	enemy->Draw();
 	boss->Draw();
 
-	//PrimitiveObject3D::PreDraw();
-	//ground[0]->CDraw();
+	//if (scene == SCENE::SET)
+	//{
+	//	PrimitiveObject3D::PreDraw();
+	//	ground->CDraw();
+	//}
 
 	InterfaceObject3d::ReleaseCmdList();
 	
@@ -209,26 +241,73 @@ void Boss1::CameraUpdate(Camera* camera)
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
-	if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
+	XMFLOAT3 target = {};
+	XMFLOAT3 eye = {};
 
-	//プレイヤー座標
-	XMFLOAT3 playerPos = player->GetPosition();
-	const float range = 15.0f;
-	float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
-	XMFLOAT3 target = playerPos;
-	XMFLOAT3 eye = {
-		cosf(cameraRadius) * range + playerPos.x,
-		playerPos.y + cameraY,
-		sinf(cameraRadius) * range + playerPos.z };
+	if (scene == SCENE::SET)
+	{
+		//初回のカメラ
+		const XMFLOAT3 initTarget = { mapSize / 2.0f,200.0f,mapSize / 2.0f };
+		const XMFLOAT3 initEye = { mapSize / 2.0f,900.0f,mapSize / 10.0f };
+		camera->SetTarget(initTarget);
+		camera->SetEye(initEye);
+		camera->SetMatProjection(cameraBack);
+	}
+	else if (scene == SCENE::SET_FROM_PLAY)
+	{
+		const float maxTime = 100.0f;
+		float ratio = float(timer) / maxTime;
 
-	cameraAngle = float(int(cameraAngle) % 360);
-	camera->SetTarget(target);
-	camera->SetEye(eye);
+		const XMFLOAT3 initTarget = { mapSize / 2.0f,200.0f,mapSize / 2.0f };
+		const XMFLOAT3 initEye = { mapSize / 2.0f,900.0f,mapSize / 10.0f };
+		XMFLOAT3 playerPos = player->GetPosition();
 
-	//カメラの傾き
-	XMFLOAT3 playerTilt = player->GetObjAngle();
-	camera->SetUp({ playerTilt.z,1,0 });
+		target.x = Easing::OutCubic(initTarget.x, playerPos.x, ratio);
+		target.y = Easing::OutCubic(initTarget.y, playerPos.y, ratio);
+		target.z = Easing::OutCubic(initTarget.z, playerPos.z, ratio);
+
+		const float range = 15.0f;
+		float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
+		XMFLOAT3 afterEye = {
+			cosf(cameraRadius) * range + playerPos.x,
+			playerPos.y + cameraY,
+			sinf(cameraRadius) * range + playerPos.z };
+
+		eye.x = Easing::OutCubic(initEye.x, afterEye.x, ratio);
+		eye.y = Easing::OutCubic(initEye.y, afterEye.y, ratio);
+		eye.z = Easing::OutCubic(initEye.z, afterEye.z, ratio);
+
+		float afterCameraBack = 1200.0f;
+		float initCameraBack = 4000.0f;
+		cameraBack= Easing::OutCubic(initCameraBack, afterCameraBack, ratio);
+
+		camera->SetTarget(target);
+		camera->SetEye(eye);
+		camera->SetMatProjection(cameraBack);
+	}
+	else if (scene == SCENE::PLAY)
+	{
+		if (input->PushKey(DIK_LEFT)) { cameraAngle += 3.0f; }
+		if (input->PushKey(DIK_RIGHT)) { cameraAngle -= 3.0f; }
+
+		//プレイヤー座標
+		XMFLOAT3 playerPos = player->GetPosition();
+		const float range = 15.0f;
+		float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
+		target = playerPos;
+		eye = {
+			cosf(cameraRadius) * range + playerPos.x,
+			playerPos.y + cameraY,
+			sinf(cameraRadius) * range + playerPos.z };
+
+		cameraAngle = float(int(cameraAngle) % 360);
+		camera->SetTarget(target);
+		camera->SetEye(eye);
+
+		//カメラの傾き
+		XMFLOAT3 playerTilt = player->GetObjAngle();
+		camera->SetUp({ playerTilt.z,1,0 });
+	}
 
 	DebugText* text = DebugText::GetInstance();
 	std::string strCameraA = std::to_string(cameraAngle);

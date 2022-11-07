@@ -152,12 +152,12 @@ bool DirectInput::ReleaseMouseButton(int _mouseButton)
 
 DirectX::XMFLOAT2 DirectInput::GetMousePoint()
 {
-	return DirectX::XMFLOAT2((float)mousePoint.x, (float)mousePoint.y);
+	return DirectX::XMFLOAT2(float(mousePoint.x), float(mousePoint.y));
 }
 
 DirectX::XMFLOAT2 DirectInput::GetMouseVelocity()
 {
-	return DirectX::XMFLOAT2((float)mouse.lX, (float)mouse.lY);
+	return DirectX::XMFLOAT2(float(mouse.lX), float(mouse.lY));
 }
 
 float DirectInput::GetMouseWheelVelocity()

@@ -53,6 +53,7 @@ void Ground::Initialize()
 
 void Ground::Draw()
 {
+	object->AddConstBufferUpdate(ratio);
 	object->Draw();
 }
 
@@ -66,9 +67,4 @@ void Ground::CubeDraw()
 	for (auto& i : cubeObject) {
 		i->Draw();
 	}
-}
-
-void Ground::SetPos(DirectX::XMFLOAT3 pos)
-{
-	object->SetPosition(pos);
 }

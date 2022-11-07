@@ -15,7 +15,7 @@ Vector3::Vector3(float x, float y, float z)
 
 // ベクトルの大きさ
 float Vector3::length() const {
-	return (float)sqrt(x * x + y * y + z * z);
+	return float(sqrt(x * x + y * y + z * z));
 }
 
 // ベクトルの正規化

@@ -97,13 +97,13 @@ bool DrawLine3D::Initialize(int _lineNum)
 
 	//使うインデックスの作成
 	std::vector<unsigned short> indices;
-	for (int i = 0; i < (int)indexArrayNum; i++)
+	for (int i = 0; i < int(indexArrayNum); i++)
 	{
 		//仮インデックス
 		unsigned short addIndex;
 
 		//ベース + 一本で使うインデックス番号の最大値 * (現在の配列数 / 一本分の配列の最大数)
-		addIndex = BASE_INDICES[i % indexNum] + 4 * (int)(i / indexNum);
+		addIndex = BASE_INDICES[i % indexNum] + 4 * int(i / indexNum);
 
 		//配列の一番後ろに入れる
 		indices.push_back(addIndex);

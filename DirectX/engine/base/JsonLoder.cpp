@@ -12,7 +12,7 @@ const std::string JsonLoder::SearchName(const std::string& _name, const std::vec
 	for (auto& target : _nameList)
 	{
 		//文字を探す
-		int programmerPos = (int)_name.find(target);
+		int programmerPos = int(_name.find(target));
 
 		//無かった場合は次
 		if (programmerPos == std::string::npos) { continue; }
@@ -85,17 +85,17 @@ JsonObjectData* JsonLoder::LoadFile(const std::string& _fileName, std::vector<st
 			//トランスフォーム情報
 			json& transform = object["transform"];
 			// 平行移動
-			objectData.pos.x = (float)transform["translation"][0] * mapSize / 2.0f;
-			objectData.pos.y = (float)transform["translation"][2];
-			objectData.pos.z = (float)transform["translation"][1] * mapSize / 2.0f;
+			objectData.pos.x = float(transform["translation"][0]) * mapSize / 2.0f;
+			objectData.pos.y = float(transform["translation"][2]);
+			objectData.pos.z = float(transform["translation"][1]) * mapSize / 2.0f;
 			// 回転角
-			objectData.rotation.x = -(float)transform["rotation"][1];
-			objectData.rotation.y = -(float)transform["rotation"][2];
-			objectData.rotation.z = (float)transform["rotation"][0];
+			objectData.rotation.x = -float(transform["rotation"][1]);
+			objectData.rotation.y = -float(transform["rotation"][2]);
+			objectData.rotation.z = float(transform["rotation"][0]);
 			// スケーリング
-			objectData.scale.x = (float)transform["scaling"][1];
-			objectData.scale.y = (float)transform["scaling"][2];
-			objectData.scale.z = (float)transform["scaling"][0];
+			objectData.scale.x = float(transform["scaling"][1]);
+			objectData.scale.y = float(transform["scaling"][2]);
+			objectData.scale.z = float(transform["scaling"][0]);
 		}
 	}
 
@@ -134,7 +134,7 @@ JsonMoveData* JsonLoder::LoadMoveFile(const std::string& _fileName)
 	//格納変数
 	JsonMoveData* jsonData = new JsonMoveData;
 	//サイズ変更
-	jsonData->movePoint.resize((int)deserialized["total"]);
+	jsonData->movePoint.resize(int(deserialized["total"]));
 
 	//"objects"の全オブジェクトを走査
 	for (json& object : deserialized["posints"]) {
@@ -144,13 +144,13 @@ JsonMoveData* JsonLoder::LoadMoveFile(const std::string& _fileName)
 		//トランスフォーム情報
 		json& transform = object["transform"];
 		// 平行移動
-		jsonData->movePoint[number].pos.x = (float)object["point"][0] * mapSize / 2.0f;
+		jsonData->movePoint[number].pos.x = float(object["point"][0]) * mapSize / 2.0f;
 		jsonData->movePoint[number].pos.y = 100.0f;
-		jsonData->movePoint[number].pos.z = (float)object["point"][1] * mapSize / 2.0f;
+		jsonData->movePoint[number].pos.z = float(object["point"][1]) * mapSize / 2.0f;
 
 		const int move_num = object["list_num"];
 		for (int i = 0; i < move_num; i++) {
-			jsonData->movePoint[number].moveList.emplace_back((int)object["move_list"][i]);
+			jsonData->movePoint[number].moveList.emplace_back(int(object["move_list"][i]));
 		}
 	}
 

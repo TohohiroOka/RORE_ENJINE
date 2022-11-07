@@ -6,7 +6,7 @@ using namespace DirectX;
 
 Camera::Camera()
 {
-	aspectRatio = (float)WindowApp::GetWindowWidth() / WindowApp::GetWindowHeight();
+	aspectRatio = float(WindowApp::GetWindowWidth() / WindowApp::GetWindowHeight());
 
 	// Ë‰es—ñ‚ÌŒvZ
 	matProjection = XMMatrixPerspectiveFovLH(
@@ -37,13 +37,25 @@ void Camera::Update()
 
 void Camera::StartCameraShake(int _strength)
 {
-	int x = int(Randomfloat(_strength * 2)) - _strength;
-	int y = int(Randomfloat(_strength * 2)) - _strength;
+	float x = Randomfloat(_strength * 2) - float(_strength);
+	float y = Randomfloat(_strength * 2) - float(_strength);
 
-	ShakeDifference = { (float)x ,(float)y,0.0f };
+	ShakeDifference = { x ,y,0.0f };
 }
 
 void Camera::EndCameraShake()
 {
 	ShakeDifference = { 0.0f,0.0f,0.0f };
+}
+
+void Camera::SetMatProjection(float _back)
+{
+	aspectRatio = float(WindowApp::GetWindowWidth() / WindowApp::GetWindowHeight());
+
+	// Ë‰es—ñ‚ÌŒvZ
+	matProjection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(60.0f),
+		aspectRatio,
+		0.1f, _back//‰œs/è‘O,Å‰œ
+	);
 }

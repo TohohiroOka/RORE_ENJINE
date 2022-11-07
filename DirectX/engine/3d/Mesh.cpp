@@ -54,7 +54,7 @@ void Mesh::CalculateSmoothedVertexNormals()
 		for (unsigned long index : v) {
 			normal += XMVectorSet(vertices[index].normal.x, vertices[index].normal.y, vertices[index].normal.z, 0);
 		}
-		normal = XMVector3Normalize(normal / (float)v.size());
+		normal = XMVector3Normalize(normal / float(v.size()));
 
 		for (unsigned long index : v) {
 			vertices[index].normal = { normal.m128_f32[0], normal.m128_f32[1], normal.m128_f32[2] };

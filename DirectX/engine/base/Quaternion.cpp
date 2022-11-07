@@ -35,7 +35,7 @@ float dot(const Quaternion& q1, const Quaternion& q2)
 //length ŠÖ”‚ÌŽÀ‘•
 float length(const Quaternion& q)
 {
-	return (float)sqrt(dot(q, q));
+	return float(sqrt(dot(q, q)));
 }
 
 //normalize ŠÖ”‚ÌŽÀ‘•
@@ -284,9 +284,9 @@ Quaternion slerp(const Quaternion& q1, const Quaternion& q2, float t)
 	float k1 = t;
 	if ((1.0f - cos) > 0.001f)
 	{
-		float thera = (float)acos(cos);
-		k0 = (float)(sin(thera * k0) / sin(thera));
-		k1 = (float)(sin(thera * k1) / sin(thera));
+		float thera = float(acos(cos));
+		k0 = sinf(thera * k0) / sinf(thera);
+		k1 = sinf(thera * k1) / sinf(thera);
 	}
 	return q1 * k0 + t2 * k1;
 }

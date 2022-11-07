@@ -39,7 +39,13 @@ public:
 	/// <summary>
 	/// 座標セット
 	/// </summary>
-	void SetPos(DirectX::XMFLOAT3 pos);
+	void SetPos(DirectX::XMFLOAT3 pos) {
+		object->SetPosition(pos);
+	}
+
+	void SetRatio(const float _ratio) {
+		ratio = _ratio;
+	}
 
 private:
 
@@ -49,6 +55,7 @@ private:
 	//マップ
 	static const float scale;
 	std::unique_ptr<HeightMap> object = nullptr;
+	float ratio;
 
 public:
 

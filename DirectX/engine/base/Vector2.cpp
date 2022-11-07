@@ -16,7 +16,7 @@ Vector2::Vector2(float x, float y)
 
 // ベクトルの大きさ
 float Vector2::length() const {
-	return (float)sqrt(x * x + y * y);
+	return float(sqrt(x * x + y * y));
 }
 
 // ベクトルの正規化

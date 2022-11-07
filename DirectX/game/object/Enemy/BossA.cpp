@@ -42,7 +42,7 @@ BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 	//Œ»Ý‚ÌˆÚ“®æ”Ô†
 	destinationNumber = _destination;
 	//ŽŸ‚ÌˆÚ“®æ”Ô†
-	int rand = (int)Randomfloat((int)moveList[destinationNumber].destination.size());
+	int rand = int(Randomfloat(int(moveList[destinationNumber].destination.size()) - 1));
 	nextDestinationNumber = rand;
 
 	//“G¢Š«ƒJƒEƒ“ƒg
@@ -107,17 +107,18 @@ void BossA::Update()
 	{
 		moveTimer++;
 		const int maxTimer = 150;
-		const float ratio = (float)moveTimer / (float)maxTimer;
+		const float ratio = float(moveTimer) / float(maxTimer);
 		pos.x = Easing::Lerp(moveList[destinationNumber].pos.x, moveList[nextDestinationNumber].pos.x, ratio);
 		pos.z = Easing::Lerp(moveList[destinationNumber].pos.z, moveList[nextDestinationNumber].pos.z, ratio);
 
 		if (ratio >= 1.0f) {
 			int rand = 0;
 			while (rand == destinationNumber) {
-				rand = (int)Randomfloat((int)moveList[destinationNumber].destination.size());
+				rand = int(Randomfloat(int(moveList[destinationNumber].destination.size()) - 1));
 			}
-			destinationNumber = nextDestinationNumber;
+			int now = nextDestinationNumber;
 			nextDestinationNumber = moveList[destinationNumber].destination[rand];
+			destinationNumber = now;
 			moveTimer = 0;
 		}
 	}

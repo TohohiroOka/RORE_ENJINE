@@ -314,9 +314,9 @@ void DirectXCommon::PreDraw()
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ビューポートの設定
-	cmdList->RSSetViewports(1, &CD3DX12_VIEWPORT(0.0f, 0.0f, (FLOAT)WindowWidth, (FLOAT)WindowHeight));
+	cmdList->RSSetViewports(1, &CD3DX12_VIEWPORT(0.0f, 0.0f, FLOAT(WindowWidth), (FLOAT)WindowHeight));
 	// シザリング矩形の設定
-	cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, (LONG)WindowWidth, (LONG)WindowHeight));
+	cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, LONG(WindowWidth), LONG(WindowHeight)));
 
 	// imgui開始
 	ImGui_ImplDX12_NewFrame();

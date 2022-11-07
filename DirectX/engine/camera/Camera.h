@@ -99,6 +99,11 @@ public: // メンバ関数
 	/// <param name="_up">カメラの傾き</param>
 	void SetUp(const XMFLOAT3& _up) { up = _up; }
 
+	/// <summary>
+	/// 射影行列の再設定
+	/// </summary>
+	/// <param name="_back">最奥</param>
+	void SetMatProjection(float _back);
 
 protected: // メンバ変数
 	// ビュー行列

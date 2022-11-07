@@ -46,13 +46,13 @@ void DebugText::NPrint(int _len, const char* _text)
 			fontIndex = 0;
 		}
 
-		int fontIndexY = fontIndex / fontLineCount;
-		int fontIndexX = fontIndex % fontLineCount;
+		float fontIndexY = float(fontIndex / fontLineCount);
+		float fontIndexX = float(fontIndex % fontLineCount);
 
 		// 座標計算
 		spriteDatas[spriteIndex]->SetPosition({ this->posX + fontWidth * this->size * i, this->posY });
-		spriteDatas[spriteIndex]->SetTexLeftTop({ (float)fontIndexX * fontWidth, (float)fontIndexY * fontHeight });
-		spriteDatas[spriteIndex]->SetTexSize({ (float)fontWidth, (float)fontHeight });
+		spriteDatas[spriteIndex]->SetTexLeftTop({ fontIndexX * fontWidth, fontIndexY * fontHeight });
+		spriteDatas[spriteIndex]->SetTexSize({ float(fontWidth), float(fontHeight) });
 		spriteDatas[spriteIndex]->SetSize({ fontWidth * this->size, fontHeight * this->size });
 		//更新
 		spriteDatas[spriteIndex]->Update();

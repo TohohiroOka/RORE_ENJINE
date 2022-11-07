@@ -122,9 +122,9 @@ bool HeightMap::HeightMapLoad(const std::string& _filename)
 
 			int index = (hmInfo.terrainHeight * j) + i;
 
-			hmInfo.heightMap[index].x = (float)i;
-			hmInfo.heightMap[index].y = (float)height / 5.0f;
-			hmInfo.heightMap[index].z = (float)j;
+			hmInfo.heightMap[index].x = float(i);
+			hmInfo.heightMap[index].y = float(height / 5.0f);
+			hmInfo.heightMap[index].z = float(j);
 
 			k += 3;
 		}
@@ -380,6 +380,16 @@ void HeightMap::Initialize()
 	model = new Model;
 	model->SetMeshes(mesh);
 
+	// 定数バッファの生成
+	result = device->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(OBJECT_INFO) + 0xff) & ~0xff),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBufferOData));
+	if (FAILED(result)) { assert(0); }
+
 	InterfaceObject3d::Initialize();
 }
 
@@ -392,16 +402,30 @@ HeightMap::~HeightMap()
 	safe_delete(model);
 }
 
+void HeightMap::AddConstBufferUpdate(const float _ratio)
+{
+	HRESULT result = S_FALSE;
+
+	OBJECT_INFO* constMap = nullptr;
+	result = constBufferOData->Map(0, nullptr, (void**)&constMap);//マッピング
+	if (SUCCEEDED(result)) {
+		constMap->ratio = _ratio;
+		constBufferOData->Unmap(0, nullptr);
+	}
+}
+
 void HeightMap::Draw()
 {
 	model->VIDraw(cmdList);
 
 	InterfaceObject3d::Draw();
 
+	cmdList->SetGraphicsRootConstantBufferView(3, constBufferOData->GetGPUVirtualAddress());
+
 	//テクスチャ転送
-	cmdList->SetGraphicsRootDescriptorTable(3, texture[TEXTURE::HEIGHT_MAP_TEX]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(4, texture[TEXTURE::GRAPHIC_TEX_1]->descriptor->gpu);
-	cmdList->SetGraphicsRootDescriptorTable(5, texture[TEXTURE::GRAPHIC_TEX_2]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(4, texture[TEXTURE::HEIGHT_MAP_TEX]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(5, texture[TEXTURE::GRAPHIC_TEX_1]->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(6, texture[TEXTURE::GRAPHIC_TEX_2]->descriptor->gpu);
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);

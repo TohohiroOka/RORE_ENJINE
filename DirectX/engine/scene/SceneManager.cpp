@@ -212,6 +212,7 @@ void SceneManager::CreatePipeline()
 		inSignature.object2d = false;
 		inSignature.textureNum = 3;
 		inSignature.light = true;
+		inSignature.instanceDraw = true;//定数バッファとしてインスタンス描画用の物を用いる
 
 		graphicsPipeline->CreatePipeline("HEIGHT_MAP", inPepeline, inSignature);
 		HeightMap::SetPipeline(graphicsPipeline->graphicsPipeline["HEIGHT_MAP"]);
@@ -237,6 +238,7 @@ void SceneManager::CreatePipeline()
 		inSignature.materialData = false;
 		inSignature.textureNum = 0;
 		inSignature.light = false;
+		inSignature.instanceDraw = false;
 
 		graphicsPipeline->CreatePipeline("DRAW_LINE_3D", inPepeline, inSignature);
 		DrawLine3D::SetPipeline(graphicsPipeline->graphicsPipeline["DRAW_LINE_3D"]);

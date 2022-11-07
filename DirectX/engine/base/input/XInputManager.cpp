@@ -276,12 +276,12 @@ bool XInputManager::TriggerRightStickY(bool _upDown)
 
 DirectX::XMFLOAT2 XInputManager::GetPadLStickIncline()
 {
-	return DirectX::XMFLOAT2((float)controllers.state.Gamepad.sThumbLX / STICK_MAX, (float)controllers.state.Gamepad.sThumbLY / STICK_MAX);
+	return DirectX::XMFLOAT2(float(controllers.state.Gamepad.sThumbLX / STICK_MAX), float(controllers.state.Gamepad.sThumbLY / STICK_MAX));
 }
 
 DirectX::XMFLOAT2 XInputManager::GetPadRStickIncline()
 {
-	return DirectX::XMFLOAT2((float)controllers.state.Gamepad.sThumbRX / STICK_MAX, (float)controllers.state.Gamepad.sThumbRY / STICK_MAX);
+	return DirectX::XMFLOAT2(float(controllers.state.Gamepad.sThumbRX / STICK_MAX), float(controllers.state.Gamepad.sThumbRY / STICK_MAX));
 }
 
 float XInputManager::GetPadLStickAngle()

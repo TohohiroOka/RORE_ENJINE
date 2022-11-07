@@ -258,7 +258,7 @@ int ParticleManager::Update()
 	constMap->matBillboard = matBillboard;// s—ñ‚Ì‡¬
 	constBuff->Unmap(0, nullptr);
 
-	return (int)std::distance(particle.begin(), particle.end());
+	return int(std::distance(particle.begin(), particle.end()));
 }
 
 void ParticleManager::PreDraw(ID3D12GraphicsCommandList* _cmdList)

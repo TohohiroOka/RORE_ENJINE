@@ -67,7 +67,7 @@ void EnemyA::Update()
 	if (isMove)
 	{
 		moveTimer++;
-		float ratio = (float)moveTimer / (float)maxTimer;
+		float ratio = float(moveTimer / maxTimer);
 		int nextNum = moveList[destinationNumber].destination[0];
 		pos.x = Easing::Lerp(moveList[destinationNumber].pos.x, moveList[nextNum].pos.x, ratio);
 		pos.z = Easing::Lerp(moveList[destinationNumber].pos.z, moveList[nextNum].pos.z, ratio);

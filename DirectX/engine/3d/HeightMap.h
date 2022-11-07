@@ -22,6 +22,11 @@ private: // エイリアス
 		SIZE,
 	};
 
+	struct OBJECT_INFO
+	{
+		float ratio;
+	};
+
 public://メンバ関数
 
 	/// <summary>
@@ -66,6 +71,11 @@ public:
 	~HeightMap();
 
 	/// <summary>
+	/// 追加の定数バッファの更新
+	/// </summary>
+	void AddConstBufferUpdate(const float _ratio = 1.0f);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw() override;
@@ -87,6 +97,8 @@ private:
 
 	//テクスチャ情報
 	std::array<std::unique_ptr<Texture>, TEXTURE::SIZE> texture;
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBufferOData;
 	// モデル
 	Model* model = nullptr;
 	//インデックスの大きさ

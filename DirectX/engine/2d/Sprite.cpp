@@ -29,8 +29,8 @@ bool Sprite::StaticInitialize(ID3D12Device* _device)
 
 	// éÀâeçsóÒåvéZ
 	matProjection = XMMatrixOrthographicOffCenterLH(
-		0.0f, (float)WindowApp::GetWindowWidth(),
-		(float)WindowApp::GetWindowHeight(), 0.0f,
+		0.0f, float(WindowApp::GetWindowWidth()),
+		float(WindowApp::GetWindowHeight()), 0.0f,
 		0.0f, 1.0f);
 
 	Sprite::LoadTexture("debugfont", "Resources/LetterResources/debugfont.png", false);
