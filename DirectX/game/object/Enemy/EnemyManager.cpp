@@ -8,14 +8,14 @@
 
 using namespace DirectX;
 
-std::list<std::unique_ptr<EnemyA>> EnemyManager::enemyA;
+std::list<std::unique_ptr<BaseEnemy>> EnemyManager::enemy;
 XMFLOAT3 EnemyManager::playerPos;
 
 EnemyManager::~EnemyManager()
 {
 	//固定砲台の弾
-	enemyA.clear();
-	std::list<std::unique_ptr<EnemyA>>().swap(enemyA);
+	enemy.clear();
+	std::list<std::unique_ptr<BaseEnemy>>().swap(enemy);
 
 	BaseEnemy::Finalize();
 }
@@ -45,18 +45,18 @@ void EnemyManager::Update(const XMFLOAT3& _playerPos)
 
 	BaseEnemy::StaticUpdate(playerPos);
 
-	for (auto& i : enemyA)
+	for (auto& i : enemy)
 	{
 		i->Update();
 	}
 
 	//倒された敵を随時消去
-	for (auto it = enemyA.begin(); it != enemyA.end();)
+	for (auto it = enemy.begin(); it != enemy.end();)
 	{
 		if (!it->get()->GetIsAlive())
 		{
 			// 削除された要素の次を指すイテレータが返される。
-			it = enemyA.erase(it);
+			it = enemy.erase(it);
 		}
 		// 要素削除をしない場合に、イテレータを進める
 		else {
@@ -67,7 +67,7 @@ void EnemyManager::Update(const XMFLOAT3& _playerPos)
 
 void EnemyManager::Draw()
 {
-	for (auto& i : enemyA)
+	for (auto& i : enemy)
 	{
 		i->Draw();
 	}
@@ -75,7 +75,7 @@ void EnemyManager::Draw()
 
 void EnemyManager::Reset()
 {
-	enemyA.clear();
+	enemy.clear();
 }
 
 bool EnemyManager::CheckCollision()
@@ -88,7 +88,7 @@ bool EnemyManager::CheckCollision()
 	bool isHit = false;
 
 	//プレイヤーが衝突状態でないなら抜ける
-	for (auto& i : enemyA)
+	for (auto& i : enemy)
 	{
 		if (!i->GetIsAlive()) { continue; }
 

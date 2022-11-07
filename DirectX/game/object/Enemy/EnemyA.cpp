@@ -1,11 +1,13 @@
 #include "EnemyA.h"
 #include "BulletManager.h"
-#include "DirectInput.h"
 #include "GameHelper.h"
+#include "Easing.h"
 
 using namespace DirectX;
 
-EnemyA::EnemyA(const XMFLOAT3& _pos)
+std::vector<BaseEnemy::MOVE_LIST> EnemyA::moveList;
+
+EnemyA::EnemyA(const XMFLOAT3& _pos, const int _destination)
 {
 	//タイマー
 	timer = 0;
@@ -14,7 +16,7 @@ EnemyA::EnemyA(const XMFLOAT3& _pos)
 	//地面についているか
 	onGround = false;
 	//速度
-	speed = 5.0f;
+	speed = 3.0f;
 	//回転角
 	angle = 0;
 	//オブジェクトの生成
@@ -26,12 +28,16 @@ EnemyA::EnemyA(const XMFLOAT3& _pos)
 	//大きさセット
 	scale = 10.0f;
 	object->SetScale({ scale ,scale ,scale });
+
+	destinationNumber = _destination;
+	moveVec = { 0,0,0 };
+	isMove = true;
 }
 
-std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos)
+std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos, const int _destination)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	EnemyA* instance = new EnemyA(_pos);
+	EnemyA* instance = new EnemyA(_pos, _destination);
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -45,7 +51,7 @@ std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos)
 void EnemyA::Update()
 {
 	timer++;
-
+	const int maxTimer = 50;
 	//角度
 	XMFLOAT2 objAngle = {};
 	objAngle.x = GetAngle({ pos.x,pos.z }, { playerPos.x, playerPos.z });//y軸
@@ -53,24 +59,24 @@ void EnemyA::Update()
 	object->SetRotation({ 0,objAngle.x, objAngle.y });
 
 	//弾の発射
-	if (timer % 50 == 1)
+	if (timer % 150 == 0)
 	{
 		BulletManager::SetEnemyBullet(pos, 10.0f, { 0.8f,0.2f, 0.8f });
 	}
 
-	//移動
-	if (pos.y < 600)
+	if (isMove)
 	{
-		moveVec.y = 0.5f;
-	}
-	else {
-		moveVec.y = 0.0f;
-	}
+		moveTimer++;
+		float ratio = (float)moveTimer / (float)maxTimer;
+		int nextNum = moveList[destinationNumber].destination[0];
+		pos.x = Easing::Lerp(moveList[destinationNumber].pos.x, moveList[nextNum].pos.x, ratio);
+		pos.z = Easing::Lerp(moveList[destinationNumber].pos.z, moveList[nextNum].pos.z, ratio);
 
-	angle += 1.3f;
-	float radiun = XMConvertToRadians(angle);
-	moveVec.x = cosf(radiun);
-	moveVec.z = sinf(radiun);
+		if (ratio >= 1.0f) {
+			destinationNumber = moveList[destinationNumber].destination[0];
+			moveTimer = 0;
+		}
+	}
 
 	BaseEnemy::Update();
 }

@@ -13,6 +13,14 @@
 
 class Boss1 : public InterfaceScene
 {
+private:
+
+	enum class SCENE {
+		SET,//準備
+		PLAY,//ゲームプレイ
+		HOME,//ホーム画面
+	};
+
 public:
 
 	/// <summary>
@@ -47,13 +55,15 @@ public:
 
 private:
 
+	//シーン
+	SCENE scene;
 	//カメラの回転
 	float cameraAngle = -90;
 	//カメラの高さ
 	const float cameraY = 5.0f;
 
 	//プレイヤー
-	std::unique_ptr<Player> player = nullptr;
+	std::unique_ptr<Player> player;
 
 	//地形
 	std::unique_ptr<Ground> ground;

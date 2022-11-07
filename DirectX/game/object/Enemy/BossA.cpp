@@ -1,13 +1,15 @@
 #include "BossA.h"
 #include "BulletManager.h"
 #include "DebugText.h"
-#include "DirectInput.h"
 #include "GameHelper.h"
 #include "EnemyManager.h"
+#include "Easing.h"
 
 using namespace DirectX;
 
-BossA::BossA(const XMFLOAT3& _pos)
+std::vector<BaseEnemy::MOVE_LIST> BossA::moveList;
+
+BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 {
 	BossBeam::StaticInitialize();
 	//タイマー
@@ -22,6 +24,7 @@ BossA::BossA(const XMFLOAT3& _pos)
 	object = Object3d::Create(bossModel.get());
 	//座標セット
 	pos = _pos;
+	pos.y = 200.0f;
 	object->SetPosition(pos);
 
 	//大きさセット
@@ -31,6 +34,16 @@ BossA::BossA(const XMFLOAT3& _pos)
 	//ブルーム等
 	object->SetBloom(true);
 	object->SetOutline(true);
+
+	//移動フラグ
+	isMove = true;
+	//移動タイマー
+	moveTimer = 0;
+	//現在の移動先番号
+	destinationNumber = _destination;
+	//次の移動先番号
+	int rand = (int)Randomfloat((int)moveList[destinationNumber].destination.size());
+	nextDestinationNumber = rand;
 
 	//敵召喚カウント
 	summonEnemyCount = 0;
@@ -47,10 +60,10 @@ BossA::BossA(const XMFLOAT3& _pos)
 	}
 }
 
-std::unique_ptr<BossA> BossA::Create(const XMFLOAT3& _pos)
+std::unique_ptr<BossA> BossA::Create(const XMFLOAT3& _pos, const int _destination)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossA* instance = new BossA(_pos);
+	BossA* instance = new BossA(_pos, _destination);
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -88,17 +101,27 @@ void BossA::Update()
 		//攻撃
 		Attack();
 	}
-	//敵の召喚
-	else {
-		if (timer % 30 == 1)
-		{
-			EnemyManager::SetEnemyA(pos);
-		}
-		if (timer % 300 == 0)
-		{
-			summonEnemyCount = 0;
+
+	//移動
+	if (isMove)
+	{
+		moveTimer++;
+		const int maxTimer = 150;
+		const float ratio = (float)moveTimer / (float)maxTimer;
+		pos.x = Easing::Lerp(moveList[destinationNumber].pos.x, moveList[nextDestinationNumber].pos.x, ratio);
+		pos.z = Easing::Lerp(moveList[destinationNumber].pos.z, moveList[nextDestinationNumber].pos.z, ratio);
+
+		if (ratio >= 1.0f) {
+			int rand = 0;
+			while (rand == destinationNumber) {
+				rand = (int)Randomfloat((int)moveList[destinationNumber].destination.size());
+			}
+			destinationNumber = nextDestinationNumber;
+			nextDestinationNumber = moveList[destinationNumber].destination[rand];
+			moveTimer = 0;
 		}
 	}
+
 
 	BaseEnemy::Update();
 

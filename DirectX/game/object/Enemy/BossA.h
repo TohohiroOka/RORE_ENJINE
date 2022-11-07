@@ -41,15 +41,16 @@ private:
 
 public:
 
-	BossA(const XMFLOAT3& _pos);
+	BossA(const XMFLOAT3& _pos, const int _destination);
 	~BossA() {};
 
 	/// <summary>
 	/// 生成
 	/// </summary>
 	/// <param name="_pos">座標</param>
+	/// <param name="_destination">次の移動先番号</param>
 	/// <returns></returns>
-	static std::unique_ptr<BossA> Create(const XMFLOAT3& _pos);
+	static std::unique_ptr<BossA> Create(const XMFLOAT3& _pos, const int _destination);
 
 	/// <summary>
 	/// 更新
@@ -72,8 +73,8 @@ private:
 	static const int kindNum = 2;
 	//ボスの最大体力
 	const int maxHp = 400;
-	//片羽の総量
-	static const int wing_num = 5;
+	//移動経路
+	static std::vector<MOVE_LIST> moveList;
 
 private:
 
@@ -81,6 +82,14 @@ private:
 	int timer;
 	//地面についているか
 	bool onGround;
+	//移動フラグ
+	bool isMove;
+	//移動タイマー
+	int moveTimer;
+	//現在の移動先番号
+	int destinationNumber;
+	//次の移動先番号
+	int nextDestinationNumber;
 	//一回に出す弾の量
 	const int bulletNum = 36;
 	//一回分の攻撃情報
@@ -94,4 +103,11 @@ public:
 
 	int GetMaxHp() { return maxHp; }
 	int GetHp() { return hp; }
+	static void SetMoveList(const XMFLOAT3& _pos, const std::vector<int> _destination) {
+		MOVE_LIST add;
+		add.pos = _pos;
+		add.destination = _destination;
+		moveList.emplace_back(add);
+	}
+
 };

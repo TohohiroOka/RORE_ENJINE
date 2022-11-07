@@ -45,13 +45,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\Imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\imgui;$(SolutionDir)engine\external\json\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)engine\external\FBX_SDK\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\Imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\imgui;$(SolutionDir)engine\external\json\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)engine\external\FBX_SDK\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,6 +124,7 @@
     <ClCompile Include="engine\base\GraphicsPipelineManager.cpp" />
     <ClCompile Include="engine\base\input\DirectInput.cpp" />
     <ClCompile Include="engine\base\input\XInputManager.cpp" />
+    <ClCompile Include="engine\base\JsonLoder.cpp" />
     <ClCompile Include="engine\base\MainEngine.cpp" />
     <ClCompile Include="engine\base\Matrix4.cpp" />
     <ClCompile Include="engine\base\Quaternion.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="game\object\Enemy\BossA.cpp" />
     <ClCompile Include="game\object\Enemy\EnemyA.cpp" />
     <ClCompile Include="game\object\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="game\object\Enemy\TutorialEnemy.cpp" />
     <ClCompile Include="game\object\Ground.cpp" />
     <ClCompile Include="game\object\Player.cpp" />
     <ClCompile Include="game\object\TouchableObject.cpp" />
@@ -368,6 +370,7 @@
     <ClInclude Include="engine\base\GraphicsPipelineManager.h" />
     <ClInclude Include="engine\base\input\DirectInput.h" />
     <ClInclude Include="engine\base\input\XInputManager.h" />
+    <ClInclude Include="engine\base\JsonLoder.h" />
     <ClInclude Include="engine\base\MainEngine.h" />
     <ClInclude Include="engine\base\Matrix4.h" />
     <ClInclude Include="engine\base\PipelineHelpar.h" />
@@ -415,6 +418,7 @@
     <ClInclude Include="game\object\Enemy\BossA.h" />
     <ClInclude Include="game\object\Enemy\EnemyA.h" />
     <ClInclude Include="game\object\Enemy\EnemyManager.h" />
+    <ClInclude Include="game\object\Enemy\TutorialEnemy.h" />
     <ClInclude Include="game\object\Ground.h" />
     <ClInclude Include="game\object\Player.h" />
     <ClInclude Include="game\object\TouchableObject.h" />

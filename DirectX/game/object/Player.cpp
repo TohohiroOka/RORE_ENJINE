@@ -85,6 +85,8 @@ void Player::Update(float _cameraAngle)
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
 	float radiusUD = XMConvertToRadians(cameraAngle);
 
+	const float maxSpeed = 4.0f;
+
 	//二つ以上のキーが押されたとき一定以上の速度にならないように調整するためのフラグ
 	std::array<bool, 4> isSpeed = { false,false, false, false };
 	//左
@@ -92,8 +94,8 @@ void Player::Update(float _cameraAngle)
 		move.x += speed.x * cosf(radiusLR);
 		move.z += speed.x * sinf(radiusLR);
 		speed.x -= 0.2f;
-		if (speed.x < -3.0f) {
-			speed.x = -3.0f;
+		if (speed.x < -maxSpeed) {
+			speed.x = -maxSpeed;
 		}
 		isSpeed[0] = true;
 	}
@@ -102,8 +104,8 @@ void Player::Update(float _cameraAngle)
 		move.x += speed.x * cosf(radiusLR);
 		move.z += speed.x * sinf(radiusLR);
 		speed.x += 0.2f;
-		if (speed.x > 3.0f) {
-			speed.x = 3.0f;
+		if (speed.x > maxSpeed) {
+			speed.x = maxSpeed;
 		}
 		isSpeed[1] = true;
 	}
@@ -120,8 +122,8 @@ void Player::Update(float _cameraAngle)
 		move.x += speed.z * cosf(radiusUD);
 		move.z += speed.z * sinf(radiusUD);
 		speed.z -= 0.2f;
-		if (speed.z < -3.0f) {
-			speed.z = -3.0f;
+		if (speed.z < -maxSpeed) {
+			speed.z = -maxSpeed;
 		}
 		isSpeed[2] = true;
 	}
@@ -130,8 +132,8 @@ void Player::Update(float _cameraAngle)
 		move.x += speed.z * cosf(radiusUD);
 		move.z += speed.z * sinf(radiusUD);
 		speed.z += 0.2f;
-		if (speed.z > 3.0f) {
-			speed.z = 3.0f;
+		if (speed.z > maxSpeed) {
+			speed.z = maxSpeed;
 		}
 		isSpeed[3] = true;
 	}
@@ -209,8 +211,8 @@ void Player::Update(float _cameraAngle)
 	std::string strMoveY = std::to_string(speed.y);
 	std::string strMoveZ = std::to_string(speed.z);
 	std::string strHP = std::to_string(hp);
-	text->Print("Upos :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 100);
-	//text->Print("speed :: x : " + strMoveX + "y : " + strMoveY + "z : " + strMoveZ, 100, 125);
+	text->Print("pos :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 100);
+	text->Print("speed :: x : " + strMoveX + "y : " + strMoveY + "z : " + strMoveZ, 100, 125);
 	text->Print("playerHP : " + strHP, 100, 150);
 	text = nullptr;
 

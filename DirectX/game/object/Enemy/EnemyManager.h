@@ -1,4 +1,5 @@
 #pragma once
+#include "TutorialEnemy.h"
 #include "EnemyA.h"
 
 class EnemyManager
@@ -47,18 +48,25 @@ public:
 private:
 
 	//敵A
-	static std::list<std::unique_ptr<EnemyA>> enemyA;
+	static std::list<std::unique_ptr<BaseEnemy>> enemy;
 	//プレイヤー座標
 	static XMFLOAT3 playerPos;
 
 public:
 
-	static void SetEnemyA(const XMFLOAT3& _pos) {
-		enemyA.emplace_back(EnemyA::Create(_pos));
+	static void SetEnemyAMoveList(const XMFLOAT3& _pos, const std::vector<int> _destination) {
+		EnemyA::SetMoveList(_pos, _destination);
 	}
 
-	std::list<std::unique_ptr<EnemyA>>::iterator& GetEnemyA() {
-		return enemyA.begin();
+	static void SetTutorialEnemy(const XMFLOAT3& _pos) {
+		enemy.emplace_back(TutorialEnemy::Create(_pos));
+	}
+
+	static void SetEnemyA(const XMFLOAT3& _pos, const int _destination) {
+		enemy.emplace_back(EnemyA::Create(_pos, _destination));
+	}
+
+	std::list<std::unique_ptr<BaseEnemy>>::iterator& GetEnemyA() {
+		return enemy.begin();
 	}
 };
-

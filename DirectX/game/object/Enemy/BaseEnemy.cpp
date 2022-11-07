@@ -23,7 +23,6 @@ void BaseEnemy::StaticUpdate(const XMFLOAT3& _playerPos)
 void BaseEnemy::Initialize()
 {
 	isAlive = true;
-	moveVec = { 0,0,0 };
 
 	// コライダーの追加
 	float radius = 3.0f;

@@ -122,9 +122,6 @@
     <Filter Include="エンジンシステム\Base\Helpar">
       <UniqueIdentifier>{3d04591c-d91a-409f-bed5-97956e0d7543}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Base\CSV">
-      <UniqueIdentifier>{89695aff-10b9-4ffc-a805-fceb5d716a93}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\object">
       <UniqueIdentifier>{d9aada42-7d56-457d-bb40-6ec31093798e}</UniqueIdentifier>
     </Filter>
@@ -166,6 +163,12 @@
     </Filter>
     <Filter Include="エンジンシステム\Base\GraphicsPipelineManager">
       <UniqueIdentifier>{9e796eba-af2b-476b-bf30-138d92a52ee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\FileLoder">
+      <UniqueIdentifier>{62f202f6-648d-4019-a24a-02fce34d6398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\Base\FileLoder\CSV">
+      <UniqueIdentifier>{89695aff-10b9-4ffc-a805-fceb5d716a93}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -233,7 +236,7 @@
       <Filter>エンジンシステム\Light</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Csv.cpp">
-      <Filter>エンジンシステム\Base\CSV</Filter>
+      <Filter>エンジンシステム\Base\FileLoder\CSV</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\ComputeShaderManager.cpp">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
@@ -390,6 +393,12 @@
     </ClCompile>
     <ClCompile Include="engine\3d\InstanceObject.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\JsonLoder.cpp">
+      <Filter>エンジンシステム\Base\FileLoder</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Enemy\TutorialEnemy.cpp">
+      <Filter>ゲームシステム\object\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -593,7 +602,7 @@
       <Filter>エンジンシステム\Light</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Csv.h">
-      <Filter>エンジンシステム\Base\CSV</Filter>
+      <Filter>エンジンシステム\Base\FileLoder\CSV</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\ComputeShaderManager.h">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
@@ -765,6 +774,12 @@
     </ClInclude>
     <ClInclude Include="engine\3d\InstanceObject.h">
       <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\JsonLoder.h">
+      <Filter>エンジンシステム\Base\FileLoder</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Enemy\TutorialEnemy.h">
+      <Filter>ゲームシステム\object\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

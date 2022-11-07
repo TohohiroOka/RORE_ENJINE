@@ -10,6 +10,13 @@ protected: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMVECTOR = DirectX::XMVECTOR;
 
+	struct MOVE_LIST {
+		//移動先座標
+		XMFLOAT3 pos;
+		//次の移動先候補
+		std::vector<int> destination;
+	};
+
 public:
 
 	/// <summary>

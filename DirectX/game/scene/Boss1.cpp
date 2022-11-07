@@ -15,16 +15,34 @@
 
 #include "GameCollision.h"
 #include "GameHelper.h"
+#include "JsonLoder.h"
 
 using namespace DirectX;
 
 void Boss1::Initialize()
 {
-	//プレイヤー
-	player = Player::Create({ mapSize / 2.0f ,250.0f,mapSize / 5.0f });
+	//シーン
+	scene = SCENE::SET;
+	//カメラの回転
+	cameraAngle = -90;
+
+	//Jsonファイル読み込みで使用するオブジェクト名配列
+	std::vector<std::string> objectName = {
+		"player",
+		"tutorial_enemy",
+		"enemy1",
+		"boss"
+	};
+
+	JsonObjectData* jData = JsonLoder::LoadFile("map1.json", objectName);
+	JsonMoveData* jEnemy1MoveData = JsonLoder::LoadMoveFile("map1_enemy1_move.json");
+	JsonMoveData* jBossMoveData = JsonLoder::LoadMoveFile("map1_boss_move.json");
 
 	//地形
-	ground = Ground::Create("heightmap01.bmp", "jimen.png", "kabe.png");
+	ground = Ground::Create("heightmap06.bmp", "jimen.png", "kabe.png");
+
+	//プレイヤー
+	player = Player::Create(jData->objects[objectName[0]][0].pos);
 
 	//弾マネージャー
 	bullet = BulletManager::Create();
@@ -32,8 +50,25 @@ void Boss1::Initialize()
 	//敵マネージャー
 	enemy = EnemyManager::Create();
 
+	//移動座標セット
+	for (auto& i : jEnemy1MoveData->movePoint) {
+		enemy->SetEnemyAMoveList(i.pos, i.moveList);
+	}
+	//チュートリアル敵セット
+	for (auto& i : jData->objects[objectName[1]]) {
+		enemy->SetTutorialEnemy(i.pos);
+	}
+	//enemy1
+	const int moveNum = (int)jData->objects[objectName[2]].size();
+	for (int i = 0; i < moveNum;i++) {
+		enemy->SetEnemyA(jData->objects[objectName[2]][i].pos, i);
+	}
+
 	//ボス
-	boss = BossA::Create({ mapSize / 2.0f ,100.0f ,mapSize / 2.0f });
+	for (auto& i : jBossMoveData->movePoint) {
+		boss->SetMoveList(i.pos, i.moveList);
+	}
+	boss = BossA::Create(jData->objects[objectName[3]][0].pos, 0);
 
 	//UI
 	ui = UiManager::Create(boss->GetMaxHp());
@@ -99,15 +134,8 @@ void Boss1::Draw()
 {
 	assert(cmdList);
 
-	XMFLOAT3 position = player->GetPosition();
-	std::string strX = std::to_string(position.x);
-	std::string strY = std::to_string(position.y);
-	std::string strZ = std::to_string(position.z);
-	DebugText::GetInstance()->Print("Upos :: x : " + strX + "y : " + strY + "z : " + strZ, 100, 125);
-
-
 	Sprite::PreDraw(cmdList);
-	ui->Draw();
+	//ui->Draw();
 	DebugText::GetInstance()->DrawAll();
 	Sprite::PostDraw();
 
