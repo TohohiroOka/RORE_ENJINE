@@ -30,15 +30,23 @@ void Title::Update()
 	}
 
 	DebugText* text = DebugText::GetInstance();
-	text->Print("push enter", 100, 200, 5.0f);
+	text->Print("push enter", 100, 200, { 0.0f,0.9f,0.0f }, 5.0f);
 	text = nullptr;
+}
+
+void Title::DrawNotPostB()
+{
 }
 
 void Title::Draw()
 {
+}
+
+void Title::DrawNotPostA()
+{
 	Sprite::PreDraw(cmdList);
-	sp->Draw();
 	DebugText::GetInstance()->DrawAll();
+	sp->Draw();
 	Sprite::PostDraw();
 }
 

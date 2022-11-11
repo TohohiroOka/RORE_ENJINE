@@ -33,17 +33,13 @@ void Boss1::Initialize()
 	//Jsonファイル読み込みで使用するオブジェクト名配列
 	std::vector<std::string> objectName = {
 		"player",
-		"tutorial_enemy",
-		"enemy1",
-		"boss"
 	};
 
-	JsonObjectData* jData = JsonLoder::LoadFile("map1.json", objectName);
-	JsonMoveData* jEnemy1MoveData = JsonLoder::LoadMoveFile("map1_enemy1_move.json");
-	JsonMoveData* jBossMoveData = JsonLoder::LoadMoveFile("map1_boss_move.json");
+	JsonObjectData* jData = JsonLoder::LoadFile("map2.json", objectName);
+	JsonMoveData* jBossMoveData = JsonLoder::LoadMoveFile("map2_boss_move.json");
 
 	//地形
-	ground = Ground::Create("heightmap06.bmp", "jimen.png", "kabe.png");
+	ground = Ground::Create("heightmap01.bmp", "jimen.png", "kabe.png");
 
 	//プレイヤー
 	player = Player::Create(jData->objects[objectName[0]][0].pos);
@@ -54,28 +50,14 @@ void Boss1::Initialize()
 	//敵マネージャー
 	enemy = EnemyManager::Create();
 
-	//移動座標セット
-	for (auto& i : jEnemy1MoveData->movePoint) {
-		enemy->SetEnemyAMoveList(i.pos, i.moveList);
-	}
-	//チュートリアル敵セット
-	for (auto& i : jData->objects[objectName[1]]) {
-		enemy->SetTutorialEnemy(i.pos);
-	}
-	//enemy1
-	const int moveNum = int(jData->objects[objectName[2]].size());
-	for (int i = 0; i < moveNum;i++) {
-		enemy->SetEnemyA(jData->objects[objectName[2]][i].pos, i);
-	}
-
 	//ボス
 	for (auto& i : jBossMoveData->movePoint) {
 		boss->SetMoveList(i.pos, i.moveList);
 	}
-	boss = BossA::Create(jData->objects[objectName[3]][0].pos, 0);
+	boss = BossA::Create(jBossMoveData->movePoint[0].pos, 0);
 
 	//UI
-	ui = UiManager::Create(boss->GetMaxHp());
+	ui = UiManager::Create(player->GetMaxHp(),boss->GetMaxHp());
 }
 
 void Boss1::Update()
@@ -85,10 +67,6 @@ void Boss1::Update()
 
 	//------オブジェクトの更新--------//
 	XMFLOAT3 playerPos = player->GetPosition();
-
-	//基礎的な更新
-	player->Update(cameraAngle);
-
 
 	if (scene == SCENE::SET)
 	{
@@ -113,6 +91,9 @@ void Boss1::Update()
 	}
 	else if (scene == SCENE::PLAY)
 	{
+		//プレイヤー更新
+		player->Update(cameraAngle);
+
 		//弾更新
 		bullet->Update(playerPos);
 		if (bullet->CheckEnemyBulletToPlayerCollision())
@@ -134,7 +115,7 @@ void Boss1::Update()
 		}
 
 		//ui更新
-		ui->Update(boss->GetHp());
+		ui->Update(player->GetHp(), boss->GetHp());
 
 		//------更新以外の処理--------//
 
@@ -159,14 +140,16 @@ void Boss1::Update()
 	xinput = nullptr;
 }
 
+void Boss1::DrawNotPostB()
+{
+	InstanceObject::PreDraw(cmdList);
+	bullet->Draw();
+	InstanceObject::PostDraw();
+}
+
 void Boss1::Draw()
 {
 	assert(cmdList);
-
-	Sprite::PreDraw(cmdList);
-	//ui->Draw();
-	DebugText::GetInstance()->DrawAll();
-	Sprite::PostDraw();
 
 	InterfaceObject3d::SetCmdList(cmdList);
 
@@ -186,10 +169,14 @@ void Boss1::Draw()
 	//}
 
 	InterfaceObject3d::ReleaseCmdList();
-	
-	InstanceObject::PreDraw(cmdList);
-	bullet->Draw();
-	InstanceObject::PostDraw();
+}
+
+void Boss1::DrawNotPostA()
+{
+	Sprite::PreDraw(cmdList);
+	ui->Draw();
+	//DebugText::GetInstance()->DrawAll();
+	Sprite::PostDraw();
 }
 
 void Boss1::Finalize()
@@ -266,7 +253,7 @@ void Boss1::CameraUpdate(Camera* camera)
 		target.y = Easing::OutCubic(initTarget.y, playerPos.y, ratio);
 		target.z = Easing::OutCubic(initTarget.z, playerPos.z, ratio);
 
-		const float range = 15.0f;
+		const float range = 20.0f;
 		float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
 		XMFLOAT3 afterEye = {
 			cosf(cameraRadius) * range + playerPos.x,
@@ -277,7 +264,7 @@ void Boss1::CameraUpdate(Camera* camera)
 		eye.y = Easing::OutCubic(initEye.y, afterEye.y, ratio);
 		eye.z = Easing::OutCubic(initEye.z, afterEye.z, ratio);
 
-		float afterCameraBack = 1200.0f;
+		float afterCameraBack = 3000.0f;
 		float initCameraBack = 4000.0f;
 		cameraBack= Easing::OutCubic(initCameraBack, afterCameraBack, ratio);
 
@@ -292,7 +279,7 @@ void Boss1::CameraUpdate(Camera* camera)
 
 		//プレイヤー座標
 		XMFLOAT3 playerPos = player->GetPosition();
-		const float range = 15.0f;
+		const float range = 20.0f;
 		float cameraRadius = DirectX::XMConvertToRadians(cameraAngle);
 		target = playerPos;
 		eye = {
@@ -303,10 +290,6 @@ void Boss1::CameraUpdate(Camera* camera)
 		cameraAngle = float(int(cameraAngle) % 360);
 		camera->SetTarget(target);
 		camera->SetEye(eye);
-
-		//カメラの傾き
-		XMFLOAT3 playerTilt = player->GetObjAngle();
-		camera->SetUp({ playerTilt.z,1,0 });
 	}
 
 	DebugText* text = DebugText::GetInstance();

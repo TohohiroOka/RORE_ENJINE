@@ -75,9 +75,15 @@ private:
 	const int maxHp = 400;
 	//移動経路
 	static std::vector<MOVE_LIST> moveList;
+	//partsの数
+	static const int partsNum = 8;
+	//中心からの距離
+	static const std::array<XMFLOAT3, partsNum> partsPos;
 
 private:
 
+	//周りのオブジェクト
+	std::array<std::unique_ptr<Object3d>, partsNum> parts;
 	//タイマー
 	int timer;
 	//地面についているか
@@ -94,8 +100,6 @@ private:
 	const int bulletNum = 36;
 	//一回分の攻撃情報
 	std::array<BULLET_INFO, kindNum> attack;
-	//敵を召喚するカウント
-	int summonEnemyCount;
 	//ビーム
 	std::unique_ptr<BossBeam> baem;
 

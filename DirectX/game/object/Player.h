@@ -74,6 +74,7 @@ private:
 	float cameraAngle;
 
 	//HP
+	const int maxHp = 100;
 	int hp;
 
 	//ダメージ演出
@@ -102,9 +103,15 @@ public:
 	}
 
 	/// <summary>
-	/// オブジェクトの正規化傾き
+	/// 最大hp
 	/// </summary>
-	/// <returns></returns>
-	XMFLOAT3 GetObjAngle() { return { moveObjAngle.x / 45.0f, moveObjAngle.y / 45.0f, moveObjAngle.z / 45.0f }; }
+	/// <returns>最大hp</returns>
+	int GetMaxHp() { return  maxHp; }
+
+	/// <summary>
+	/// 現hp取得
+	/// </summary>
+	/// <returns>現hp</returns>
+	int GetHp() { return  hp; }
 
 };

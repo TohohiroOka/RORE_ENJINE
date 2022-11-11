@@ -176,6 +176,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="PlayerUi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
@@ -427,6 +428,7 @@
     <ClInclude Include="game\ui\BaseUi.h" />
     <ClInclude Include="game\ui\BossHpUi.h" />
     <ClInclude Include="game\ui\UiManager.h" />
+    <ClInclude Include="PlayerUi.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

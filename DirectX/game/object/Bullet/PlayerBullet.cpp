@@ -4,7 +4,7 @@ PlayerBullet::PlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
 {
 	pos = _pos;
 	moveVec = _moveVec;
-	const float speed = 5.0f;
+	const float speed = 10.0f;
 	move = { moveVec.x * speed,moveVec.y * speed, moveVec.z * speed };
 }
 

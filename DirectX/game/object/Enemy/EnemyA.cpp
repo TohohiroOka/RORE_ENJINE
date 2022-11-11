@@ -51,7 +51,7 @@ std::unique_ptr<EnemyA> EnemyA::Create(const XMFLOAT3& _pos, const int _destinat
 void EnemyA::Update()
 {
 	timer++;
-	const int maxTimer = 50;
+	const float maxTimer = 80.0f;
 	//äpìx
 	XMFLOAT2 objAngle = {};
 	objAngle.x = GetAngle({ pos.x,pos.z }, { playerPos.x, playerPos.z });//yé≤
@@ -67,7 +67,7 @@ void EnemyA::Update()
 	if (isMove)
 	{
 		moveTimer++;
-		float ratio = float(moveTimer / maxTimer);
+		float ratio = float(moveTimer) / maxTimer;
 		int nextNum = moveList[destinationNumber].destination[0];
 		pos.x = Easing::Lerp(moveList[destinationNumber].pos.x, moveList[nextNum].pos.x, ratio);
 		pos.z = Easing::Lerp(moveList[destinationNumber].pos.z, moveList[nextNum].pos.z, ratio);

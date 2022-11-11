@@ -3,7 +3,7 @@
 #include "CollisionAttribute.h"
 #include "GameHelper.h"
 
- const float Ground::scale = 12.0f;
+ const float Ground::scale = 5.0f;
 
 std::unique_ptr<Ground> Ground::Create(const std::string& heightmapFilename,
 	const std::string& filename1, const std::string& filename2)

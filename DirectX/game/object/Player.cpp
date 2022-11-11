@@ -27,9 +27,10 @@ Player::Player(const XMFLOAT3& _pos)
 {
 	isDraw = true;
 	position = _pos;
+	position.y = 200.0f;
 	move = { 0,0,0 };
 	speed = { 0,0,0 };
-	hp = 100;
+	hp = 10;
 	moveObjAngle = { 0,0,0 };
 	cameraAngle = 0.0f;
 	isDamageStaging = false;
@@ -85,7 +86,7 @@ void Player::Update(float _cameraAngle)
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
 	float radiusUD = XMConvertToRadians(cameraAngle);
 
-	const float maxSpeed = 4.0f;
+	const float maxSpeed = 8.0f;
 
 	//二つ以上のキーが押されたとき一定以上の速度にならないように調整するためのフラグ
 	std::array<bool, 4> isSpeed = { false,false, false, false };

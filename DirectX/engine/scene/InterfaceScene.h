@@ -54,7 +54,17 @@ public:
 	/// <summary>
 	/// •`‰æ
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual void DrawNotPostB() {};
+
+	/// <summary>
+	/// •`‰æ
+	/// </summary>
+	virtual void Draw() {};
+
+	/// <summary>
+	/// •`‰æ
+	/// </summary>
+	virtual void DrawNotPostA() {};
 
 	/// <summary>
 	/// ‰ð•ú

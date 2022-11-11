@@ -113,23 +113,22 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
-	//カリング（現在は両面描画に設定）
-	//gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-
 	// 図形の形状設定
 	gpipeline.PrimitiveTopologyType = _pepelineDescSet.topologyType;
 
 	//2D描画なら上書きモードに設定
 	if (_pepelineDescSet.object2d)
 	{
+		gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
 		if (_pepelineDescSet.particl)
 		{
 			gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		}
 		else
 		{
-			//gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-			//gpipeline.DepthStencilState.DepthEnable = true;
+			gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+			gpipeline.DepthStencilState.DepthEnable = false;
 		}
 	}
 

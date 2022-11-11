@@ -400,6 +400,9 @@
     <ClCompile Include="game\object\Enemy\TutorialEnemy.cpp">
       <Filter>ゲームシステム\object\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerUi.cpp">
+      <Filter>ゲームシステム\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -780,6 +783,9 @@
     </ClInclude>
     <ClInclude Include="game\object\Enemy\TutorialEnemy.h">
       <Filter>ゲームシステム\object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerUi.h">
+      <Filter>ゲームシステム\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,10 +20,11 @@ void DebugText::Initialize()
 	}
 }
 
-void DebugText::Print(const std::string& _text, float _x, float _y, float _size)
+void DebugText::Print(const std::string& _text, float _x, float _y, DirectX::XMFLOAT3 _color, float _size)
 {
 	SetPos(_x, _y);
 	SetSize(_size);
+	SetColor(_color);
 
 	NPrint((UINT)_text.size(), _text.c_str());
 }
@@ -57,7 +58,7 @@ void DebugText::NPrint(int _len, const char* _text)
 		//XV
 		spriteDatas[spriteIndex]->Update();
 
-		spriteDatas[spriteIndex]->SetColor({ red,green,blue,1 });
+		spriteDatas[spriteIndex]->SetColor({ color.x,color.y,color.z,1 });
 
 		// •¶š‚ğ‚P‚Âi‚ß‚é
 		spriteIndex++;

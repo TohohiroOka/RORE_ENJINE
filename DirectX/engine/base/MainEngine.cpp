@@ -89,6 +89,7 @@ void MainEngine::Draw()
 {
 	//描画
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
+
 	postEffect->PreDrawScene(dXCommon->GetCmdList());
 	//CubeMap::PreDraw(dXCommon->GetCmdList());
 	//cubemap->Draw();
@@ -96,6 +97,7 @@ void MainEngine::Draw()
 
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene(dXCommon->GetCmdList());
+	scene->DrawNotPostB(dXCommon->GetCmdList());
 
 	//描画前設定
 	dXCommon->PreDraw();
@@ -105,6 +107,8 @@ void MainEngine::Draw()
 
 	//ポストエフェクト描画
 	postEffect->Draw(dXCommon->GetCmdList());
+
+	scene->DrawNotPostA(dXCommon->GetCmdList());
 
 	//コマンド実行
 	dXCommon->PostDraw();

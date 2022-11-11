@@ -8,6 +8,12 @@
 using namespace DirectX;
 
 std::vector<BaseEnemy::MOVE_LIST> BossA::moveList;
+const std::array<XMFLOAT3, BossA::partsNum> BossA::partsPos = {
+	XMFLOAT3{10,10,10},{-10,10,10},
+	{10,10,-10},{-10,10,-10},
+	{10,-10,10},{-10,-10,10},
+	{10,-10,-10},{-10,-10,-10}
+};
 
 BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 {
@@ -21,19 +27,30 @@ BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 	//移動速度
 	speed = 1.0f;
 	//オブジェクトの生成
-	object = Object3d::Create(bossModel.get());
+	object = Object3d::Create(bossModel[0].get());
 	//座標セット
 	pos = _pos;
 	pos.y = 200.0f;
 	object->SetPosition(pos);
 
 	//大きさセット
-	scale = 30.0f;
+	scale = 3.0f;
 	object->SetScale({ scale ,scale ,scale });
 
 	//ブルーム等
 	object->SetBloom(true);
-	object->SetOutline(true);
+
+	//partsのセット
+	float partsScale = scale * 2.0f;
+	for (int i = 0; i < partsNum; i++) {
+		parts[i] = Object3d::Create(bossModel[1].get());
+		XMFLOAT3 addPos = pos;
+		addPos.x += partsPos[i].x;
+		addPos.y += partsPos[i].y;
+		addPos.z += partsPos[i].z;
+		parts[i]->SetPosition(addPos);
+		parts[i]->SetScale({ partsScale ,partsScale ,partsScale });
+	}
 
 	//移動フラグ
 	isMove = true;
@@ -44,9 +61,6 @@ BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 	//次の移動先番号
 	int rand = int(Randomfloat(int(moveList[destinationNumber].destination.size()) - 1));
 	nextDestinationNumber = rand;
-
-	//敵召喚カウント
-	summonEnemyCount = 0;
 
 	//ビーム
 	baem = BossBeam::Create();
@@ -85,44 +99,49 @@ void BossA::Update()
 	//}
 
 	//攻撃の更新
-	if (summonEnemyCount <= 5)
+	if (timer % 300 == 1)
 	{
-		if (timer % 300 == 1)
+		for (auto& i : attack)
 		{
-			for (auto& i : attack)
-			{
-				i.kind++;
-				i.kind = i.kind % int(BULLET_KIND::SIZE);
-				i.rota = { 0,0,0 };
-			}
-			summonEnemyCount++;
+			i.kind++;
+			i.kind = i.kind % int(BULLET_KIND::SIZE);
+			i.rota = { 0,0,0 };
 		}
-
-		//攻撃
-		Attack();
 	}
+
+	//攻撃
+	Attack();
 
 	//移動
 	if (isMove)
 	{
 		moveTimer++;
-		const int maxTimer = 150;
-		const float ratio = float(moveTimer) / float(maxTimer);
+		const float maxTimer = 150.0f;
+		const float ratio = float(moveTimer) / maxTimer;
 		pos.x = Easing::Lerp(moveList[destinationNumber].pos.x, moveList[nextDestinationNumber].pos.x, ratio);
 		pos.z = Easing::Lerp(moveList[destinationNumber].pos.z, moveList[nextDestinationNumber].pos.z, ratio);
 
 		if (ratio >= 1.0f) {
-			int rand = 0;
+			int rand = destinationNumber;
+
 			while (rand == destinationNumber) {
-				rand = int(Randomfloat(int(moveList[destinationNumber].destination.size()) - 1));
+				rand = int(Randomfloat(int(moveList[nextDestinationNumber].destination.size()) - 1));
+				rand = moveList[nextDestinationNumber].destination[rand];
 			}
-			int now = nextDestinationNumber;
-			nextDestinationNumber = moveList[destinationNumber].destination[rand];
-			destinationNumber = now;
+			destinationNumber = nextDestinationNumber;
+			nextDestinationNumber = rand;
 			moveTimer = 0;
 		}
 	}
 
+	//parts更新
+	for (int i = 0; i < partsNum; i++) {
+		XMFLOAT3 addPos = pos;
+		addPos.x += partsPos[i].x;
+		addPos.y += partsPos[i].y;
+		addPos.z += partsPos[i].z;
+		parts[i]->SetPosition(addPos);
+	}
 
 	BaseEnemy::Update();
 
@@ -130,10 +149,11 @@ void BossA::Update()
 	std::string bossHp = std::to_string(hp);
 	std::string bossAttack1= std::to_string(attack[0].kind);
 	std::string bossAttack2 = std::to_string(attack[1].kind);
-	std::string stdSummonEnemyCount = std::to_string(summonEnemyCount);
+	std::string strDestinationNumber = std::to_string(destinationNumber);
+	std::string strNextDestinationNumber = std::to_string(nextDestinationNumber);
 	text->Print("Boss hp : " + bossHp, 100, 200);
 	text->Print("Boss Attack1 : " + bossAttack1+ " Boss Attack2 : " + bossAttack2, 100, 225);
-	text->Print("summonEnemyCount : " + stdSummonEnemyCount, 100, 250);
+	text->Print("destinationNumber : " + strDestinationNumber + "nextDestinationNumber : " + strNextDestinationNumber, 100, 250);
 
 	text = nullptr;
 }
@@ -141,6 +161,9 @@ void BossA::Update()
 void BossA::Draw()
 {
 	BaseEnemy::Draw();
+	for (auto& i : parts) {
+		i->Draw();
+	}
 
 	if (!baem->GetIsAlive()) { return; }
 	//baem->Draw();

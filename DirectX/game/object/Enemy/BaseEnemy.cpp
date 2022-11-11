@@ -5,13 +5,14 @@
 
 using namespace DirectX;
 
-std::unique_ptr<Model> BaseEnemy::bossModel;
+std::array<std::unique_ptr<Model>, 2> BaseEnemy::bossModel;
 std::unique_ptr<Model> BaseEnemy::enemyAModel;
 XMFLOAT3 BaseEnemy::playerPos;
 
 void BaseEnemy::StaticInitialize()
 {
-	bossModel = Model::CreateFromOBJ("Square");//ボス
+	bossModel[0] = Model::CreateFromOBJ("core");//コアボス
+	bossModel[1] = Model::CreateFromOBJ("Square");//コアボス
 	enemyAModel = Model::CreateFromOBJ("enemyA");//敵A
 }
 
@@ -50,7 +51,7 @@ void BaseEnemy::Draw()
 
 void BaseEnemy::Finalize()
 {
-	bossModel.reset();
+	bossModel[0].reset();
 	enemyAModel.reset();
 }
 

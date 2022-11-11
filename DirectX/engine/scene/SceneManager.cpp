@@ -397,10 +397,22 @@ void SceneManager::Update()
 	HeightMap::SetLightGroup(light.get());
 }
 
+void SceneManager::DrawNotPostB(ID3D12GraphicsCommandList* cmdList)
+{
+	scene->SetCmdList(cmdList);
+	scene->DrawNotPostB();
+}
+
 void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	scene->SetCmdList(cmdList);
 	scene->Draw();
+}
+
+void SceneManager::DrawNotPostA(ID3D12GraphicsCommandList* cmdList)
+{
+	scene->SetCmdList(cmdList);
+	scene->DrawNotPostA();
 }
 
 void SceneManager::ImguiDraw()

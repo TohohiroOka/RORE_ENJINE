@@ -116,9 +116,9 @@ float4 SetOutline(float2 uv, float outlineWidth, float4 outlineColor)
 
 float4 SetFog(float2 uv)
 {
-	float depth = pow(depthTex.Sample(smp, uv), 50000);
-
-	float4 depthColor = float4(depth, depth, depth, 1.0);
+	float depth = pow(depthTex.Sample(smp, uv), 10000);
+	depth = depth * depth;
+	float4 depthColor = float4(0, depth/2, depth, 1.0);
 
 	return depthColor;
 }

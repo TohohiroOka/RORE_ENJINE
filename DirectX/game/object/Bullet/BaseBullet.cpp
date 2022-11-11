@@ -26,7 +26,7 @@ void BaseBullet::StaticInitialize()
 void BaseBullet::Initialize()
 {
 	isAlive = true;
-	scale = 3;
+	scale = 1.5f;
 	rotate = { 0,0,0 };
 }
 

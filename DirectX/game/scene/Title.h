@@ -22,9 +22,19 @@ public:
 	void CameraUpdate(Camera* camera) override {};
 
 	/// <summary>
+	/// •`‰æ
+	/// </summary>
+	void DrawNotPostB() override;
+
+	/// <summary>
 	///	•`‰æ
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// •`‰æ
+	/// </summary>
+	void DrawNotPostA() override;
 
 	/// <summary>
 	///	‰ð•ú

@@ -16,4 +16,5 @@ void BaseUi::StaticInitialize()
 {
 	KeepName("Resources/Sprite/bossHPGaugeIn.png", SPRITE::BOSS_HP_IN, { 694,20 });
 	KeepName("Resources/Sprite/bossHPGaugeOut.png", SPRITE::BOSS_HP_OUT, { 700,40 });
+	KeepName("Resources/Sprite/PlayerHpDown.png", SPRITE::PLAYER_HP_DOWN, { 1280,720 });
 }

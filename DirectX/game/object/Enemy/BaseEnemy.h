@@ -63,7 +63,7 @@ public:
 protected:
 
 	//ボスモデル
-	static std::unique_ptr<Model> bossModel;
+	static std::array<std::unique_ptr<Model>, 2> bossModel;
 	//enemyAモデル
 	static std::unique_ptr<Model> enemyAModel;
 	//プレイヤー座標

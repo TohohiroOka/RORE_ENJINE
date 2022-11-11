@@ -55,10 +55,8 @@ public:// メンバ関数
 	/// 色変更
 	/// </summary>
 	/// <param name="size"></param>
-	inline void SetColor(float _red, float _green, float _blue) {
-		this->red = _red;
-		this->green = _green;
-		this->blue = _blue;
+	inline void SetColor(DirectX::XMFLOAT3 _color) {
+		this->color = _color;
 	}
 
 	/// <summary>
@@ -68,7 +66,8 @@ public:// メンバ関数
 	/// <param name="x">x軸の位置</param>
 	/// <param name="y">y軸の位置</param>
 	/// <param name="size">大きさ</param>
-	void Print(const std::string& _text, float _x, float _y, float _size = 1.0f);
+	void Print(const std::string& _text, float _x, float _y,
+		DirectX::XMFLOAT3 _color = { 1.0f,1.0f, 1.0f }, float _size = 1.0f);
 
 	/// <summary>
 	/// 
@@ -100,10 +99,7 @@ private:
 	float posX = 0.0f;
 	float posY = 0.0f;
 	float size = 1.0f;
-	float red = 1.0f;
-	float green = 1.0f;
-	float blue = 1.0f;
-
+	DirectX::XMFLOAT3 color = { 1.0f,1.0f, 1.0f };
 
 	char buffer[bufferSize];
 };

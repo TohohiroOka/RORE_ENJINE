@@ -123,7 +123,7 @@ bool HeightMap::HeightMapLoad(const std::string& _filename)
 			int index = (hmInfo.terrainHeight * j) + i;
 
 			hmInfo.heightMap[index].x = float(i);
-			hmInfo.heightMap[index].y = float(height / 5.0f);
+			hmInfo.heightMap[index].y = float(height / 3.0f);
 			hmInfo.heightMap[index].z = float(j);
 
 			k += 3;
