@@ -9,7 +9,7 @@ BossBulletB::BossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const X
 	pos = _pos;
 	moveVec = _moveVec;
 	color = _color;
-	const float speed = 8.0f;
+	const float speed = 1.0f;
 	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
 }
 
@@ -45,7 +45,7 @@ void BossBulletB::Update()
 			float radiunXZ = XMConvertToRadians(nowAngleXZ);
 
 			BulletManager::SetBossBulletNormal(pos,
-				{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) }, 8.0f,
+				{ cos(radiunXY) * cos(radiunXZ),cos(radiunXY) * sin(radiunXZ),sin(radiunXY) }, 1.0f,
 				{ float(i % 10) / 10.0f, float(i / bulletNum), float(i) / 10.0f });
 		}
 		isAlive = false;

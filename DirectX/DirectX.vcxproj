@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BeamManager.cpp" />
     <ClCompile Include="engine\2d\DebugText.cpp" />
     <ClCompile Include="engine\2d\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -148,7 +149,7 @@
     <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="game\GameCollision.cpp" />
-    <ClCompile Include="game\object\BossBeam.cpp" />
+    <ClCompile Include="game\object\BaseBeam.cpp" />
     <ClCompile Include="game\object\Bullet\BaseBullet.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletA.cpp" />
     <ClCompile Include="game\object\Bullet\BossBulletB.cpp" />
@@ -171,12 +172,13 @@
     <ClCompile Include="game\scene\Title.cpp" />
     <ClCompile Include="game\ui\BaseUi.cpp" />
     <ClCompile Include="game\ui\BossHpUi.cpp" />
+    <ClCompile Include="game\ui\PlayerUi.cpp" />
     <ClCompile Include="game\ui\UiManager.cpp" />
+    <ClCompile Include="LatticeBeam.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="PlayerUi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
@@ -338,6 +340,7 @@
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BeamManager.h" />
     <ClInclude Include="engine\2d\DebugText.h" />
     <ClInclude Include="engine\2d\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -404,7 +407,7 @@
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="game\GameCollision.h" />
     <ClInclude Include="game\GameHelper.h" />
-    <ClInclude Include="game\object\BossBeam.h" />
+    <ClInclude Include="game\object\BaseBeam.h" />
     <ClInclude Include="game\object\Bullet\BaseBullet.h" />
     <ClInclude Include="game\object\Bullet\BossBulletA.h" />
     <ClInclude Include="game\object\Bullet\BossBulletB.h" />
@@ -427,8 +430,9 @@
     <ClInclude Include="game\scene\Title.h" />
     <ClInclude Include="game\ui\BaseUi.h" />
     <ClInclude Include="game\ui\BossHpUi.h" />
+    <ClInclude Include="game\ui\PlayerUi.h" />
     <ClInclude Include="game\ui\UiManager.h" />
-    <ClInclude Include="PlayerUi.h" />
+    <ClInclude Include="LatticeBeam.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -9,7 +9,7 @@ BossBulletA::BossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
 {
 	pos = _pos;
 	moveVec = _moveVec;
-	const float speed = 15.0f;
+	const float speed = 1.0f;
 	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
 	color = circleColor;
 	ColorChange();

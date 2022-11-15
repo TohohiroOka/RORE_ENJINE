@@ -42,7 +42,7 @@ protected:
 	//モデル
 	static std::unique_ptr<Model> model;
 	//オブジェクトの最大値
-	static const int object_max_num = 10;
+	static const int object_max_num = 20;
 	//オブジェクト
 	static std::array<std::unique_ptr<InstanceObject>, object_max_num> object;
 	//現在の使用個数

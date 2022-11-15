@@ -17,7 +17,7 @@ BossBulletC::BossBulletC(const XMFLOAT3& _pos, const XMFLOAT3& _targetPos, const
 
 	Vector3 mVec = { randTargetPos.x - pos.x, randTargetPos.y - pos.y,randTargetPos.z - pos.z };
 	moveVec = mVec.normalize();
-	const float speed = 20.0f;
+	const float speed = 5.0f;
 	move = { moveVec.x * speed,moveVec.y * speed,moveVec.z * speed };
 }
 

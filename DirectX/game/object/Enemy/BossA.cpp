@@ -4,6 +4,7 @@
 #include "GameHelper.h"
 #include "EnemyManager.h"
 #include "Easing.h"
+#include "BeamManager.h"
 
 using namespace DirectX;
 
@@ -17,7 +18,6 @@ const std::array<XMFLOAT3, BossA::partsNum> BossA::partsPos = {
 
 BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 {
-	BossBeam::StaticInitialize();
 	//タイマー
 	timer = 0;
 	//HP
@@ -62,12 +62,9 @@ BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 	int rand = int(Randomfloat(int(moveList[destinationNumber].destination.size()) - 1));
 	nextDestinationNumber = rand;
 
-	//ビーム
-	baem = BossBeam::Create();
-
 	//攻撃初期化
 	attack[0].kind = int(BULLET_KIND::CIRCLE);
-	attack[1].kind = int(BULLET_KIND::BOMB_HOMING);
+	attack[1].kind = int(BULLET_KIND::LATTICE_BAEM_SET_X);
 	for (auto& i : attack)
 	{
 		i.oldKind = i.kind;
@@ -91,23 +88,6 @@ std::unique_ptr<BossA> BossA::Create(const XMFLOAT3& _pos, const int _destinatio
 void BossA::Update()
 {
 	timer++;
-
-	//if (DirectInput::GetInstance()->TriggerKey(DIK_K))
-	//{
-	//	attack[0].kind++;
-	//	attack[0].kind = attack[0].kind % int(BULLET_KIND::SIZE);
-	//}
-
-	//攻撃の更新
-	if (timer % 300 == 1)
-	{
-		for (auto& i : attack)
-		{
-			i.kind++;
-			i.kind = i.kind % int(BULLET_KIND::SIZE);
-			i.rota = { 0,0,0 };
-		}
-	}
 
 	//攻撃
 	Attack();
@@ -164,13 +144,28 @@ void BossA::Draw()
 	for (auto& i : parts) {
 		i->Draw();
 	}
-
-	if (!baem->GetIsAlive()) { return; }
-	//baem->Draw();
 }
 
 void BossA::Attack()
 {
+	//if (DirectInput::GetInstance()->TriggerKey(DIK_K))
+	//{
+	//	attack[0].kind++;
+	//	attack[0].kind = attack[0].kind % int(BULLET_KIND::SIZE);
+	//}
+
+	//攻撃の更新
+	if (timer % 300 == 299)
+	{
+		for (auto& i : attack)
+		{
+			i.kind++;
+			i.kind = i.kind % int(BULLET_KIND::SIZE);
+			i.rota = { 0,0,0 };
+		}
+		timer = 0;
+	}
+
 	//for (int i = 0; i < 1; i++)
 	for (int i = 0; i < kindNum; i++)
 	{
@@ -194,7 +189,7 @@ void BossA::Attack()
 						{ cos(radiun) * cosXZ,cos(radiun) * sonXZ,sin(radiun) });
 				}
 			}
-		}
+		} 
 		else if (attack[i].kind == int(BULLET_KIND::CIRCLE_ROTATE))
 		{
 			if (timer % 3 == 1)
@@ -210,16 +205,51 @@ void BossA::Attack()
 						{ cos(radiun) * cos(radiunXZ),cos(radiun) * sin(radiunXZ),sin(radiun) });
 				}
 			}
-		}
-		//else if (kind[i] == int(BULLET_KIND::BAEM))
-		//{
-		//	baem->Update(pos, { 0.9f,0.0f,0.9f });
-		//}
+		} 
+		else if (attack[i].kind == int(BULLET_KIND::LATTICE_BAEM_SET_X))
+		{
+			const float inConstPos = -mapSize / 2.0f;
+			XMFLOAT3 inMoveVec = { 1.0f,0.0f,0.0f };
+			const float range = mapSize / lattice_beam_side_num;
+			for (int a = 0; a < lattice_beam_side_num; a++) {
+				for (int b = 0; b < lattice_beam_side_num; b++) {
+					XMFLOAT3 inPos = { inConstPos,range * float(a),range * float(b) };
+					BeamManager::SetLatticeBeam(inPos, inMoveVec, 10.0f, { 0.9f,0.2f,0.2f });
+				}
+			}
+			attack[i].kind = int(BULLET_KIND::LATTICE_BAEM_SET_Y);
+		} 
+		else if (attack[i].kind == int(BULLET_KIND::LATTICE_BAEM_SET_Y))
+		{
+			const float inConstPos = -mapSize / 2.0f;
+			XMFLOAT3 inMoveVec = { 0.0f,1.0f,0.0f };
+			const float range = mapSize / lattice_beam_side_num;
+			for (int a = 0; a < lattice_beam_side_num; a++) {
+				for (int b = 0; b < lattice_beam_side_num; b++) {
+					XMFLOAT3 inPos = { range * float(a),inConstPos,range * float(b) };
+					BeamManager::SetLatticeBeam(inPos, inMoveVec, 10.0f, { 0.9f,0.2f,0.2f });
+				}
+			}
+			attack[i].kind = int(BULLET_KIND::LATTICE_BAEM_SET_Z);
+		} 
+		else if (attack[i].kind == int(BULLET_KIND::LATTICE_BAEM_SET_Z))
+		{
+			const float inConstPos = -mapSize / 2.0f;
+			XMFLOAT3 inMoveVec = { 0.0f,0.0f,1.0f };
+			const float range = mapSize / lattice_beam_side_num;
+			for (int a = 0; a < lattice_beam_side_num; a++) {
+				for (int b = 0; b < lattice_beam_side_num; b++) {
+					XMFLOAT3 inPos = { range * float(a),range * float(b),inConstPos };
+					BeamManager::SetLatticeBeam(inPos, inMoveVec, 10.0f, { 0.9f,0.2f,0.2f });
+				}
+			}
+			attack[i].kind = int(BULLET_KIND::LATTICE_BAEM_NOW);
+		} 
 		else if (attack[i].kind == int(BULLET_KIND::HOMING))
 		{
 			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
 			BulletManager::SetBossBulletC(pos, color);
-		}
+		} 
 		else if (attack[i].kind == int(BULLET_KIND::BOMB_HOMING))
 		{
 			if (timer % 3 == 1)
@@ -230,12 +260,12 @@ void BossA::Attack()
 				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
 				BulletManager::SetBossBulletF(pos, { cos(radiun.x) * cos(radiun.y),cos(radiun.x) * sin(radiun.y),sin(radiun.x) }, color);
 			}
-		}
+		} 
 		else if (attack[i].kind == int(BULLET_KIND::SNAKE))
 		{
 			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
 			BulletManager::SetBossBulletD(pos, color);
-		}
+		} 
 		else if (attack[i].kind == int(BULLET_KIND::HOMING_LINE1))
 		{
 			for (int lineNumber = 0; lineNumber < homing_line_num; lineNumber++)
@@ -255,7 +285,7 @@ void BossA::Attack()
 
 				//弾セット
 				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
-				BulletManager::SetBossBulletE(attack[i].HOMING_LINEpos[lineNumber], 3.0f, color, false);
+				BulletManager::SetBossBulletE(attack[i].HOMING_LINEpos[lineNumber], 1.0f, color, false);
 
 				const float speed = 2.0f;
 				attack[i].HOMING_LINEpos[lineNumber].x += speed * cos(attack[i].radiun[lineNumber].x) * cos(attack[i].radiun[lineNumber].y);
@@ -268,20 +298,15 @@ void BossA::Attack()
 					attack[i].kind = int(BULLET_KIND::HOMING_LINE2);
 				}
 			}
-		}
+		} 
 		else if (attack[i].kind == int(BULLET_KIND::HOMING_LINE2))
 		{
 			for (auto& linePos : attack[i].HOMING_LINEpos)
 			{
 				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
-				BulletManager::SetBossBulletE(linePos, 3.0f, color,1);
+				BulletManager::SetBossBulletE(linePos, 3.0f, color, 1);
 			}
 		}
-
-		//if (kind[i] != int(BULLET_KIND::BAEM))
-		//{
-		//	baem->SetIsAlive(false);
-		//}
 
 		//前フレームの集類を保存
 		attack[i].oldKind = attack[i].kind;

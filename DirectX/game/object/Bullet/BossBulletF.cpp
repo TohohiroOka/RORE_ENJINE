@@ -8,7 +8,7 @@ BossBulletF::BossBulletF(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const X
 {
 	pos = _pos;
 	moveVec = _moveVec;
-	const float speed = 15.0f;
+	const float speed = 1.0f;
 	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
 	timer = 0;
 	maxTimer = int(Randomfloat(40)) + 20;

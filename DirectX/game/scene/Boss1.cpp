@@ -47,6 +47,9 @@ void Boss1::Initialize()
 	//弾マネージャー
 	bullet = BulletManager::Create();
 
+	//ビームマネージャー
+	beam = BeamManager::Create();
+
 	//敵マネージャー
 	enemy = EnemyManager::Create();
 
@@ -71,7 +74,7 @@ void Boss1::Update()
 	if (scene == SCENE::SET)
 	{
 		timer++;
-		const float maxTime = 300.0f;
+		const float maxTime = 1.0f;
 		float ratio = float(timer) / maxTime;
 		ground->SetRatio(ratio);
 		if (ratio >= 1.0f) {
@@ -100,6 +103,9 @@ void Boss1::Update()
 		{
 			player->Damage();
 		}
+
+		//ビームの更新
+		beam->Update();
 
 		//敵の更新
 		enemy->Update(playerPos);
@@ -144,6 +150,7 @@ void Boss1::DrawNotPostB()
 {
 	InstanceObject::PreDraw(cmdList);
 	bullet->Draw();
+	beam->Draw();
 	InstanceObject::PostDraw();
 }
 
@@ -175,7 +182,7 @@ void Boss1::DrawNotPostA()
 {
 	Sprite::PreDraw(cmdList);
 	ui->Draw();
-	//DebugText::GetInstance()->DrawAll();
+	DebugText::GetInstance()->DrawAll();
 	Sprite::PostDraw();
 }
 

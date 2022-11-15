@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Object3d.h"
+#include "Vector3.h"
 
 class Player
 {
@@ -61,7 +62,7 @@ private:
 	std::unique_ptr<Object3d> object = nullptr;
 
 	XMFLOAT3 position;
-	XMFLOAT3 move;
+	std::array<Vector3, 2> moveVec;
 	XMFLOAT3 speed;
 
 	//描画するか否か

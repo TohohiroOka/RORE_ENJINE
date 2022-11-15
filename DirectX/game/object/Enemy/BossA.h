@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseEnemy.h"
-#include "BossBeam.h"
 #include <array>
 
 class BossA : public BaseEnemy
@@ -13,7 +12,10 @@ private:
 		CIRCLE_ROTATE,//円状に出る回転あり
 		CIRCLE_UP_DOWN,//円状に上下する
 		FIREWORKE,//花火的なもの
-		//BAEM,//ビーム
+		LATTICE_BAEM_SET_X,//格子状ビームセットyz平面
+		LATTICE_BAEM_SET_Y,//格子状ビームセットxz平面
+		LATTICE_BAEM_SET_Z,//格子状ビームセットxy平面
+		LATTICE_BAEM_NOW,//格子状ビーム中
 		HOMING,//ホーミング
 		BOMB_HOMING,//爆破してから追従
 		SNAKE,//うねうね動く
@@ -38,6 +40,8 @@ private:
 		//回転軸
 		XMFLOAT3 rota = { 0,0,0 };
 	};
+
+	static const int lattice_beam_side_num = 20;
 
 public:
 
@@ -100,8 +104,6 @@ private:
 	const int bulletNum = 36;
 	//一回分の攻撃情報
 	std::array<BULLET_INFO, kindNum> attack;
-	//ビーム
-	std::unique_ptr<BossBeam> baem;
 
 public:
 

@@ -1,7 +1,7 @@
 #pragma once
-#include "Object3d.h"
+#include "InstanceObject.h"
 
-class BossBeam
+class BaseBeam
 {
 protected: // エイリアス
 	// DirectX::を省略
@@ -12,36 +12,25 @@ protected: // エイリアス
 
 public:
 
-	BossBeam() {};
-	~BossBeam() {};
-
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
 	static void StaticInitialize();
 
 	/// <summary>
-	/// 生成
-	/// </summary>
-	/// <returns></returns>
-	static std::unique_ptr<BossBeam> Create();
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	virtual void Initialize();
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="_pos">座標</param>
-	/// <param name="_color">色</param>
-	void Update(const XMFLOAT3& _pos, const XMFLOAT3& _color);
+	virtual void Update();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	static void Draw();
 
 	/// <summary>
 	/// delete処理
@@ -52,31 +41,35 @@ protected:
 
 	//モデル
 	static std::unique_ptr<Model> model;
-	//オブジェクトの数
-	static const int objNum = 5;
+	//オブジェクトの最大値
+	static const int object_max_num = 2;
+	//オブジェクト
+	static std::array<std::unique_ptr<InstanceObject>, object_max_num> object;
 
 protected:
 
-	//オブジェクト
-	std::array<std::unique_ptr<Object3d>, objNum> object;
 	//生存フラグ
 	bool isAlive;
 	//座標
 	XMFLOAT3 pos;
-	//ビームの方向
+	//移動ベクトル
 	XMFLOAT3 moveVec;
+	//移動速度
+	XMFLOAT3 move;
 	//大きさ
-	float scale;
-	//角度(xy,xz)
-	XMFLOAT2 angle;
+	XMFLOAT3 scale;
+	//角度
+	XMFLOAT3 rotate;
+	//色
+	XMFLOAT4 color = { 1,1,1,1 };
 
 public:
 
 	void SetIsAlive(bool _isAlive) { isAlive = _isAlive; }
 	bool GetIsAlive() { return isAlive; }
 	XMFLOAT3 GetPosition() { return pos; }
-	float GetScale() { return scale; }
+	XMFLOAT3 GetScale() { return scale; }
 	XMFLOAT3 GetMoveVec() { return moveVec; }
-
+	XMFLOAT3 GetMove() { return move; }
 };
 

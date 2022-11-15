@@ -28,7 +28,8 @@ Player::Player(const XMFLOAT3& _pos)
 	isDraw = true;
 	position = _pos;
 	position.y = 200.0f;
-	move = { 0,0,0 };
+	moveVec[0] = { 0,0,0 };
+	moveVec[1] = { 0,0,0 };
 	speed = { 0,0,0 };
 	hp = 10;
 	moveObjAngle = { 0,0,0 };
@@ -86,86 +87,109 @@ void Player::Update(float _cameraAngle)
 	float radiusLR = XMConvertToRadians(cameraAngle + 90.0f);
 	float radiusUD = XMConvertToRadians(cameraAngle);
 
-	const float maxSpeed = 8.0f;
+	//最大速度
+	const float maxSpeed = 4.0f;
 
 	//二つ以上のキーが押されたとき一定以上の速度にならないように調整するためのフラグ
 	std::array<bool, 4> isSpeed = { false,false, false, false };
 	//左
 	if (input->PushKey(DIK_A)) {
-		move.x += speed.x * cosf(radiusLR);
-		move.z += speed.x * sinf(radiusLR);
-		speed.x -= 0.2f;
+		moveVec[0].x = cosf(radiusLR);
+		moveVec[0].z = sinf(radiusLR);
+		speed.x -= 0.5f;
+		//速度制限
 		if (speed.x < -maxSpeed) {
 			speed.x = -maxSpeed;
+		}
+		//反対方向速度だった場合減速増加
+		if (speed.x > 0) {
+			speed.x -= fabs(speed.x) / 5.0f + 0.5f;
 		}
 		isSpeed[0] = true;
 	}
 	//右
 	else if (input->PushKey(DIK_D)) {
-		move.x += speed.x * cosf(radiusLR);
-		move.z += speed.x * sinf(radiusLR);
-		speed.x += 0.2f;
+		moveVec[0].x = cosf(radiusLR);
+		moveVec[0].z = sinf(radiusLR);
+		speed.x += 0.5f;
+		//速度制限
 		if (speed.x > maxSpeed) {
 			speed.x = maxSpeed;
+		}
+		//反対方向速度だった場合減速増加
+		if (speed.x < 0) {
+			speed.x += fabs(speed.x) / 5.0f + 0.5f;
 		}
 		isSpeed[1] = true;
 	}
 	//キー入力が無ければ減速
-	else if (fabs(speed.x) > 0) {
-		int sign = int(speed.x < 0) + int(speed.x > 0) * (-1);
-		speed.x += float(sign) * (fabs(speed.x) / 10.0f);
+	else if (speed.x != 0) {
+		bool sign = speed.x > 0;
+		if (sign) {
+			speed.x -= fabs(speed.x) / 5.0f;
+		} else {
+			speed.x += fabs(speed.x) / 5.0f;
+		}
+
 		if (fabs(speed.x) < 0.5f) {
 			speed.x = 0.0f;
 		}
 	}
 	//前
 	if (input->PushKey(DIK_W)) {
-		move.x += speed.z * cosf(radiusUD);
-		move.z += speed.z * sinf(radiusUD);
-		speed.z -= 0.2f;
+		moveVec[1].x = cosf(radiusUD);
+		moveVec[1].z = sinf(radiusUD);
+		speed.z -= 0.5f;
+		//速度制限
 		if (speed.z < -maxSpeed) {
 			speed.z = -maxSpeed;
+		}
+		//反対方向速度だった場合減速増加
+		if (speed.z > 0) {
+			speed.z -= fabs(speed.z) / 5.0f + 0.5f;
 		}
 		isSpeed[2] = true;
 	}
 	//後
 	else if (input->PushKey(DIK_S)) {
-		move.x += speed.z * cosf(radiusUD);
-		move.z += speed.z * sinf(radiusUD);
-		speed.z += 0.2f;
+		moveVec[1].x = cosf(radiusUD);
+		moveVec[1].z = sinf(radiusUD);
+		speed.z += 0.5f;
+		//速度制限
 		if (speed.z > maxSpeed) {
 			speed.z = maxSpeed;
+		}
+		//反対方向速度だった場合減速増加
+		if (speed.z < 0) {
+			speed.z += (fabs(speed.z) / 5.0f) + 0.5f;
 		}
 		isSpeed[3] = true;
 	}
 	//キー入力が無ければ減速
-	else if (fabs(speed.z) > 0) {
-		int sign = int(speed.z < 0) + int(speed.z > 0) * (-1);
-		speed.z += float(sign) / (fabs(speed.z) / 10.0f);
+	else if (speed.z != 0) {
+		bool sign = speed.z > 0;
+		if (sign) {
+			speed.z -= fabs(speed.z) / 5.0f;
+		} else {
+			speed.z += fabs(speed.z) / 5.0f;
+		}
 		if (fabs(speed.z) < 0.5f) {
 			speed.z = 0.0f;
 		}
 	}
 	//上
+	float moveY = 0.0f;
 	if (input->PushKey(DIK_UP)) {
-		move.y += 2.0f;
+		moveY = 2.0f;
 	}
 	//下
 	if (input->PushKey(DIK_DOWN)) {
-		move.y -= 2.0f;
+		moveY = -2.0f;
 	}
 
-	//軸の異なる二方向が押されたときスピードを/2する
-	if (isSpeed[0] != isSpeed[1] && isSpeed[2] != isSpeed[3])
-	{
-		move.x /= 2.0f;
-		move.y /= 2.0f;
-		move.z /= 2.0f;
-	}
-
-	position.x += move.x;
-	position.y += move.y;
-	position.z += move.z;
+	position.x += moveVec[0].x * speed.x + moveVec[1].x * speed.z;
+	position.y += moveY;
+	position.z += moveVec[0].z * speed.x + moveVec[1].z * speed.z;
 
 	//角度の変更
 	if (isSpeed[0] == true != isSpeed[1] == true)
@@ -216,8 +240,6 @@ void Player::Update(float _cameraAngle)
 	text->Print("speed :: x : " + strMoveX + "y : " + strMoveY + "z : " + strMoveZ, 100, 125);
 	text->Print("playerHP : " + strHP, 100, 150);
 	text = nullptr;
-
-	move = { 0,0,0 };
 }
 
 void Player::Draw()

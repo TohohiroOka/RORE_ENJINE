@@ -7,6 +7,7 @@
 
 #include "BulletManager.h"
 #include "EnemyManager.h"
+#include "BeamManager.h"
 #include "BossA.h"
 
 #include "UiManager.h"
@@ -86,6 +87,9 @@ private:
 	//’e
 	std::unique_ptr<BulletManager> bullet;
 	
+	//ƒr[ƒ€
+	std::unique_ptr<BeamManager> beam;
+
 	//“G
 	std::unique_ptr<EnemyManager> enemy;
 
