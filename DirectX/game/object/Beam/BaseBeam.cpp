@@ -7,7 +7,7 @@
 using namespace DirectX;
 
 std::unique_ptr<Model> BaseBeam::model;
-std::array<std::unique_ptr<InstanceObject>, BaseBeam::object_max_num> BaseBeam::object;
+std::array<BaseBeam::OBEJCT, BaseBeam::object_max_num> BaseBeam::object;
 
 void BaseBeam::StaticInitialize()
 {
@@ -16,17 +16,22 @@ void BaseBeam::StaticInitialize()
 
 	for (auto& i : object)
 	{
-		i = InstanceObject::Create(model.get());
-		i->SetBloom(true);
-		i->SetLight(false);
+		i.in = InstanceObject::Create(model.get());
+		i.in->SetBloom(true);
+		i.in->SetLight(false);
+		i.out = InstanceObject::Create(model.get());
+		i.out->SetBloom(true);
+		i.out->SetLight(false);
 	}
 }
 
 void BaseBeam::Initialize()
 {
 	isAlive = true;
-	float inSize = mapSize / 700.0f;
-	scale = { inSize,inSize,mapSize / 2.0f };
+	float inSize = mapSize / 1000.0f;
+	float outSize = mapSize / 700.0f;
+	inScale = { inSize,inSize,mapSize / 2.0f };
+	outScale = { outSize,outSize,mapSize / 2.0f };
 }
 
 void BaseBeam::Update()
@@ -37,8 +42,9 @@ void BaseBeam::Update()
 
 	for (auto& i : object)
 	{
-		if (!i->GetInstanceDrawCheck()) { continue; }
-		i->DrawInstance(pos, scale, rotate, color);
+		if (!i.out->GetInstanceDrawCheck()) { continue; }
+		i.in->DrawInstance(pos, inScale, rotate, color);
+		i.out->DrawInstance(pos, outScale, rotate, color);
 		return;
 	}
 }
@@ -46,8 +52,9 @@ void BaseBeam::Update()
 void BaseBeam::Draw()
 {
 	for (auto& i : object) {
-		if (i->GetInstanceDrawNum() == 0) { continue; }
-		i->Draw();
+		if (i.out->GetInstanceDrawNum() == 0) { continue; }
+		i.in->Draw();
+		i.out->Draw();
 	}
 }
 

@@ -2,8 +2,8 @@
 
 using namespace DirectX;
 
-std::array<bool, 3> BossBulletCircle::isCircleColor = { true,false,false };
-XMFLOAT3 BossBulletCircle::circleColor = { 0.1f,0.1f,0.1f };
+BossBulletCircle::COLOR BossBulletCircle::colorKind = COLOR::RED;
+XMFLOAT3 BossBulletCircle::circleColor = { 0.4f,0.1f,0.4f };
 
 BossBulletCircle::BossBulletCircle(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed)
 {
@@ -30,61 +30,61 @@ std::unique_ptr<BossBulletCircle> BossBulletCircle::Create(const XMFLOAT3& _pos,
 
 void BossBulletCircle::ColorChange()
 {
-	float variation = 0.01f;
-	const XMFLOAT2 minmax = { 0.1f,0.9f };
+	float variation = 0.005f;
+	const XMFLOAT2 minmax = { 0.1f,0.4f };
 
-	if (isCircleColor[0] && !isCircleColor[1] && !isCircleColor[2])
-	{
-		circleColor.x += variation;
-		if (circleColor.x >= minmax.y)
-		{
-			circleColor.x = minmax.y;
-			isCircleColor[1] = true;
-		}
-	}
-	else if (isCircleColor[0] && isCircleColor[1] && !isCircleColor[2])
-	{
-		circleColor.y += variation;
-		if (circleColor.y >= minmax.y)
-		{
-			circleColor.y = minmax.y;
-			isCircleColor[2] = true;
-		}
-	}
-	else if (isCircleColor[0] && isCircleColor[1] && isCircleColor[2])
-	{
-		circleColor.z += variation;
-		if (circleColor.y >= minmax.y)
-		{
-			circleColor.z = minmax.y;
-			isCircleColor[0] = false;
-		}
-	}
-	else if (!isCircleColor[0] && isCircleColor[1] && isCircleColor[2])
-	{
-		circleColor.x -= variation;
-		if (circleColor.x <= minmax.x)
-		{
-			circleColor.x = minmax.x;
-			isCircleColor[1] = false;
-		}
-	}
-	else if (!isCircleColor[0] && !isCircleColor[1] && isCircleColor[2])
-	{
-		circleColor.y -= variation;
-		if (circleColor.y <= minmax.x)
-		{
-			circleColor.y = minmax.x;
-			isCircleColor[2] = false;
-		}
-	}
-	else if (!isCircleColor[0] && !isCircleColor[1] && !isCircleColor[2])
+	if (colorKind==COLOR::RED)
 	{
 		circleColor.z -= variation;
 		if (circleColor.z <= minmax.x)
 		{
 			circleColor.z = minmax.x;
-			isCircleColor[0] = true;
+			colorKind = COLOR::YELLOW;
+		}
+	}
+	else if (colorKind == COLOR::YELLOW)
+	{
+		circleColor.y += variation;
+		if (circleColor.y >= minmax.y)
+		{
+			circleColor.y = minmax.y;
+			colorKind = COLOR::GREEN;
+		}
+	}
+	else if (colorKind == COLOR::GREEN)
+	{
+		circleColor.x -= variation;
+		if (circleColor.x <= minmax.x)
+		{
+			circleColor.x = minmax.x;
+			colorKind = COLOR::LIGHT_BLUE;
+		}
+	}
+	else if (colorKind == COLOR::LIGHT_BLUE)
+	{
+		circleColor.z += variation;
+		if (circleColor.z >= minmax.y)
+		{
+			circleColor.z = minmax.y;
+			colorKind = COLOR::BLUE;
+		}
+	}
+	else if (colorKind == COLOR::BLUE)
+	{
+		circleColor.y -= variation;
+		if (circleColor.y <= minmax.x)
+		{
+			circleColor.y = minmax.x;
+			colorKind = COLOR::PURPLE;
+		}
+	}
+	else if (colorKind == COLOR::PURPLE)
+	{
+		circleColor.x += variation;
+		if (circleColor.x >= minmax.y)
+		{
+			circleColor.x = minmax.y;
+			colorKind = COLOR::RED;
 		}
 	}
 }

@@ -10,6 +10,11 @@ protected: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMVECTOR = DirectX::XMVECTOR;
 
+	struct OBEJCT {
+		std::unique_ptr<InstanceObject> in;
+		std::unique_ptr<InstanceObject> out;
+	};
+
 public:
 
 	/// <summary>
@@ -44,7 +49,7 @@ protected:
 	//オブジェクトの最大値
 	static const int object_max_num = 2;
 	//オブジェクト
-	static std::array<std::unique_ptr<InstanceObject>, object_max_num> object;
+	static std::array<OBEJCT, object_max_num> object;
 
 protected:
 
@@ -57,7 +62,8 @@ protected:
 	//移動速度
 	XMFLOAT3 move;
 	//大きさ
-	XMFLOAT3 scale;
+	XMFLOAT3 inScale;
+	XMFLOAT3 outScale;
 	//角度
 	XMFLOAT3 rotate;
 	//色
@@ -68,7 +74,7 @@ public:
 	void SetIsAlive(bool _isAlive) { isAlive = _isAlive; }
 	bool GetIsAlive() { return isAlive; }
 	XMFLOAT3 GetPosition() { return pos; }
-	XMFLOAT3 GetScale() { return scale; }
+	XMFLOAT3 GetScale() { return outScale; }
 	XMFLOAT3 GetMoveVec() { return moveVec; }
 	XMFLOAT3 GetMove() { return move; }
 };

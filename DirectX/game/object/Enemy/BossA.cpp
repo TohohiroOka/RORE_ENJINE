@@ -16,6 +16,40 @@ const std::array<XMFLOAT3, BossA::partsNum> BossA::partsPos = {
 	{10,-10,-10},{-10,-10,-10}
 };
 
+XMFLOAT3 SetColor(const int timer) {
+	std::array<bool, 2> colorFlag = { rand() % 2 == 0,rand() % 2 == 0 };
+	XMFLOAT3 color = { 0.0f,0.0f,0.0f };
+	const float setColorNum = 0.5f;
+	if (timer % 3 == 0) {
+		color.x = setColorNum;
+		if (!colorFlag[0]) { return color; }
+		if (colorFlag[1]) {
+			color.y = setColorNum;
+		} else {
+			color.z = setColorNum;
+		}
+	} else if (timer % 3 == 1) {
+		color.y = setColorNum;
+		if (!colorFlag[0]) { return color; }
+		if (colorFlag[1]) {
+			color.x = setColorNum;
+		} else {
+			color.z = setColorNum;
+		}
+
+	} else if (timer % 3 == 2) {
+		color.z = setColorNum;
+		if (!colorFlag[0]) { return color; }
+		if (colorFlag[1]) {
+			color.x = setColorNum;
+		} else {
+			color.y = setColorNum;
+		}
+	}
+
+	return color;
+}
+
 BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 {
 	//タイマー
@@ -63,7 +97,7 @@ BossA::BossA(const XMFLOAT3& _pos, const int _destination)
 	nextDestinationNumber = rand;
 
 	//攻撃初期化
-	attack[0].kind = int(BULLET_KIND::CIRCLE);
+	attack[0].kind = int(BULLET_KIND::LATTICE_BAEM_SET_X);
 	//attack[1].kind = int(BULLET_KIND::LATTICE_BAEM_SET_X);
 	for (auto& i : attack)
 	{
@@ -169,7 +203,7 @@ void BossA::Attack()
 	//for (int i = 0; i < 1; i++)
 	for (int i = 0; i < kindNum; i++)
 	{
-		if (attack[i].kind == int(BULLET_KIND::CIRCLE) && timer % 10 == 1)
+		if (attack[i].kind == int(BULLET_KIND::CIRCLE) && timer % 20 == 1)
 		{
 			for (int a = 0; a < 50; a++)
 			{
@@ -314,12 +348,13 @@ void BossA::Attack()
 		else if (attack[i].kind == int(BULLET_KIND::FIREWORKE))
 		{
 			if (timer % 50==0) {
-				BulletManager::SetBossBulletFireWorke(pos, 10.0f, { 0.1f,0.9f,0.1f });
+				BulletManager::SetBossBulletFireWorke(pos, 10.0f, { 0.1f,0.6f,0.1f });
 			}
 		} 
 		else if (attack[i].kind == int(BULLET_KIND::HOMING))
 		{
-			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+			//色決め
+			XMFLOAT3 color = SetColor(timer);
 			BulletManager::SetBossBulletHoming(pos, 10.0f, color);
 		} 
 		else if (attack[i].kind == int(BULLET_KIND::BOMB_HOMING))
@@ -329,13 +364,15 @@ void BossA::Attack()
 				XMFLOAT2 _angle = { Randomfloat(360),Randomfloat(360) };
 				XMFLOAT2 radiun = { XMConvertToRadians(_angle.x),XMConvertToRadians(_angle.y) };
 
-				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+				//色決め
+				XMFLOAT3 color = SetColor(timer);
 				BulletManager::SetBossBulletBombHoming(pos, { cos(radiun.x) * cos(radiun.y),cos(radiun.x) * sin(radiun.y),sin(radiun.x) }, color);
 			}
 		} 
 		else if (attack[i].kind == int(BULLET_KIND::SNAKE))
 		{
-			XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+			//色決め
+			XMFLOAT3 color = SetColor(timer);
 			BulletManager::SetBossBulletSnake(pos, color);
 		} 
 		else if (attack[i].kind == int(BULLET_KIND::HOMING_LINE1))
@@ -356,7 +393,7 @@ void BossA::Attack()
 				}
 
 				//弾セット
-				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+				XMFLOAT3 color = SetColor(timer);
 				BulletManager::SetBossBulletHomingLine(attack[i].HOMING_LINEpos[lineNumber], 5.0f, color, false);
 
 				const float speed = 2.0f;
@@ -375,7 +412,8 @@ void BossA::Attack()
 		{
 			for (auto& linePos : attack[i].HOMING_LINEpos)
 			{
-				XMFLOAT3 color = { Randomfloat(100) / 100.0f,Randomfloat(100) / 100.0f, Randomfloat(100) / 100.0f, };
+				//色決め
+				XMFLOAT3 color = SetColor(timer);
 				BulletManager::SetBossBulletHomingLine(linePos, 5.0f, color, 1);
 			}
 		}

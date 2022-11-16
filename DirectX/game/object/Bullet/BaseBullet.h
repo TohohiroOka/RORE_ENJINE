@@ -11,6 +11,15 @@ protected: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMVECTOR = DirectX::XMVECTOR;
 
+	enum class COLOR {
+		RED,//1,0,0
+		YELLOW,//1,1,0
+		GREEN,//0,1,0
+		LIGHT_BLUE,//0,1,1
+		BLUE,//0,0,1
+		PURPLE,//1,0,1
+	};
+
 public:
 
 	/// <summary>

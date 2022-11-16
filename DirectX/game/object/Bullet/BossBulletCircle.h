@@ -30,8 +30,8 @@ public:
 
 private:
 
-	//球状のダンマクの色操作
-	static std::array<bool, 3> isCircleColor;
+	//色
+	static COLOR colorKind;
 	//球状のダンマクの色
 	static XMFLOAT3 circleColor;
 
