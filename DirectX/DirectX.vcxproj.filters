@@ -343,7 +343,7 @@
     <ClCompile Include="game\object\Enemy\EnemyA.cpp">
       <Filter>ゲームシステム\object\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletB.cpp">
+    <ClCompile Include="game\object\Bullet\BossBulletFireWorke.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="game\object\Bullet\BulletManager.cpp">
@@ -355,11 +355,8 @@
     <ClCompile Include="game\object\Bullet\BaseBullet.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletA.cpp">
+    <ClCompile Include="game\object\Bullet\BossBulletCircle.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\BaseBeam.cpp">
-      <Filter>ゲームシステム\object\Beam</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\Boss1.cpp">
       <Filter>ゲームシステム\Scene</Filter>
@@ -367,16 +364,13 @@
     <ClCompile Include="game\object\Player.cpp">
       <Filter>ゲームシステム\object\player</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletC.cpp">
+    <ClCompile Include="game\object\Bullet\BossBulletSnake.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletD.cpp">
+    <ClCompile Include="game\object\Bullet\BossBulletHomingLine.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletE.cpp">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\Bullet\BossBulletF.cpp">
+    <ClCompile Include="game\object\Bullet\BossBulletBombHoming.cpp">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="game\object\Bullet\BossBulletNormal.cpp">
@@ -403,10 +397,13 @@
     <ClCompile Include="game\ui\PlayerUi.cpp">
       <Filter>ゲームシステム\ui</Filter>
     </ClCompile>
-    <ClCompile Include="LatticeBeam.cpp">
+    <ClCompile Include="game\object\Beam\BeamManager.cpp">
       <Filter>ゲームシステム\object\Beam</Filter>
     </ClCompile>
-    <ClCompile Include="BeamManager.cpp">
+    <ClCompile Include="game\object\Beam\LatticeBeam.cpp">
+      <Filter>ゲームシステム\object\Beam</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\Beam\BaseBeam.cpp">
       <Filter>ゲームシステム\object\Beam</Filter>
     </ClCompile>
   </ItemGroup>
@@ -727,7 +724,7 @@
     <ClInclude Include="game\object\Enemy\BossA.h">
       <Filter>ゲームシステム\object\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletB.h">
+    <ClInclude Include="game\object\Bullet\BossBulletFireWorke.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="game\object\Bullet\BulletManager.h">
@@ -739,11 +736,8 @@
     <ClInclude Include="game\object\Bullet\BaseBullet.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletA.h">
+    <ClInclude Include="game\object\Bullet\BossBulletCircle.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\BaseBeam.h">
-      <Filter>ゲームシステム\object\Beam</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\Boss1.h">
       <Filter>ゲームシステム\Scene</Filter>
@@ -757,19 +751,16 @@
     <ClInclude Include="game\GameHelper.h">
       <Filter>ゲームシステム</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletC.h">
+    <ClInclude Include="game\object\Bullet\BossBulletSnake.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletD.h">
-      <Filter>ゲームシステム\object\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletE.h">
+    <ClInclude Include="game\object\Bullet\BossBulletHomingLine.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="game\object\Bullet\BossBulletNormal.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Bullet\BossBulletF.h">
+    <ClInclude Include="game\object\Bullet\BossBulletBombHoming.h">
       <Filter>ゲームシステム\object\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="game\ui\BaseUi.h">
@@ -793,10 +784,13 @@
     <ClInclude Include="game\ui\PlayerUi.h">
       <Filter>ゲームシステム\ui</Filter>
     </ClInclude>
-    <ClInclude Include="LatticeBeam.h">
+    <ClInclude Include="game\object\Beam\BaseBeam.h">
       <Filter>ゲームシステム\object\Beam</Filter>
     </ClInclude>
-    <ClInclude Include="BeamManager.h">
+    <ClInclude Include="game\object\Beam\BeamManager.h">
+      <Filter>ゲームシステム\object\Beam</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\Beam\LatticeBeam.h">
       <Filter>ゲームシステム\object\Beam</Filter>
     </ClInclude>
   </ItemGroup>

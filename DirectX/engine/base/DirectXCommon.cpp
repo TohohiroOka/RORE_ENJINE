@@ -26,9 +26,9 @@ DirectXCommon::~DirectXCommon()
 	cmdAllocator.Reset();
 	cmdQueue.Reset();
 	swapchain.Reset();
-	for (int i = 0; i < backBuffers.size(); i++)
+	for (auto& i : backBuffers)
 	{
-		backBuffers[i].Reset();
+		i.Reset();
 	}
 	rtvHeaps.Reset();
 	depthBuffer.Reset();

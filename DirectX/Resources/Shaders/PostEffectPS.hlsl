@@ -89,14 +89,19 @@ float4 SetOutline(float2 uv, float outlineWidth, float4 outlineColor)
 	float yPoutline = uv.y + outlineWidth;
 	float yMoutline = uv.y - outlineWidth;
 
-	outlineTex = outlineTex + outline.Sample(smp, float2(xPoutline, yPoutline));
-	outlineTex = outlineTex + outline.Sample(smp, float2(xPoutline, yMoutline));
-	outlineTex = outlineTex + outline.Sample(smp, float2(xMoutline, yPoutline));
-	outlineTex = outlineTex + outline.Sample(smp, float2(xMoutline, yMoutline));
-	outlineTex = outlineTex + outline.Sample(smp, float2(xPoutline, uv.y));
-	outlineTex = outlineTex + outline.Sample(smp, float2(xMoutline, uv.y));
-	outlineTex = outlineTex + outline.Sample(smp, float2(uv.x, yPoutline));
-	outlineTex = outlineTex + outline.Sample(smp, float2(uv.x, yMoutline));
+	float add1 = xPoutline < 1;
+	float add2 = xMoutline > 0;
+	float add3 = yPoutline < 1;
+	float add4 = yMoutline > 0;
+
+	outlineTex = outlineTex + outline.Sample(smp, float2(xPoutline, yPoutline)) * (add1 + add3);
+	outlineTex = outlineTex + outline.Sample(smp, float2(xPoutline, yMoutline)) * (add1 + add4);
+	outlineTex = outlineTex + outline.Sample(smp, float2(xMoutline, yPoutline)) * (add2 + add3);
+	outlineTex = outlineTex + outline.Sample(smp, float2(xMoutline, yMoutline)) * (add2 + add4);
+	outlineTex = outlineTex + outline.Sample(smp, float2(xPoutline, uv.y)) * add1;
+	outlineTex = outlineTex + outline.Sample(smp, float2(xMoutline, uv.y)) * add2;
+	outlineTex = outlineTex + outline.Sample(smp, float2(uv.x, yPoutline)) * add3;
+	outlineTex = outlineTex + outline.Sample(smp, float2(uv.x, yMoutline)) * add4;
 
 	float4 normalColor = outline.Sample(smp, uv);
 	outlineTex.rgb = outlineTex.rgb - normalColor.rgb * 8.0;

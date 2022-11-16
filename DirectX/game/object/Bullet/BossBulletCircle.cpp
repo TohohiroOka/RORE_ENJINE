@@ -1,34 +1,34 @@
-#include "BossBulletA.h"
+#include "BossBulletCircle.h"
 
 using namespace DirectX;
 
-std::array<bool, 3> BossBulletA::isCircleColor = { true,false,false };
-XMFLOAT3 BossBulletA::circleColor = { 0.1f,0.1f,0.1f };
+std::array<bool, 3> BossBulletCircle::isCircleColor = { true,false,false };
+XMFLOAT3 BossBulletCircle::circleColor = { 0.1f,0.1f,0.1f };
 
-BossBulletA::BossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
+BossBulletCircle::BossBulletCircle(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed)
 {
 	pos = _pos;
 	moveVec = _moveVec;
-	const float speed = 1.0f;
-	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
+	move = { moveVec.x * _speed , moveVec.y * _speed , moveVec.z * _speed };
 	color = circleColor;
 	ColorChange();
 }
 
-std::unique_ptr<BossBulletA> BossBulletA::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec)
+std::unique_ptr<BossBulletCircle> BossBulletCircle::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec,
+	const float _speed)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletA* instance = new BossBulletA(_pos, _moveVec);
+	BossBulletCircle* instance = new BossBulletCircle(_pos, _moveVec, _speed);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	instance->Initialize();
 
-	return std::unique_ptr<BossBulletA>(instance);
+	return std::unique_ptr<BossBulletCircle>(instance);
 }
 
-void BossBulletA::ColorChange()
+void BossBulletCircle::ColorChange()
 {
 	float variation = 0.01f;
 	const XMFLOAT2 minmax = { 0.1f,0.9f };

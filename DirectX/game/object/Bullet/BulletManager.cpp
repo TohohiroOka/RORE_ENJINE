@@ -42,6 +42,8 @@ void BulletManager::Initialize()
 
 void BulletManager::Update(const XMFLOAT3& _playerPos)
 {
+	BaseBullet::StaticUpdate();
+
 	playerPos = _playerPos;
 
 	for (auto& i : bossBullet)
@@ -86,6 +88,11 @@ void BulletManager::Update(const XMFLOAT3& _playerPos)
 void BulletManager::Draw()
 {
 	BaseBullet::Draw();
+}
+
+void BulletManager::EffectDraw()
+{
+	BaseBullet::EffectDraw();
 }
 
 void BulletManager::Reset()
@@ -138,7 +145,7 @@ bool BulletManager::CheckPlayerBulletToEnemyCollision(const XMFLOAT3& _pos, floa
 		//エネミーのcollider
 		Sphere sphere;
 		sphere.center = { enemyPos.x,enemyPos.y,enemyPos.z,0 };
-		sphere.radius = _scale / 2.0f;
+		sphere.radius = _scale * 3.0f;
 		if (Collision::CheckRay2Sphere(ray, sphere))
 		{
 			float x = powf(enemyPos.x - bulletPos.x, 2);
@@ -171,10 +178,40 @@ void BulletManager::SetEnemyBullet(const XMFLOAT3& _pos, const float _speed, con
 	bossBullet.emplace_back(BossBulletNormal::Create(_pos, moveVn, _speed, _color));
 }
 
-void BulletManager::SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color,const int _progress)
+void BulletManager::SetBossBulletHoming(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
+{
+	const int randMax = 50;
+
+	XMFLOAT3 randTargetPos = playerPos;
+	randTargetPos.x = randTargetPos.x + Randomfloat(randMax) * float(RandomSign());
+	randTargetPos.y = randTargetPos.y + Randomfloat(randMax) * float(RandomSign());
+	randTargetPos.z = randTargetPos.z + Randomfloat(randMax) * float(RandomSign());
+
+	Vector3 moveVec = { randTargetPos.x - _pos.x, randTargetPos.y - _pos.y,randTargetPos.z - _pos.z };
+	moveVec = moveVec.normalize();
+
+	bossBullet.emplace_back(BossBulletNormal::Create(_pos, moveVec, _speed, _color));
+}
+
+void BulletManager::SetBossBulletFireWorke(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
+{
+	const int randMax = 50;
+
+	XMFLOAT3 randTargetPos = playerPos;
+	randTargetPos.x = randTargetPos.x + Randomfloat(randMax) * float(RandomSign());
+	randTargetPos.y = randTargetPos.y + Randomfloat(randMax) * float(RandomSign());
+	randTargetPos.z = randTargetPos.z + Randomfloat(randMax) * float(RandomSign());
+
+	Vector3 moveVec = { randTargetPos.x - _pos.x, randTargetPos.y - _pos.y,randTargetPos.z - _pos.z };
+	moveVec = moveVec.normalize();
+
+	bossBullet.emplace_back(BossBulletFireWorke::Create(_pos, moveVec, _speed, _color));
+}
+
+void BulletManager::SetBossBulletHomingLine(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color,const int _progress)
 {
 	//弾追加
-	bossBullet.emplace_back(BossBulletE::Create(_pos, _color));
+	bossBullet.emplace_back(BossBulletHomingLine::Create(_pos, _color));
 
 	//0ならボス側で移動
 	if (_progress == 0) { return; }
@@ -191,10 +228,19 @@ void BulletManager::SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFL
 	_pos.z += moveVec.z * speed;
 }
 
-void BulletManager::SetBossBulletFF(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
+void BulletManager::SetBossBulletHomingLine1(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color)
+{
+	//次の位置を決める
+	Vector3 moveVec = { playerPos.x - _pos.x,playerPos.y - _pos.y ,playerPos.z - _pos.z };
+	moveVec = moveVec.normalize();
+	//弾追加
+	SetBossBulletNormal(_pos, moveVec, speed, _color);
+}
+
+void BulletManager::SetBossBulletBombHoming1(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color)
 {
 	//球状に出す
-	XMFLOAT3 rand = { Randomfloat(300) - 150.0f,Randomfloat(300) - 150.0f ,Randomfloat(300) - 150.0f };
+	XMFLOAT3 rand = { Randomfloat(100) - 50.0f,Randomfloat(100) - 50.0f ,Randomfloat(100) - 50.0f };
 	Vector3 moveVec = { rand.x + playerPos.x - _pos.x,rand.y + playerPos.y - _pos.y ,rand.z + playerPos.z - _pos.z };
 	moveVec = moveVec.normalize();
 	bossBullet.emplace_back(BossBulletNormal::Create(_pos, { moveVec.x,moveVec.y,moveVec.z }, _speed, _color));

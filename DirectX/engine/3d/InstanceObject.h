@@ -5,8 +5,8 @@
 #include <DirectXMath.h>
 #include "GraphicsPipelineManager.h"
 #include "Texture.h"
+#include "Model.h"
 
-class Model;
 class Camera;
 class LightGroup;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "InstanceObject.h"
+#include "Emitter.h"
 
 class BaseBullet
 {
@@ -23,6 +24,11 @@ public:
 	virtual void Initialize();
 
 	/// <summary>
+	/// 静的更新
+	/// </summary>
+	static void StaticUpdate();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	virtual void Update();
@@ -31,6 +37,8 @@ public:
 	/// 描画
 	/// </summary>
 	static void Draw();
+
+	static void EffectDraw();
 
 	/// <summary>
 	/// delete処理
@@ -43,10 +51,15 @@ protected:
 	static std::unique_ptr<Model> model;
 	//オブジェクトの最大値
 	static const int object_max_num = 20;
+	//オブジェクトの最大値
+	static const int effect_max_num = 20 * 10;
 	//オブジェクト
-	static std::array<std::unique_ptr<InstanceObject>, object_max_num> object;
+	static std::array<std::unique_ptr<InstanceObject>, object_max_num> bullet;
 	//現在の使用個数
 	static int usingNum;
+	//
+	static std::array<std::unique_ptr<Emitter>, effect_max_num> effect;
+	static std::array<int, effect_max_num> effectNum;
 
 protected:
 

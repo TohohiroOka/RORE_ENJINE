@@ -11,19 +11,16 @@ std::unique_ptr<Emitter> Emitter::Create(const std::string& _name)
 	return std::unique_ptr<Emitter>(instance);
 }
 
-void Emitter::InEmitter(int _maxCount, int _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
+void Emitter::InEmitter(int _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
 	const XMFLOAT3& _accel, float _startScale, float _endScale, const XMFLOAT4& _startColor, const XMFLOAT4& _endColor)
 {
-	if (_maxCount > count)
-	{
-		particleManager->Add(_maxFrame, _position, _velocity,
-			_accel, _startScale, _endScale, _startColor, _endColor);
-	}
+	particleManager->Add(_maxFrame, _position, _velocity,
+		_accel, _startScale, _endScale, _startColor, _endColor);
 }
 
 void Emitter::Update()
 {
-	count = particleManager->Update();
+	particleManager->Update();
 }
 
 void Emitter::Draw()

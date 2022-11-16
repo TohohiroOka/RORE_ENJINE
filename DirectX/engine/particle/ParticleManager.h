@@ -35,6 +35,7 @@ public: // サブクラス
 	{
 		XMMATRIX mat;	// ３Ｄ変換行列
 		XMMATRIX matBillboard;//ビルボード行列
+		unsigned int isBloom;
 	};
 
 	//パーティクル一粒
@@ -179,8 +180,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <returns>配列数</returns>
-	int Update();
+	void Update();
 
 	/// <summary>
 	/// 描画前処理
@@ -203,6 +203,13 @@ public: // メンバ関数
 	/// </summary>
 	void ParticlAllDelete();
 
+	/// <summary>
+	/// 現在の数
+	/// </summary>
+	int GetCreateNum() {
+		return int(std::distance(particle.begin(), particle.end()));
+	}
+
 private: // メンバ変数
 
 	//テクスチャ名
@@ -217,7 +224,14 @@ private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff;
 	// ローカルスケール
 	XMFLOAT3 scale = { 1,1,1 };
-	//テクスチャナンバー
-	int texNumber = 0;
+	//ブルームの有無
+	bool isBloom = false;
 
+public:
+
+	/// <summary>
+	/// ブルームのセット
+	/// </summary>
+	/// <param name="isBloom">ブルーム有->true / 無->false</param>
+	void SetBloom(bool isBloom) { this->isBloom = isBloom; }
 };

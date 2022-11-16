@@ -203,7 +203,7 @@ XMMATRIX ParticleManager::UpdateViewMatrix()
 	return matView;
 }
 
-int ParticleManager::Update()
+void ParticleManager::Update()
 {
 	HRESULT result;
 
@@ -256,9 +256,8 @@ int ParticleManager::Update()
 	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->mat = UpdateViewMatrix() * camera->GetProjection();// s—ñ‚Ì‡¬
 	constMap->matBillboard = matBillboard;// s—ñ‚Ì‡¬
+	constMap->isBloom = isBloom;
 	constBuff->Unmap(0, nullptr);
-
-	return int(std::distance(particle.begin(), particle.end()));
 }
 
 void ParticleManager::PreDraw(ID3D12GraphicsCommandList* _cmdList)

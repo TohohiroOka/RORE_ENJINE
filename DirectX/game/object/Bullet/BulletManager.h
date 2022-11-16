@@ -2,12 +2,11 @@
 #include "Vector3.h"
 #include "PlayerBullet.h"
 #include "BossBulletNormal.h"
-#include "BossBulletA.h"
-#include "BossBulletB.h"
-#include "BossBulletC.h"
-#include "BossBulletD.h"
-#include "BossBulletE.h"
-#include "BossBulletF.h"
+#include "BossBulletCircle.h"
+#include "BossBulletFireWorke.h"
+#include "BossBulletSnake.h"
+#include "BossBulletHomingLine.h"
+#include "BossBulletBombHoming.h"
 
 class BulletManager
 {
@@ -44,6 +43,11 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// 毎フレーム処理
+	/// </summary>
+	void EffectDraw();
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Reset();
@@ -72,48 +76,47 @@ private:
 public:
 
 	//弾セット
-	static void SetPlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
-		playerBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec));
+	static void SetPlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec,const float _speed, const XMFLOAT3& _color) {
+		playerBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec, _speed, _color));
 	}
 
 	//弾セット
 	static void SetEnemyBullet(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color);
 
-	//弾セット
+	//通常弾セット
 	static void SetBossBulletNormal(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec,
 		const float _speed, const XMFLOAT3& _color) {
 		bossBullet.emplace_back(BossBulletNormal::Create(_pos, _moveVec, _speed, _color));
 	}
 
-	//弾セット
-	static void SetBossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec) {
-		bossBullet.emplace_back(BossBulletA::Create(_pos, _moveVec));
+	//円状の弾セット
+	static void SetBossBulletCircle(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed) {
+		bossBullet.emplace_back(BossBulletCircle::Create(_pos, _moveVec, _speed));
+	}
+
+	//花火弾セット
+	static void SetBossBulletFireWorke(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color);
+
+	//ホーミング弾セット
+	static void SetBossBulletHoming(const XMFLOAT3& _pos, const float _speed, const XMFLOAT3& _color);
+
+	//平面状のウネウネ弾セット
+	static void SetBossBulletSnake(const XMFLOAT3& _pos, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletSnake::Create(_pos, _color));
 	}
 
 	//弾セット
-	static void SetBossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
-		bossBullet.emplace_back(BossBulletB::Create(_pos, _moveVec, _color));
+	static void SetBossBulletHomingLine(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color, const int _progress);
+
+	//弾セット
+	static void SetBossBulletHomingLine1(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color);
+
+	//弾セット
+	static void SetBossBulletBombHoming(XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
+		bossBullet.emplace_back(BossBulletBombHoming::Create(_pos, _moveVec, _color));
 	}
 
 	//弾セット
-	static void SetBossBulletC(const XMFLOAT3& _pos, const XMFLOAT3& _color) {
-		bossBullet.emplace_back(BossBulletC::Create(_pos, playerPos, _color));
-	}
-
-	//弾セット
-	static void SetBossBulletD(const XMFLOAT3& _pos, const XMFLOAT3& _color) {
-		bossBullet.emplace_back(BossBulletD::Create(_pos, _color));
-	}
-
-	//弾セット
-	static void SetBossBulletE(XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color, const int _progress);
-
-	//弾セット
-	static void SetBossBulletF(XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color) {
-		bossBullet.emplace_back(BossBulletF::Create(_pos, _moveVec, _color));
-	}
-
-	//弾セット
-	static void SetBossBulletFF(const XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color);
+	static void SetBossBulletBombHoming1(const XMFLOAT3& _pos, const float speed, const XMFLOAT3& _color);
 
 };

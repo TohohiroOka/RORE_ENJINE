@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseBullet.h"
 
-class BossBulletA : public BaseBullet
+class BossBulletCircle : public BaseBullet
 {
 public:
 
@@ -10,16 +10,18 @@ public:
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <param name="_moveVec">移動量</param>
-	BossBulletA(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
-	~BossBulletA() {};
+	/// <param name="_speed">速度</param>
+	BossBulletCircle(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed);
+	~BossBulletCircle() {};
 
 	/// <summary>
 	/// 生成
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <param name="_moveVec">移動量</param>
+	/// <param name="_speed">速度</param>
 	/// <returns></returns>
-	static std::unique_ptr<BossBulletA> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec);
+	static std::unique_ptr<BossBulletCircle> Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed);
 
 	/// <summary>
 	/// 色変換

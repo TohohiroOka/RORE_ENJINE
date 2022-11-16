@@ -31,8 +31,6 @@ void BaseBeam::Initialize()
 
 void BaseBeam::Update()
 {
-	if (!isAlive) { return; }
-
 	pos.x += move.x;
 	pos.y += move.y;
 	pos.z += move.z;

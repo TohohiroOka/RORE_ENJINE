@@ -1,8 +1,8 @@
-#include "BossBulletD.h"
+#include "BossBulletSnake.h"
 #include "GameHelper.h"
 using namespace DirectX;
 
-BossBulletD::BossBulletD(const XMFLOAT3& _pos, const XMFLOAT3& _color)
+BossBulletSnake::BossBulletSnake(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 {
 	timer = 0;
 	divideNum = int(Randomfloat(50)) + 10;
@@ -14,10 +14,10 @@ BossBulletD::BossBulletD(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 	color = _color;
 }
 
-std::unique_ptr<BossBulletD> BossBulletD::Create(const XMFLOAT3& _pos, const XMFLOAT3& _color)
+std::unique_ptr<BossBulletSnake> BossBulletSnake::Create(const XMFLOAT3& _pos, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletD* instance = new BossBulletD(_pos, _color);
+	BossBulletSnake* instance = new BossBulletSnake(_pos, _color);
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -25,10 +25,10 @@ std::unique_ptr<BossBulletD> BossBulletD::Create(const XMFLOAT3& _pos, const XMF
 	// 初期化
 	instance->Initialize();
 
-	return std::unique_ptr<BossBulletD>(instance);
+	return std::unique_ptr<BossBulletSnake>(instance);
 }
 
-void BossBulletD::Update()
+void BossBulletSnake::Update()
 {
 	timer++;
 

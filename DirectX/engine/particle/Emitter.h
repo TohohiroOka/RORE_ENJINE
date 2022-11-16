@@ -35,7 +35,6 @@ public://メンバ関数
 	/// <summary>
 	/// パーティクルの発生地点
 	/// </summary>
-	/// <param name="_maxCount">生成する個数の最大</param>
 	/// <param name="_maxFrame">生存時間</param>
 	/// <param name="_position">初期座標</param>
 	/// <param name="_velocity">速度</param>
@@ -44,7 +43,7 @@ public://メンバ関数
 	/// <param name="_endScale">最終サイズ</param>
 	/// <param name="_startColor">初期カラー</param>
 	/// <param name="_endColor">最終カラー</param>
-	void InEmitter(int _maxCount, int _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
+	void InEmitter(int _maxFrame, const XMFLOAT3& _position, const XMFLOAT3& _velocity,
 		const XMFLOAT3& _accel, float _startScale, float _endScale, const XMFLOAT4& _startColor, const XMFLOAT4& _endColor);
 
 	/// <summary>
@@ -62,15 +61,22 @@ public://メンバ関数
 	/// </summary>
 	void ParticlAllDelete();
 
-	/// <summary>
-	/// 生成してあるパーティクルの個数
-	/// </summary>
-	/// <returns></returns>
-	int GetCount() { return count; }
-
 private:
-	//パーティクル制御
-	int count = 0;
 	//パーティクルクラス
 	std::unique_ptr<ParticleManager> particleManager = nullptr;
+
+public:
+
+	/// <summary>
+	/// ブルームセット
+	/// </summary>
+	void SetBloom() { particleManager->SetBloom(true); }
+
+	/// <summary>
+	/// 現在の数
+	/// </summary>
+	int GetCreateNum() {
+		return particleManager->GetCreateNum();
+	}
+
 };

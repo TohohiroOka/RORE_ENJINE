@@ -1,32 +1,31 @@
-#include "BossBulletB.h"
+#include "BossBulletFireWorke.h"
 #include "BulletManager.h"
 
 using namespace DirectX;
 
-BossBulletB::BossBulletB(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color)
+BossBulletFireWorke::BossBulletFireWorke(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed, const XMFLOAT3& _color)
 {
 	timer = 0;
 	pos = _pos;
 	moveVec = _moveVec;
 	color = _color;
-	const float speed = 1.0f;
-	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
+	move = { moveVec.x * _speed , moveVec.y * _speed , moveVec.z * _speed };
 }
 
-std::unique_ptr<BossBulletB> BossBulletB::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const XMFLOAT3& _color)
+std::unique_ptr<BossBulletFireWorke> BossBulletFireWorke::Create(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed, const XMFLOAT3& _color)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	BossBulletB* instance = new BossBulletB(_pos, _moveVec, _color);
+	BossBulletFireWorke* instance = new BossBulletFireWorke(_pos, _moveVec, _speed, _color);
 	if (instance == nullptr) {
 		return nullptr;
 	}
 
 	instance->Initialize();
 
-	return std::unique_ptr<BossBulletB>(instance);
+	return std::unique_ptr<BossBulletFireWorke>(instance);
 }
 
-void BossBulletB::Update()
+void BossBulletFireWorke::Update()
 {
 	timer++;
 

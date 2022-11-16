@@ -307,7 +307,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
+		inPepeline.stateNum = 2;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
 		inPepeline.particl = true;
@@ -382,7 +382,7 @@ void SceneManager::Update()
 	InstanceObject::SetCamera(camera.get());
 	//Fbx::SetCamera(camera.get());
 	DrawLine3D::SetCamera(camera.get());
-	//ParticleManager::SetCamera(camera.get());
+	ParticleManager::SetCamera(camera.get());
 	CubeMap::SetCamera(camera.get());
 	HeightMap::SetCamera(camera.get());
 

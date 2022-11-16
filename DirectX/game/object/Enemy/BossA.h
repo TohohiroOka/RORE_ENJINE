@@ -9,18 +9,17 @@ private:
 	enum class BULLET_KIND
 	{
 		CIRCLE,//円状に出る
-		CIRCLE_ROTATE,//円状に出る回転あり
-		CIRCLE_UP_DOWN,//円状に上下する
-		FIREWORKE,//花火的なもの
 		LATTICE_BAEM_SET_X,//格子状ビームセットyz平面
 		LATTICE_BAEM_SET_Y,//格子状ビームセットxz平面
 		LATTICE_BAEM_SET_Z,//格子状ビームセットxy平面
-		LATTICE_BAEM_NOW,//格子状ビーム中
+		FIREWORKE,//花火的なもの
 		HOMING,//ホーミング
+		CIRCLE_ROTATE,//円状に出る回転あり
 		BOMB_HOMING,//爆破してから追従
 		SNAKE,//うねうね動く
 		HOMING_LINE1,//追従線(円形に出る)
 		HOMING_LINE2,//追従線(追従する)
+		SHOCK_WAVE,//衝撃波
 		SIZE,//合計
 	};
 
@@ -39,9 +38,13 @@ private:
 		XMFLOAT2 radiun[homing_line_num];
 		//回転軸
 		XMFLOAT3 rota = { 0,0,0 };
+		//ビームのセット回数
+		int beamSetNum = 0;
+		//格子ビームの座標
+		std::array<int,2> lattice_beam_pos = { 0,0 };
 	};
 
-	static const int lattice_beam_side_num = 20;
+	static const int lattice_beam_side_num = 15;
 
 public:
 
@@ -74,7 +77,7 @@ public:
 private:
 
 	//一回にできる攻撃の種類
-	static const int kindNum = 2;
+	static const int kindNum = 1;
 	//ボスの最大体力
 	const int maxHp = 400;
 	//移動経路

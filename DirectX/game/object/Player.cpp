@@ -393,5 +393,5 @@ void Player::SetBullet()
 	vecPt.y *= dist;
 	vecPt.z *= dist;
 
-	BulletManager::SetPlayerBullet(position, vecPt);
+	BulletManager::SetPlayerBullet(position, vecPt, 10.0f, { 1,1,1 });
 }

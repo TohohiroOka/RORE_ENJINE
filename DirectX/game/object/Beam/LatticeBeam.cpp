@@ -8,15 +8,14 @@ LatticeBeam::LatticeBeam(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, float _
 	timer = 0;
 	pos = _pos;
 	moveVec = _moveVec;
-	const float speed = 15.0f;
-	move = { moveVec.x * speed , moveVec.y * speed , moveVec.z * speed };
+	move = { moveVec.x * _speed , moveVec.y * _speed , moveVec.z * _speed };
 	color = { _color.x,_color.y,_color.z,1.0f };
 	rotate = { 0,0,0 };	
 
 	if (moveVec.x != 0) {
-		rotate.z = 90;
-	}else if (moveVec.y != 0) {
 		rotate.y = 90;
+	}else if (moveVec.y != 0) {
+		rotate.x = 90;
 	}
 }
 
@@ -40,9 +39,11 @@ void LatticeBeam::Update()
 
 	//è¡ãéÇ∑ÇÈÇΩÇﬂÇ…alphaÇà¯Ç≠
 	if (timer > maxTimer) {
-		color.w -= 0.01f;
+		color.x -= 0.01f;
+		color.y -= 0.01f;
+		color.z -= 0.01f;
 		//alpha0Ç≈è¡ãé
-		if (color.w<0.05f){
+		if (color.x<0.05f){
 			isAlive = false;
 		}
 	}

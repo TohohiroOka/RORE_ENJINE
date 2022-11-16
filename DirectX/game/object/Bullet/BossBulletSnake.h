@@ -1,8 +1,8 @@
 #pragma once
 #include "BaseBullet.h"
 
-class BossBulletE :
-	public BaseBullet
+class BossBulletSnake :
+    public BaseBullet
 {
 public:
 
@@ -11,8 +11,8 @@ public:
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <param name="_color">色</param>
-	BossBulletE(const XMFLOAT3& _pos, const XMFLOAT3& _color);
-	~BossBulletE() {};
+	BossBulletSnake(const XMFLOAT3& _pos, const XMFLOAT3& _color);
+	~BossBulletSnake() {};
 
 	/// <summary>
 	/// 生成
@@ -20,7 +20,7 @@ public:
 	/// <param name="_pos">座標</param>
 	/// <param name="_color">色</param>
 	/// <returns></returns>
-	static std::unique_ptr<BossBulletE> Create(const XMFLOAT3& _pos, const XMFLOAT3& _color);
+	static std::unique_ptr<BossBulletSnake> Create(const XMFLOAT3& _pos, const XMFLOAT3& _color);
 
 	/// <summary>
 	/// 更新
@@ -31,6 +31,11 @@ private:
 
 	//タイマー
 	int timer;
-	//移動フラグ
-	bool isMove;
+	//割る値（ランダム）
+	int divideNum;
+	//回転角
+	float angle;
+	//速度
+	float velocity;
 };
+

@@ -1,5 +1,4 @@
 #include "InstanceObject.h"
-#include "Model.h"
 #include "LightGroup.h"
 #include "Camera.h"
 #include <string>
@@ -112,9 +111,9 @@ void InstanceObject::DrawInstance(const XMFLOAT3& _pos, const XMFLOAT3& _scale,
 
 	XMMATRIX matRot;//äpìx
 	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(_rotation.x));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(_rotation.y));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(_rotation.z));
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(_rotation.z));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(_rotation.x));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(_rotation.y));
 	matWorld *= matRot;
 
 	XMMATRIX matTrans;//ïΩçsï˚å¸

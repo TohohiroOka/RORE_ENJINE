@@ -176,6 +176,10 @@ void Boss1::Draw()
 	//}
 
 	InterfaceObject3d::ReleaseCmdList();
+
+	ParticleManager::PreDraw(cmdList);
+	bullet->EffectDraw();
+	ParticleManager::PostDraw();
 }
 
 void Boss1::DrawNotPostA()
