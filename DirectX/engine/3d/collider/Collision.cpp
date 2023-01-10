@@ -329,41 +329,26 @@ bool Collision::CheckCapsuleCapsule(const Capsule& capsule1, const Capsule& caps
 
 bool Collision::CheckTriangleCapsule(const Triangle& _triangle, const Capsule& _capsule)
 {
-	//三角形の頂点
-	XMVECTOR cStart = { _capsule.startPosition.x,_capsule.startPosition.y,_capsule.startPosition.z };
-	XMVECTOR cEnd = { _capsule.endPosition.x,_capsule.endPosition.y,_capsule.endPosition.z };
+	//1.カプセル内の線分のスタート位置からエンド位置へのベクトルを作る
+	Vector3 vStartToEnd = _capsule.endPosition - _capsule.startPosition;
 
-	//線分と線分の距離を調べる
-	float distance[3];
-	CheckSegmentSegment(cStart, cEnd, _triangle.p0, _triangle.p1, &distance[0]);
-	CheckSegmentSegment(cStart, cEnd, _triangle.p1, _triangle.p2, &distance[1]);
-	CheckSegmentSegment(cStart, cEnd, _triangle.p2, _triangle.p0, &distance[2]);
+	//2.1.のベクトルを単位ベクトル(normalize)し、用意する
+	Vector3 n = vStartToEnd;
+	n.normalize();
 
-	bool isHit = false;
-	if (distance[0] < distance[1] && distance[0] < distance[2])
-	{
-		if (distance[0] < _capsule.radius * 4.0f)
-		{
-			isHit = true;
-		}
+	Ray ray;
+	ray.start = { _capsule.startPosition.x,_capsule.startPosition.y,_capsule.startPosition.z,0.0f };
+	ray.dir = { n.x,n.y,n.z,1.0f };
+	
+	float hitDistance;
+	XMVECTOR inter;
+	bool ishit = CheckRay2Triangle(ray, _triangle, &hitDistance, &inter);
+
+	if (ishit) {
+		return vStartToEnd.length() > hitDistance;
+	} else {
+		return false;
 	}
-	else if (distance[1] < distance[0] && distance[1] < distance[2])
-
-	{
-		if (distance[1] < _capsule.radius * 4.0f)
-		{
-			isHit = true;
-		}
-	}
-	else
-	{
-		if (distance[2] < _capsule.radius * 4.0f)
-		{
-			isHit = true;
-		}
-	}
-
-	return isHit;
 }
 
 float Collision::sqDistanceSegmentSegment(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2)

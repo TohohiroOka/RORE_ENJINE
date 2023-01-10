@@ -6,6 +6,7 @@ class Player
 {
 private:
 
+	using XMFLOAT2 = DirectX::XMFLOAT2;
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 
 public:
@@ -13,8 +14,27 @@ public:
 	/// <summary>
 	/// 3Dオブジェクト生成
 	/// </summary>
+	/// <param name="pos">座標</param>
+	/// <param name="cameraAngle">カメラ角度</param>
 	/// <returns></returns>
-	static std::unique_ptr<Player> Create(const XMFLOAT3& _pos);
+	static std::unique_ptr<Player> Create(const XMFLOAT3& _pos,const XMFLOAT2& _cameraAngle);
+
+private:
+
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Move();
+
+	/// <summary>
+	/// 押し戻し有の当たり判定
+	/// </summary>
+	void Collider();
+
+	/// <summary>
+	/// 弾のセット
+	/// </summary>
+	void SetBullet();
 
 public:
 
@@ -22,7 +42,8 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="pos">座標</param>
-	Player(const XMFLOAT3& _pos);
+	/// <param name="cameraAngle">カメラ角度</param>
+	Player(const XMFLOAT3& _pos, const XMFLOAT2& _cameraAngle);
 	~Player() {};
 
 	/// <summary>
@@ -34,7 +55,7 @@ public:
 	/// 毎フレーム処理
 	/// </summary>
 	/// <param name="cameraAngle">カメラ角度</param>
-	void Update(float _cameraAngle);
+	void Update(const XMFLOAT2& _cameraAngle);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -47,14 +68,10 @@ public:
 	void Reset();
 
 	/// <summary>
-	/// 押し戻し有の当たり判定
+	/// 地形変更時の移動処理
 	/// </summary>
-	void Collider();
-
-	/// <summary>
-	/// 弾のセット
-	/// </summary>
-	void SetBullet();
+	/// <param name="_ratio"></param>
+	void SetMoviePos(const float _ratio);
 
 private:
 
@@ -62,8 +79,11 @@ private:
 	std::unique_ptr<Object3d> object = nullptr;
 
 	XMFLOAT3 position;
-	std::array<Vector3, 2> moveVec;
+	std::array<Vector3, 3> moveVec;
 	XMFLOAT3 speed;
+	float scale;
+	XMFLOAT3 easingPos;
+	XMFLOAT3 endEasingPos;
 
 	//描画するか否か
 	bool isDraw;
@@ -72,7 +92,7 @@ private:
 	XMFLOAT3 moveObjAngle;
 
 	//カメラ角度
-	float cameraAngle;
+	DirectX::XMFLOAT2 cameraAngle;
 
 	//HP
 	const int maxHp = 100;
@@ -81,6 +101,13 @@ private:
 	//ダメージ演出
 	bool isDamageStaging;
 	int damageTimer;
+
+	//エネルギー
+	const float bulletEnergyMax = 50.0f;
+	float bulletEnergy;
+
+	//地形変更時にmove,衝突判定を出来なくする
+	bool isMovie;
 
 public:
 
@@ -115,4 +142,27 @@ public:
 	/// <returns>現hp</returns>
 	int GetHp() { return  hp; }
 
+	/// <summary>
+	/// bulletEnergy最大取得
+	/// </summary>
+	/// <returns>bulletEnergy最大値</returns>
+	float GetBulletEnergyMax() { return  bulletEnergyMax; }
+
+	/// <summary>
+	/// bulletEnergy取得
+	/// </summary>
+	/// <returns>bulletEnergy</returns>
+	float GetBulletEnergy() { return  bulletEnergy; }
+
+	/// <summary>
+	/// 地形変更時の初期化
+	/// </summary>
+	void SetMovie() {
+		easingPos = position;
+		isMovie = true;
+	};
+
+	void EndMovie() {
+		isMovie = false;
+	}
 };

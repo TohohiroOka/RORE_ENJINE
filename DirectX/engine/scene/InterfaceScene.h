@@ -5,6 +5,7 @@
 
 //オブジェクト系
 #include "InterfaceObject3d.h"
+#include "Object3d.h"
 #include "Sprite.h"
 #include "Emitter.h"
 #include "LightGroup.h"

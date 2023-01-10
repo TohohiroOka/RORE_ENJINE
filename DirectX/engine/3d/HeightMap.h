@@ -114,6 +114,6 @@ private:
 public:
 
 	Model* GetModel() { return model; }
-	std::vector<Mesh::VERTEX>* GetHitVertices() { return &hitVertices; }
-	std::vector<unsigned long>* GetHitIndices() { return &hitIndices; }
+	std::vector<Mesh::VERTEX>& GetHitVertices() { return hitVertices; }
+	std::vector<unsigned long>& GetHitIndices() { return hitIndices; }
 };

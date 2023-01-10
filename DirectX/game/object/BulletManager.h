@@ -1,7 +1,8 @@
 #pragma once
-#include "LatticeBeam.h"
+#include "Vector3.h"
+#include "PlayerBullet.h"
 
-class BeamManager
+class BulletManager
 {
 private:
 
@@ -10,14 +11,14 @@ private:
 
 public:
 
-	BeamManager() {};
-	~BeamManager();
+	BulletManager() {};
+	~BulletManager();
 
 	/// <summary>
 	/// 生成
 	/// </summary>
 	/// <returns></returns>
-	static std::unique_ptr<BeamManager> Create();
+	static std::unique_ptr<BulletManager> Create();
 
 	/// <summary>
 	/// 初期化
@@ -27,12 +28,18 @@ public:
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update();
+	/// <param name="_pos">プレイヤー座標</param>
+	void Update(const XMFLOAT3& _playerPos);
 
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// 毎フレーム処理
+	/// </summary>
+	void EffectDraw();
 
 	/// <summary>
 	/// 初期化
@@ -49,13 +56,14 @@ public:
 private:
 
 	//プレイヤーの弾
-	static std::list<std::unique_ptr<BaseBeam>> beam;
+	static std::list<std::unique_ptr<PlayerBullet>> playerBullet;
+	//プレイヤー座標
+	static XMFLOAT3 playerPos;
 
 public:
 
-	//ビームセット
-	static void SetLatticeBeam(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec, const float _speed, const XMFLOAT3& _color) {
-		beam.emplace_back(LatticeBeam::Create(_pos, _moveVec, _speed, _color));
+	//弾セット
+	static void SetPlayerBullet(const XMFLOAT3& _pos, const XMFLOAT3& _moveVec,const float _speed, const XMFLOAT3& _color) {
+		playerBullet.emplace_back(PlayerBullet::Create(_pos, _moveVec, _speed, _color));
 	}
 };
-

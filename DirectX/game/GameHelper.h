@@ -8,10 +8,7 @@
 #include <random>
 #include <cstdlib>
 
-#include "Ground.h"
-#include "Player.h"
-
-static const float mapSize = 255.0f * Ground::GetScale();
+static const float mapSize = 255.0f * 10;
 
 /// <summary>
 /// Œ…”æ“¾

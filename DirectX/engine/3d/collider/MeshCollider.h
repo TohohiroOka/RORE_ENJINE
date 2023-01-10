@@ -21,27 +21,6 @@ public:
 		shapeType = COLLISIONSHAPE_MESH;
 	}
 
-	struct ONE_MESH {
-		Triangle triangle;
-		Sphere sphere;
-	};
-
-	/// <summary>
-	/// 三次元空間の二点間の距離を求める
-	/// </summary>
-	/// <param name="pos1">座標1</param>
-	/// <param name="pos2">座標2</param>
-	/// <returns>二点間の距離</returns>
-	float DistanceTwoPoints(const Vector3& _pos1, const Vector3& _pos2);
-
-	/// <summary>
-	/// 三角形から外接円を求める
-	/// </summary>
-	/// <param name="pos1">三角形の頂点1</param>
-	/// <param name="pos2">三角形の頂点2</param>
-	/// <param name="pos3">三角形の頂点3</param>
-	void SetCircumscribedCircle(const DirectX::XMFLOAT3& _pos1, const DirectX::XMFLOAT3& _pos2, const DirectX::XMFLOAT3& _pos3, Sphere& _sphere);
-
 	/// <summary>
 	/// 八分木の最大最小の保存
 	/// </summary>
@@ -52,14 +31,14 @@ public:
 	/// 八分木の最大最小の保存
 	/// </summary>
 	/// <param name="_vertices">頂点</param>
-	void MinMax(const std::vector<Mesh::VERTEX>* _vertices);
+	void MinMax(const std::vector<Mesh::VERTEX>& _vertices);
 
 	/// <summary>
 	/// 八分木の現在地セット
 	/// </summary>
 	/// <param name="_pos">座標</param>
 	/// <returns>現在番号</returns>
-	int OctreeSet(const DirectX::XMFLOAT3& _pos);
+	DirectX::XMINT2 OctreeSet(const DirectX::XMFLOAT3& _pos);
 
 	/// <summary>
 	/// 三角形の配列を構築する
@@ -72,7 +51,7 @@ public:
 	/// </summary>
 	/// <param name="_vertices">頂点</param>
 	/// <param name="_indices">インデック</param>
-	void ConstructTriangles(const std::vector<Mesh::VERTEX>* _vertices, std::vector<unsigned long>* _indices);
+	void ConstructTriangles(const std::vector<Mesh::VERTEX>& _vertices, const std::vector<unsigned long>& _indices);
 
 	/// <summary>
 	/// 更新
@@ -106,17 +85,15 @@ public:
 	/// カプセルとの当たり判定
 	/// </summary>
 	/// <param name="_capsule">カプセル</param>
-	/// <param name="_distance">距離（出力用）</param>
-	/// <param name="_inter">交点（出力用）</param>
 	/// <returns>交差しているか否か</returns>
-	bool CheckCollisionCapsule(const Capsule& _capsule, float* _distance, DirectX::XMVECTOR* _inter);
+	bool CheckCollisionCapsule(const Capsule& _capsule);
 
 private:
 
 	//八分木分割個数
-	static const int octreeSplit = 64;
+	static const int octreeSplit = 8;
 	//判定用メッシュの情報
-	std::array<std::vector<ONE_MESH>, octreeSplit> colliderMeshes;
+	std::array<std::array<std::vector<Triangle>, octreeSplit>, octreeSplit> triangle;
 	//八分木の最小値
 	DirectX::XMVECTOR min = {};
 	//八分木の最大値
@@ -134,4 +111,3 @@ private:
 	//コリジョンの視覚化用
 	std::unique_ptr<PrimitiveObject3D> object = nullptr;
 };
-

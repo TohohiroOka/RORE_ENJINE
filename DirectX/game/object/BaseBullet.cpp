@@ -15,7 +15,7 @@ std::array<int, BaseBullet::effect_max_num> BaseBullet::effectNum;
 void BaseBullet::StaticInitialize()
 {
 	//弾
-	model = Model::CreateFromOBJ("Square1");
+	model = Model::CreateFromOBJ("NormalCube");
 
 	for (auto& i : bullet)
 	{
@@ -50,26 +50,20 @@ void BaseBullet::Update()
 	if (!isAlive) { return; }
 
 	//最大値にいったら生存フラグを消す
-	if (pos.x < 0.0f || pos.x>mapSize || pos.y > 710 || pos.y < -1.0f || pos.z < 0.0f || pos.z>mapSize) {
+	if (pos.x < 0.0f || pos.x>1000 || pos.y > 430 || pos.y < -1.0f || pos.z < 0.0f || pos.z>1000) {
 		isAlive = false;
 	}
-
-	Ray ray;
-	ray.start = { pos.x,pos.y,pos.z,1 };
-	ray.dir = { moveVec.x,moveVec.y,moveVec.z,0 };
-	RAYCAST_HIT raycastHit;
-
-	//レイの距離
-	float distance = sqrtf(move.x * move.x + move.y * move.y + move.z + move.z);
 
 	//カプセル
 	Capsule capsule;
 	capsule.startPosition = { pos.x,pos.y,pos.z };
 	capsule.endPosition = { pos.x + move.x,pos.y + move.y,pos.z + move.z };
 	capsule.radius = scale;
+
 	if (CollisionManager::GetInstance()->QueryCapsule(capsule, COLLISION_ATTR_LANDSHAPE))
 	{
 		isAlive = false;
+		return;
 	}
 
 	XMFLOAT3 bPos = pos;
@@ -84,6 +78,10 @@ void BaseBullet::Update()
 		break;
 	}
 
+	//移動している時に残像としてパーティクルを出す
+	if(move.x==0&& move.y == 0 && move.z == 0){return;}
+
+	//移動している時に残像として出すパーティクル処理
 	for (int i = 0; i < effect_max_num; i++) {
 		if (effectNum[i] >= 512) { continue; }
 		effect[i]->InEmitter(10, pos, { 0,0,0 }, { 0,0,0 }, 5.0f, 0.0f,
