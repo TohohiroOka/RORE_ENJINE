@@ -344,7 +344,7 @@ bool Collision::CheckTriangleCapsule(const Triangle& _triangle, const Capsule& _
 	XMVECTOR inter;
 	bool ishit = CheckRay2Triangle(ray, _triangle, &hitDistance, &inter);
 
-	if (ishit) {
+ 	if (ishit) {
 		return vStartToEnd.length() > hitDistance;
 	} else {
 		return false;
