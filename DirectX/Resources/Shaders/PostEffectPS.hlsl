@@ -46,7 +46,7 @@ float4 main(VSOutput input) : SV_TARGET
 	}
 
 	//ポストエフェクトの合成
-	return mainColor + bloom + outline + fog;
+	return mainColor;
 }
 
 float Gaussian(float2 drawUV, float2 pickUV, float sigma)

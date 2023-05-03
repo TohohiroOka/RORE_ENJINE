@@ -8,6 +8,17 @@
 #include "Vector3.h"
 
 /// <summary>
+/// ボックス
+/// </summary>
+struct Box
+{
+	// 1
+	DirectX::XMFLOAT3 point1 = {};
+	// 2
+	DirectX::XMFLOAT3 point2 = {};
+};
+
+/// <summary>
 /// 球
 /// </summary>
 struct Sphere

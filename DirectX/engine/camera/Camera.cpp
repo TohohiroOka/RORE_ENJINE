@@ -6,7 +6,7 @@ using namespace DirectX;
 
 Camera::Camera()
 {
-	aspectRatio = float(WindowApp::GetWindowWidth() / WindowApp::GetWindowHeight());
+	aspectRatio = float(WindowApp::GetWindowWidth()) / float(WindowApp::GetWindowHeight());
 
 	// Ë‰es—ñ‚ÌŒvZ
 	matProjection = XMMatrixPerspectiveFovLH(

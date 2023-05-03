@@ -68,9 +68,6 @@
     <Filter Include="ゲームシステム\Scene">
       <UniqueIdentifier>{8677fbf2-e109-497b-99fb-14bb695dc881}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\NormalMap">
-      <UniqueIdentifier>{110cc445-8ccf-4738-abfc-f7275b52f11a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\Basic">
       <UniqueIdentifier>{a8a993ee-4e2d-4f0e-bfdd-b29afe531222}</UniqueIdentifier>
     </Filter>
@@ -295,7 +292,7 @@
     <ClCompile Include="engine\base\Quaternion.cpp">
       <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClCompile>
-    <ClCompile Include="game\scene\Boss1.cpp">
+    <ClCompile Include="game\scene\Scene1.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\InstanceObject.cpp">
@@ -304,16 +301,7 @@
     <ClCompile Include="engine\base\JsonLoder.cpp">
       <Filter>エンジンシステム\Base\FileLoder</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\Player.cpp">
-      <Filter>ゲームシステム</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\PlayerBullet.cpp">
-      <Filter>ゲームシステム</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\BaseBullet.cpp">
-      <Filter>ゲームシステム</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\BulletManager.cpp">
+    <ClCompile Include="Map.cpp">
       <Filter>ゲームシステム</Filter>
     </ClCompile>
   </ItemGroup>
@@ -356,12 +344,6 @@
     </FxCompile>
     <FxCompile Include="Resources\Shaders\PostEffectVS.hlsl">
       <Filter>シェーダーファイル\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\NormalMapPS.hlsl">
-      <Filter>シェーダーファイル\NormalMap</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\NormalMapVS.hlsl">
-      <Filter>シェーダーファイル\NormalMap</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
       <Filter>シェーダーファイル\Basic</Filter>
@@ -409,9 +391,6 @@
     </None>
     <None Include="Resources\Shaders\PostEffect.hlsli">
       <Filter>シェーダーファイル\PostEffect</Filter>
-    </None>
-    <None Include="Resources\Shaders\NormalMap.hlsli">
-      <Filter>シェーダーファイル\NormalMap</Filter>
     </None>
     <None Include="Resources\Shaders\DrawLine2D.hlsli">
       <Filter>シェーダーファイル\DrawLine2d</Filter>
@@ -610,7 +589,7 @@
     <ClInclude Include="engine\base\Quaternion.h">
       <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\Boss1.h">
+    <ClInclude Include="game\scene\Scene1.h">
       <Filter>ゲームシステム\Scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SafeDelete.h">
@@ -625,16 +604,7 @@
     <ClInclude Include="game\GameHelper.h">
       <Filter>ゲームシステム</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\Player.h">
-      <Filter>ゲームシステム</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\PlayerBullet.h">
-      <Filter>ゲームシステム</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\BulletManager.h">
-      <Filter>ゲームシステム</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\BaseBullet.h">
+    <ClInclude Include="Map.h">
       <Filter>ゲームシステム</Filter>
     </ClInclude>
   </ItemGroup>

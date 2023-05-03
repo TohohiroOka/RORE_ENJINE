@@ -1,5 +1,5 @@
 ﻿#include "Collision.h"
-
+#include <array>
 using namespace DirectX;
 
 bool Collision::CheckCircle2Circle(const DirectX::XMFLOAT3& pos1, float radius1, const DirectX::XMFLOAT3& pos2, float radius2)
@@ -125,7 +125,7 @@ bool Collision::CheckSphere2Plane(const Sphere& _sphere, const Plane& _plane, Di
 	if (_inter)
 	{
 		// 平面上の再接近点を、疑似交点とする
-		*_inter = -dist * _plane.normal + _sphere.center;                                                                                              + _sphere.center;
+		*_inter = -dist * _plane.normal + _sphere.center;
 	}
 
 	return true;
@@ -158,6 +158,97 @@ bool Collision::CheckSphere2Triangle(const Sphere& _sphere, const Triangle& _tri
 		*_reject = _triangle.normal * rejectLen;
 	}
 	return true;
+}
+
+bool Collision::CheckRayRangePlane(const Ray& _lay, const Box& _box,
+	const DirectX::XMMATRIX& _boxMat, float* _t, DirectX::XMVECTOR* _inter)
+{
+{
+	//const float epsilon = 1.0e-5f;	// 誤差吸収用の微小な値
+
+	//float d1 = XMVector3Dot({ _normal.x,_normal.y,_normal.z }, _lay.dir).m128_f32[0];
+	//float d11 = 0.0f;
+	//// 裏面には当たらない
+	//if (d1 > -epsilon) {
+	//	d11 = XMVector3Dot({ -_normal.x,-_normal.y,-_normal.z }, _lay.dir).m128_f32[0];
+	//	if (d11 > -epsilon) {
+	//		return false;
+	//	}
+	//	d1 = d11;
+	//}
+
+	//float dist = Vector3(_box.point1.x, _box.point1.y, _box.point1.z).length();
+	//float d2 = XMVector3Dot({ _normal.x,_normal.y,_normal.z }, _lay.start).m128_f32[0];
+	//float t = (dist - d2) / d1;
+
+	//if (t < 0) return false;
+
+	//// 距離を書き込む
+	//if (_t) {
+	//	*_t = t;
+	//}
+
+	//// 交点を計算
+	//if (_inter) {
+	//	*_inter = _lay.start + t * _lay.dir;
+	//}
+
+	//return true;
+	}
+
+	// 光線を境界ボックスの空間へ移動
+	XMMATRIX invMat;
+	invMat=XMMatrixInverse(nullptr, _boxMat);
+
+	XMVECTOR p_l, dir_l;
+	p_l = XMVector3TransformCoord(_lay.start, invMat);
+	XMFLOAT4X4 mtx;
+	XMStoreFloat4x4(&mtx, invMat);
+	mtx._41 = 0.0f;
+	mtx._42 = 0.0f;
+	mtx._43 = 0.0f;
+	invMat = XMLoadFloat4x4(&mtx);
+	dir_l=XMVector3TransformCoord(_lay.dir, invMat);
+
+	// 交差判定
+	std::array<float, 3> p = { p_l.m128_f32[0],p_l.m128_f32[1],p_l.m128_f32[2] };
+	std::array<float, 3> d = { dir_l.m128_f32[0],dir_l.m128_f32[1],dir_l.m128_f32[2] };
+	std::array<float, 3> min = { p_l.m128_f32[0],p_l.m128_f32[1],p_l.m128_f32[2] };
+	std::array<float, 3> max = { dir_l.m128_f32[0],dir_l.m128_f32[1],dir_l.m128_f32[2] };
+
+	*_t = -FLT_MAX;
+	float t_max = FLT_MAX;
+
+	for (int i = 0; i < 3; ++i) {
+		if (abs(d[i]) < FLT_EPSILON) {
+			if (p[i] < min[i] || p[i] > max[i])
+				return false; // 交差していない
+		} else {
+			// スラブとの距離を算出
+			// t1が近スラブ、t2が遠スラブとの距離
+			float odd = 1.0f / d[i];
+			float t1 = (min[i] - p[i]) * odd;
+			float t2 = (max[i] - p[i]) * odd;
+			if (t1 > t2) {
+				float tmp = t1; t1 = t2; t2 = tmp;
+			}
+
+			if (t1 > *_t) *_t = t1;
+			if (t2 < t_max) t_max = t2;
+
+			// スラブ交差チェック
+			if (*_t >= t_max)
+				return false;
+		}
+	}
+
+	// 交差している
+	if (_inter) {
+		*_inter = _lay.start + *_t * _lay.dir;
+	}
+
+	return true;
+
 }
 
 bool Collision::CheckRay2Plane(const Ray& _lay, const Plane& _plane, float* _distance, DirectX::XMVECTOR* _inter)
@@ -195,7 +286,7 @@ bool Collision::CheckRay2Triangle(const Ray& _lay, const Triangle& _triangle, fl
 	XMVECTOR interPlane;
 	plane.normal = _triangle.normal;
 	plane.distance = XMVector3Dot(_triangle.normal, _triangle.p0).m128_f32[0];
-	// レイと平面が当たっていなければ、当たっていない	
+	// レイと平面が当たっていなければ、当たっていない
 	if (!CheckRay2Plane(_lay, plane, _distance, &interPlane)) {
 		return false;
 	}
@@ -345,7 +436,8 @@ bool Collision::CheckTriangleCapsule(const Triangle& _triangle, const Capsule& _
 	bool ishit = CheckRay2Triangle(ray, _triangle, &hitDistance, &inter);
 
  	if (ishit) {
-		return vStartToEnd.length() > hitDistance;
+		float a= vStartToEnd.length();
+		return a > hitDistance;
 	} else {
 		return false;
 	}

@@ -45,13 +45,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\imgui;$(SolutionDir)engine\external\json\nlohmann;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\imgui;$(SolutionDir)engine\external\json\nlohmann;$(SolutionDir)engine\external\json;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)engine\external\FBX_SDK\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\imgui;$(SolutionDir)engine\external\json\nlohmann;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\external\FBX_SDK\include;$(SolutionDir)engine\external\DirectXTex;$(SolutionDir)engine\external\imgui;$(SolutionDir)engine\external\json\nlohmann;$(SolutionDir)engine\external\json;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)engine\external\FBX_SDK\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,15 +147,12 @@
     <ClCompile Include="engine\particle\Emitter.cpp" />
     <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
-    <ClCompile Include="game\object\BaseBullet.cpp" />
-    <ClCompile Include="game\object\BulletManager.cpp" />
-    <ClCompile Include="game\object\Player.cpp" />
-    <ClCompile Include="game\object\PlayerBullet.cpp" />
-    <ClCompile Include="game\scene\Boss1.cpp" />
+    <ClCompile Include="game\scene\Scene1.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
@@ -195,18 +192,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\InstanceObjectVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\NormalMapPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\NormalMapVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -307,7 +292,6 @@
     <None Include="Resources\Shaders\CubeBox.hlsli" />
     <None Include="Resources\Shaders\HeightMap.hlsli" />
     <None Include="Resources\Shaders\InstanceObject.hlsli" />
-    <None Include="Resources\Shaders\NormalMap.hlsli" />
     <None Include="Resources\Shaders\DrawLine2D.hlsli" />
     <None Include="Resources\Shaders\DrawLine3D.hlsli" />
     <None Include="Resources\Shaders\Fbx.hlsli" />
@@ -382,11 +366,8 @@
     <ClInclude Include="engine\scene\InterfaceScene.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="game\GameHelper.h" />
-    <ClInclude Include="game\object\BaseBullet.h" />
-    <ClInclude Include="game\object\BulletManager.h" />
-    <ClInclude Include="game\object\Player.h" />
-    <ClInclude Include="game\object\PlayerBullet.h" />
-    <ClInclude Include="game\scene\Boss1.h" />
+    <ClInclude Include="game\scene\Scene1.h" />
+    <ClInclude Include="Map.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

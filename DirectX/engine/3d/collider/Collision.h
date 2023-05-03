@@ -63,6 +63,19 @@ public:
 		const Triangle& _triangle, DirectX::XMVECTOR* _inter = nullptr, DirectX::XMVECTOR* _reject = nullptr);
 
 	/// <summary>
+	/// レイと平面（範囲・表裏有）の当たり判定
+	/// </summary>
+	/// <param name="_lay">レイ</param>
+	/// <param name="_box">ボックス</param>
+	/// <param name="_normal">法線</param>
+	/// <param name="_boxMat">ボックスのワールド行列</param>
+	/// <param name="t">衝突間隔（出力用）</param>
+	/// <param name="_inter">交点（出力用）</param>
+	/// <returns></returns>
+	static bool CheckRayRangePlane(const Ray& _lay, const Box& _box,
+		const DirectX::XMMATRIX& _boxMat, float* _t, DirectX::XMVECTOR* _inter = nullptr);
+
+	/// <summary>
 	/// レイと平面の当たり判定
 	/// </summary>
 	/// <param name="_lay">レイ</param>

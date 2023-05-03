@@ -13,10 +13,10 @@ const bool operator==(const XMINT2& a, const XMINT2& b) {
 }
 
 const bool operator!=(const XMINT2& a, const XMINT2& b) {
-	bool x = a.x != b.x;
-	bool y = a.y != b.y;
+	bool x = a.x == b.x;
+	bool y = a.y == b.y;
 
-	return x * y;
+	return !x || !y;
 }
 
 void MeshCollider::MinMax(Model* _model)
@@ -108,7 +108,7 @@ XMINT2 MeshCollider::OctreeSet(const XMFLOAT3& _pos)
 	XMINT2 octtreenum = {};
 	for (int i = 0; i < 8; i++)
 	{
-		if (octtreeRange[i].x < _pos.x && _pos.x < octtreeRange[i + 1].x)
+		if (octtreeRange[i].x <= _pos.x && _pos.x < octtreeRange[i + 1].x)
 		{
 			octtreenum.x = i;
 			break;
@@ -116,7 +116,7 @@ XMINT2 MeshCollider::OctreeSet(const XMFLOAT3& _pos)
 	}
 	for (int i = 0; i < 8; i++)
 	{
-		if (octtreeRange[i].z < _pos.z && _pos.z < octtreeRange[i + 1].z)
+		if (octtreeRange[i].z <= _pos.z && _pos.z < octtreeRange[i + 1].z)
 		{
 			octtreenum.y = i;
 			break;
@@ -160,6 +160,10 @@ void MeshCollider::ConstructTriangles(Model* _model)
 		octtreeRange[i].y = minmaxRange.y / 8 * i;
 		octtreeRange[i].z = minmaxRange.z / 8 * i;
 	}
+
+	octtreeRange[8].x++;
+	octtreeRange[8].y++;
+	octtreeRange[8].z++;
 
 	std::vector<Mesh*>::const_iterator it = meshes.cbegin();
 	for (; it != meshes.cend(); ++it) {
@@ -247,11 +251,18 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>& _vertices
 		octtreeRange[i].y = minmaxRange.y / 8 * i;
 		octtreeRange[i].z = minmaxRange.z / 8 * i;
 	}
+	octtreeRange[8].x++;
+	octtreeRange[8].y++;
+	octtreeRange[8].z++;
 
 	const std::vector<Mesh::VERTEX> vertices = _vertices;
 	const std::vector<unsigned long> indices = _indices;
 
 	size_t triangleNum = indices.size() / 3;
+
+	XMINT2 aa = { 0,1 };
+	XMINT2 bb = { 0,1 };
+	bool aaa=aa!=bb;
 
 	for (int i = 0; i < triangleNum; i++)
 	{
@@ -288,7 +299,7 @@ void MeshCollider::ConstructTriangles(const std::vector<Mesh::VERTEX>& _vertices
 		{
 			triangle[Octree2.x][Octree2.y].emplace_back(addTriangle);
 		}
-		if (Octree1 != Octree3 && Octree2 != Octree3)
+		if ((Octree1 != Octree3) && (Octree2 != Octree3))
 		{
 			triangle[Octree3.x][Octree3.y].emplace_back(addTriangle);
 		}
@@ -435,7 +446,7 @@ bool MeshCollider::CheckCollisionCapsule(const Capsule& _capsule)
 
 	for (int i = 0; i < roopNum; i++)
 	{
-		std::vector<Triangle>::const_iterator it = triangle[Octree[i].x][Octree[i].y].cbegin();;
+		std::vector<Triangle>::const_iterator it = triangle[Octree[i].x][Octree[i].y].cbegin();
 
 		for (; it != triangle[Octree[i].x][Octree[i].y].cend(); ++it) {
 			const Triangle& mesh = *it;
@@ -445,5 +456,22 @@ bool MeshCollider::CheckCollisionCapsule(const Capsule& _capsule)
 			}
 		}
 	}
+
+	//for (int x = 0; x < 8; x++)
+	//{
+	//	for (int y = 0; y < 8; y++)
+	//	{
+	//		std::vector<Triangle>::const_iterator it = triangle[x][y].cbegin();
+
+	//		for (; it != triangle[x][y].cend(); ++it) {
+	//			const Triangle& mesh = *it;
+
+	//			if (Collision::CheckTriangleCapsule(mesh, localCapsule)) {
+	//				return true;
+	//			}
+	//		}
+	//	}
+	//}
+
 	return false;
 }

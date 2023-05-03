@@ -110,6 +110,13 @@ public:
 		const XMFLOAT3& _rotation, const XMFLOAT4& _color);
 
 	/// <summary>
+	/// 描画セット
+	/// </summary>
+	/// <param name="_worldMat">ワールド行列</param>
+	/// <param name="_color">色</param>
+	void DrawInstance(const XMMATRIX& _worldMat, const XMFLOAT4& _color);
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();

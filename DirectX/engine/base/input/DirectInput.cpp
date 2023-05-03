@@ -118,7 +118,7 @@ bool DirectInput::ReleaseKey(const BYTE& _keyNumber)
 	return false;
 }
 
-bool DirectInput::PushMouseButton(int _mouseButton)
+bool DirectInput::PushMouseButton(const MOUSE_BUTTON _mouseButton)
 {
 	//指定のボタンを押していればtrueを返す
 	if (mouse.rgbButtons[_mouseButton]) {
@@ -128,7 +128,7 @@ bool DirectInput::PushMouseButton(int _mouseButton)
 	return false;
 }
 
-bool DirectInput::TriggerMouseButton(int _mouseButton)
+bool DirectInput::TriggerMouseButton(const MOUSE_BUTTON _mouseButton)
 {
 	//指定のボタンを押した瞬間ならtrueを返す
 	if (mouse.rgbButtons[_mouseButton] &&

@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-#include "Boss1.h"
+#include "Scene1.h"
 #include "PostEffect.h"
 
 std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
@@ -111,9 +111,9 @@ void SceneManager::Initialize()
 	light->SetDirLightDir(0, { 0.0f, 0.0f, 1.0f, 0 });
 
 	//Å‰‚ÌƒV[ƒ“Ý’è
-	Boss1* firstScene = new Boss1();
+	Scene1* firstScene = new Scene1();
 	firstScene->Initialize();
-	scene = std::unique_ptr<Boss1>(firstScene);
+	scene = std::unique_ptr<Scene1>(firstScene);
 }
 
 void SceneManager::CreatePipeline()
@@ -161,7 +161,7 @@ void SceneManager::CreatePipeline()
 		inPepeline.inputLayout = inputLayout;
 		inPepeline.stateNum = 3;
 		inPepeline.rtvNum = 3;
-		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
+		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 
 		inSignature.instanceDraw = true;
 

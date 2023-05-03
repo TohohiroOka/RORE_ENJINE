@@ -81,7 +81,7 @@ std::unique_ptr<Sprite> Sprite::Create(const std::string& _name)
 	}
 
 	// ‰Šú‰»
-	instance->Initialize(_name, { 0.5f,0.5f });
+	instance->Initialize(_name, { 0.0f,0.0f });
 
 	//XV
 	instance->Update();

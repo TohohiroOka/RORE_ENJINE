@@ -75,14 +75,14 @@ public: //メンバ関数
 	/// </summary>
 	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>押されているか</returns>
-	bool PushMouseButton(int _mouseButton);
+	bool PushMouseButton(const MOUSE_BUTTON _mouseButton);
 
 	/// <summary>
 	/// マウスボタンのトリガーをチェック
 	/// </summary>
 	/// <param name = "_mouseButton">マウスボタン</param>
 	/// <returns>トリガーか</returns>
-	bool TriggerMouseButton(int _mouseButton);
+	bool TriggerMouseButton(const MOUSE_BUTTON _mouseButton);
 
 	/// <summary>
 	/// マウスボタンを離したかチェック

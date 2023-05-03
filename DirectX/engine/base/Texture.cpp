@@ -54,13 +54,29 @@ void Texture::LoadTexture(const std::string& _fileName)
 	int bufferSize = MultiByteToWideChar(CP_ACP, 0,
 		_fileName.c_str(), -1, wfilePath, _countof(wfilePath));
 
-	result = LoadFromWICFile(
-		wfilePath,
-		DirectX::WIC_FLAGS_NONE,
-		&metadata, scratchImage);
-	assert(SUCCEEDED(result));
+	//データ形式
+	//区切り文字'.'が出てくる一番最後の部分を検索
+	int pos1 = int(_fileName.rfind('.'));
+	//区切り文字の後をファイル拡張子として保存
+	std::string fileExt_ = _fileName.substr(pos1 + 1, _fileName.size() - pos1 - 1);
 
-	const DirectX::Image* img = scratchImage.GetImage(0, 0, 0);
+
+	if (fileExt_ == "dds")
+	{
+		result = LoadFromDDSFile(
+			wfilePath,
+			DirectX::DDS_FLAGS_NONE,
+			&metadata, scratchImage);
+		assert(SUCCEEDED(result));
+	} else {
+		result = LoadFromWICFile(
+			wfilePath,
+			DirectX::WIC_FLAGS_NONE,
+			&metadata, scratchImage);
+		assert(SUCCEEDED(result));
+	}
+
+	metadata.format = DirectX::MakeSRGB(metadata.format);
 
 	//テクスチャバッファの生成
 	//リソース設定
@@ -79,15 +95,23 @@ void Texture::LoadTexture(const std::string& _fileName)
 		D3D12_RESOURCE_STATE_GENERIC_READ,//テクスチャ用指定
 		nullptr,
 		IID_PPV_ARGS(&texBuffer));
+	assert(SUCCEEDED(result));
 
-	//テクスチャバッファにデータ転送
-	result = texBuffer->WriteToSubresource(
-		0,
-		nullptr,//全領域へコピー
-		img->pixels,//元データアドレス
-		(UINT)img->rowPitch,//１ラインサイズ
-		(UINT)img->slicePitch//1枚サイズ
-	);
+	//ミップマップ
+	const int mipSize = int(metadata.mipLevels);
+	for (int i = 0; i < mipSize; i++) {
+		//ミップマップレベルを指定してイメージを取得
+		const DirectX::Image* img = scratchImage.GetImage(i, 0, 0);
+		//テクスチャバッファにデータ転送
+		result = texBuffer->WriteToSubresource(
+			(UINT)i,
+			nullptr,//全領域へコピー
+			img->pixels,//元データアドレス
+			(UINT)img->rowPitch,//１ラインサイズ
+			(UINT)img->slicePitch//1枚サイズ
+		);
+		assert(SUCCEEDED(result));
+	}
 
 	//シェーダーリソースビュー設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};//設定構造体

@@ -125,6 +125,13 @@ void InstanceObject::DrawInstance(const XMFLOAT3& _pos, const XMFLOAT3& _scale,
 	instanceDrawNum++;
 }
 
+void InstanceObject::DrawInstance(const XMMATRIX& _worldMat, const XMFLOAT4& _color)
+{
+	objInform.baseColor[instanceDrawNum] = _color;
+	objInform.matWorld[instanceDrawNum] = _worldMat;
+	instanceDrawNum++;
+}
+
 void InstanceObject::Update()
 {
 	//定数バッファにデータを転送
