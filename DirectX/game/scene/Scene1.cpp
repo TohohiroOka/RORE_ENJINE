@@ -4,6 +4,7 @@
 #include "XInputManager.h"
 #include "DebugText.h"
 #include "WindowApp.h"
+#include <imgui.h>
 
 using namespace DirectX;
 
@@ -44,55 +45,61 @@ void Scene1::Initialize()
 	camera = nullptr;
 
 	map = Map::Create();
-	isDrawLine = false;
+	isDrawLine = true;
 
 	cameraPos = { 0,0,-10 };
 	cameraTarget = { 135,0,0 };
 
-	lineObject = std::make_unique<PrimitiveObject3D>();
-	lineObject->UpdateWorldMatrix();
+	isAdd = true;
+
+	imguiPos = { 0,0 };
+	kaburi = false;
 }
 
 void Scene1::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	if (input->TriggerKey(DIK_P)) {
-		isDrawLine = !isDrawLine;
-	}
+	//フレームの最初に初期化するもの
+	kaburi = false;
 
-	if (input->TriggerKey(DIK_O)) {
-		map->OutputMap("out", 30);
-	}
-
+	//マウス座標
 	XMFLOAT2 mousePos = input->GetMousePoint();
 	Vector3 pout = {};
 	Vector3 target = {};
 	CalcScreenToWorld(&pout, mousePos, 0.0f);
 	CalcScreenToWorld(&target, mousePos, 1.0f);
 
-	DebugText* text = DebugText::GetInstance();
-	std::string strmX = std::to_string(pout.x);
-	std::string strmY = std::to_string(pout.y);
-	std::string strmZ = std::to_string(pout.z);
-	std::string strmtX = std::to_string(target.x);
-	std::string strmtY = std::to_string(target.y);
-	std::string strmtZ = std::to_string(target.z);
-	text->Print("mause x y z : " + strmX + ":"+ strmY+":"+ strmZ, 100,150);
-	text->Print("target  x y z : " + strmtX + ":" + strmtY + ":" + strmtZ, 100, 175);
-	text = nullptr;
-
-	map->Update({ pout.x,pout.y,pout.z }, { target.x,target.y,target.z });
-
-	if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
-		map->AddBox();
+	if (imguiPos.x < mousePos.x && imguiPos.x + imguiMax.x > mousePos.x &&
+		imguiPos.y < mousePos.y && imguiPos.y + imguiMax.y > mousePos.y)
+	{
+		kaburi = true;
 	}
 
-	//線配列初期化
-	lineObject->ResetVertex();
-	lineObject->SetVertex({ pout.x,pout.y,pout.z });
-	lineObject->SetVertex({ target.x,target.y,target.z });
-	lineObject->Initialize();
+	if (!kaburi) {
+		//オブジェクト設置
+		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT) && frame) {
+			if (isAdd) {
+				map->AddBox(camera->GetEye());
+			} else {
+				map->DeleteBox(camera->GetEye());
+			}
+			frame = false;
+		}
+	}
+
+	map->Update(pout, target, kaburi);
+
+	DebugText* text = DebugText::GetInstance();
+
+	text->Print("move          : WASD", 20, 25);
+	text->Print("camera        : ARROW", 20, 40);
+	text->Print("Add or Delete : MOUSE LEFT", 20, 55);
+	text->Print("Add or Delete model change : M", 20, 70);
+	text->Print("Line Draw Change: P", 20, 85);
+	text->Print("Output        : O", 20, 100);
+
+	text = nullptr;
 }
 
 void Scene1::DrawNotPostB()
@@ -107,8 +114,9 @@ void Scene1::DrawNotPostB()
 	if (isDrawLine) {
 		map->Draw();
 	}
-	//lineObject->Draw();
 	InterfaceObject3d::ReleaseCmdList();
+
+	frame = true;
 }
 
 void Scene1::Draw()
@@ -128,6 +136,33 @@ void Scene1::Finalize()
 
 void Scene1::ImguiDraw()
 {
+	//ファイル名
+	static char fileName[36] = "";
+	//マップサイズ
+	const XMINT3 mapSize = map->GetDelimitNum();
+	XMINT3 nowMapSize = mapSize;
+
+	ImGui::Begin("MapEditor");
+	ImGui::SetWindowPos(ImVec2(imguiPos.x, imguiPos.y));
+	ImGui::SetWindowSize(ImVec2(imguiMax.x, imguiMax.y));
+
+	ImGui::InputText("FileName", fileName, sizeof(fileName));
+	//出力
+	if (ImGui::Button("OK")) {
+		map->OutputMap(fileName, 30);
+	}
+	ImGui::SliderInt("MapSize : X", &nowMapSize.x, 1, 20);
+	ImGui::SliderInt("MapSize : Y", &nowMapSize.y, 1, 20);
+	ImGui::SliderInt("MapSize : Z", &nowMapSize.z, 1, 20);
+	ImGui::Checkbox("Line Draw", &isDrawLine);
+	ImGui::Checkbox("Box Delete", &isAdd);
+
+	ImGui::End();
+
+	//サイズ変更
+	if (nowMapSize.x != mapSize.x || nowMapSize.y != mapSize.y || nowMapSize.z != mapSize.z) {
+		map->ChangeDelimitNum(nowMapSize);
+	}
 }
 
 void Scene1::CameraUpdate(Camera* _camera)
@@ -187,18 +222,18 @@ void Scene1::CameraUpdate(Camera* _camera)
 	_camera->SetEye(cameraPos);
 	_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y - sinf(XMConvertToRadians(cameraTarget.y)) ,cameraPos.z - sinf(radian.x) });
 
-	DebugText* text = DebugText::GetInstance();
-	std::string strcameraPosx = std::to_string(cameraPos.x);
-	std::string strcameraPosy = std::to_string(cameraPos.y);
-	std::string strcameraPosz = std::to_string(cameraPos.z);
-	std::string strcameraTargetx = std::to_string(cameraTarget.x);
-	std::string strcameraTargety = std::to_string(cameraTarget.y);
-	std::string strcameraTargetz = std::to_string(cameraTarget.z);
-	text->Print("cameraPos x y z : " + strcameraPosx + ":" + strcameraPosy + ":" + strcameraPosz, 100, 100);
-	text->Print("cameraTarget x y z : " + strcameraTargetx + ":" + strcameraTargety + ":" + strcameraTargetz, 100, 125);
-	text->Print("cameraAngle: " + std::to_string(cameraTarget.x), 100, 200);
+	//DebugText* text = DebugText::GetInstance();
+	//std::string strcameraPosx = std::to_string(cameraPos.x);
+	//std::string strcameraPosy = std::to_string(cameraPos.y);
+	//std::string strcameraPosz = std::to_string(cameraPos.z);
+	//std::string strcameraTargetx = std::to_string(cameraTarget.x);
+	//std::string strcameraTargety = std::to_string(cameraTarget.y);
+	//std::string strcameraTargetz = std::to_string(cameraTarget.z);
+	//text->Print("cameraPos x y z : " + strcameraPosx + ":" + strcameraPosy + ":" + strcameraPosz, 100, 100);
+	//text->Print("cameraTarget x y z : " + strcameraTargetx + ":" + strcameraTargety + ":" + strcameraTargetz, 100, 125);
+	//text->Print("cameraAngle: " + std::to_string(cameraTarget.x), 100, 200);
 
-	text = nullptr;
+	//text = nullptr;
 
 	camera = _camera;
 }

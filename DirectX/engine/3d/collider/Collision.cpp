@@ -160,61 +160,30 @@ bool Collision::CheckSphere2Triangle(const Sphere& _sphere, const Triangle& _tri
 	return true;
 }
 
-bool Collision::CheckRayRangePlane(const Ray& _lay, const Box& _box,
-	const DirectX::XMMATRIX& _boxMat, float* _t, DirectX::XMVECTOR* _inter)
+bool Collision::CheckRayAabb(const Ray& _lay, const Box& _box, const DirectX::XMMATRIX& _boxMat, float* _t, DirectX::XMVECTOR* _inter)
 {
-{
-	//const float epsilon = 1.0e-5f;	// 誤差吸収用の微小な値
-
-	//float d1 = XMVector3Dot({ _normal.x,_normal.y,_normal.z }, _lay.dir).m128_f32[0];
-	//float d11 = 0.0f;
-	//// 裏面には当たらない
-	//if (d1 > -epsilon) {
-	//	d11 = XMVector3Dot({ -_normal.x,-_normal.y,-_normal.z }, _lay.dir).m128_f32[0];
-	//	if (d11 > -epsilon) {
-	//		return false;
-	//	}
-	//	d1 = d11;
-	//}
-
-	//float dist = Vector3(_box.point1.x, _box.point1.y, _box.point1.z).length();
-	//float d2 = XMVector3Dot({ _normal.x,_normal.y,_normal.z }, _lay.start).m128_f32[0];
-	//float t = (dist - d2) / d1;
-
-	//if (t < 0) return false;
-
-	//// 距離を書き込む
-	//if (_t) {
-	//	*_t = t;
-	//}
-
-	//// 交点を計算
-	//if (_inter) {
-	//	*_inter = _lay.start + t * _lay.dir;
-	//}
-
-	//return true;
-	}
-
 	// 光線を境界ボックスの空間へ移動
 	XMMATRIX invMat;
-	invMat=XMMatrixInverse(nullptr, _boxMat);
+	invMat = XMMatrixInverse(nullptr, _boxMat);
+
+	XMVECTOR vmin = XMVector3Transform({ _box.point1.x,_box.point1.y,_box.point1.z }, invMat);
+	XMVECTOR vmax = XMVector3Transform({ _box.point2.x,_box.point2.y,_box.point2.z }, invMat);
 
 	XMVECTOR p_l, dir_l;
-	p_l = XMVector3TransformCoord(_lay.start, invMat);
+	p_l = XMVector3Transform(_lay.start, invMat);
 	XMFLOAT4X4 mtx;
 	XMStoreFloat4x4(&mtx, invMat);
 	mtx._41 = 0.0f;
 	mtx._42 = 0.0f;
 	mtx._43 = 0.0f;
 	invMat = XMLoadFloat4x4(&mtx);
-	dir_l=XMVector3TransformCoord(_lay.dir, invMat);
+	dir_l = XMVector3Transform(_lay.dir, invMat);
 
 	// 交差判定
 	std::array<float, 3> p = { p_l.m128_f32[0],p_l.m128_f32[1],p_l.m128_f32[2] };
 	std::array<float, 3> d = { dir_l.m128_f32[0],dir_l.m128_f32[1],dir_l.m128_f32[2] };
-	std::array<float, 3> min = { p_l.m128_f32[0],p_l.m128_f32[1],p_l.m128_f32[2] };
-	std::array<float, 3> max = { dir_l.m128_f32[0],dir_l.m128_f32[1],dir_l.m128_f32[2] };
+	std::array<float, 3> min = { vmin.m128_f32[0],vmin.m128_f32[1],vmin.m128_f32[2] };
+	std::array<float, 3> max = { vmax.m128_f32[0],vmax.m128_f32[1],vmax.m128_f32[2] };
 
 	*_t = -FLT_MAX;
 	float t_max = FLT_MAX;
@@ -248,7 +217,6 @@ bool Collision::CheckRayRangePlane(const Ray& _lay, const Box& _box,
 	}
 
 	return true;
-
 }
 
 bool Collision::CheckRay2Plane(const Ray& _lay, const Plane& _plane, float* _distance, DirectX::XMVECTOR* _inter)

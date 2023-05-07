@@ -14,6 +14,7 @@ private:// エイリアス
 	using XMFLOAT2 = DirectX::XMFLOAT2;
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 	using XMFLOAT4 = DirectX::XMFLOAT4;
+	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
 	using XMINT3 = DirectX::XMINT3;
 	using XMINT4 = DirectX::XMINT4;
@@ -26,11 +27,12 @@ private:// エイリアス
 	struct BOX_INFO {
 		TYPE type = TYPE::NONE;
 		XMFLOAT3 pos;
+		XMMATRIX worldMat;
 	};
 
 	//設置可能場所の面
 	struct FACE_INFO {
-		bool isDraw = false;
+		int isPossibleHit = false;
 		XMFLOAT3 pos;
 		XMFLOAT3 rota;
 		XMFLOAT4 color = { 1.0f,1.0f ,1.0f ,1.0f };
@@ -42,6 +44,11 @@ private:// エイリアス
 		std::array<FACE_INFO,3> face;
 	};
 	
+	struct HIT_INFO {
+		float dist;
+		XMVECTOR hitPos;
+	};
+
 public:
 
 	Map() {};
@@ -65,8 +72,9 @@ public:
 	/// 更新
 	/// </summary>
 	/// <param name="_pos">座標</param>
-	/// <param name="cameraTarget">カメラのターゲット</param>
-	void Update(const XMFLOAT3& _pos, const XMFLOAT3& cameraTarget);
+	/// <param name="_cameraTarget">カメラのターゲット</param>
+	/// <param name="_kaburi">imguiと被っているか</param>
+	void Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool _kaburi);
 
 	/// <summary>
 	/// 描画
@@ -87,7 +95,15 @@ public:
 	/// <summary>
 	/// ボックスの設置
 	/// </summary>
-	void AddBox();
+	/// <param name="_cameraPos">カメラ座標</param>
+	void AddBox(const XMFLOAT3& _cameraPos);
+
+	/// <summary>
+	/// ボックスの削除
+	/// </summary>
+	/// <param name="_cameraPos">カメラ座標</param>
+	void DeleteBox(const XMFLOAT3& _cameraPos);
+
 
 	/// <summary>
 	/// マップ出力
@@ -113,8 +129,9 @@ private:
 	/// <param name="_point1">座標</param>
 	/// <param name="_point2">座標</param>
 	/// <param name="_boxMat">ワールド行列</param>
-	/// <returns>衝突距離</returns>
-	float ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMATRIX& _boxMat);
+	/// <param name="_hitInfo">交差情報</param>
+	/// <returns>衝突したか</returns>
+	bool ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMATRIX& _boxMat, HIT_INFO* _hitInfo);
 
 	/// <summary>
 	/// 初期化
@@ -132,12 +149,6 @@ private:
 	/// 面生成
 	/// </summary>
 	void CreateFace();
-
-	/// <summary>
-	/// 配置場所移動
-	/// </summary>
-	/// <param name="_angle">カメラ角度</param>
-	void Move(const float _angle);
 
 private:
 
@@ -169,5 +180,14 @@ private:
 
 	//現在の指定面
 	XMINT4 pointface;
+	//接触座標
+	HIT_INFO hitInfo;
+	//設置ボックスとレイが当たっているか
+	bool isHitBox;
+
+public:
+
+	XMINT3 GetDelimitNum() { return delimitNum; }
+
 };
 

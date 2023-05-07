@@ -24,6 +24,12 @@ public://静的メンバ関数
 	~PrimitiveObject3D();
 
 	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <returns></returns>
+	static std::unique_ptr<PrimitiveObject3D> Create();
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	static void PreDraw();
@@ -52,6 +58,11 @@ public://メンバ関数
 	/// //描画
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// 頂点情報の再設定
+	/// </summary>
+	void VertexInit();
 
 private://静的メンバ変数
 

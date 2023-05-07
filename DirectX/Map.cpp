@@ -25,18 +25,35 @@ void Map::WorldMat(const XMFLOAT3& _pos, const XMFLOAT3& _scale, const XMFLOAT3&
 	_worldMat *= matTrans;
 }
 
-float Map::ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2,const XMMATRIX& _boxMat) {
+bool Map::ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMATRIX& _boxMat, HIT_INFO* _hitInfo) {
 	Box box;
 	box.point1 = _point1;
 	box.point2 = _point2;
 
-	float t;
+	HIT_INFO rNum;
 
-	if (Collision::CheckRayRangePlane(mouseLay, box, _boxMat, &t, nullptr)) {
-		return t;
+	if (Collision::CheckRayAabb(mouseLay, box, _boxMat, &rNum.dist, &rNum.hitPos)) {
+		if ((mouseLay.dir.m128_f32[0] < 0 && mouseLay.start.m128_f32[0] < rNum.hitPos.m128_f32[0]) ||
+			(mouseLay.dir.m128_f32[0] > 0 && mouseLay.start.m128_f32[0] > rNum.hitPos.m128_f32[0]) ||
+			(mouseLay.dir.m128_f32[1] < 0 && mouseLay.start.m128_f32[1] < rNum.hitPos.m128_f32[1]) ||
+			(mouseLay.dir.m128_f32[1] > 0 && mouseLay.start.m128_f32[1] > rNum.hitPos.m128_f32[1]) || 
+			(mouseLay.dir.m128_f32[2] < 0 && mouseLay.start.m128_f32[2] < rNum.hitPos.m128_f32[2]) ||
+			(mouseLay.dir.m128_f32[2] > 0 && mouseLay.start.m128_f32[2] > rNum.hitPos.m128_f32[2])) {
+			if (_hitInfo) {
+				_hitInfo->dist = 501.0f;
+			}
+			return false;
+		}
+		if (_hitInfo) {
+			*_hitInfo = rNum;
+		}
+		return true;
 	}
 
-	return 501.0f;
+	if (_hitInfo) {
+		_hitInfo->dist = 501.0f;
+	}
+	return false;
 }
 
 std::unique_ptr<Map> Map::Create(const float _delimitSize, const XMINT3& _delimitNum)
@@ -59,14 +76,18 @@ void Map::ChangeDelimitNum(const XMINT3& _delimitNum)
 	CreateFace();
 }
 
-void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& cameraTarget)
+void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool _kaburi)
 {
+	//現在の配置場所
 	{
 		mouseLay.start = { _pos.x,_pos.y,_pos.z };
-		mouseLay.dir = { cameraTarget.x - _pos.x,cameraTarget.y - _pos.y,cameraTarget.z - _pos.y };
+		mouseLay.dir = { _cameraTarget.x - _pos.x ,_cameraTarget.y - _pos.y,_cameraTarget.z - _pos.z };
 		mouseLay.dir = DirectX::XMVector3Normalize(mouseLay.dir);
 
-		float hitDist = 500.0f;
+		//情報初期化
+		hitInfo.dist = 501.0f;
+
+		HIT_INFO hinfo;
 		const float zure = delimitSize / 2.0f;
 		//面更新
 		int xx = 0, yy = 0, zz = 0;
@@ -76,56 +97,61 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& cameraTarget)
 			{
 				for (auto& x : z)
 				{
-					float hitDistNow = 0;
 					//xz平面
-					if (x.face[0].isDraw) {
+					if (x.face[0].isPossibleHit) {
 						//色初期化
-						x.face[0].color={1,1,1,1};
+						x.face[0].color = { 1,1,1,1 };
 						//ワールド行列
 						WorldMat(x.face[0].pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f },
 							x.face[0].rota, x.face[0].worldMat);
 						//判定
-						hitDistNow = ColRayBox({ x.face[0].pos.x - zure ,x.face[0].pos.y,x.face[0].pos.z - zure },
-							{ x.face[0].pos.x + zure ,x.face[0].pos.y,x.face[0].pos.z + zure },x.face[0].worldMat);
+						if (ColRayBox({ x.face[0].pos.x - zure ,x.face[0].pos.y - 0.05f,x.face[0].pos.z - zure },
+							{ x.face[0].pos.x + zure ,x.face[0].pos.y + 0.05f,x.face[0].pos.z + zure },
+							x.face[0].worldMat, &hinfo)) {
 
-						//近い方に更新
-						if (hitDist > hitDistNow) {
-							hitDist = hitDistNow;
-							pointface = { xx,yy,zz,0 };
+							//近い方に更新
+							if (hitInfo.dist > hinfo.dist) {
+								hitInfo = hinfo;
+								pointface = { xx,yy,zz,0 };
+							}
 						}
 					}
 					//xy平面
-					if (x.face[1].isDraw) {
+					if (x.face[1].isPossibleHit) {
 						//色初期化
 						x.face[1].color = { 1,1,1,1 };
 						//ワールド行列
 						WorldMat(x.face[1].pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f },
 							x.face[1].rota, x.face[1].worldMat);
 						//判定
-						hitDistNow = ColRayBox({ x.face[1].pos.x - zure ,x.face[1].pos.y,x.face[1].pos.z - zure },
-							{ x.face[1].pos.x + zure ,x.face[1].pos.y,x.face[0].pos.z + zure },x.face[1].worldMat);
+						if (ColRayBox({ x.face[1].pos.x - zure ,x.face[1].pos.y - zure,x.face[1].pos.z - 0.05f },
+							{ x.face[1].pos.x + zure ,x.face[1].pos.y + zure,x.face[1].pos.z + 0.05f },
+							x.face[1].worldMat, &hinfo)) {
 
-						//近い方に更新
-						if (hitDist > hitDistNow) {
-							hitDist = hitDistNow;
-							pointface = { xx,yy,zz,1 };
+							//近い方に更新
+							if (hitInfo.dist > hinfo.dist) {
+								hitInfo = hinfo;
+								pointface = { xx,yy,zz,1 };
+							}
 						}
 					}
 					//yz平面
-					if (x.face[2].isDraw) {
+					if (x.face[2].isPossibleHit) {
 						//色初期化
 						x.face[2].color = { 1,1,1,1 };
 						//ワールド行列
 						WorldMat(x.face[2].pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f },
 							x.face[2].rota, x.face[2].worldMat);
 						//判定
-						hitDistNow = ColRayBox({ x.face[2].pos.x - zure ,x.face[2].pos.y,x.face[2].pos.z - zure },
-							{ x.face[2].pos.x + zure ,x.face[2].pos.y,x.face[2].pos.z + zure },x.face[2].worldMat);
+						if (ColRayBox({ x.face[2].pos.x - 0.05f ,x.face[2].pos.y - zure,x.face[2].pos.z - zure },
+							{ x.face[2].pos.x + 0.05f ,x.face[2].pos.y + zure,x.face[2].pos.z + zure },
+							x.face[2].worldMat, &hinfo)) {
 
-						//近い方に更新
-						if (hitDist > hitDistNow) {
-							hitDist = hitDistNow;
-							pointface = { xx,yy,zz,2 };
+							//近い方に更新
+							if (hitInfo.dist > hinfo.dist) {
+								hitInfo = hinfo;
+								pointface = { xx,yy,zz,2 };
+							}
 						}
 					}
 					xx++;
@@ -137,57 +163,84 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& cameraTarget)
 			yy++;
 		}
 
-		DebugText* text = DebugText::GetInstance();
-		text->Print("hitNum x y z w : " + std::to_string(pointface.x) + ":" + std::to_string(pointface.y) + ":"
-			+ std::to_string(pointface.z) + ":" + std::to_string(pointface.w), 100, 425);
-		text = nullptr;
-	}
-
-	int xx = -1, yy = -1, zz = -1;
-	//面描画指定
-	for (auto& y : faceInfo)
-	{
-		yy++;
-		for (auto& z : y)
+		//設置されているブロックとの判定
+		isHitBox = false;
+		for (auto& y : boxInfo)
 		{
-			zz++;
-			for (auto& x : z)
+			for (auto& z : y)
 			{
-				xx++;
-				for (auto& itr : faceObject)
+				for (auto& x : z)
 				{
-					if (!itr->GetInstanceDrawCheck()) { continue; }
-					//xz平面
-					if (x.face[0].isDraw) {
-						if (pointface.x == xx && pointface.y == yy && pointface.z == zz && pointface.w == 0) {
-							itr->DrawInstance(x.face[0].worldMat, COLOR[1]);
-						} else {
-							itr->DrawInstance(x.face[0].worldMat, COLOR[0]);
-						}
+					if (x.type != TYPE::NORMAL) { continue; }
+					WorldMat(x.pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, x.worldMat);
+					//判定
+					if (!ColRayBox({ x.pos.x - zure ,x.pos.y - zure,x.pos.z - zure },
+						{ x.pos.x + zure ,x.pos.y + zure,x.pos.z + zure }, x.worldMat, &hinfo)) {
+						continue;
 					}
-					//xy平面
-					if (x.face[1].isDraw) {
-						if (pointface.x == xx && pointface.y == yy && pointface.z == zz && pointface.w == 1) {
-							itr->DrawInstance(x.face[1].worldMat, COLOR[1]);
-						} else {
-							itr->DrawInstance(x.face[1].worldMat, COLOR[0]);
-						}
-					}
-					//yz平面
-					if (x.face[2].isDraw) {
-						if (pointface.x == xx && pointface.y == yy && pointface.z == zz && pointface.w == 2) {
-							itr->DrawInstance(x.face[2].worldMat, COLOR[1]);
-						} else {
-							itr->DrawInstance(x.face[2].worldMat, COLOR[0]);
-						}
-					}
+
+					if (!(hitInfo.dist > hinfo.dist)) { continue; }
+					isHitBox = true;
 					break;
 				}
 			}
-			xx = -1;
 		}
-		zz = -1;
+
+		//DebugText* text = DebugText::GetInstance();
+		//text->Print("hitNum x y z w : " + std::to_string(pointface.x) + ":" + std::to_string(pointface.y) + ":"
+		//	+ std::to_string(pointface.z) + ":" + std::to_string(pointface.w), 100, 425);
+		//text = nullptr;
 	}
+
+	if (!isHitBox && !_kaburi) {
+		faceObject[0]->DrawInstance(faceInfo[pointface.y][pointface.z][pointface.x].face[pointface.w].worldMat, COLOR[1]);
+	}
+	
+	//int xx = -1, yy = -1, zz = -1;
+	////面描画指定
+	//for (auto& y : faceInfo)
+	//{
+	//	yy++;
+	//	for (auto& z : y)
+	//	{
+	//		zz++;
+	//		for (auto& x : z)
+	//		{
+	//			xx++;
+	//			for (auto& itr : faceObject)
+	//			{
+	//				if (!itr->GetInstanceDrawCheck()) { continue; }
+	//				//xz平面
+	//				if (x.face[0].isPossibleHit) {
+	//					if (pointface.x == xx && pointface.y == yy && pointface.z == zz && pointface.w == 0) {
+	//						itr->DrawInstance(x.face[0].worldMat, COLOR[1]);
+	//					} else {
+	//						itr->DrawInstance(x.face[0].worldMat, COLOR[0]);
+	//					}
+	//				}
+	//				//xy平面
+	//				if (x.face[1].isPossibleHit) {
+	//					if (pointface.x == xx && pointface.y == yy && pointface.z == zz && pointface.w == 1) {
+	//						itr->DrawInstance(x.face[1].worldMat, COLOR[1]);
+	//					} else {
+	//						itr->DrawInstance(x.face[1].worldMat, COLOR[0]);
+	//					}
+	//				}
+	//				//yz平面
+	//				if (x.face[2].isPossibleHit) {
+	//					if (pointface.x == xx && pointface.y == yy && pointface.z == zz && pointface.w == 2) {
+	//						itr->DrawInstance(x.face[2].worldMat, COLOR[1]);
+	//					} else {
+	//						itr->DrawInstance(x.face[2].worldMat, COLOR[0]);
+	//					}
+	//				}
+	//				break;
+	//			}
+	//		}
+	//		xx = -1;
+	//	}
+	//	zz = -1;
+	//}
 
 	//ボックス更新
 	for (auto& y : boxInfo)
@@ -197,7 +250,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& cameraTarget)
 			for (auto& x : z)
 			{
 				if (x.type != TYPE::NORMAL) { continue; }
-				boxObject->DrawInstance(x.pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f,1.0f });
+				boxObject->DrawInstance(x.worldMat, { 1.0f,1.0f,1.0f,1.0f });
 			}
 		}
 	}
@@ -215,7 +268,7 @@ void Map::InstanceDraw()
 		if (itr->GetInstanceDrawNum() == 0) { continue; }
 		itr->Draw();
 	}
-
+	
 	//ボックス描画
 	boxObject->Draw();
 }
@@ -270,8 +323,8 @@ void Map::LoadMap(const std::string _fileName)
 	for (int y = 0; y < _size.y; y++) {
 		boxInfo[y].resize(_size.z);
 		for (int z = 0; z < _size.z; z++) {
-			boxInfo[y][z].resize(_size.y);
-			for (int x = 0; x < _size.y; x++) {
+			boxInfo[y][z].resize(_size.x);
+			for (int x = 0; x < _size.x; x++) {
 				boxInfo[y][z][x].type = TYPE(_map[y][z][x]);
 				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
 			}
@@ -279,17 +332,433 @@ void Map::LoadMap(const std::string _fileName)
 	}
 }
 
-void Map::AddBox()
+void Map::AddBox(const XMFLOAT3& _cameraPos)
 {
-	//if (boxInfo[mapNum.y][mapNum.z][mapNum.x].type == TYPE::NONE) { return; }
-	//boxInfo[mapNum.y][mapNum.z][mapNum.x].type = TYPE::NORMAL;
+	//設置されたボックスと当たっている時は新しいボックスを設置しない
+	if (isHitBox) {
+		return;
+	}
+	//カメラと設置面との位置関係
+	XMFLOAT3 zure = {};
+	zure.x = hitInfo.hitPos.m128_f32[0] - _cameraPos.x;
+	zure.y = hitInfo.hitPos.m128_f32[1] - _cameraPos.y;
+	zure.z = hitInfo.hitPos.m128_f32[2] - _cameraPos.z;
 
-	//if (mapNum.y != 0 && boxInfo[mapNum.y - 1][mapNum.z][mapNum.x].type == TYPE::NONE) {
-	//	
-	//} else {
+	//xz平面の時
+	if (pointface.w == 0) {
+		if (pointface.y == 0 || (zure.y < 0&& pointface.y != delimitNum.y)) {
+			//設置
+			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NORMAL;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+		} else if (pointface.y == delimitNum.y || zure.y > 0) {
+			//設置
+			boxInfo[pointface.y - 1][pointface.z][pointface.x].type = TYPE::NORMAL;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = true;;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+		}
+		return;
+	}
+	//xy平面の時
+	if (pointface.w == 1) {
+		if (pointface.z == 0 || (zure.z < 0 && pointface.z != delimitNum.z)) {
+			//設置
+			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NORMAL;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+		} else if (pointface.z == delimitNum.z || zure.z > 0) {
+			//設置
+			boxInfo[pointface.y][pointface.z - 1][pointface.x].type = TYPE::NORMAL;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = true;;
+			}
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+		}
+		return;
+	}
+	//yz平面の時
+	if (pointface.w == 2) {
+		if (pointface.x == 0 || (zure.x < 0 && pointface.x != delimitNum.x)) {
+			//設置
+			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NORMAL;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
 
-	//}
+		} else if (pointface.x == delimitNum.x || zure.x > 0) {
+			//設置
+			boxInfo[pointface.y][pointface.z][pointface.x - 1].type = TYPE::NORMAL;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = true;;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = true;
+			}
+		}
+		return;
+	}
+}
 
+void Map::DeleteBox(const XMFLOAT3& _cameraPos)
+{
+	//カメラと設置面との位置関係
+	XMFLOAT3 zure = {};
+	zure.x = hitInfo.hitPos.m128_f32[0] - _cameraPos.x;
+	zure.y = hitInfo.hitPos.m128_f32[1] - _cameraPos.y;
+	zure.z = hitInfo.hitPos.m128_f32[2] - _cameraPos.z;
+
+	//xz平面の時
+	if (pointface.w == 0) {
+		//上から
+		if (pointface.y != 0 && zure.y < 0 && boxInfo[pointface.y - 1][pointface.z][pointface.x].type == TYPE::NORMAL) {
+			//削除
+			boxInfo[pointface.y - 1][pointface.z][pointface.x].type = TYPE::NONE;
+			//設置可不可変更
+			faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+		} else if (pointface.y != delimitNum.y && zure.y > 0 && boxInfo[pointface.y][pointface.z][pointface.x].type == TYPE::NORMAL) {
+			//削除
+			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NONE;
+			//設置可不可変更
+			faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+		}
+		return;
+	}
+	//xy平面の時
+	if (pointface.w == 1) {
+		if (pointface.z != 0 && zure.z < 0 && boxInfo[pointface.y][pointface.z - 1][pointface.x].type == TYPE::NORMAL) {
+			//削除
+			boxInfo[pointface.y][pointface.z - 1][pointface.x].type = TYPE::NONE;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = true;;
+			}
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+		} else if (pointface.z != delimitNum.z && zure.z > 0 && boxInfo[pointface.y][pointface.z][pointface.x].type == TYPE::NORMAL) {
+			//削除
+			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NONE;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+		}
+		return;
+	}
+	//yz平面の時
+	if (pointface.w == 2) {
+		if (pointface.x != 0 && zure.x < 0 && boxInfo[pointface.y][pointface.z][pointface.x - 1].type == TYPE::NORMAL) {
+			//設置
+			boxInfo[pointface.y][pointface.z][pointface.x - 1].type = TYPE::NONE;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = true;;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = true;
+			}
+		} else if (pointface.x != delimitNum.x && zure.x > 0 && boxInfo[pointface.y][pointface.z][pointface.x].type == TYPE::NORMAL) {
+			//削除
+			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NONE;
+			//設置不可
+			faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+			//不可状態なら可能に、可能状態なら不可状態にする
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			}
+			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+			} else {
+				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			}
+
+		}
+		return;
+	}
 }
 
 void Map::OutputMap(const std::string& _fileName, float _cameraDist)
@@ -317,8 +786,7 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	//区切り個数
 	delimitNum = _delimitNum;
 
-	lineObject = std::make_unique<PrimitiveObject3D>();
-	lineObject->UpdateWorldMatrix();
+	lineObject = PrimitiveObject3D::Create();
 	isChange = false;
 
 	faceModel = Model::CreateFromOBJ("Face");
@@ -328,15 +796,31 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 		itr->SetBloom(false);
 		itr->SetLight(false);
 	}
+	
 	//線と接地面の生成
 	CreateLine();
 	CreateFace();
+
+	//ボックス生成
+	boxInfo.clear();
+	boxInfo.resize(delimitNum.y);
+
+	for (int y = 0; y < delimitNum.y; y++) {
+		boxInfo[y].resize(delimitNum.z);
+		for (int z = 0; z < delimitNum.z; z++) {
+			boxInfo[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
+				boxInfo[y][z][x].type = TYPE::NONE;
+				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+			}
+		}
+	}
 
 	//ボックス初期化
 	boxModel = Model::CreateFromOBJ("NormalCube");
 	boxObject = InstanceObject::Create(boxModel.get());
 	boxObject->SetBloom(false);
-	boxObject->SetLight(false);
+	boxObject->SetLight(true);
 
 	pointface = { 0,0,0,0 };
 }
@@ -399,7 +883,7 @@ void Map::CreateLine()
 		}
 	}
 
-	lineObject->Initialize();
+	lineObject->VertexInit();
 
 	isChange = false;
 }
@@ -423,7 +907,7 @@ void Map::CreateFace()
 				FACE_CHIP& one_chip = faceInfo[y][z][x];
 				//xz
 				if ((y == 0 || y == delimitNum.y) && x != delimitNum.x && z != delimitNum.z) {
-					one_chip.face[0].isDraw = true;
+					one_chip.face[0].isPossibleHit = true;
 				}
 				one_chip.face[0].pos = { delimitSize / 2.0f + x * delimitSize,
 					y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
@@ -431,7 +915,7 @@ void Map::CreateFace()
 
 				//xy
 				if ((z == 0 || z == delimitNum.z) && x != delimitNum.x && y != delimitNum.y) {
-					one_chip.face[1].isDraw = true;
+					one_chip.face[1].isPossibleHit = true;
 				}
 				one_chip.face[1].pos = { delimitSize / 2.0f + x * delimitSize,
 					delimitSize / 2.0f + y * delimitSize ,z * delimitSize };
@@ -439,7 +923,7 @@ void Map::CreateFace()
 
 				//yz
 				if ((x == 0 || x == delimitNum.x) && y != delimitNum.y && z != delimitNum.z) {
-					one_chip.face[2].isDraw = true;
+					one_chip.face[2].isPossibleHit = true;
 				}
 				one_chip.face[2].pos = { x * delimitSize,
 					delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
@@ -448,154 +932,3 @@ void Map::CreateFace()
 		}
 	}
 }
-
-//void Map::Move(const float _angle)
-//{
-//	DirectInput* input = DirectInput::GetInstance();
-//
-//	enum key {
-//		pz,
-//		mz,
-//		px,
-//		mx
-//	};
-//
-//	//+z/-z/+x/+y
-//	std::array<bool, 4> key = { false,false,false,false };
-//
-//	//入力
-//	{
-//		//前
-//		if (input->PushKey(DIK_W)) {
-//			if (_angle > -45 && _angle < 45) {
-//				key[mz] = true;
-//			} else if((_angle >= 45 && _angle < 135)||(_angle >= -225 && _angle < -315)) {
-//				key[px] = true;
-//			} else if ((_angle >= 135 && _angle < 225) || (_angle >= -225 && _angle < -135)) {
-//				key[pz] = true;
-//			} else {
-//				key[mx] = true;
-//			}
-//		}
-//		//後
-//		if (input->PushKey(DIK_S)) {
-//			if (_angle > -45 && _angle < 45) {
-//				key[pz] = true;
-//			} else if ((_angle >= 45 && _angle < 135) || (_angle >= -225 && _angle < -315)) {
-//				key[mx] = true;
-//			} else if ((_angle >= 135 && _angle < 225) || (_angle >= -225 && _angle < -135)) {
-//				key[mz] = true;
-//			} else {
-//				key[px] = true;
-//			}
-//		}
-//		//右
-//		if (input->PushKey(DIK_D)) {
-//			if (_angle > -45 && _angle < 45) {
-//				key[mx] = true;
-//			} else if ((_angle >= 45 && _angle < 135) || (_angle >= -225 && _angle < -315)) {
-//				key[pz] = true;
-//			} else if ((_angle >= 135 && _angle < 225) || (_angle >= -225 && _angle < -135)) {
-//				key[mx] = true;
-//			} else {
-//				key[mz] = true;
-//			}
-//		}
-//		//左
-//		if (input->PushKey(DIK_A)) {
-//			if (_angle > -45 && _angle < 45) {
-//				key[px] = true;
-//			} else if ((_angle >= 45 && _angle < 135) || (_angle >= -225 && _angle < -315)) {
-//				key[mz] = true;
-//			} else if ((_angle >= 135 && _angle < 225) || (_angle >= -225 && _angle < -135)) {
-//				key[px] = true;
-//			} else {
-//				key[pz] = true;
-//			}
-//		}
-//	}
-//
-//	//enum F_point {
-//	//	Px,
-//	//	Py,
-//	//	Pz,
-//	//	Pw,
-//	//	IN_OUT,
-//	//	SIZE
-//	//};
-//
-//	//+z方向
-//	if (key[pz])
-//	{
-//		//xz平面にいる時
-//		if (pointface.w == 0) {
-//			//xz平面で奥に移動
-//			//前下が接地面である、前方にオブジェクトが存在しない
-//			if (pointface[Pz] + 1 < delimitNum.x && faceInfo[pointface[Py]][pointface[Pz] + 1][pointface[Px]].face[0].isDraw&&
-//				((pointface[IN_OUT] == 0 && !faceInfo[pointface[Py]][pointface[Pz] + 1][pointface[Px]].face[1].isDraw)||
-//					(pointface[IN_OUT] == 1 && !faceInfo[pointface[Py] - 1][pointface[Pz] + 1][pointface[Px]].face[1].isDraw))) {
-//				pointface[Pz]++;
-//			}
-//			//xz平面からxy平面上に移動
-//			//中は前方にオブジェクトが存在する、外は前に接地面が無い
-//			else if (pointface[Pz] + 1 == delimitNum.x ||
-//				((pointface[IN_OUT] == 0 && faceInfo[pointface[Py]][pointface[Pz] + 1][pointface[Px]].face[1].isDraw) ||
-//					(pointface[IN_OUT] == 1 && !faceInfo[pointface[Py] - 1][pointface[Pz] + 1][pointface[Px]].face[1].isDraw))) {
-//				pointface[Pz]++;
-//				pointface[Pw] = 1;
-//				//面移動の際に中外が変わる
-//				if (pointface[IN_OUT] == 1) {
-//					pointface[IN_OUT] = 0;
-//				} else {
-//					pointface[IN_OUT] = 1;
-//				}
-//			}
-//			//xz平面からxy平面下に移動
-//			else if (pointface[Pz] + 1 == delimitNum.x ||
-//				((pointface[IN_OUT] == 0 && faceInfo[pointface[Py]][pointface[Pz] + 1][pointface[Px]].face[1].isDraw) ||
-//					(pointface[IN_OUT] == 1 && !faceInfo[pointface[Py] - 1][pointface[Pz] + 1][pointface[Px]].face[1].isDraw))) {
-//				pointface.z++;
-//				pointface.y--;
-//				pointface.w = 1;
-//			}
-//		}
-//		//xy平面にいる時
-//		else if (pointface.w == 1) {
-//			//xy平面で上に移動
-//			if (pointface.y + 1 < delimitNum.y && faceInfo[pointface.y + 1][pointface.z][pointface.x].face[1].isDraw) {
-//				pointface.y++;
-//			}
-//			//xy平面からxz平面前に移動
-//			else if (pointface.y + 1 == delimitNum.y || faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isDraw) {
-//				pointface.y++;
-//				pointface.z--;
-//				pointface.w = 0;
-//			}
-//			//xy平面からxz平面奥に移動
-//			else if (pointface.y + 1 <= delimitNum.y && !faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isDraw) {
-//				pointface.y++;
-//				pointface.w = 0;
-//			}
-//		}
-//		//xy平面にいる時
-//		else if (pointface.w == 2) {
-//			//yz平面で奥に移動
-//			if (pointface.z + 1 < delimitNum.z && !faceInfo[pointface.y][pointface.z+ 1][pointface.x].face[1].isDraw) {
-//				pointface.y++;
-//			}
-//			//xy平面からxz平面前に移動
-//			else if (pointface.y + 1 == delimitNum.y || faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isDraw) {
-//				pointface.y++;
-//				pointface.z--;
-//				pointface.w = 0;
-//			}
-//			//xy平面からxz平面奥に移動
-//			else if (pointface.y + 1 <= delimitNum.y && !faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isDraw) {
-//				pointface.y++;
-//				pointface.w = 0;
-//			}
-//		}
-//
-//	input = nullptr;
-//}
-//}

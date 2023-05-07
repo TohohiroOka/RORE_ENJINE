@@ -66,7 +66,6 @@ private:
 	/// <returns>ワールド座標</returns>
 	Vector3* CalcScreenToWorld(Vector3* _pout, XMFLOAT2 _screenPos, float fz);
 
-
 private:
 
 	Camera* camera;
@@ -80,6 +79,12 @@ private:
 	std::unique_ptr<Map> map;
 	//線を描画するかのフラグ
 	bool isDrawLine;
+	//オブジェクト設置フラグ
+	bool isAdd;
+	bool frame;
 
-	std::unique_ptr<PrimitiveObject3D> lineObject = nullptr;
+	//imgui
+	XMFLOAT2 imguiPos;
+	const XMFLOAT2 imguiMax = { 300,300 };
+	bool kaburi;
 };
