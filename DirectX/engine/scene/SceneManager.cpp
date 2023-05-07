@@ -138,7 +138,6 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 3;
 		inPepeline.rtvNum = 3;
 
 		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
@@ -159,7 +158,6 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 3;
 		inPepeline.rtvNum = 3;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 
@@ -182,7 +180,6 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 1;
 
 		inSignature.instanceDraw = false;
@@ -204,7 +201,6 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 3;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 
@@ -230,7 +226,6 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
 		inPepeline.rtvNum = 1;
 
 		inSignature.object2d = false;
@@ -256,7 +251,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
+		inPepeline.rtvNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 
 		inSignature.object2d = false;
@@ -281,7 +276,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
+		inPepeline.rtvNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 		inSignature.object2d = true;
@@ -306,7 +301,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 2;
+		inPepeline.rtvNum = 2;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
 		inPepeline.particl = true;
@@ -333,7 +328,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.stateNum = 1;
+		inPepeline.rtvNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 		inPepeline.particl = false;

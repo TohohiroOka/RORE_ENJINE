@@ -167,7 +167,7 @@ private:
 
 	//設置可能場所の面
 	std::unique_ptr<Model> faceModel;
-	std::array<std::unique_ptr<InstanceObject>, 15> faceObject;
+	std::unique_ptr<InstanceObject> faceObject;
 	std::vector<std::vector<std::vector<FACE_CHIP>>> faceInfo;
 
 	//mapのボックス

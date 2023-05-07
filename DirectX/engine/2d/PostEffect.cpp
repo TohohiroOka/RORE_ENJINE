@@ -227,9 +227,10 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* _cmdList)
 	// 定数バッファへデータ転送
 	CONST_BUFFER_DATA* constMap = nullptr;
 	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);
+	if (FAILED(result)) { assert(0); }
 	constMap->outlineColor = InterfaceObject3d::GetOutlineColor();
-	constMap->outlineWidth = InterfaceObject3d::GetOutlineWidth();
-	constMap->isFog = isFog;
+		constMap->outlineWidth = InterfaceObject3d::GetOutlineWidth();
+		constMap->isFog = isFog;
 	constBuff->Unmap(0, nullptr);
 
 	// パイプラインステートの設定

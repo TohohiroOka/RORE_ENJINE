@@ -98,7 +98,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 
 	//ブレンドモード設定
 	D3D12_RENDER_TARGET_BLEND_DESC blenddesc = CreateBlendDesc(_pepelineDescSet.blendMode);
-	for (int i = 0; i < _pepelineDescSet.stateNum; i++)
+	for (int i = 0; i < _pepelineDescSet.rtvNum; i++)
 	{
 		gpipeline.BlendState.RenderTarget[i] = blenddesc;
 	}

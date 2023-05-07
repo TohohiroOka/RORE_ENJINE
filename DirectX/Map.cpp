@@ -163,29 +163,32 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 			yy++;
 		}
 
-		//設置されているブロックとの判定
-		isHitBox = false;
-		for (auto& y : boxInfo)
-		{
-			for (auto& z : y)
+		if (hitInfo.dist != 501.0f) {
+			//設置されているブロックとの判定
+			isHitBox = false;
+			for (auto& y : boxInfo)
 			{
-				for (auto& x : z)
+				for (auto& z : y)
 				{
-					if (x.type != TYPE::NORMAL) { continue; }
-					WorldMat(x.pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, x.worldMat);
-					//判定
-					if (!ColRayBox({ x.pos.x - zure ,x.pos.y - zure,x.pos.z - zure },
-						{ x.pos.x + zure ,x.pos.y + zure,x.pos.z + zure }, x.worldMat, &hinfo)) {
-						continue;
-					}
+					for (auto& x : z)
+					{
+						if (x.type != TYPE::NORMAL) { continue; }
+						WorldMat(x.pos, { delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, x.worldMat);
+						//判定
+						if (!ColRayBox({ x.pos.x - zure ,x.pos.y - zure,x.pos.z - zure },
+							{ x.pos.x + zure ,x.pos.y + zure,x.pos.z + zure }, x.worldMat, &hinfo)) {
+							continue;
+						}
 
-					if (!(hitInfo.dist > hinfo.dist)) { continue; }
-					isHitBox = true;
-					break;
+						if (!(hitInfo.dist > hinfo.dist)) { continue; }
+						isHitBox = true;
+						break;
+					}
 				}
 			}
+		} else {
+			isHitBox = true;
 		}
-
 		//DebugText* text = DebugText::GetInstance();
 		//text->Print("hitNum x y z w : " + std::to_string(pointface.x) + ":" + std::to_string(pointface.y) + ":"
 		//	+ std::to_string(pointface.z) + ":" + std::to_string(pointface.w), 100, 425);
@@ -193,7 +196,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 	}
 
 	if (!isHitBox && !_kaburi) {
-		faceObject[0]->DrawInstance(faceInfo[pointface.y][pointface.z][pointface.x].face[pointface.w].worldMat, COLOR[1]);
+		faceObject->DrawInstance(faceInfo[pointface.y][pointface.z][pointface.x].face[pointface.w].worldMat, COLOR[1]);
 	}
 	
 	//int xx = -1, yy = -1, zz = -1;
@@ -264,11 +267,9 @@ void Map::Draw()
 void Map::InstanceDraw()
 {
 	//面描画
-	for (auto& itr : faceObject) {
-		if (itr->GetInstanceDrawNum() == 0) { continue; }
-		itr->Draw();
+	if (faceObject->GetInstanceDrawNum() != 0) {
+		faceObject->Draw();
 	}
-	
 	//ボックス描画
 	boxObject->Draw();
 }
@@ -786,16 +787,11 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	//区切り個数
 	delimitNum = _delimitNum;
 
-	lineObject = PrimitiveObject3D::Create();
-	isChange = false;
-
 	faceModel = Model::CreateFromOBJ("Face");
 
-	for (auto& itr : faceObject) {
-		itr = InstanceObject::Create(faceModel.get());
-		itr->SetBloom(false);
-		itr->SetLight(false);
-	}
+	faceObject = InstanceObject::Create(faceModel.get());
+	faceObject->SetBloom(false);
+	faceObject->SetLight(false);
 	
 	//線と接地面の生成
 	CreateLine();
@@ -827,8 +823,9 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 
 void Map::CreateLine()
 {
-	//線配列初期化
-	lineObject->ResetVertex();
+	lineObject.reset();
+	lineObject = PrimitiveObject3D::Create();
+	isChange = false;
 
 	//線の数
 	const int lineNumx = delimitNum.x + 1;

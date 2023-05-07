@@ -64,14 +64,12 @@ public://メンバenum
 		int layoutNum = 0;
 		//頂点レイアウト設定
 		D3D12_INPUT_ELEMENT_DESC* inputLayout = nullptr;
-		//ブレンドステート設定数
-		int stateNum = 1;
+		//レンダーターゲット数
+		int rtvNum = 1;
 		//ブレンドの種類
 		BLEND_MODE blendMode = BLEND_MODE::ALPHA;
 		//描画方法
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		//レンダーターゲット数
-		int rtvNum = 1;
 	};
 
 	//ルートシグネチャ設定

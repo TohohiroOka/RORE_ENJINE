@@ -150,11 +150,10 @@ void Sprite::Update()
 	// 定数バッファにデータ転送
 	CONST_BUFFER_DATA* constMap = nullptr;
 	HRESULT result = this->constBuff->Map(0, nullptr, (void**)&constMap);
-	if (SUCCEEDED(result)) {
-		constMap->color = this->color;
-		constMap->mat = this->matWorld * matProjection;	// 行列の合成
-		this->constBuff->Unmap(0, nullptr);
-	}
+	if (FAILED(result)) { assert(0); }
+	constMap->color = this->color;
+	constMap->mat = this->matWorld * matProjection;	// 行列の合成
+	this->constBuff->Unmap(0, nullptr);
 }
 
 void Sprite::Draw()
