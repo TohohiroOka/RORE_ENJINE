@@ -79,12 +79,20 @@ private:
 	std::unique_ptr<Map> map;
 	//線を描画するかのフラグ
 	bool isDrawLine;
+
+	//設置オブジェクト管理/0プレイヤー/1ゴール/2ノーマル
+	std::array<bool,3> isSetObject;
+
 	//オブジェクト設置フラグ
-	bool isAdd;
+	bool isDelete;
 	bool frame;
 
 	//imgui
 	XMFLOAT2 imguiPos;
 	const XMFLOAT2 imguiMax = { 300,300 };
 	bool kaburi;
+
+	//マップチェンジ
+	bool mapChange;
+	XMINT3 mapChangeSize;
 };

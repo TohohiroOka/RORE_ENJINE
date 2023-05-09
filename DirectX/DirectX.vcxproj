@@ -124,7 +124,7 @@
     <ClCompile Include="engine\base\GraphicsPipelineManager.cpp" />
     <ClCompile Include="engine\base\input\DirectInput.cpp" />
     <ClCompile Include="engine\base\input\XInputManager.cpp" />
-    <ClCompile Include="engine\base\JsonLoder.cpp" />
+    <ClCompile Include="engine\base\JsonLoader.cpp" />
     <ClCompile Include="engine\base\MainEngine.cpp" />
     <ClCompile Include="engine\base\Matrix4.cpp" />
     <ClCompile Include="engine\base\Quaternion.cpp" />
@@ -334,7 +334,7 @@
     <ClInclude Include="engine\base\GraphicsPipelineManager.h" />
     <ClInclude Include="engine\base\input\DirectInput.h" />
     <ClInclude Include="engine\base\input\XInputManager.h" />
-    <ClInclude Include="engine\base\JsonLoder.h" />
+    <ClInclude Include="engine\base\JsonLoader.h" />
     <ClInclude Include="engine\base\MainEngine.h" />
     <ClInclude Include="engine\base\Matrix4.h" />
     <ClInclude Include="engine\base\PipelineHelpar.h" />

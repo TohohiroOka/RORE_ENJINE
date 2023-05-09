@@ -298,7 +298,7 @@
     <ClCompile Include="engine\3d\InstanceObject.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\JsonLoder.cpp">
+    <ClCompile Include="engine\base\JsonLoader.cpp">
       <Filter>エンジンシステム\Base\FileLoder</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
@@ -598,7 +598,7 @@
     <ClInclude Include="engine\3d\InstanceObject.h">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\JsonLoder.h">
+    <ClInclude Include="engine\base\JsonLoader.h">
       <Filter>エンジンシステム\Base\FileLoder</Filter>
     </ClInclude>
     <ClInclude Include="game\GameHelper.h">

@@ -40,7 +40,7 @@ void PrimitiveObject3D::Update()
 	CONST_BUFFER_DATA* constMap = nullptr;
 	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
 	if (SUCCEEDED(result)) {
-		constMap->color = { 1,1,1,1 };
+		constMap->color = { 0.6f,0.6f,0.6f,1.0f };
 		constMap->matWorld = matWorld;
 		if (camera != nullptr)
 		{

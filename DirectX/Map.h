@@ -21,7 +21,10 @@ private:// エイリアス
 
 	enum TYPE {
 		NONE,
+		PLAYER,
+		GOAL,
 		NORMAL,
+		SIZE,
 	};
 
 	struct BOX_INFO {
@@ -96,14 +99,13 @@ public:
 	/// ボックスの設置
 	/// </summary>
 	/// <param name="_cameraPos">カメラ座標</param>
-	void AddBox(const XMFLOAT3& _cameraPos);
+	void AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 3> _isSetObject);
 
 	/// <summary>
 	/// ボックスの削除
 	/// </summary>
 	/// <param name="_cameraPos">カメラ座標</param>
 	void DeleteBox(const XMFLOAT3& _cameraPos);
-
 
 	/// <summary>
 	/// マップ出力
@@ -149,6 +151,11 @@ private:
 	/// 面生成
 	/// </summary>
 	void CreateFace();
+
+	/// <summary>
+	/// 面の変更
+	/// </summary>
+	void ChangeFace();
 
 private:
 

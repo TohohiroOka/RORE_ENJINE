@@ -46,11 +46,12 @@ void Scene1::Initialize()
 
 	map = Map::Create();
 	isDrawLine = true;
+	isSetObject = { false,false,true };
 
 	cameraPos = { 0,0,-10 };
 	cameraTarget = { 135,0,0 };
 
-	isAdd = true;
+	isDelete = false;
 
 	imguiPos = { 0,0 };
 	kaburi = false;
@@ -62,6 +63,10 @@ void Scene1::Update()
 
 	//フレームの最初に初期化するもの
 	kaburi = false;
+	if (mapChange) {
+		map->ChangeDelimitNum(mapChangeSize);
+		mapChange = false;
+	}
 
 	//マウス座標
 	XMFLOAT2 mousePos = input->GetMousePoint();
@@ -79,8 +84,8 @@ void Scene1::Update()
 	if (!kaburi) {
 		//オブジェクト設置
 		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT) && frame) {
-			if (isAdd) {
-				map->AddBox(camera->GetEye());
+			if (!isDelete) {
+				map->AddBox(camera->GetEye(), isSetObject);
 			} else {
 				map->DeleteBox(camera->GetEye());
 			}
@@ -90,16 +95,16 @@ void Scene1::Update()
 
 	map->Update(pout, target, kaburi);
 
-	DebugText* text = DebugText::GetInstance();
+	//DebugText* text = DebugText::GetInstance();
 
-	text->Print("move          : WASD", 20, 25);
-	text->Print("camera        : ARROW", 20, 40);
-	text->Print("Add or Delete : MOUSE LEFT", 20, 55);
-	text->Print("Add or Delete model change : M", 20, 70);
-	text->Print("Line Draw Change: P", 20, 85);
-	text->Print("Output        : O", 20, 100);
+	//text->Print("move          : WASD", 20, 25);
+	//text->Print("camera        : ARROW", 20, 40);
+	//text->Print("Add or Delete : MOUSE LEFT", 20, 55);
+	//text->Print("Add or Delete model change : M", 20, 70);
+	//text->Print("Line Draw Change: P", 20, 85);
+	//text->Print("Output        : O", 20, 100);
 
-	text = nullptr;
+	//text = nullptr;
 }
 
 void Scene1::DrawNotPostB()
@@ -140,7 +145,9 @@ void Scene1::ImguiDraw()
 	static char fileName[36] = "";
 	//マップサイズ
 	const XMINT3 mapSize = map->GetDelimitNum();
-	XMINT3 nowMapSize = mapSize;
+	mapChangeSize = mapSize;
+
+	std::array<bool, 3> isSetFlag = isSetObject;
 
 	ImGui::Begin("MapEditor");
 	ImGui::SetWindowPos(ImVec2(imguiPos.x, imguiPos.y));
@@ -148,30 +155,44 @@ void Scene1::ImguiDraw()
 
 	ImGui::InputText("FileName", fileName, sizeof(fileName));
 	//出力
-	if (ImGui::Button("OK")) {
+	if (ImGui::Button("import")) {
 		map->OutputMap(fileName, 30);
 	}
-	ImGui::SliderInt("MapSize : X", &nowMapSize.x, 1, 20);
-	ImGui::SliderInt("MapSize : Y", &nowMapSize.y, 1, 20);
-	ImGui::SliderInt("MapSize : Z", &nowMapSize.z, 1, 20);
+	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 20);
+	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 20);
+	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, 20);
+	ImGui::Checkbox("Player", &isSetObject[0]);
+	ImGui::Checkbox("Goal", &isSetObject[1]);
+	ImGui::Checkbox("NormalObject", &isSetObject[2]);
 	ImGui::Checkbox("Line Draw", &isDrawLine);
-	ImGui::Checkbox("Box Delete", &isAdd);
+	ImGui::Checkbox("Box Delete", &isDelete);
 
 	ImGui::End();
 
+	//設置フラグ管理
+	if (isSetFlag[0] != isSetObject[0] && isSetObject[0]) {
+		isSetObject[1] = false;
+		isSetObject[2] = false;
+	} else if (isSetFlag[1] != isSetObject[1] && isSetObject[1]) {
+		isSetObject[0] = false;
+		isSetObject[2] = false;
+	} else if (isSetFlag[2] != isSetObject[2] && isSetObject[2]) {
+		isSetObject[0] = false;
+		isSetObject[1] = false;
+	}
+
 	//サイズ変更
-	if (nowMapSize.x != mapSize.x || nowMapSize.y != mapSize.y || nowMapSize.z != mapSize.z) {
-		map->ChangeDelimitNum(nowMapSize);
+	if (mapChangeSize.x != mapSize.x || mapChangeSize.y != mapSize.y || mapChangeSize.z != mapSize.z) {
+		mapChange = true;
 	}
 }
 
 void Scene1::CameraUpdate(Camera* _camera)
 {
 	DirectInput* input = DirectInput::GetInstance();
-
-	const float Tgspeed = 1.0f;
 	//視界移動
-	{
+	if (!kaburi) {
+		const float Tgspeed = 1.0f;
 		if (input->PushKey(DIK_RIGHT)) { cameraTarget.x -= Tgspeed; }//右入力
 		if (input->PushKey(DIK_LEFT)) { cameraTarget.x += Tgspeed; }//左入力
 		if (input->PushKey(DIK_UP)) { cameraTarget.y -= Tgspeed; }//上入力
@@ -190,50 +211,39 @@ void Scene1::CameraUpdate(Camera* _camera)
 	float Pspeed = 1.0f;
 	XMFLOAT2 radian = { XMConvertToRadians(cameraTarget.x + 90),XMConvertToRadians(cameraTarget.x) };
 
+	if (!kaburi) {
 	//右入力
-	if (input->PushKey(DIK_S)) {
-		cameraPos.x += Pspeed * cos(radian.x);
-		cameraPos.z += Pspeed * sin(radian.x);
-	}
-	//左入力
-	if (input->PushKey(DIK_W)) {
-		cameraPos.x -= Pspeed * cos(radian.x);
-		cameraPos.z -= Pspeed * sin(radian.x);
-	}
-	//下入力
-	if (input->PushKey(DIK_D)) {
-		cameraPos.x -= Pspeed * cos(radian.y);
-		cameraPos.z -= Pspeed * sin(radian.y);
-	}
-	//上入力
-	if (input->PushKey(DIK_A)) {
-		cameraPos.x += Pspeed * cos(radian.y);
-		cameraPos.z += Pspeed * sin(radian.y);
-	}
-	//下入力
-	if (input->PushKey(DIK_E)) {
-		cameraPos.y += Pspeed;
-	}
-	//上入力
-	if (input->PushKey(DIK_Z)) {
-		cameraPos.y -= Pspeed;
+		if (input->PushKey(DIK_S)) {
+			cameraPos.x += Pspeed * cos(radian.x);
+			cameraPos.z += Pspeed * sin(radian.x);
+		}
+		//左入力
+		if (input->PushKey(DIK_W)) {
+			cameraPos.x -= Pspeed * cos(radian.x);
+			cameraPos.z -= Pspeed * sin(radian.x);
+		}
+		//下入力
+		if (input->PushKey(DIK_D)) {
+			cameraPos.x -= Pspeed * cos(radian.y);
+			cameraPos.z -= Pspeed * sin(radian.y);
+		}
+		//上入力
+		if (input->PushKey(DIK_A)) {
+			cameraPos.x += Pspeed * cos(radian.y);
+			cameraPos.z += Pspeed * sin(radian.y);
+		}
+		//下入力
+		if (input->PushKey(DIK_SPACE)) {
+			cameraPos.y += Pspeed;
+		}
+		//上入力
+		if (input->PushKey(DIK_LSHIFT)) {
+			cameraPos.y -= Pspeed;
+		}
 	}
 
 	_camera->SetEye(cameraPos);
 	_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y - sinf(XMConvertToRadians(cameraTarget.y)) ,cameraPos.z - sinf(radian.x) });
-
-	//DebugText* text = DebugText::GetInstance();
-	//std::string strcameraPosx = std::to_string(cameraPos.x);
-	//std::string strcameraPosy = std::to_string(cameraPos.y);
-	//std::string strcameraPosz = std::to_string(cameraPos.z);
-	//std::string strcameraTargetx = std::to_string(cameraTarget.x);
-	//std::string strcameraTargety = std::to_string(cameraTarget.y);
-	//std::string strcameraTargetz = std::to_string(cameraTarget.z);
-	//text->Print("cameraPos x y z : " + strcameraPosx + ":" + strcameraPosy + ":" + strcameraPosz, 100, 100);
-	//text->Print("cameraTarget x y z : " + strcameraTargetx + ":" + strcameraTargety + ":" + strcameraTargetz, 100, 125);
-	//text->Print("cameraAngle: " + std::to_string(cameraTarget.x), 100, 200);
-
-	//text = nullptr;
 
 	camera = _camera;
 }
