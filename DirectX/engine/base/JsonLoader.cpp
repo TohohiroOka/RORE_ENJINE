@@ -22,16 +22,20 @@ void JsonLoader::SerializeTest(const std::string& _fileName, const float _camera
     std::cout << ss.str() << std::endl;
 }
 
-void JsonLoader::DeserializeTest(std::string& _fileName, float _cameraDist,
-    std::array<int, 3> _mapSize, std::vector<std::vector<std::vector<int>>> _map)
+bool JsonLoader::DeserializeTest(const std::string _fileName,
+    float* _cameraDist, std::vector<std::vector<std::vector<int>>>* _map)
 {
     Person x;
 
-    std::ifstream os(_fileName + ".json", std::ios::in);
+    std::ifstream os(_fileName, std::ios::in);
+    if (!os.is_open()) {
+        return false;
+    }
     cereal::JSONInputArchive archive(os);
     x.serialize(archive);
 
-    _cameraDist = x.cameraDist;
-    _mapSize = x.mapSize;
-    _map = x.map;
+    *_cameraDist = x.cameraDist;
+    *_map = x.map;
+
+    return true;
 }

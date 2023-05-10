@@ -75,6 +75,9 @@ private:
 	//カメラ座標
 	XMFLOAT3 cameraTarget;
 
+	//マップ名
+	static char fileName[36];
+
 	//線
 	std::unique_ptr<Map> map;
 	//線を描画するかのフラグ
@@ -95,4 +98,11 @@ private:
 	//マップチェンジ
 	bool mapChange;
 	XMINT3 mapChangeSize;
+
+	//タイマー
+	int exportTimer;
+	int improtTimer;
+
+	//imguiカラー
+	XMFLOAT4 imguiColor;
 };

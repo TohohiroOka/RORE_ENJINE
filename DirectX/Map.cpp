@@ -71,6 +71,7 @@ std::unique_ptr<Map> Map::Create(const float _delimitSize, const XMINT3& _delimi
 
 void Map::ChangeDelimitNum(const XMINT3& _delimitNum)
 {
+	const XMINT3 motoSize = delimitNum;
 	delimitNum = _delimitNum;
 
 	CreateLine();
@@ -83,6 +84,9 @@ void Map::ChangeDelimitNum(const XMINT3& _delimitNum)
 		for (int z = 0; z < delimitNum.z; z++) {
 			boxInfo[y][z].resize(delimitNum.x);
 			for (int x = 0; x < delimitNum.x; x++) {
+				if (x > motoSize.x || y > motoSize.y || z > motoSize.z) {
+					boxInfo[y][z][x].type = TYPE::NONE;
+				}
 				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
 			}
 		}
@@ -222,7 +226,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 					boxObject->DrawInstance(x.worldMat, { 0.8f,0.2f,0.2f,1.0f });
 				}
 				else if (x.type == TYPE::NORMAL) {
-					boxObject->DrawInstance(x.worldMat, { 0.8f,0.8f,0.8f,1.0f });
+					boxObject->DrawInstance(x.worldMat, { 0.2f,0.8f,0.2f,1.0f });
 				}
 			}
 		}
@@ -327,232 +331,324 @@ void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 3> _isSetObj
 
 	//xz平面の時
 	if (pointface.w == 0) {
+		//下から
 		if (pointface.y == 0 || (zure.y < 0 && pointface.y != delimitNum.y)) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x].type != TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y][pointface.z][pointface.x].type = setType;
-			//設置不可
+			//下面
 			if (pointface.y != 0) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1){
+				if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-		} else if (pointface.y == delimitNum.y || zure.y > 0) {
+		}
+		//上から
+		else if (pointface.y == delimitNum.y || zure.y > 0) {
 			if (boxInfo[pointface.y - 1][pointface.z][pointface.x].type != TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y - 1][pointface.z][pointface.x].type = setType;
-			//設置不可
+			//上面
 			if (pointface.y != delimitNum.y) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = true;;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = true;;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
 		}
 		return;
 	}
 	//xy平面の時
 	if (pointface.w == 1) {
+		//前から
 		if (pointface.z == 0 || (zure.z < 0 && pointface.z != delimitNum.z)) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x].type != TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y][pointface.z][pointface.x].type = setType;
-			//設置不可
+			//前面
 			if (pointface.z != 0) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-		} else if (pointface.z == delimitNum.z || zure.z > 0) {
+		}
+		//奥から
+		else if (pointface.z == delimitNum.z || zure.z > 0) {
 			if (boxInfo[pointface.y][pointface.z - 1][pointface.x].type != TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y][pointface.z - 1][pointface.x].type = setType;
-			//設置不可
+			//奥面
 			if (pointface.z != delimitNum.z) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = true;;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = true;;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
 		}
 		return;
 	}
 	//yz平面の時
 	if (pointface.w == 2) {
+		//左から
 		if (pointface.x == 0 || (zure.x < 0 && pointface.x != delimitNum.x)) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x].type != TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y][pointface.z][pointface.x].type = setType;
-			//設置不可
+			//左面
 			if (pointface.x != 0) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
+			//上面
+			if(pointface.y != delimitNum.y-1)
 			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
 				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
 			} else {
 				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
 			}
 
-		} else if (pointface.x == delimitNum.x || zure.x > 0) {
+		}
+		//右から
+		else if (pointface.x == delimitNum.x || zure.x > 0) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x - 1].type != TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y][pointface.z][pointface.x - 1].type = setType;
-			//設置不可
+			//右面
 			if (pointface.x != delimitNum.x) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = true;;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = true;;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = true;
+				}
 			}
 		}
 		return;
@@ -576,227 +672,318 @@ void Map::DeleteBox(const XMFLOAT3& _cameraPos)
 			}
 			//削除
 			boxInfo[pointface.y - 1][pointface.z][pointface.x].type = TYPE::NONE;
-			//設置可不可変更
+			//上面
 			if (pointface.y != delimitNum.y) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x == delimitNum.x - 1) {
+				if (faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z == delimitNum.z - 1) {
+				if (faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y - 1][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-		} else if (pointface.y != delimitNum.y && zure.y > 0) {
+		}
+		//下から
+		else if (pointface.y != delimitNum.y && zure.y > 0) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x].type == TYPE::NONE) {
 				return;
 			}
 			//削除
 			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NONE;
-			//設置可不可変更
+			//下面
 			if (pointface.y != 0) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
 		}
 		return;
 	}
 	//xy平面の時
 	if (pointface.w == 1) {
+		//奥から
 		if (pointface.z != 0 && zure.z < 0) {
 			if (boxInfo[pointface.y][pointface.z - 1][pointface.x].type == TYPE::NONE) {
 				return;
 			}
 			//削除
 			boxInfo[pointface.y][pointface.z - 1][pointface.x].type = TYPE::NONE;
-			//設置不可
+			//奥面
 			if (pointface.z != delimitNum.z) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = true;;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[1].isPossibleHit = true;;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z - 1][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z - 1][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-		} else if (pointface.z != delimitNum.z && zure.z > 0) {
+		}
+		//前から
+		else if (pointface.z != delimitNum.z && zure.z > 0) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x].type == TYPE::NONE) {
 				return;
 			}
 			//削除
 			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NONE;
-			//設置不可
+			//前面
 			if (pointface.z != 0) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
 		}
 		return;
 	}
 	//yz平面の時
 	if (pointface.w == 2) {
+		//右から
 		if (pointface.x != 0 && zure.x < 0) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x - 1].type == TYPE::NONE) {
 				return;
 			}
 			//設置
 			boxInfo[pointface.y][pointface.z][pointface.x - 1].type = TYPE::NONE;
-			//設置不可
+			//右面
 			if (pointface.x != delimitNum.x) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
+			//下面
+			if(pointface.y != 0){
 			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
 				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
 			} else {
 				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = true;;
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = true;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[1].isPossibleHit = true;;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+			//左面
+			if (pointface.x != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x - 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x - 1].face[0].isPossibleHit = true;
+				}
 			}
-		} else if (pointface.x != delimitNum.x && zure.x > 0) {
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x - 1].face[1].isPossibleHit = true;
+				}
+			}
+		}
+		//左から
+		else if (pointface.x != delimitNum.x && zure.x > 0) {
 			if (boxInfo[pointface.y][pointface.z][pointface.x].type == TYPE::NONE) {
 				return;
 			}
 			//削除
 			boxInfo[pointface.y][pointface.z][pointface.x].type = TYPE::NONE;
-			//設置不可
+			//左面
 			if (pointface.x != 0) {
 				faceInfo[pointface.y][pointface.z][pointface.x].face[2].isPossibleHit = false;
 			}
-			//不可状態なら可能に、可能状態なら不可状態にする
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//下面
+			if (pointface.y != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+			//前面
+			if (pointface.z != 0) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+			//右面
+			if (pointface.x != delimitNum.x - 1) {
+				if (faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z][pointface.x + 1].face[2].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+			//奥面
+			if (pointface.z != delimitNum.z - 1) {
+				if (faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit) {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y][pointface.z + 1][pointface.x].face[1].isPossibleHit = true;
+				}
 			}
-			if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
-			} else {
-				faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+			//上面
+			if (pointface.y != delimitNum.y - 1) {
+				if (faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit) {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = false;
+				} else {
+					faceInfo[pointface.y + 1][pointface.z][pointface.x].face[0].isPossibleHit = true;
+				}
 			}
-
 		}
 		return;
 	}
@@ -818,6 +1005,36 @@ void Map::OutputMap(const std::string& _fileName, float _cameraDist)
 	}
 
 	JsonLoader::SerializeTest(_fileName + ".json", _cameraDist, { delimitNum.x,delimitNum.y ,delimitNum.z }, outmap);
+}
+
+bool Map::ImputMap(const std::string& _fileName)
+{
+	XMINT3 mapSize={};
+	std::vector<std::vector<std::vector<int>>> imputmap;
+	float _cameraDist;
+
+	if (!JsonLoader::DeserializeTest(_fileName + ".json", &_cameraDist, &imputmap)) {
+		return false;
+	}
+
+	delimitNum = { int(imputmap.size()),int(imputmap[0].size()),int(imputmap[0][0].size()) };
+
+	boxInfo.resize(delimitNum.y);
+	for (int y = 0; y < delimitNum.y; y++) {
+		boxInfo[y].resize(delimitNum.z);
+		for (int z = 0; z < delimitNum.z; z++) {
+			boxInfo[y][z].resize(delimitNum.y);
+			for (int x = 0; x < delimitNum.y; x++) {
+				boxInfo[y][z][x].type = TYPE(imputmap[y][z][x]);
+				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+			}
+		}
+	}
+
+	CreateLine();
+	ImportFace();
+
+	return true;
 }
 
 void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
@@ -1012,6 +1229,75 @@ void Map::ChangeFace()
 				one_chip.face[2].pos = { x * delimitSize,
 					delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
 				one_chip.face[2].rota = { 90.0f ,0.0f,90.0f };
+			}
+		}
+	}
+}
+
+void Map::ImportFace()
+{
+	faceInfo.clear();
+
+	//頂点数
+	const int f_x = delimitNum.x + 1;
+	const int f_y = delimitNum.y + 1;
+	const int f_z = delimitNum.z + 1;
+
+	faceInfo.resize(f_y);
+
+	for (int y = 0; y < f_y; y++) {
+		faceInfo[y].resize(f_z);
+		for (int z = 0; z < f_z; z++) {
+			faceInfo[y][z].resize(f_x);
+			for (int x = 0; x < f_x; x++) {
+				FACE_CHIP& one_chip = faceInfo[y][z][x];
+				//xz
+				one_chip.face[0].pos = { delimitSize / 2.0f + x * delimitSize,
+					y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+				one_chip.face[0].rota = { 0.0f ,0.0f,0.0f };
+
+				//xy
+				one_chip.face[1].pos = { delimitSize / 2.0f + x * delimitSize,
+					delimitSize / 2.0f + y * delimitSize ,z * delimitSize };
+				one_chip.face[1].rota = { 90.0f ,0.0f,0.0f };
+
+				//yz
+				one_chip.face[2].pos = { x * delimitSize,
+					delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+				one_chip.face[2].rota = { 90.0f ,0.0f,90.0f };
+			}
+		}
+	}
+
+	for (int y = 0; y < f_y; y++) {
+		faceInfo[y].resize(f_z);
+		for (int z = 0; z < f_z; z++) {
+			faceInfo[y][z].resize(f_x);
+			for (int x = 0; x < f_x; x++) {
+				FACE_CHIP& one_chip = faceInfo[y][z][x];
+
+				if (x != delimitNum.x && y != delimitNum.y && z != delimitNum.z) {
+					if (boxInfo[y][z][x].type != TYPE::NONE) {
+						one_chip.face[0].isPossibleHit = !one_chip.face[0].isPossibleHit;
+						one_chip.face[1].isPossibleHit = !one_chip.face[1].isPossibleHit;
+						one_chip.face[2].isPossibleHit = !one_chip.face[2].isPossibleHit;
+						faceInfo[y + 1][z][x].face[0].isPossibleHit = !faceInfo[y + 1][z][x].face[0].isPossibleHit;
+						faceInfo[y][z + 1][x].face[1].isPossibleHit = !faceInfo[y][z + 1][x].face[1].isPossibleHit;
+						faceInfo[y][z][x + 1].face[2].isPossibleHit = !faceInfo[y][z][x + 1].face[2].isPossibleHit;
+					}
+				}
+				//xz
+				if ((y == 0 || y == delimitNum.y) && x != delimitNum.x && z != delimitNum.z) {
+					one_chip.face[0].isPossibleHit = true;
+				}
+				//xy
+				if ((z == 0 || z == delimitNum.z) && x != delimitNum.x && y != delimitNum.y) {
+					one_chip.face[1].isPossibleHit = true;
+				}
+				//yz
+				if ((x == 0 || x == delimitNum.x) && y != delimitNum.y && z != delimitNum.z) {
+					one_chip.face[2].isPossibleHit = true;
+				}
 			}
 		}
 	}

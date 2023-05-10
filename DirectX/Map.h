@@ -35,7 +35,7 @@ private:// エイリアス
 
 	//設置可能場所の面
 	struct FACE_INFO {
-		int isPossibleHit = false;
+		bool isPossibleHit = false;
 		XMFLOAT3 pos;
 		XMFLOAT3 rota;
 		XMFLOAT4 color = { 1.0f,1.0f ,1.0f ,1.0f };
@@ -114,6 +114,11 @@ public:
 	/// <param name="_cameraDist">カメラ距離</param>
 	void OutputMap(const std::string& _fileName,float _cameraDist);
 
+	/// <summary>
+	/// マップ入力
+	/// </summary>
+	bool ImputMap(const std::string& _fileName);
+
 private:
 
 	/// <summary>
@@ -156,6 +161,11 @@ private:
 	/// 面の変更
 	/// </summary>
 	void ChangeFace();
+
+	/// <summary>
+	/// import時の面生成
+	/// </summary>
+	void ImportFace();
 
 private:
 

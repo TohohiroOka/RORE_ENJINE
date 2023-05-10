@@ -8,6 +8,10 @@
 
 using namespace DirectX;
 
+char Scene1::fileName[36] = "";
+
+const std::array<XMFLOAT4,2> COLOR={ XMFLOAT4{ 0.0f,0.0f,0.8f,1.0f } ,{ 0.8f,0.0f,0.0f,1.0f } };
+
 // スクリーン座標をワールド座標に変換
 Vector3* Scene1::CalcScreenToWorld(Vector3* _pout, XMFLOAT2 _screenPos, float fz)
 {
@@ -55,6 +59,11 @@ void Scene1::Initialize()
 
 	imguiPos = { 0,0 };
 	kaburi = false;
+
+	exportTimer = 100;
+	improtTimer = 100;
+
+	imguiColor = COLOR[0];
 }
 
 void Scene1::Update()
@@ -93,18 +102,44 @@ void Scene1::Update()
 		}
 	}
 
+	if (input->TriggerKey(DIK_1)) {
+		isSetObject[0] = true;
+		isSetObject[1] = false;
+		isSetObject[2] = false;
+	}
+	if (input->TriggerKey(DIK_2)) {
+		isSetObject[0] = false;
+		isSetObject[1] = true;
+		isSetObject[2] = false;
+	}
+	if (input->TriggerKey(DIK_3)) {
+		isSetObject[0] = false;
+		isSetObject[1] = false;
+		isSetObject[2] = true;
+	}
+	if (input->TriggerKey(DIK_4)) {
+		isDrawLine = !isDrawLine;
+	}
+	if (input->TriggerKey(DIK_5)) {
+		isDelete = !isDelete;
+	}
+
 	map->Update(pout, target, kaburi);
 
-	//DebugText* text = DebugText::GetInstance();
-
-	//text->Print("move          : WASD", 20, 25);
-	//text->Print("camera        : ARROW", 20, 40);
-	//text->Print("Add or Delete : MOUSE LEFT", 20, 55);
-	//text->Print("Add or Delete model change : M", 20, 70);
-	//text->Print("Line Draw Change: P", 20, 85);
-	//text->Print("Output        : O", 20, 100);
-
-	//text = nullptr;
+	DebugText* text = DebugText::GetInstance();
+	if (exportTimer != 100) {
+		exportTimer++;
+		text->Print("export", 100, 100, { 1.0f,1.0f ,1.0f }, 20);
+		if (exportTimer == 20) { exportTimer = 100; }
+	}
+	if (improtTimer != 100) {
+		improtTimer++;
+		if (improtTimer == 40) {
+			exportTimer = 100;
+			imguiColor = COLOR[0];
+		}
+	}
+	text = nullptr;
 }
 
 void Scene1::DrawNotPostB()
@@ -141,8 +176,8 @@ void Scene1::Finalize()
 
 void Scene1::ImguiDraw()
 {
-	//ファイル名
-	static char fileName[36] = "";
+	DirectInput* input = DirectInput::GetInstance();
+
 	//マップサイズ
 	const XMINT3 mapSize = map->GetDelimitNum();
 	mapChangeSize = mapSize;
@@ -150,22 +185,29 @@ void Scene1::ImguiDraw()
 	std::array<bool, 3> isSetFlag = isSetObject;
 
 	ImGui::Begin("MapEditor");
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(imguiColor.x, imguiColor.y, imguiColor.z, imguiColor.w));
 	ImGui::SetWindowPos(ImVec2(imguiPos.x, imguiPos.y));
 	ImGui::SetWindowSize(ImVec2(imguiMax.x, imguiMax.y));
 
 	ImGui::InputText("FileName", fileName, sizeof(fileName));
-	//出力
-	if (ImGui::Button("import")) {
+	if (ImGui::Button("export [0]")|| input->TriggerKey(DIK_0)) {
 		map->OutputMap(fileName, 30);
+		exportTimer = 0;
+	}
+	if (ImGui::Button("import [9]") || input->TriggerKey(DIK_9)) {
+		if (!map->ImputMap(fileName)) {
+			imguiColor = COLOR[1];
+		}
+		improtTimer = 0;
 	}
 	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 20);
 	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 20);
 	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, 20);
-	ImGui::Checkbox("Player", &isSetObject[0]);
-	ImGui::Checkbox("Goal", &isSetObject[1]);
-	ImGui::Checkbox("NormalObject", &isSetObject[2]);
-	ImGui::Checkbox("Line Draw", &isDrawLine);
-	ImGui::Checkbox("Box Delete", &isDelete);
+	ImGui::Checkbox("Player [1]", &isSetObject[0]);
+	ImGui::Checkbox("Goal [2]", &isSetObject[1]);
+	ImGui::Checkbox("NormalObject [3]", &isSetObject[2]);
+	ImGui::Checkbox("Line Draw [4]", &isDrawLine);
+	ImGui::Checkbox("Box Delete [5]", &isDelete);
 
 	ImGui::End();
 
@@ -185,6 +227,8 @@ void Scene1::ImguiDraw()
 	if (mapChangeSize.x != mapSize.x || mapChangeSize.y != mapSize.y || mapChangeSize.z != mapSize.z) {
 		mapChange = true;
 	}
+
+	input = nullptr;
 }
 
 void Scene1::CameraUpdate(Camera* _camera)
@@ -195,12 +239,12 @@ void Scene1::CameraUpdate(Camera* _camera)
 		const float Tgspeed = 1.0f;
 		if (input->PushKey(DIK_RIGHT)) { cameraTarget.x -= Tgspeed; }//右入力
 		if (input->PushKey(DIK_LEFT)) { cameraTarget.x += Tgspeed; }//左入力
-		if (input->PushKey(DIK_UP)) { cameraTarget.y -= Tgspeed; }//上入力
-		if (input->PushKey(DIK_DOWN)) { cameraTarget.y += Tgspeed; }//下入力
+		if (input->PushKey(DIK_DOWN)) { cameraTarget.y -= 0.01f + abs(cameraTarget.y) * 0.01f; }//下入力
+		if (input->PushKey(DIK_UP)) { cameraTarget.y += 0.01f + abs(cameraTarget.y) * 0.01f; }//上入力
 
 		//上下方向の角度制限
-		if (cameraTarget.y <= -48) { cameraTarget.y = -48; }//下制限
-		if (cameraTarget.y >= 60) { cameraTarget.y = 60; }//上制限
+		if (cameraTarget.y <= -13) { cameraTarget.y = -13; }//下制限
+		if (cameraTarget.y >= 13) { cameraTarget.y = 13; }//上制限
 
 		//横の制限
 		if (cameraTarget.x > 360) { cameraTarget.x = 0; }
@@ -243,7 +287,7 @@ void Scene1::CameraUpdate(Camera* _camera)
 	}
 
 	_camera->SetEye(cameraPos);
-	_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y - sinf(XMConvertToRadians(cameraTarget.y)) ,cameraPos.z - sinf(radian.x) });
+	_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y + cameraTarget.y ,cameraPos.z - sinf(radian.x) });
 
 	camera = _camera;
 }

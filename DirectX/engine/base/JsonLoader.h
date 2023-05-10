@@ -45,8 +45,7 @@ public:
 	/// </summary>
 	/// <param name="_fileName">ファイルの名前</param>
 	/// <param name="_cameraDist">カメラの距離</param>
-	/// <param name="_mapSize">マップサイズ</param>
 	/// <param name="_map">マップチップ</param>
-	static void DeserializeTest(std::string& _fileName, float _cameraDist,
-		std::array<int, 3> _mapSize, std::vector<std::vector<std::vector<int>>> _map);
+	static bool DeserializeTest(const std::string _fileName, float* _cameraDist,
+		std::vector<std::vector<std::vector<int>>>* _map);
 };
