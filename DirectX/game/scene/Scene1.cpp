@@ -62,8 +62,11 @@ void Scene1::Initialize()
 
 	exportTimer = 100;
 	improtTimer = 100;
+	isImprot = false;
 
 	imguiColor = COLOR[0];
+
+	isOutsideCollision = true;
 }
 
 void Scene1::Update()
@@ -76,7 +79,13 @@ void Scene1::Update()
 		map->ChangeDelimitNum(mapChangeSize);
 		mapChange = false;
 	}
-
+	if (isImprot) {
+		if (!map->ImputMap(fileName)) {
+			imguiColor = COLOR[1];
+		}
+		improtTimer = 0;
+		isImprot = false;
+	}
 	//マウス座標
 	XMFLOAT2 mousePos = input->GetMousePoint();
 	Vector3 pout = {};
@@ -123,8 +132,11 @@ void Scene1::Update()
 	if (input->TriggerKey(DIK_5)) {
 		isDelete = !isDelete;
 	}
+	if (input->TriggerKey(DIK_6)) {
+		isOutsideCollision = !isOutsideCollision;
+	}
 
-	map->Update(pout, target, kaburi);
+	map->Update(pout, target, kaburi, isOutsideCollision);
 
 	DebugText* text = DebugText::GetInstance();
 	if (exportTimer != 100) {
@@ -185,7 +197,7 @@ void Scene1::ImguiDraw()
 	std::array<bool, 3> isSetFlag = isSetObject;
 
 	ImGui::Begin("MapEditor");
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(imguiColor.x, imguiColor.y, imguiColor.z, imguiColor.w));
+	//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(imguiColor.x, imguiColor.y, imguiColor.z, imguiColor.w));
 	ImGui::SetWindowPos(ImVec2(imguiPos.x, imguiPos.y));
 	ImGui::SetWindowSize(ImVec2(imguiMax.x, imguiMax.y));
 
@@ -195,10 +207,7 @@ void Scene1::ImguiDraw()
 		exportTimer = 0;
 	}
 	if (ImGui::Button("import [9]") || input->TriggerKey(DIK_9)) {
-		if (!map->ImputMap(fileName)) {
-			imguiColor = COLOR[1];
-		}
-		improtTimer = 0;
+		isImprot = true;
 	}
 	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 20);
 	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 20);
@@ -208,6 +217,7 @@ void Scene1::ImguiDraw()
 	ImGui::Checkbox("NormalObject [3]", &isSetObject[2]);
 	ImGui::Checkbox("Line Draw [4]", &isDrawLine);
 	ImGui::Checkbox("Box Delete [5]", &isDelete);
+	ImGui::Checkbox("Outside collision [6]", &isOutsideCollision);
 
 	ImGui::End();
 

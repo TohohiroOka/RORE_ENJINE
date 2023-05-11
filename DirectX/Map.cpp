@@ -36,9 +36,9 @@ bool Map::ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMA
 		if ((mouseLay.dir.m128_f32[0] < 0 && mouseLay.start.m128_f32[0] < rNum.hitPos.m128_f32[0]) ||
 			(mouseLay.dir.m128_f32[0] > 0 && mouseLay.start.m128_f32[0] > rNum.hitPos.m128_f32[0]) ||
 			(mouseLay.dir.m128_f32[1] < 0 && mouseLay.start.m128_f32[1] < rNum.hitPos.m128_f32[1]) ||
-			(mouseLay.dir.m128_f32[1] > 0 && mouseLay.start.m128_f32[1] > rNum.hitPos.m128_f32[1]) || 
+			(mouseLay.dir.m128_f32[1] > 0 && mouseLay.start.m128_f32[1] > rNum.hitPos.m128_f32[1]) ||
 			(mouseLay.dir.m128_f32[2] < 0 && mouseLay.start.m128_f32[2] < rNum.hitPos.m128_f32[2]) ||
-			(mouseLay.dir.m128_f32[2] > 0 && mouseLay.start.m128_f32[2] > rNum.hitPos.m128_f32[2])) {
+			(mouseLay.dir.m128_f32[2] > 0 && mouseLay.start.m128_f32[2] > rNum.hitPos.m128_f32[2]) || rNum.dist<10.0f) {
 			if (_hitInfo) {
 				_hitInfo->dist = 501.0f;
 			}
@@ -74,9 +74,6 @@ void Map::ChangeDelimitNum(const XMINT3& _delimitNum)
 	const XMINT3 motoSize = delimitNum;
 	delimitNum = _delimitNum;
 
-	CreateLine();
-	ChangeFace();
-
 	boxInfo.resize(delimitNum.y);
 
 	for (int y = 0; y < delimitNum.y; y++) {
@@ -91,9 +88,12 @@ void Map::ChangeDelimitNum(const XMINT3& _delimitNum)
 			}
 		}
 	}
+
+	CreateLine();
+	ImportFace();
 }
 
-void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool _kaburi)
+void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool _kaburi, const bool _isOutsideCollision)
 {
 	//現在の配置場所
 	{
@@ -115,7 +115,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 				for (auto& x : z)
 				{
 					//xz平面
-					if (x.face[0].isPossibleHit) {
+					if ((x.face[0].isPossibleHit && !x.face[0].isEdge) || (_isOutsideCollision && x.face[0].isEdge)) {
 						//色初期化
 						x.face[0].color = { 1,1,1,1 };
 						//ワールド行列
@@ -134,7 +134,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 						}
 					}
 					//xy平面
-					if (x.face[1].isPossibleHit) {
+					if ((x.face[1].isPossibleHit && !x.face[1].isEdge) || (_isOutsideCollision && x.face[1].isEdge)) {
 						//色初期化
 						x.face[1].color = { 1,1,1,1 };
 						//ワールド行列
@@ -153,7 +153,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 						}
 					}
 					//yz平面
-					if (x.face[2].isPossibleHit) {
+					if ((x.face[2].isPossibleHit && !x.face[2].isEdge) || (_isOutsideCollision && x.face[2].isEdge)) {
 						//色初期化
 						x.face[2].color = { 1,1,1,1 };
 						//ワールド行列
@@ -997,8 +997,8 @@ void Map::OutputMap(const std::string& _fileName, float _cameraDist)
 	for (int y = 0; y < delimitNum.y; y++) {
 		outmap[y].resize(delimitNum.z);
 		for (int z = 0; z < delimitNum.z; z++) {
-			outmap[y][z].resize(delimitNum.y);
-			for (int x = 0; x < delimitNum.y; x++) {
+			outmap[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
 				outmap[y][z][x]= boxInfo[y][z][x].type;
 			}
 		}
@@ -1017,14 +1017,14 @@ bool Map::ImputMap(const std::string& _fileName)
 		return false;
 	}
 
-	delimitNum = { int(imputmap.size()),int(imputmap[0].size()),int(imputmap[0][0].size()) };
+	delimitNum = { int(imputmap[0][0].size()),int(imputmap.size()),int(imputmap[0].size()) };
 
 	boxInfo.resize(delimitNum.y);
 	for (int y = 0; y < delimitNum.y; y++) {
 		boxInfo[y].resize(delimitNum.z);
 		for (int z = 0; z < delimitNum.z; z++) {
-			boxInfo[y][z].resize(delimitNum.y);
-			for (int x = 0; x < delimitNum.y; x++) {
+			boxInfo[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
 				boxInfo[y][z][x].type = TYPE(imputmap[y][z][x]);
 				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
 			}
@@ -1160,6 +1160,7 @@ void Map::CreateFace()
 				//xz
 				if ((y == 0 || y == delimitNum.y) && x != delimitNum.x && z != delimitNum.z) {
 					one_chip.face[0].isPossibleHit = true;
+					one_chip.face[0].isEdge = true;
 				}
 				one_chip.face[0].pos = { delimitSize / 2.0f + x * delimitSize,
 					y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
@@ -1168,6 +1169,7 @@ void Map::CreateFace()
 				//xy
 				if ((z == 0 || z == delimitNum.z) && x != delimitNum.x && y != delimitNum.y) {
 					one_chip.face[1].isPossibleHit = true;
+					one_chip.face[1].isEdge = true;
 				}
 				one_chip.face[1].pos = { delimitSize / 2.0f + x * delimitSize,
 					delimitSize / 2.0f + y * delimitSize ,z * delimitSize };
@@ -1176,55 +1178,7 @@ void Map::CreateFace()
 				//yz
 				if ((x == 0 || x == delimitNum.x) && y != delimitNum.y && z != delimitNum.z) {
 					one_chip.face[2].isPossibleHit = true;
-				}
-				one_chip.face[2].pos = { x * delimitSize,
-					delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
-				one_chip.face[2].rota = { 90.0f ,0.0f,90.0f };
-			}
-		}
-	}
-}
-
-void Map::ChangeFace()
-{
-	//頂点数
-	const int f_x = delimitNum.x + 1;
-	const int f_y = delimitNum.y + 1;
-	const int f_z = delimitNum.z + 1;
-
-	faceInfo.resize(f_y);
-
-	for (int y = 0; y < f_y; y++) {
-		faceInfo[y].resize(f_z);
-		for (int z = 0; z < f_z; z++) {
-			faceInfo[y][z].resize(f_x);
-			for (int x = 0; x < f_x; x++) {
-				FACE_CHIP& one_chip = faceInfo[y][z][x];
-				//xz
-				if ((y == 0 || y == delimitNum.y) && x != delimitNum.x && z != delimitNum.z) {
-					one_chip.face[0].isPossibleHit = true;
-				} else if((x == delimitNum.x || z == delimitNum.z)) {
-					one_chip.face[0].isPossibleHit = false;
-				}
-				one_chip.face[0].pos = { delimitSize / 2.0f + x * delimitSize,
-					y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
-				one_chip.face[0].rota = { 0.0f ,0.0f,0.0f };
-
-				//xy
-				if ((z == 0 || z == delimitNum.z) && x != delimitNum.x && y != delimitNum.y) {
-					one_chip.face[1].isPossibleHit = true;
-				} else if(x == delimitNum.x || y == delimitNum.y) {
-					one_chip.face[1].isPossibleHit = false;
-				}
-				one_chip.face[1].pos = { delimitSize / 2.0f + x * delimitSize,
-					delimitSize / 2.0f + y * delimitSize ,z * delimitSize };
-				one_chip.face[1].rota = { 90.0f ,0.0f,0.0f };
-
-				//yz
-				if ((x == 0 || x == delimitNum.x) && y != delimitNum.y && z != delimitNum.z) {
-					one_chip.face[2].isPossibleHit = true;
-				} else if(y == delimitNum.y || z == delimitNum.z) {
-					one_chip.face[2].isPossibleHit = false;
+					one_chip.face[2].isEdge = true;
 				}
 				one_chip.face[2].pos = { x * delimitSize,
 					delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
@@ -1289,14 +1243,17 @@ void Map::ImportFace()
 				//xz
 				if ((y == 0 || y == delimitNum.y) && x != delimitNum.x && z != delimitNum.z) {
 					one_chip.face[0].isPossibleHit = true;
+					one_chip.face[0].isEdge = true;
 				}
 				//xy
 				if ((z == 0 || z == delimitNum.z) && x != delimitNum.x && y != delimitNum.y) {
 					one_chip.face[1].isPossibleHit = true;
+					one_chip.face[1].isEdge = true;
 				}
 				//yz
 				if ((x == 0 || x == delimitNum.x) && y != delimitNum.y && z != delimitNum.z) {
 					one_chip.face[2].isPossibleHit = true;
+					one_chip.face[2].isEdge = true;
 				}
 			}
 		}

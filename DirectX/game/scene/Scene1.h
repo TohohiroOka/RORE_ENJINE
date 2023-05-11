@@ -102,7 +102,11 @@ private:
 	//タイマー
 	int exportTimer;
 	int improtTimer;
+	bool isImprot;
 
 	//imguiカラー
 	XMFLOAT4 imguiColor;
+
+	//外側の面との判定
+	bool isOutsideCollision;
 };

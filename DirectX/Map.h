@@ -36,6 +36,7 @@ private:// エイリアス
 	//設置可能場所の面
 	struct FACE_INFO {
 		bool isPossibleHit = false;
+		bool isEdge = false;
 		XMFLOAT3 pos;
 		XMFLOAT3 rota;
 		XMFLOAT4 color = { 1.0f,1.0f ,1.0f ,1.0f };
@@ -77,7 +78,8 @@ public:
 	/// <param name="_pos">座標</param>
 	/// <param name="_cameraTarget">カメラのターゲット</param>
 	/// <param name="_kaburi">imguiと被っているか</param>
-	void Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool _kaburi);
+	/// <param name="_isEdgeHit">外側の判定を取るか</param>
+	void Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool _kaburi, const bool _isOutsideCollision);
 
 	/// <summary>
 	/// 描画
@@ -156,11 +158,6 @@ private:
 	/// 面生成
 	/// </summary>
 	void CreateFace();
-
-	/// <summary>
-	/// 面の変更
-	/// </summary>
-	void ChangeFace();
 
 	/// <summary>
 	/// import時の面生成
