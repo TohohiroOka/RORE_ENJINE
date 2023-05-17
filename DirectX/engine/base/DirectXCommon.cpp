@@ -7,6 +7,7 @@
 #include "SafeDelete.h"
 #include "DescriptorHeapManager.h"
 #include "Texture.h"
+#include "WindowApp.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -153,8 +154,8 @@ void DirectXCommon::Initialize()
 
 	// 各種設定をしてスワップチェーンを生成
 	DXGI_SWAP_CHAIN_DESC1 swapchainDesc{};
-	swapchainDesc.Width = 1280;
-	swapchainDesc.Height = 720;
+	swapchainDesc.Width = WindowApp::GetWindowWidth();
+	swapchainDesc.Height = WindowApp::GetWindowHeight();
 	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;// 色情報の書式
 	swapchainDesc.SampleDesc.Count = 1; // マルチサンプルしない
 	swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;// バックバッファ用

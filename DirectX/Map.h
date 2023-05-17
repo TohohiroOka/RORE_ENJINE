@@ -64,7 +64,7 @@ public:
 	/// <param name="_delimitSize">‹æØ‚è‚Ì‘å‚«‚³</param>
 	/// <param name="_delimitNum">‹æØ‚è‚Ì”</param>
 	/// <returns></returns>
-	static std::unique_ptr<Map> Create(const float _delimitSize = 10, const XMINT3& _delimitNum = { 11,11,11 });
+	static std::unique_ptr<Map> Create(const float _delimitSize = 10, const XMINT3& _delimitNum = { 7,7,7 });
 
 	/// <summary>
 	/// ‹æØ‚èŒÂ”•ÏX

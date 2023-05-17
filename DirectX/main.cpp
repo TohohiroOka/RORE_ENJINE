@@ -5,8 +5,8 @@
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// ウィンドウサイズ
-	const int window_width = 1280;// 横幅
-	const int window_height = 720;// 縦幅
+	const int window_width = 1500;// 横幅
+	const int window_height = 830;// 縦幅
 
 	//ゲーム名
 	const wchar_t* gameName = L"DirectX";

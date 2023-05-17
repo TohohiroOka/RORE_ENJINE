@@ -91,12 +91,6 @@ void Scene1::Update()
 	CalcScreenToWorld(&pout, mousePos, 0.0f);
 	CalcScreenToWorld(&target, mousePos, 1.0f);
 
-	if (imguiPos.x < mousePos.x && imguiPos.x + imguiMax.x > mousePos.x &&
-		imguiPos.y < mousePos.y && imguiPos.y + imguiMax.y > mousePos.y)
-	{
-		kaburi = true;
-	}
-
 	if (!kaburi) {
 		//オブジェクト設置
 		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
@@ -185,8 +179,7 @@ void Scene1::ImguiDraw()
 
 	ImGui::Begin("MapEditor");
 	//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(imguiColor.x, imguiColor.y, imguiColor.z, imguiColor.w));
-	ImGui::SetWindowPos(ImVec2(imguiPos.x, imguiPos.y));
-	ImGui::SetWindowSize(ImVec2(imguiMax.x, imguiMax.y));
+	ImGui::SetWindowSize(ImVec2(imguiMax.x, imguiMax.y), ImGuiCond_::ImGuiCond_FirstUseEver);
 
 	ImGui::InputText("FileName", fileName, sizeof(fileName));
 	if (ImGui::Button("export")) {
@@ -196,9 +189,9 @@ void Scene1::ImguiDraw()
 	if (ImGui::Button("import")) {
 		isImprot = true;
 	}
-	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 20);
-	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 20);
-	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, 20);
+	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 17);
+	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 17);
+	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, 17);
 	ImGui::Checkbox("Player [1]", &isSetObject[0]);
 	ImGui::Checkbox("Goal [2]", &isSetObject[1]);
 	ImGui::Checkbox("NormalObject [3]", &isSetObject[2]);
@@ -232,8 +225,11 @@ void Scene1::CameraUpdate(const int _cameraNum, Camera* _camera)
 	XMINT3 delimitNumInt = map->GetDelimitNum();
 	XMFLOAT3 delimitNum = { float(delimitNumInt.x),float(delimitNumInt.y) ,float(delimitNumInt.z) };
 	float delimitSize = map->GetDelimitSize();
-	const float t_e_sa = 10.0f;
+	const float camera_sa = 10.0f;
+	const float LR_sa = 163.0f;
+	const float UD_sa = 53.0f;
 
+	//通常カメラ
 	if (_cameraNum == 0) {
 		DirectInput* input = DirectInput::GetInstance();
 		//視界移動
@@ -292,26 +288,38 @@ void Scene1::CameraUpdate(const int _cameraNum, Camera* _camera)
 		_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y + cameraTarget.y ,cameraPos.z - sinf(radian.x) });
 
 		camera = _camera;
-	} else if (_cameraNum == 1) {
-		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,(delimitNum.z / 2.0f) * 5.0f + t_e_sa });
-		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,0.0f });
-	} else if (_cameraNum == 2) {
-		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,-(delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,0.0f });
-	} else if (_cameraNum == 3) {
-		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f + t_e_sa , (delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, 0.0f ,(delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetUp({ 0.5f,0,0 });
-	} else if (_cameraNum == 4) {
-		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, -(delimitNum.y / 2.0f) * 5.0f , (delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, 0.0f ,(delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetUp({ 0.5f,0,0 });
-	} else if (_cameraNum == 5) {
-		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f + t_e_sa, (delimitNum.y / 2.0f) * 5.0f , (delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetTarget({ 0.0f, (delimitNum.y / 2.0f) * 5.0f  ,(delimitNum.z / 2.0f) * 5.0f });
-	} else if (_cameraNum == 6) {
-		_camera->SetEye({ -(delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f , (delimitNum.z / 2.0f) * 5.0f });
-		_camera->SetTarget({ 0.0f, (delimitNum.y / 2.0f) * 5.0f  ,(delimitNum.z / 2.0f) * 5.0f });
+	}
+	//後ろ
+	else if (_cameraNum == 1) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * delimitSize - LR_sa, (delimitNum.y / 2.0f) * delimitSize - UD_sa ,delimitNum.z * delimitSize + camera_sa });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * delimitSize - LR_sa, (delimitNum.y / 2.0f) * delimitSize - UD_sa ,0.0f });
+	}
+	//前
+	else if (_cameraNum == 2) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * delimitSize + LR_sa,(delimitNum.y / 2.0f) * delimitSize - UD_sa ,-delimitNum.z * delimitSize });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * delimitSize + LR_sa, (delimitNum.y / 2.0f) * delimitSize - UD_sa ,0.0f });
+	}
+	//上
+	else if (_cameraNum == 3) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * delimitSize + LR_sa, delimitNum.y * delimitSize + camera_sa , (delimitNum.z / 2.0f) * delimitSize - UD_sa });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * delimitSize + LR_sa , 0.0f ,(delimitNum.z / 2.0f) * delimitSize - UD_sa });
+		_camera->SetUp({ 0.0f,0.0f,0.5f });
+	}
+	//下
+	else if (_cameraNum == 4) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * delimitSize - LR_sa, -delimitNum.y * delimitSize , (delimitNum.z / 2.0f) * delimitSize - UD_sa });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * delimitSize - LR_sa, 0.0f ,(delimitNum.z / 2.0f) * delimitSize - UD_sa });
+		_camera->SetUp({ 0.0f,0.0f,0.5f });
+	}
+	//右
+	else if (_cameraNum == 5) {
+		_camera->SetEye({ delimitNum.x * delimitSize + camera_sa, (delimitNum.y / 2.0f) * delimitSize - UD_sa , (delimitNum.z / 2.0f) * delimitSize + LR_sa });
+		_camera->SetTarget({ 0.0f, (delimitNum.y / 2.0f) * delimitSize - UD_sa  ,(delimitNum.z / 2.0f) * delimitSize + LR_sa });
+	}
+	//左
+	else if (_cameraNum == 6) {
+		_camera->SetEye({ -delimitNum.x * delimitSize, (delimitNum.y / 2.0f) * delimitSize - UD_sa , (delimitNum.z / 2.0f) * delimitSize - LR_sa });
+		_camera->SetTarget({ 0.0f, (delimitNum.y / 2.0f) * delimitSize - UD_sa  ,(delimitNum.z / 2.0f) * delimitSize - LR_sa });
 	}
 }
 

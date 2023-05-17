@@ -119,17 +119,19 @@ void MainEngine::ImguiDraw()
 {
 	const XMFLOAT2 window = { float(WindowApp::GetWindowWidth()) , float(WindowApp::GetWindowHeight()) };
 
-	std::array<XMFLOAT2, 6> pos={ XMFLOAT2
-		{0.0f, 0.0f},{0.0f, window.y / 2.0f},{window.x / 4.0f, window.y / 2.0f},{(window.x / 4.0f) * 2.0f, window.y / 2.0f},
-		{(window.x / 4.0f) * 3.0f, window.y / 2.0f},{(window.x / 4.0f) * 3.0f, 0.0f}
+	const float x_s = 305.0f;
+	const float y_s = 295.0f;
+	std::array<XMFLOAT2, 6> pos = { XMFLOAT2
+		{0.0f,window.y - y_s},{x_s,window.y - y_s}, {x_s * 2.0f,window.y - y_s}, {x_s * 3.0f,window.y - y_s},
+		{x_s * 4.0f,window.y - y_s},{x_s * 4.0f,window.y - y_s * 2.0f}
 	};
 
-	const std::array<std::string, 6> imName = { "-z","+z","-y","+y","-x","+x"};
+	const std::array<std::string, 6> imName = { "buck","front","under","top","Right","Left" };
 
 	for (int i = 1; i < 7; i++) {
 		ImGui::Begin(imName[i-1].c_str());
 		ImGui::SetWindowPos(ImVec2(pos[i - 1].x, pos[i - 1].y));
-		ImGui::SetWindowSize(ImVec2(window.x / 4.0f, window.y / 2.0f));
+		ImGui::SetWindowSize(ImVec2(290.0f, 295.0f));
 		ImGui::Image((ImTextureID)postEffect[i]->GetTex()->descriptor->gpu.ptr, ImVec2(window.x / 2.0f, window.y / 2.0f));
 		ImGui::End();
 	}

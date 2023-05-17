@@ -83,10 +83,12 @@ void PostEffect::Initialize()
 		constBuff->Unmap(0, nullptr);
 	}
 
+	std::array<UINT, 2> texSize = texSize = { WindowApp::GetWindowWidth(),WindowApp::GetWindowHeight() };
+
 	//テクスチャバッファ生成用変数
 	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
 		DXGI_FORMAT_R8G8B8A8_UNORM,
-		WindowApp::GetWindowWidth(), (UINT)WindowApp::GetWindowHeight(),
+		texSize[0], texSize[1],
 		1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
 	// テクスチャ用バッファの生成
@@ -104,11 +106,11 @@ void PostEffect::Initialize()
 	//テクスチャを赤クリア
 	{
 		//画素数
-		const UINT pixel_count = WindowApp::GetWindowWidth() * WindowApp::GetWindowHeight();
+		const UINT pixel_count = texSize[0] * texSize[1];
 		//画素一行分のデータサイズ
-		const UINT row_pitch = sizeof(UINT) * WindowApp::GetWindowWidth();
+		const UINT row_pitch = sizeof(UINT) * texSize[0];
 		//画素全体のデータサイズ
-		const UINT depth_pitch = row_pitch * WindowApp::GetWindowHeight();
+		const UINT depth_pitch = row_pitch * texSize[1];
 		//画素イメージ
 		UINT* img = new UINT[pixel_count];
 		for (UINT j = 0; j < pixel_count; j++) { img[j] = 0xff0000ff; }

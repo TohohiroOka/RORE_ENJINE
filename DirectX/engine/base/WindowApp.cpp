@@ -7,7 +7,7 @@ WNDCLASSEX WindowApp::winClass{};
 HWND WindowApp::hwnd = nullptr;
 bool WindowApp::isWindowResize;
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 
 LRESULT WindowApp::WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM _lparam)
 {
@@ -57,15 +57,12 @@ LRESULT WindowApp::WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM 
 	//	isWindowResize = true;
 	//}
 
-	if (ImGui_ImplWin32_WndProcHandler(_hwnd, _msg, _wparam, _lparam)) {
-		return 1;
-	}
-
 	if (_msg == WM_DESTROY)
 	{
 		PostQuitMessage((0));
 		return 0;
 	}
+	ImGui_ImplWin32_WndProcHandler(_hwnd, _msg, _wparam, _lparam);
 
 	return DefWindowProc(_hwnd, _msg, _wparam, _lparam);
 }

@@ -19,7 +19,7 @@ Camera::Camera(const bool _mode)
 	} else {
 		// éÀâeçsóÒåvéZ
 		matProjection = XMMatrixOrthographicOffCenterLH(
-			(-window.x / 6.0f) + 100.0f, (window.x / 6.0f) + 100.0f,
+			-window.x / 6.0f, window.x / 6.0f,
 			-window.y / 6.0f, window.y / 6.0f,
 			0.1f, 1200.0f);
 	}
