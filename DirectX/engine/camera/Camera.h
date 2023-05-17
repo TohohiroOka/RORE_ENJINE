@@ -21,14 +21,16 @@ public://静的メンバ関数
 	/// インスタンスの生成
 	/// </summary>
 	/// <returns></returns>
-	static std::unique_ptr<Camera> Create();
+	/// <param name="_mode">true->3D/false->2D</param>
+	static std::unique_ptr<Camera> Create(const bool _mode);
 
 public: // メンバ関数
 
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Camera();
+	/// <param name="_mode">true->3D/false->2D</param>
+	Camera(const bool _mode);
 
 	/// <summary>
 	/// デストラクタ

@@ -20,14 +20,16 @@ void PrimitiveObject3D::Initialize()
 	HRESULT result = S_FALSE;
 
 	//定数バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuff));
-	if (FAILED(result)) { assert(0); }
+	for (auto& i : constBuff) {
+		result = device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA) + 0xff) & ~0xff),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&i));
+		if (FAILED(result)) { assert(0); }
+	}
 }
 
 void PrimitiveObject3D::Update()
@@ -38,9 +40,9 @@ void PrimitiveObject3D::Update()
 
 	//定数バッファにデータを転送
 	CONST_BUFFER_DATA* constMap = nullptr;
-	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);//マッピング
+	HRESULT result = constBuff[useCameraNum]->Map(0, nullptr, (void**)&constMap);//マッピング
 	if (SUCCEEDED(result)) {
-		constMap->color = { 0.6f,0.6f,0.6f,1.0f };
+		constMap->color = baseColor;
 		constMap->matWorld = matWorld;
 		if (camera != nullptr)
 		{
@@ -48,7 +50,7 @@ void PrimitiveObject3D::Update()
 		} else {
 			constMap->viewproj = matViewProjection;
 		}
-		constBuff->Unmap(0, nullptr);
+		constBuff[useCameraNum]->Unmap(0, nullptr);
 	}
 }
 
@@ -91,7 +93,7 @@ void PrimitiveObject3D::Draw()
 	//頂点バッファをセット
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 
-	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(0, constBuff[useCameraNum]->GetGPUVirtualAddress());
 
 	//描画コマンド
 	cmdList->DrawIndexedInstanced(static_cast<UINT>(indices.size()), 1, 0, 0, 0);

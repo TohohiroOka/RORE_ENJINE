@@ -240,71 +240,12 @@ void Map::Draw()
 
 void Map::InstanceDraw()
 {
+	//ボックス描画
+	boxObject->Draw();
+	
 	//面描画
 	if (faceObject->GetInstanceDrawNum() != 0) {
 		faceObject->Draw();
-	}
-
-	//ボックス描画
-	boxObject->Draw();
-}
-
-void Map::LoadMap(const std::string _fileName)
-{
-	std::vector<std::vector<std::vector<int>>> _map = {
-	{
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1}
-	},
-	{
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1}
-	},
-	{
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1}
-	},
-	{
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1}
-	},
-	{
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1},
-	{1,1,1,1,1}
-	} };
-	XMINT3 _size = { 5,5,5 };
-
-	//線と面生成
-	ChangeDelimitNum(_size);
-
-	//ボックス生成
-	boxInfo.clear();
-	boxInfo.resize(_size.y);
-
-	for (int y = 0; y < _size.y; y++) {
-		boxInfo[y].resize(_size.z);
-		for (int z = 0; z < _size.z; z++) {
-			boxInfo[y][z].resize(_size.x);
-			for (int x = 0; x < _size.x; x++) {
-				boxInfo[y][z][x].type = TYPE(_map[y][z][x]);
-				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
-			}
-		}
 	}
 }
 
@@ -1258,4 +1199,21 @@ void Map::ImportFace()
 			}
 		}
 	}
+}
+
+void Map::SetLight(const bool set)
+{
+	if (set) {
+		boxObject->SetLight(true);
+		lineObject->SetColor({ 0.6f,0.6f ,0.6f ,1.0f });
+	} else {
+		boxObject->SetLight(false);
+		lineObject->SetColor({ 1.0f,1.0f ,1.0f ,1.0f });
+	}
+}
+
+void Map::FrameReset()
+{
+	faceObject->FrameReset();
+	boxObject->FrameReset();
 }

@@ -67,7 +67,10 @@ public://メンバ関数
 	/// カメラのセット
 	/// </summary>
 	/// <param name="_camera">カメラ</param>
-	static void SetCamera(Camera* _camera) { InstanceObject::camera = _camera; }
+	static void SetCamera(int _useCameraNum,Camera* _camera) {
+		useCameraNum = _useCameraNum;
+		InstanceObject::camera = _camera;
+	}
 
 	/// <summary>
 	/// ライトグループのセット
@@ -144,6 +147,11 @@ public:
 	/// <returns></returns>
 	int GetInstanceDrawNum() { return instanceDrawNum; }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	void FrameReset();
+
 private:
 
 	//デバイス
@@ -154,6 +162,8 @@ private:
 	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//カメラ
 	static Camera* camera;
+	//カメラ番号
+	static int useCameraNum;
 	//ライト
 	static LightGroup* light;
 	//アウトラインの色
@@ -168,7 +178,7 @@ private:
 	//ベースカラー
 	OBJECT_INFO objInform;
 	//定数バッファ
-	ComPtr<ID3D12Resource> constBuffB0;
+	std::array<ComPtr<ID3D12Resource>, 7> constBuffB0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
 	//ブルームの有無

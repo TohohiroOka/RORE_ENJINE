@@ -109,8 +109,11 @@ void Sprite::Initialize(const std::string& _name, const XMFLOAT2& _anchorpoint, 
 		IID_PPV_ARGS(&vertBuff));
 	if (FAILED(result)) { assert(0); }
 
-	// 頂点バッファへのデータ転送
-	TransferVertices();
+	if (name != "") {
+		TransferVertices();
+	} else {
+		TransferVerticesNoTex();
+	}
 
 	// 頂点バッファビューの作成
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
@@ -145,7 +148,11 @@ void Sprite::Update()
 	this->matWorld *= XMMatrixTranslation(position.x, position.y, 0.0f);
 
 	//頂点バッファに反映
-	TransferVertices();
+	if (name != "") {
+		TransferVertices();
+	} else {
+		TransferVerticesNoTex();
+	}
 
 	// 定数バッファにデータ転送
 	CONST_BUFFER_DATA* constMap = nullptr;
@@ -165,6 +172,17 @@ void Sprite::Draw()
 	// シェーダリソースビューをセット
 	cmdList->SetGraphicsRootDescriptorTable(1, texture[name].instance->descriptor->gpu);
 
+	// 描画コマンド
+	cmdList->DrawInstanced(4, 1, 0, 0);
+}
+
+void Sprite::Draw(const Texture* _tex) {
+	// 頂点バッファの設定
+	cmdList->IASetVertexBuffers(0, 1, &this->vbView);
+	// 定数バッファビューをセット
+	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
+	// シェーダリソースビューをセット
+	cmdList->SetGraphicsRootDescriptorTable(1, _tex->descriptor->gpu);
 	// 描画コマンド
 	cmdList->DrawInstanced(4, 1, 0, 0);
 }
@@ -215,6 +233,51 @@ void Sprite::TransferVertices()
 		vertices[RB].uv = { texRight,	texBottom }; // 右下
 		vertices[RT].uv = { texRight,	texTop }; // 右上
 	}
+
+	// 頂点バッファへのデータ転送
+	VERTEX* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result)) {
+		memcpy(vertMap, vertices, sizeof(vertices));
+		vertBuff->Unmap(0, nullptr);
+	}
+}
+
+void Sprite::TransferVerticesNoTex()
+{
+	HRESULT result = S_FALSE;
+
+	// 左下、左上、右下、右上
+	enum { LB, LT, RB, RT };
+
+	float left = (0.0f - anchorpoint.x) * size.x;
+	float right = (1.0f - anchorpoint.x) * size.x;
+	float top = (0.0f - anchorpoint.x) * size.y;
+	float bottom = (1.0f - anchorpoint.x) * size.y;
+	if (isFlipX)
+	{// 左右入れ替え
+		left = -left;
+		right = -right;
+	}
+
+	if (isFlipY)
+	{// 上下入れ替え
+		top = -top;
+		bottom = -bottom;
+	}
+
+	// 頂点データ
+	VERTEX vertices[vertNum];
+
+	vertices[LB].pos = { left,	bottom,	0.0f }; // 左下
+	vertices[LT].pos = { left,	top,	0.0f }; // 左上
+	vertices[RB].pos = { right,	bottom,	0.0f }; // 右下
+	vertices[RT].pos = { right,	top,	0.0f }; // 右上
+
+	vertices[LB].uv = { 0,	1 }; // 左下
+	vertices[LT].uv = { 0,	0 }; // 左上
+	vertices[RB].uv = { 1,	1 }; // 右下
+	vertices[RT].uv = { 1,	0 }; // 右上
 
 	// 頂点バッファへのデータ転送
 	VERTEX* vertMap = nullptr;

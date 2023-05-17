@@ -4,22 +4,31 @@
 
 using namespace DirectX;
 
-Camera::Camera()
+Camera::Camera(const bool _mode)
 {
-	aspectRatio = float(WindowApp::GetWindowWidth()) / float(WindowApp::GetWindowHeight());
+	const XMFLOAT2 window = { float(WindowApp::GetWindowWidth()) , float(WindowApp::GetWindowHeight()) };
+	aspectRatio = window.x / window.y;
 
-	// 射影行列の計算
-	matProjection = XMMatrixPerspectiveFovLH(
-		XMConvertToRadians(60.0f),
-		aspectRatio,
-		0.1f, 1200.0f//奥行/手前,最奥
-	);
+	if (_mode) {
+		 //射影行列の計算
+		matProjection = XMMatrixPerspectiveFovLH(
+			XMConvertToRadians(60.0f),
+			aspectRatio,
+			0.1f, 1200.0f//奥行/手前,最奥
+		);
+	} else {
+		// 射影行列計算
+		matProjection = XMMatrixOrthographicOffCenterLH(
+			(-window.x / 6.0f) + 100.0f, (window.x / 6.0f) + 100.0f,
+			-window.y / 6.0f, window.y / 6.0f,
+			0.1f, 1200.0f);
+	}
 }
 
-std::unique_ptr<Camera> Camera::Create()
+std::unique_ptr<Camera> Camera::Create(const bool _mode)
 {
 	// Spriteのインスタンスを生成
-	Camera* instance = new Camera();
+	Camera* instance = new Camera(_mode);
 	if (instance == nullptr) {
 		return nullptr;
 	}

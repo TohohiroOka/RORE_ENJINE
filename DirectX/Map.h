@@ -64,7 +64,7 @@ public:
 	/// <param name="_delimitSize">区切りの大きさ</param>
 	/// <param name="_delimitNum">区切りの数</param>
 	/// <returns></returns>
-	static std::unique_ptr<Map> Create(const float _delimitSize = 10, const XMINT3& _delimitNum = { 10,10,10 });
+	static std::unique_ptr<Map> Create(const float _delimitSize = 10, const XMINT3& _delimitNum = { 11,11,11 });
 
 	/// <summary>
 	/// 区切り個数変更
@@ -92,12 +92,6 @@ public:
 	void InstanceDraw();
 
 	/// <summary>
-	/// マップ読み込み
-	/// </summary>
-	/// <param name="_fileName">ファイル名</param>
-	void LoadMap(const std::string _fileName);
-
-	/// <summary>
 	/// ボックスの設置
 	/// </summary>
 	/// <param name="_cameraPos">カメラ座標</param>
@@ -120,6 +114,16 @@ public:
 	/// マップ入力
 	/// </summary>
 	bool ImputMap(const std::string& _fileName);
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void FrameReset();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void SetLight(const bool set);
 
 private:
 
@@ -202,6 +206,7 @@ private:
 public:
 
 	XMINT3 GetDelimitNum() { return delimitNum; }
+	float GetDelimitSize() { return delimitSize; }
 
 };
 

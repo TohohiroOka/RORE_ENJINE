@@ -68,6 +68,11 @@ public:
 	/// <returns>windowHeight</returns>
 	static UINT GetWindowHeight() { return windowHeight; }
 
+	/// <summary>
+	/// 縦幅の取得
+	/// </summary>
+	/// <returns>windowHeight</returns>
+	static bool GetIsWindowResize() { return isWindowResize; }
 private:
 
 	//メッセージ
@@ -80,5 +85,7 @@ private:
 	static WNDCLASSEX winClass;
 	//ウィンドウオブジェクト
 	static HWND hwnd;
+	//ウィンドウサイズ変更フラグ
+	static bool isWindowResize;
 };
 

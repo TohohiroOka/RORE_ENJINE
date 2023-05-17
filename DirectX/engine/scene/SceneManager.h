@@ -34,19 +34,8 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void DrawNotPostB(ID3D12GraphicsCommandList* cmdList);
-
-	/// <summary>
-	/// 描画
-	/// </summary>
 	/// <param name="cmdList">コマンドリスト</param>
 	void Draw(ID3D12GraphicsCommandList* cmdList);
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="cmdList">コマンドリスト</param>
-	void DrawNotPostA(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
 	/// imguiの表示
@@ -64,6 +53,12 @@ public://メンバ関数
 	/// <param name="inScene">次シーンのインスタンス</param>
 	static void SetNextScene(InterfaceScene* inScene) { nextScene = inScene; }
 
+	void SetCameraNum(const int _num) {
+		useCamera = _num;
+	}
+
+	void FrameReset();
+
 private://メンバ変数
 
 	//現在シーン
@@ -71,11 +66,12 @@ private://メンバ変数
 	//次シーン
 	static InterfaceScene* nextScene;
 	//Cameraのインスタンス
-	std::unique_ptr<Camera> camera = nullptr;
+	std::array<std::unique_ptr<Camera>,7> camera;
 	//オーディオ
 	std::unique_ptr<Audio> audio = nullptr;
 	//ライト
 	std::unique_ptr<LightGroup> light = nullptr;
 	//パイプライン
 	std::unique_ptr<GraphicsPipelineManager> graphicsPipeline = nullptr;
+	int useCamera;
 };

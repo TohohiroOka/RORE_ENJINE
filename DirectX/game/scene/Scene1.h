@@ -23,28 +23,19 @@ public:
 	/// <summary>
 	///	更新
 	/// </summary>
-	void Update() override;
+	void Update()override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void CameraUpdate(Camera* camera) override;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void DrawNotPostB() override;
+	void CameraUpdate(const int _cameraNum, Camera* camera) override;
 
 	/// <summary>
 	///	描画
 	/// </summary>
-	void Draw() override;
+	/// <param name="_cameraNum">カメラ番号</param>
+	void Draw(const int _cameraNum) override;
 	
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void DrawNotPostA() override;
-
 	/// <summary>
 	///	解放
 	/// </summary>
@@ -54,6 +45,11 @@ public:
 	/// imguiの表示
 	/// </summary>
 	void ImguiDraw() override;
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void FrameReset() override;
 
 private:
 
@@ -85,10 +81,6 @@ private:
 
 	//設置オブジェクト管理/0プレイヤー/1ゴール/2ノーマル
 	std::array<bool,3> isSetObject;
-
-	//オブジェクト設置フラグ
-	bool isDelete;
-	bool frame;
 
 	//imgui
 	XMFLOAT2 imguiPos;

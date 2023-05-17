@@ -5,11 +5,58 @@ UINT WindowApp::windowWidth;
 UINT WindowApp::windowHeight;
 WNDCLASSEX WindowApp::winClass{};
 HWND WindowApp::hwnd = nullptr;
+bool WindowApp::isWindowResize;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);
 
 LRESULT WindowApp::WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM _lparam)
 {
+	//if (_msg == WM_SIZE) {
+	//	//ウィンドウサイズ取得
+	//	RECT window_rect;
+	//	GetWindowRect(_hwnd, &window_rect);
+
+	//	////クライアント領域取得
+	//	//RECT client_rect;
+	//	//GetClientRect(_hwnd, &client_rect);
+
+	//	// フレームサイズ算出
+	//	int frame_size_x = (window_rect.right - window_rect.left);// - (client_rect.right - client_rect.left);
+	//	int frame_size_y = (window_rect.bottom - window_rect.top);// - (client_rect.bottom - client_rect.top);
+
+	//	window_rect = { 0,0,frame_size_x ,frame_size_y };
+
+	//	//// リサイズ用サイズの算出
+	//	//int resize_width = frame_size_x + windowWidth;
+	//	//int resize_height = frame_size_y + windowHeight;
+
+	//	windowWidth = frame_size_x;
+	//	windowHeight = frame_size_y;
+
+	//	AdjustWindowRect(&window_rect, WS_VSCROLL, false);// 自動でサイズ補正
+
+	//	//SetWindowPos(
+	//	//	// ウィンドウハンドル
+	//	//	_hwnd,
+	//	//	// 配置順序のハンドル(NULLでよし)
+	//	//	NULL,
+	//	//	// 表示座標X
+	//	//	CW_USEDEFAULT,
+	//	//	// 表示座標Y
+	//	//	CW_USEDEFAULT,
+	//	//	// リサイズ横幅
+	//	//	frame_size_x,
+	//	//	// リサイズ縦幅
+	//	//	frame_size_y,
+	//	//	// SWP_NOMOVE => 位置変更なし
+	//	//	SWP_NOMOVE);
+
+	//	// ウィンドウ表示
+	//	//ShowWindow(hwnd, SW_SHOW);
+
+	//	isWindowResize = true;
+	//}
+
 	if (ImGui_ImplWin32_WndProcHandler(_hwnd, _msg, _wparam, _lparam)) {
 		return 1;
 	}
@@ -19,6 +66,7 @@ LRESULT WindowApp::WindowProcdure(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM 
 		PostQuitMessage((0));
 		return 0;
 	}
+
 	return DefWindowProc(_hwnd, _msg, _wparam, _lparam);
 }
 
@@ -59,6 +107,7 @@ void WindowApp::Initialize(int _windowWidth, int _windowHeight,const wchar_t* _g
 
 bool WindowApp::Update()
 {
+	isWindowResize = false;
 	//メッセージ処理
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{

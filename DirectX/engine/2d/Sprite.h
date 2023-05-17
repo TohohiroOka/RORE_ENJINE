@@ -77,7 +77,7 @@ public: // 静的メンバ関数
 	/// </summary>
 	/// <param name="_name">テクスチャ保存名</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Sprite> Create(const std::string& _name);
+	static std::unique_ptr<Sprite> Create(const std::string& _name = "");
 
 	/// <summary>
 	/// シーンごとの解放処理
@@ -141,6 +141,11 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw(const Texture* _tex);
+
 protected: // メンバ変数
 
 	//テクスチャ名
@@ -178,6 +183,11 @@ protected: // メンバ関数
 	/// 頂点データ転送
 	/// </summary>
 	void TransferVertices();
+
+	/// <summary>
+	/// 頂点データ転送
+	/// </summary>
+	void TransferVerticesNoTex();
 
 public:
 

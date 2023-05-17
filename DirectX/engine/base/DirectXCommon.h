@@ -101,6 +101,4 @@ private://メンバ変数
 	ComPtr<ID3D12Fence> fence;
 	//コマンドリスト完了までのカウント
 	UINT64 fenceVal = 0;
-	//imgui用ヒープ
-	ComPtr<ID3D12DescriptorHeap> imguiHeap;
 };

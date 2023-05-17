@@ -5,6 +5,8 @@
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
 #include "SafeDelete.h"
+#include "DescriptorHeapManager.h"
+#include "Texture.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -18,7 +20,6 @@ DirectXCommon::~DirectXCommon()
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-	imguiHeap.Reset();
 
 	//directX系の解放
 	dxgiFactory.Reset();
@@ -201,6 +202,8 @@ void DirectXCommon::Initialize()
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	if (FAILED(result)) { assert(0); }
 
+	Texture::StaticInitialize(device.Get());
+
 	device->SetName(L"DXdev");
 	cmdList->SetName(L"DXcmdList");
 	cmdAllocator->SetName(L"DXcmdAllocator");
@@ -254,14 +257,6 @@ void DirectXCommon::InitImgui()
 {
 	HRESULT result = S_FALSE;
 
-	// デスクリプタヒープを生成
-	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	heapDesc.NumDescriptors = 1;
-	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	result = device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&imguiHeap));
-	if (FAILED(result)) { assert(0); }
-
 	// スワップチェーンの情報を取得
 	DXGI_SWAP_CHAIN_DESC swcDesc = {};
 	result = swapchain->GetDesc(&swcDesc);
@@ -273,13 +268,15 @@ void DirectXCommon::InitImgui()
 	if (!ImGui_ImplWin32_Init(WindowApp::GetHwnd())) {
 		assert(0);
 	}
+
+	ID3D12DescriptorHeap* heap = DescriptorHeapManager::GetDescriptorHeap();
 	if (!ImGui_ImplDX12_Init(
 		GetDevice(),
 		swcDesc.BufferCount,
 		swcDesc.BufferDesc.Format,
-		imguiHeap.Get(),
-		imguiHeap->GetCPUDescriptorHandleForHeapStart(),
-		imguiHeap->GetGPUDescriptorHandleForHeapStart()))
+		heap,
+		heap->GetCPUDescriptorHandleForHeapStart(),
+		heap->GetGPUDescriptorHandleForHeapStart()))
 	{
 		assert(0);
 	}
@@ -328,7 +325,7 @@ void DirectXCommon::PostDraw()
 {
 	// imgui描画
 	ImGui::Render();
-	ID3D12DescriptorHeap* ppHeaps[] = { imguiHeap.Get() };
+	ID3D12DescriptorHeap* ppHeaps[] = { DescriptorHeapManager::GetDescriptorHeap()};
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), cmdList.Get());
 

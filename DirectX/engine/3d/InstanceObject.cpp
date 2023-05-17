@@ -11,6 +11,7 @@ ID3D12Device* InstanceObject::device = nullptr;
 ID3D12GraphicsCommandList* InstanceObject::cmdList = nullptr;
 GraphicsPipelineManager::GRAPHICS_PIPELINE InstanceObject::pipeline;
 Camera* InstanceObject::camera = nullptr;
+int InstanceObject::useCameraNum = 0;
 LightGroup* InstanceObject::light = nullptr;
 DirectX::XMFLOAT4 InstanceObject::outlineColor;
 float InstanceObject::outlineWidth;
@@ -75,14 +76,16 @@ void InstanceObject::Initialize(Model* _model)
 	}
 
 	//定数バッファの生成
-	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B0) + 0xff) & ~0xff),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuffB0));
-	if (FAILED(result)) { assert(0); }
+	for (auto& i : constBuffB0) {
+		result = device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B0) + 0xff) & ~0xff),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&i));
+		if (FAILED(result)) { assert(0); }
+	}
 
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
@@ -97,7 +100,9 @@ void InstanceObject::Initialize(Model* _model)
 
 InstanceObject::~InstanceObject()
 {
-	constBuffB0.Reset();
+	for (auto& i : constBuffB0) {
+		i.Reset();
+	}
 	constBuffB1.Reset();
 }
 
@@ -136,7 +141,7 @@ void InstanceObject::Update()
 {
 	//定数バッファにデータを転送
 	CONST_BUFFER_DATA_B0* constMap = nullptr;
-	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
+	HRESULT result = constBuffB0[useCameraNum]->Map(0, nullptr, (void**)&constMap);//マッピング
 	if (SUCCEEDED(result)) {
 		if (camera)
 		{
@@ -151,7 +156,7 @@ void InstanceObject::Update()
 		constMap->isToon = isToon;
 		constMap->isOutline = isOutline;
 		constMap->isLight = isLight;
-		constBuffB0->Unmap(0, nullptr);
+		constBuffB0[useCameraNum]->Unmap(0, nullptr);
 	}
 
 	OBJECT_INFO* constMapB1 = nullptr;
@@ -180,7 +185,7 @@ void InstanceObject::Draw()
 	}
 
 	// 定数バッファビューをセット
-	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0[useCameraNum]->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootConstantBufferView(3, constBuffB1->GetGPUVirtualAddress());
 
 	// ライトの描画
@@ -188,7 +193,10 @@ void InstanceObject::Draw()
 
 	// モデル描画
 	model->Draw(cmdList, 4, instanceDrawNum);
+}
 
+void InstanceObject::FrameReset()
+{
 	//描画個数リセット
 	instanceDrawNum = 0;
 

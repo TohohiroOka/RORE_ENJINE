@@ -55,8 +55,6 @@ void Scene1::Initialize()
 	cameraPos = { 0,0,-10 };
 	cameraTarget = { 135,0,0 };
 
-	isDelete = false;
-
 	imguiPos = { 0,0 };
 	kaburi = false;
 
@@ -101,13 +99,10 @@ void Scene1::Update()
 
 	if (!kaburi) {
 		//オブジェクト設置
-		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT) && frame) {
-			if (!isDelete) {
-				map->AddBox(camera->GetEye(), isSetObject);
-			} else {
-				map->DeleteBox(camera->GetEye());
-			}
-			frame = false;
+		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
+			map->AddBox(camera->GetEye(), isSetObject);
+		} else if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT)) {
+			map->DeleteBox(camera->GetEye());
 		}
 	}
 
@@ -130,9 +125,6 @@ void Scene1::Update()
 		isDrawLine = !isDrawLine;
 	}
 	if (input->TriggerKey(DIK_5)) {
-		isDelete = !isDelete;
-	}
-	if (input->TriggerKey(DIK_6)) {
 		isOutsideCollision = !isOutsideCollision;
 	}
 
@@ -154,11 +146,9 @@ void Scene1::Update()
 	text = nullptr;
 }
 
-void Scene1::DrawNotPostB()
+void Scene1::Draw(const int _cameraNum)
 {
-	InstanceObject::PreDraw(cmdList);
-	map->InstanceDraw();
-	InstanceObject::PostDraw();
+	map->SetLight(_cameraNum == 0);
 
 	InterfaceObject3d::SetCmdList(cmdList);
 	//線
@@ -168,18 +158,15 @@ void Scene1::DrawNotPostB()
 	}
 	InterfaceObject3d::ReleaseCmdList();
 
-	frame = true;
-}
+	InstanceObject::PreDraw(cmdList);
+	map->InstanceDraw();
+	InstanceObject::PostDraw();
 
-void Scene1::Draw()
-{
-}
-
-void Scene1::DrawNotPostA()
-{
-	Sprite::PreDraw(cmdList);
-	DebugText::GetInstance()->DrawAll();
-	Sprite::PostDraw();
+	if (_cameraNum == 0) {
+		Sprite::PreDraw(cmdList);
+		DebugText::GetInstance()->DrawAll();
+		Sprite::PostDraw();
+	}
 }
 
 void Scene1::Finalize()
@@ -202,11 +189,11 @@ void Scene1::ImguiDraw()
 	ImGui::SetWindowSize(ImVec2(imguiMax.x, imguiMax.y));
 
 	ImGui::InputText("FileName", fileName, sizeof(fileName));
-	if (ImGui::Button("export [0]")|| input->TriggerKey(DIK_0)) {
+	if (ImGui::Button("export")) {
 		map->OutputMap(fileName, 30);
 		exportTimer = 0;
 	}
-	if (ImGui::Button("import [9]") || input->TriggerKey(DIK_9)) {
+	if (ImGui::Button("import")) {
 		isImprot = true;
 	}
 	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 20);
@@ -216,8 +203,7 @@ void Scene1::ImguiDraw()
 	ImGui::Checkbox("Goal [2]", &isSetObject[1]);
 	ImGui::Checkbox("NormalObject [3]", &isSetObject[2]);
 	ImGui::Checkbox("Line Draw [4]", &isDrawLine);
-	ImGui::Checkbox("Box Delete [5]", &isDelete);
-	ImGui::Checkbox("Outside collision [6]", &isOutsideCollision);
+	ImGui::Checkbox("Outside collision [5]", &isOutsideCollision);
 
 	ImGui::End();
 
@@ -241,63 +227,95 @@ void Scene1::ImguiDraw()
 	input = nullptr;
 }
 
-void Scene1::CameraUpdate(Camera* _camera)
+void Scene1::CameraUpdate(const int _cameraNum, Camera* _camera)
 {
-	DirectInput* input = DirectInput::GetInstance();
-	//視界移動
-	if (!kaburi) {
-		const float Tgspeed = 1.0f;
-		if (input->PushKey(DIK_RIGHT)) { cameraTarget.x -= Tgspeed; }//右入力
-		if (input->PushKey(DIK_LEFT)) { cameraTarget.x += Tgspeed; }//左入力
-		if (input->PushKey(DIK_DOWN)) { cameraTarget.y -= 0.01f + abs(cameraTarget.y) * 0.01f; }//下入力
-		if (input->PushKey(DIK_UP)) { cameraTarget.y += 0.01f + abs(cameraTarget.y) * 0.01f; }//上入力
+	XMINT3 delimitNumInt = map->GetDelimitNum();
+	XMFLOAT3 delimitNum = { float(delimitNumInt.x),float(delimitNumInt.y) ,float(delimitNumInt.z) };
+	float delimitSize = map->GetDelimitSize();
+	const float t_e_sa = 10.0f;
 
-		//上下方向の角度制限
-		if (cameraTarget.y <= -13) { cameraTarget.y = -13; }//下制限
-		if (cameraTarget.y >= 13) { cameraTarget.y = 13; }//上制限
+	if (_cameraNum == 0) {
+		DirectInput* input = DirectInput::GetInstance();
+		//視界移動
+		if (!kaburi) {
+			const float Tgspeed = 1.0f;
+			if (input->PushKey(DIK_RIGHT)) { cameraTarget.x -= Tgspeed; }//右入力
+			if (input->PushKey(DIK_LEFT)) { cameraTarget.x += Tgspeed; }//左入力
+			if (input->PushKey(DIK_DOWN)) { cameraTarget.y -= 0.01f + abs(cameraTarget.y) * 0.01f; }//下入力
+			if (input->PushKey(DIK_UP)) { cameraTarget.y += 0.01f + abs(cameraTarget.y) * 0.01f; }//上入力
 
-		//横の制限
-		if (cameraTarget.x > 360) { cameraTarget.x = 0; }
-		if (cameraTarget.x < -360) { cameraTarget.x = 0; }
+			//上下方向の角度制限
+			if (cameraTarget.y <= -13) { cameraTarget.y = -13; }//下制限
+			if (cameraTarget.y >= 13) { cameraTarget.y = 13; }//上制限
+
+			//横の制限
+			if (cameraTarget.x > 360) { cameraTarget.x = 0; }
+			if (cameraTarget.x < -360) { cameraTarget.x = 0; }
+		}
+
+		//カメラ移動
+		float Pspeed = 1.0f;
+		XMFLOAT2 radian = { XMConvertToRadians(cameraTarget.x + 90),XMConvertToRadians(cameraTarget.x) };
+
+		if (!kaburi) {
+			//右入力
+			if (input->PushKey(DIK_S)) {
+				cameraPos.x += Pspeed * cos(radian.x);
+				cameraPos.z += Pspeed * sin(radian.x);
+			}
+			//左入力
+			if (input->PushKey(DIK_W)) {
+				cameraPos.x -= Pspeed * cos(radian.x);
+				cameraPos.z -= Pspeed * sin(radian.x);
+			}
+			//下入力
+			if (input->PushKey(DIK_D)) {
+				cameraPos.x -= Pspeed * cos(radian.y);
+				cameraPos.z -= Pspeed * sin(radian.y);
+			}
+			//上入力
+			if (input->PushKey(DIK_A)) {
+				cameraPos.x += Pspeed * cos(radian.y);
+				cameraPos.z += Pspeed * sin(radian.y);
+			}
+			//下入力
+			if (input->PushKey(DIK_SPACE)) {
+				cameraPos.y += Pspeed;
+			}
+			//上入力
+			if (input->PushKey(DIK_LSHIFT)) {
+				cameraPos.y -= Pspeed;
+			}
+		}
+
+		_camera->SetEye(cameraPos);
+		_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y + cameraTarget.y ,cameraPos.z - sinf(radian.x) });
+
+		camera = _camera;
+	} else if (_cameraNum == 1) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,(delimitNum.z / 2.0f) * 5.0f + t_e_sa });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,0.0f });
+	} else if (_cameraNum == 2) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,-(delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f ,0.0f });
+	} else if (_cameraNum == 3) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f + t_e_sa , (delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, 0.0f ,(delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetUp({ 0.5f,0,0 });
+	} else if (_cameraNum == 4) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f, -(delimitNum.y / 2.0f) * 5.0f , (delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetTarget({ (delimitNum.x / 2.0f) * 5.0f, 0.0f ,(delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetUp({ 0.5f,0,0 });
+	} else if (_cameraNum == 5) {
+		_camera->SetEye({ (delimitNum.x / 2.0f) * 5.0f + t_e_sa, (delimitNum.y / 2.0f) * 5.0f , (delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetTarget({ 0.0f, (delimitNum.y / 2.0f) * 5.0f  ,(delimitNum.z / 2.0f) * 5.0f });
+	} else if (_cameraNum == 6) {
+		_camera->SetEye({ -(delimitNum.x / 2.0f) * 5.0f, (delimitNum.y / 2.0f) * 5.0f , (delimitNum.z / 2.0f) * 5.0f });
+		_camera->SetTarget({ 0.0f, (delimitNum.y / 2.0f) * 5.0f  ,(delimitNum.z / 2.0f) * 5.0f });
 	}
+}
 
-	//カメラ移動
-	float Pspeed = 1.0f;
-	XMFLOAT2 radian = { XMConvertToRadians(cameraTarget.x + 90),XMConvertToRadians(cameraTarget.x) };
-
-	if (!kaburi) {
-	//右入力
-		if (input->PushKey(DIK_S)) {
-			cameraPos.x += Pspeed * cos(radian.x);
-			cameraPos.z += Pspeed * sin(radian.x);
-		}
-		//左入力
-		if (input->PushKey(DIK_W)) {
-			cameraPos.x -= Pspeed * cos(radian.x);
-			cameraPos.z -= Pspeed * sin(radian.x);
-		}
-		//下入力
-		if (input->PushKey(DIK_D)) {
-			cameraPos.x -= Pspeed * cos(radian.y);
-			cameraPos.z -= Pspeed * sin(radian.y);
-		}
-		//上入力
-		if (input->PushKey(DIK_A)) {
-			cameraPos.x += Pspeed * cos(radian.y);
-			cameraPos.z += Pspeed * sin(radian.y);
-		}
-		//下入力
-		if (input->PushKey(DIK_SPACE)) {
-			cameraPos.y += Pspeed;
-		}
-		//上入力
-		if (input->PushKey(DIK_LSHIFT)) {
-			cameraPos.y -= Pspeed;
-		}
-	}
-
-	_camera->SetEye(cameraPos);
-	_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y + cameraTarget.y ,cameraPos.z - sinf(radian.x) });
-
-	camera = _camera;
+void Scene1::FrameReset()
+{
+	map->FrameReset();
 }

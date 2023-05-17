@@ -26,8 +26,6 @@ public:
 	/// </summary>
 	static void Finalize();
 
-public:
-
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -44,6 +42,10 @@ public:
 	/// <param name="_texBuffer">テクスチャバッファ</param>
 	/// <param name="_srvDesc">シェーダーリソースビュー設定</param>
 	void CreateSRV(Microsoft::WRL::ComPtr<ID3D12Resource> _texBuffer, D3D12_SHADER_RESOURCE_VIEW_DESC _srvDesc);
+
+	static ID3D12DescriptorHeap* GetDescriptorHeap() {
+		return descHeap.Get();
+	}
 
 private:
 

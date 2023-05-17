@@ -3,25 +3,6 @@
 
 class PostEffect : public Sprite
 {
-public: // サブクラス
-
-	// 定数バッファ用データ構造体B0
-	struct CONST_BUFFER_DATA
-	{
-		XMFLOAT4 outlineColor;//アウトラインの色
-		float outlineWidth;//アウトラインの太さ
-		unsigned int isFog;//フォグの有無
-	};
-
-	enum TEX_TYPE
-	{
-		NORMAL,
-		BLOOM,
-		OUTLINE,
-		DEPTH,
-		SIZE
-	};
-
 public://メンバ関数
 
 	/// <summary>
@@ -85,27 +66,25 @@ public://メンバ関数
 	/// <param name="_pipeline">パイプライン</param>
 	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
 
+	Texture* GetTex() {
+		return texture.get();
+	}
+
 private://静的メンバ変数
 
 	//画面クリアカラー
-	static const float clearColor[2][4];
+	static const float clearColor[4];
 	//パイプライン
 	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 
 private://メンバ変数
 
 	//テクスチャ情報
-	std::array<std::unique_ptr<Texture>, TEX_TYPE::SIZE> texture;
+	std::unique_ptr<Texture> texture;
 	//RTV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
-	//フォグ
-	bool isFog;
-
-public:
-
-	void SetFog(bool _isFog) {
-		isFog = _isFog;
-	}
+	//深度バッファ
+	ComPtr<ID3D12Resource> depthBuffer;
 };

@@ -101,7 +101,10 @@ void SceneManager::Initialize()
 	CreatePipeline();
 
 	//カメラの初期化
-	camera = Camera::Create();
+	for (int i = 0; i < 7; i++) {
+		camera[i] = Camera::Create(0 == i);
+		camera[i]->SetEye({ 0,0,10 });
+	}
 	//サウンド用
 	audio = std::make_unique<Audio>();
 	//ライト
@@ -138,7 +141,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 3;
+		inPepeline.rtvNum = 1;
 
 		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
 		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
@@ -158,7 +161,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 3;
+		inPepeline.rtvNum = 1;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 
 		inSignature.instanceDraw = true;
@@ -201,7 +204,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 3;
+		inPepeline.rtvNum = 1;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 
 		inSignature.object2d = false;
@@ -301,7 +304,7 @@ void SceneManager::CreatePipeline()
 		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
 		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
 		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 2;
+		inPepeline.rtvNum = 1;
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
 		inPepeline.particl = true;
@@ -332,11 +335,10 @@ void SceneManager::CreatePipeline()
 		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
 		inPepeline.particl = false;
-
+		
 		inSignature.object2d = true;
-		inSignature.textureNum = 4;
+		inSignature.textureNum = 1;
 		inSignature.light = false;
-
 		graphicsPipeline->CreatePipeline("POST_EFFECT", inPepeline, inSignature);
 		PostEffect::SetPipeline(graphicsPipeline->graphicsPipeline["POST_EFFECT"]);
 	}
@@ -366,19 +368,15 @@ void SceneManager::Update()
 	//シーン更新
 	scene->Update();
 
-	//シーンでのカメラ更新
-	scene->CameraUpdate(camera.get());
-
 	//カメラ更新
-	camera->Update();
+	camera[useCamera]->Update();
 
-	InterfaceObject3d::SetCamera(camera.get());
-	InstanceObject::SetCamera(camera.get());
-	//Fbx::SetCamera(camera.get());
-	DrawLine3D::SetCamera(camera.get());
-	ParticleManager::SetCamera(camera.get());
-	CubeMap::SetCamera(camera.get());
-	HeightMap::SetCamera(camera.get());
+	InterfaceObject3d::SetCamera(useCamera,camera[useCamera].get());
+	InstanceObject::SetCamera(useCamera, camera[useCamera].get());
+	DrawLine3D::SetCamera(camera[useCamera].get());
+	ParticleManager::SetCamera(camera[useCamera].get());
+	CubeMap::SetCamera(camera[useCamera].get());
+	HeightMap::SetCamera(useCamera, camera[useCamera].get());
 
 	//ライト
 	light->Update();
@@ -387,26 +385,29 @@ void SceneManager::Update()
 	// 3Dオブエクトにライトをセット
 	InstanceObject::SetLightGroup(light.get());
 	InterfaceObject3d::SetLightGroup(light.get());
-	//Fbx::SetLightGroup(light.get());
 	HeightMap::SetLightGroup(light.get());
-}
-
-void SceneManager::DrawNotPostB(ID3D12GraphicsCommandList* cmdList)
-{
-	scene->SetCmdList(cmdList);
-	scene->DrawNotPostB();
 }
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	scene->SetCmdList(cmdList);
-	scene->Draw();
-}
 
-void SceneManager::DrawNotPostA(ID3D12GraphicsCommandList* cmdList)
-{
-	scene->SetCmdList(cmdList);
-	scene->DrawNotPostA();
+	//シーンでのカメラ更新
+	scene->CameraUpdate(useCamera, camera[useCamera].get());
+
+	if (useCamera != 0) {
+		//カメラ更新
+		camera[useCamera]->Update();
+
+		InterfaceObject3d::SetCamera(useCamera, camera[useCamera].get());
+		InstanceObject::SetCamera(useCamera, camera[useCamera].get());
+		DrawLine3D::SetCamera(camera[useCamera].get());
+		ParticleManager::SetCamera(camera[useCamera].get());
+		CubeMap::SetCamera(camera[useCamera].get());
+		HeightMap::SetCamera(useCamera, camera[useCamera].get());
+	}
+
+	scene->Draw(useCamera);
 }
 
 void SceneManager::ImguiDraw()
@@ -417,4 +418,9 @@ void SceneManager::ImguiDraw()
 void SceneManager::GetConstbufferNum()
 {
 	scene->GetConstbufferNum();
+}
+
+void SceneManager::FrameReset()
+{
+	scene->FrameReset();
 }

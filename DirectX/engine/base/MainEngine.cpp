@@ -12,6 +12,7 @@
 #include "GraphicsPipelineManager.h"
 #include "Texture.h"
 #include "HeightMap.h"
+#include "WindowApp.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -25,7 +26,9 @@ MainEngine::~MainEngine()
 	//Fbx::Finalize();
 	CubeMap::Finalize();
 	ParticleManager::Finalize();
-	postEffect->Finalize();
+	for (auto& i : postEffect) {
+		i->Finalize();
+	}
 	ComputeShaderManager::Finalize();
 	DescriptorHeapManager::Finalize();
 }
@@ -45,7 +48,6 @@ void MainEngine::Initialize()
 
 	//Object系の初期化
 	InstanceObject::StaticInitialize(dXCommon->GetDevice());
-	Texture::StaticInitialize(dXCommon->GetDevice());
 	GraphicsPipelineManager::SetDevice(dXCommon->GetDevice());
 	InterfaceObject3d::StaticInitialize(dXCommon->GetDevice());
 	Sprite::StaticInitialize(dXCommon->GetDevice());
@@ -60,13 +62,10 @@ void MainEngine::Initialize()
 
 	scene = SceneManager::Create();
 
-	postEffect = PostEffect::Create();
-
+	for (auto& i : postEffect) {
+		i = PostEffect::Create();
+	}
 	fps = FrameRateKeep::Create();
-
-	postEffect->SetFog(true);
-
-	//cubemap = CubeMap::Create(dXCommon->GetCmdList());
 }
 
 bool MainEngine::Update()
@@ -78,9 +77,8 @@ bool MainEngine::Update()
 	if (input->PushKey(DIK_ESCAPE)) { return true; }
 
 	//更新
-	//Fbx::SetCubeTex(cubemap->SetTexture());
+	scene->SetCameraNum(0);
 	scene->Update();
-	//cubemap->Update();
 
 	return false;
 }
@@ -90,38 +88,54 @@ void MainEngine::Draw()
 	//描画
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
 
-	postEffect->PreDrawScene(dXCommon->GetCmdList());
-	//CubeMap::PreDraw(dXCommon->GetCmdList());
-	//cubemap->Draw();
-	//CubeMap::PostDraw();
-
+	scene->SetCameraNum(0);
+	postEffect[0]->PreDrawScene(dXCommon->GetCmdList());
 	scene->Draw(dXCommon->GetCmdList());
-	postEffect->PostDrawScene(dXCommon->GetCmdList());
-	scene->DrawNotPostB(dXCommon->GetCmdList());
+	postEffect[0]->PostDrawScene(dXCommon->GetCmdList());
+
+	scene->SetCameraNum(useCamera);
+	postEffect[useCamera]->PreDrawScene(dXCommon->GetCmdList());
+	scene->Draw(dXCommon->GetCmdList());
+	postEffect[useCamera]->PostDrawScene(dXCommon->GetCmdList());
+	useCamera++;
+	if (useCamera == 7) {
+		useCamera = 1;
+	}
 
 	//描画前設定
 	dXCommon->PreDraw();
 
 	//imgui表示
 	scene->ImguiDraw();
-
-	//ポストエフェクト描画
-	postEffect->Draw(dXCommon->GetCmdList());
-
-	scene->DrawNotPostA(dXCommon->GetCmdList());
-
+	ImguiDraw();
+	postEffect[0]->Draw(dXCommon->GetCmdList());
 	//コマンド実行
 	dXCommon->PostDraw();
+
+	scene->FrameReset();
+}
+
+void MainEngine::ImguiDraw()
+{
+	const XMFLOAT2 window = { float(WindowApp::GetWindowWidth()) , float(WindowApp::GetWindowHeight()) };
+
+	std::array<XMFLOAT2, 6> pos={ XMFLOAT2
+		{0.0f, 0.0f},{0.0f, window.y / 2.0f},{window.x / 4.0f, window.y / 2.0f},{(window.x / 4.0f) * 2.0f, window.y / 2.0f},
+		{(window.x / 4.0f) * 3.0f, window.y / 2.0f},{(window.x / 4.0f) * 3.0f, 0.0f}
+	};
+
+	const std::array<std::string, 6> imName = { "-z","+z","-y","+y","-x","+x"};
+
+	for (int i = 1; i < 7; i++) {
+		ImGui::Begin(imName[i-1].c_str());
+		ImGui::SetWindowPos(ImVec2(pos[i - 1].x, pos[i - 1].y));
+		ImGui::SetWindowSize(ImVec2(window.x / 4.0f, window.y / 2.0f));
+		ImGui::Image((ImTextureID)postEffect[i]->GetTex()->descriptor->gpu.ptr, ImVec2(window.x / 2.0f, window.y / 2.0f));
+		ImGui::End();
+	}
 }
 
 void MainEngine::FrameControl()
 {
 	fps->FixedFps();
 }
-
-//void MainEngine::debugNum(float x, float y, float z)
-//{
-//	//数字のデバッグ
-//	swprintf_s(str, L"%f,%f,%f\n", x, y, z);
-//	OutputDebugString(str);
-//}

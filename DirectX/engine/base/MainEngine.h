@@ -39,6 +39,11 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// imgui描画
+	/// </summary>
+	void ImguiDraw();
+
+	/// <summary>
 	/// フレームレートキープ
 	/// </summary>
 	void FrameControl();
@@ -54,11 +59,13 @@ private:
 	//GameSceneのインスタンス
 	std::unique_ptr<SceneManager> scene = nullptr;
 	//ポストエフェクトのインスタンス
-	std::unique_ptr<PostEffect> postEffect = nullptr;
+	std::array<std::unique_ptr<PostEffect>, 7> postEffect;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//キューブマップ
 	//std::unique_ptr<CubeMap> cubemap;
 	//数字表示デバッグ用
 	wchar_t str[256] = {};
+	int useCamera;
+
 };

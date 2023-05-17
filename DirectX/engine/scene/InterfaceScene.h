@@ -50,22 +50,13 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	virtual void CameraUpdate(Camera* camera) {};
+	virtual void CameraUpdate(const int _cameraNum, Camera* camera) {};
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void DrawNotPostB() {};
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	virtual void Draw() {};
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	virtual void DrawNotPostA() {};
+	/// <param name="_cameraNum">カメラ番号</param>
+	virtual void Draw(const int _cameraNum) {};
 
 	/// <summary>
 	/// 解放
@@ -93,6 +84,11 @@ public:
 	/// </summary>
 	/// <param name="light">ライトクラスのインスタンス</param>
 	void SetLight(LightGroup* light) { this->light = light; }
+
+	/// <summary>
+	/// 
+	/// </summary>
+	virtual void FrameReset() {};
 
 protected:
 

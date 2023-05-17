@@ -64,7 +64,10 @@ public:
 	/// カメラのセット
 	/// </summary>
 	/// <param name="_camera">カメラ</param>
-	static void SetCamera(Camera* _camera) { InterfaceObject3d::camera = _camera; }
+	static void SetCamera(int _useCameraNum, Camera* _camera) {
+		useCameraNum = _useCameraNum;
+		InterfaceObject3d::camera = _camera;
+	}
 
 	/// <summary>
 	/// ライトグループのセット
@@ -122,6 +125,8 @@ protected:
 	static ID3D12GraphicsCommandList* cmdList;
 	//カメラ
 	static Camera* camera;
+	//カメラ番号
+	static int useCameraNum;
 	//ライト
 	static LightGroup* light;
 	//アウトラインの色
@@ -134,7 +139,7 @@ protected:
 protected:
 
 	//定数バッファ
-	ComPtr<ID3D12Resource> constBuffB0;
+	std::array<ComPtr<ID3D12Resource>, 7> constBuffB0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
 	//ベースカラー
