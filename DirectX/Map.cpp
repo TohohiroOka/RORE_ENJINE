@@ -69,26 +69,77 @@ std::unique_ptr<Map> Map::Create(const float _delimitSize, const XMINT3& _delimi
 	return std::unique_ptr<Map>(instance);
 }
 
-void Map::ChangeDelimitNum(const XMINT3& _delimitNum)
+void Map::ChangeDelimitNum(const bool _frontBack, const XMINT3& _delimitNum)
 {
-	const XMINT3 motoSize = delimitNum;
-	delimitNum = _delimitNum;
+	if (_frontBack) {
+		const XMINT3 motoSize = delimitNum;
+		delimitNum = _delimitNum;
 
-	boxInfo.resize(delimitNum.y);
-
-	for (int y = 0; y < delimitNum.y; y++) {
-		boxInfo[y].resize(delimitNum.z);
-		for (int z = 0; z < delimitNum.z; z++) {
-			boxInfo[y][z].resize(delimitNum.x);
-			for (int x = 0; x < delimitNum.x; x++) {
-				if (x > motoSize.x || y > motoSize.y || z > motoSize.z) {
-					boxInfo[y][z][x].type = TYPE::NONE;
+		boxInfo.resize(delimitNum.y);
+		for (int y = 0; y < delimitNum.y; y++) {
+			boxInfo[y].resize(delimitNum.z);
+			for (int z = 0; z < delimitNum.z; z++) {
+				boxInfo[y][z].resize(delimitNum.x);
+				for (int x = 0; x < delimitNum.x; x++) {
+					if (x > motoSize.x || y > motoSize.y || z > motoSize.z) {
+						boxInfo[y][z][x].type = TYPE::NONE;
+					}
+					boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
 				}
-				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+			}
+		}
+	} else {
+		const XMINT3 saSize = { _delimitNum.x - delimitNum.x,_delimitNum.y - delimitNum.y, _delimitNum.z - delimitNum.z };
+		delimitNum = _delimitNum;
+
+		if (saSize.x > 0 || saSize.y > 0 || saSize.z > 0) {
+			boxInfo.resize(delimitNum.y);
+			for (int y = delimitNum.y - 1; y >= 0; y--) {
+				boxInfo[y].resize(delimitNum.z);
+				for (int z = delimitNum.z - 1; z >= 0; z--) {
+					boxInfo[y][z].resize(delimitNum.x);
+					for (int x = delimitNum.x - 1; x >= 0; x--) {
+						//Œã‚ë‚É‚¸‚ç‚·
+						if (x > saSize.x - 1) {
+							int addX = x - saSize.x;
+							boxInfo[y][z][x] = boxInfo[y][z][addX];
+							boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+						} else {
+							boxInfo[y][z][x].type = TYPE::NONE;
+							boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+						}
+						if (y > saSize.y - 1) {
+							int addY = y - saSize.y;
+							boxInfo[y][z][x] = boxInfo[addY][z][x];
+							boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+						} else {
+							boxInfo[y][z][x].type = TYPE::NONE;
+							boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+						}
+						if (z > saSize.z - 1) {
+							int addZ = z - saSize.z;
+							boxInfo[y][z][x] = boxInfo[y][addZ][x];
+							boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+						} else {
+							boxInfo[y][z][x].type = TYPE::NONE;
+							boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+						}
+					}
+				}
+			}
+		} else {
+			boxInfo.erase(boxInfo.begin(), boxInfo.begin() + abs(saSize.y));
+			for (int y = 0; y < delimitNum.y; y++) {
+				boxInfo[y].erase(boxInfo[y].begin(), boxInfo[y].begin() + abs(saSize.z));
+				for (int z = 0; z < delimitNum.z; z++) {
+					boxInfo[y][z].erase(boxInfo[y][z].begin(), boxInfo[y][z].begin() + abs(saSize.x));
+					for (int x = 0; x < delimitNum.x; x++) {
+						boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+					}
+				}
 			}
 		}
 	}
-
 	CreateLine();
 	ImportFace();
 }

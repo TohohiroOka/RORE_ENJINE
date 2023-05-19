@@ -81,8 +81,9 @@ public:
 	/// <summary>
 	/// 区切り個数変更
 	/// </summary>
+	/// <param name="_frontBack">前か後ろに追加/true->後ろ/false->前</param>
 	/// <param name="_delimitNum"></param>
-	void ChangeDelimitNum(const XMINT3& _delimitNum = { 5,5,5 });
+	void ChangeDelimitNum(const bool _frontBack = true, const XMINT3& _delimitNum = { 5,5,5 });
 
 	/// <summary>
 	/// 更新

@@ -101,4 +101,7 @@ private:
 
 	//ŠO‘¤‚Ì–Ê‚Æ‚Ì”»’è
 	bool isOutsideCollision;
+
+	//Ú’n–Ê‚Ì’Ç‰Á•ûŒü
+	bool mapChangeDirection;
 };

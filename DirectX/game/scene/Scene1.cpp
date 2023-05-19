@@ -65,6 +65,8 @@ void Scene1::Initialize()
 	imguiColor = COLOR[0];
 
 	isOutsideCollision = true;
+
+	mapChangeDirection = true;
 }
 
 void Scene1::Update()
@@ -74,7 +76,7 @@ void Scene1::Update()
 	//ƒtƒŒ[ƒ€‚ÌÅ‰‚É‰Šú‰»‚·‚é‚à‚Ì
 	kaburi = false;
 	if (mapChange) {
-		map->ChangeDelimitNum(mapChangeSize);
+		map->ChangeDelimitNum(mapChangeDirection, mapChangeSize);
 		mapChange = false;
 	}
 	if (isImprot) {
@@ -219,6 +221,7 @@ void Scene1::ImguiDraw()
 	if (ImGui::Button("import")) {
 		isImprot = true;
 	}
+	ImGui::Checkbox("Map Change Direction", &mapChangeDirection);
 	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 17);
 	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 17);
 	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, 17);
