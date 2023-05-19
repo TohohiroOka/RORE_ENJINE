@@ -19,11 +19,23 @@ private:// エイリアス
 	using XMINT3 = DirectX::XMINT3;
 	using XMINT4 = DirectX::XMINT4;
 
-	enum TYPE {
+	enum class TYPE {
 		NONE,
 		PLAYER,
 		GOAL,
 		NORMAL,
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		FRONT,
+		BACK,
+		SIZE,
+	};
+
+	enum class BOX_TYPE {
+		NORMAL,
+		FACE,
 		SIZE,
 	};
 
@@ -95,7 +107,7 @@ public:
 	/// ボックスの設置
 	/// </summary>
 	/// <param name="_cameraPos">カメラ座標</param>
-	void AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 3> _isSetObject);
+	void AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 9> _isSetObject);
 
 	/// <summary>
 	/// ボックスの削除
@@ -189,8 +201,8 @@ private:
 	std::vector<std::vector<std::vector<FACE_CHIP>>> faceInfo;
 
 	//mapのボックス
-	std::unique_ptr<Model> boxModel;
-	std::unique_ptr<InstanceObject> boxObject;
+	std::array<std::unique_ptr<Model>, int(BOX_TYPE::SIZE)> boxModel;
+	std::array<std::unique_ptr<InstanceObject>, int(BOX_TYPE::SIZE)> boxObject;
 	std::vector<std::vector<std::vector<BOX_INFO>>> boxInfo;
 
 	//マウスのレイ情報

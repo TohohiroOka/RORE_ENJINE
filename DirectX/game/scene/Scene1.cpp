@@ -101,25 +101,55 @@ void Scene1::Update()
 	}
 
 	if (input->TriggerKey(DIK_1)) {
-		isSetObject[0] = true;
-		isSetObject[1] = false;
-		isSetObject[2] = false;
+		for (int i = 0; i < 9; i++) {
+			if (i == 0) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
 	}
 	if (input->TriggerKey(DIK_2)) {
-		isSetObject[0] = false;
-		isSetObject[1] = true;
-		isSetObject[2] = false;
+		for (int i = 0; i < 9; i++) {
+			if (i == 1) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
 	}
 	if (input->TriggerKey(DIK_3)) {
-		isSetObject[0] = false;
-		isSetObject[1] = false;
-		isSetObject[2] = true;
+		for (int i = 0; i < 9; i++) {
+			if (i == 2) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
 	}
 	if (input->TriggerKey(DIK_4)) {
 		isDrawLine = !isDrawLine;
 	}
 	if (input->TriggerKey(DIK_5)) {
 		isOutsideCollision = !isOutsideCollision;
+	}
+	if (input->TriggerKey(DIK_F1)) {
+		for (int i = 0; i < 9; i++) {
+			if (i == 3) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
+	}
+	if (input->TriggerKey(DIK_F2)) {
+		for (int i = 0; i < 9; i++) {
+			if (i == 4) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
+	}
+	if (input->TriggerKey(DIK_F3)) {
+		for (int i = 0; i < 9; i++) {
+			if (i == 5) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
+	}
+	if (input->TriggerKey(DIK_F4)) {
+		for (int i = 0; i < 9; i++) {
+			if (i == 6) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
+	}
+	if (input->TriggerKey(DIK_F5)) {
+		for (int i = 0; i < 9; i++) {
+			if (i == 7) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
+	}
+	if (input->TriggerKey(DIK_F6)) {
+		for (int i = 0; i < 9; i++) {
+			if (i == 8) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
 	}
 
 	map->Update(pout, target, kaburi, isOutsideCollision);
@@ -175,7 +205,7 @@ void Scene1::ImguiDraw()
 	const XMINT3 mapSize = map->GetDelimitNum();
 	mapChangeSize = mapSize;
 
-	std::array<bool, 3> isSetFlag = isSetObject;
+	std::array<bool, 9> isSetFlag = isSetObject;
 
 	ImGui::Begin("MapEditor");
 	//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(imguiColor.x, imguiColor.y, imguiColor.z, imguiColor.w));
@@ -197,19 +227,26 @@ void Scene1::ImguiDraw()
 	ImGui::Checkbox("NormalObject [3]", &isSetObject[2]);
 	ImGui::Checkbox("Line Draw [4]", &isDrawLine);
 	ImGui::Checkbox("Outside collision [5]", &isOutsideCollision);
+	ImGui::End();
 
+	ImGui::Begin("Face Object");
+	ImGui::Checkbox("up face [F1]", &isSetObject[3]);
+	ImGui::Checkbox("down face [F2]", &isSetObject[4]);
+	ImGui::Checkbox("left face [F3]", &isSetObject[5]);
+	ImGui::Checkbox("right face [F4]", &isSetObject[6]);
+	ImGui::Checkbox("front face [F5]", &isSetObject[7]);
+	ImGui::Checkbox("back face [F6]", &isSetObject[8]);
 	ImGui::End();
 
 	//設置フラグ管理
-	if (isSetFlag[0] != isSetObject[0] && isSetObject[0]) {
-		isSetObject[1] = false;
-		isSetObject[2] = false;
-	} else if (isSetFlag[1] != isSetObject[1] && isSetObject[1]) {
-		isSetObject[0] = false;
-		isSetObject[2] = false;
-	} else if (isSetFlag[2] != isSetObject[2] && isSetObject[2]) {
-		isSetObject[0] = false;
-		isSetObject[1] = false;
+	for (int i = 0; i < 9; i++) {
+		if (isSetFlag[i] != isSetObject[i] && isSetObject[i]) {
+			for (int j = 0; j < 9; j++) {
+				if (j == i) { continue; }
+				isSetObject[j] = false;
+			}
+			break;
+		}
 	}
 
 	//サイズ変更

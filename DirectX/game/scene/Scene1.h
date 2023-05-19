@@ -80,7 +80,7 @@ private:
 	bool isDrawLine;
 
 	//設置オブジェクト管理/0プレイヤー/1ゴール/2ノーマル
-	std::array<bool,3> isSetObject;
+	std::array<bool, 9> isSetObject;
 
 	//imgui
 	XMFLOAT2 imguiPos;

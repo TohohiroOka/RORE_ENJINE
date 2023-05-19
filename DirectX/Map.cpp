@@ -211,7 +211,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 	if (!isHitBox && !_kaburi) {
 		faceObject->DrawInstance(faceInfo[pointface.y][pointface.z][pointface.x].face[pointface.w].worldMat, COLOR[1]);
 	}
-	
+
 	//ボックス更新
 	for (auto& y : boxInfo)
 	{
@@ -219,14 +219,47 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 		{
 			for (auto& x : z)
 			{
+				//プレイヤー
 				if (x.type == TYPE::PLAYER) {
-					boxObject->DrawInstance(x.worldMat, { 0.2f,0.2f,0.8f,1.0f });
+					boxObject[int(BOX_TYPE::NORMAL)]->DrawInstance(x.worldMat, {0.2f,0.2f,0.8f,1.0f});
 				}
+				//ゴール
 				else if (x.type == TYPE::GOAL) {
-					boxObject->DrawInstance(x.worldMat, { 0.8f,0.2f,0.2f,1.0f });
+					boxObject[int(BOX_TYPE::NORMAL)]->DrawInstance(x.worldMat, { 0.8f,0.2f,0.2f,1.0f });
 				}
+				//通常
 				else if (x.type == TYPE::NORMAL) {
-					boxObject->DrawInstance(x.worldMat, { 0.2f,0.8f,0.2f,1.0f });
+					boxObject[int(BOX_TYPE::NORMAL)]->DrawInstance(x.worldMat, { 0.2f,0.8f,0.2f,1.0f });
+				}
+				//上方向
+				else if (x.type == TYPE::UP) {
+					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y + delimitSize / 2.0f,x.pos.z },
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
+				}
+				//下方向
+				else if (x.type == TYPE::DOWN) {
+					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y - delimitSize / 2.0f,x.pos.z },
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
+				}
+				//左方向
+				else if (x.type == TYPE::LEFT) {
+					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x - delimitSize / 2.0f,x.pos.y ,x.pos.z },
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,90.0f }, { 0.5f,0.3f,0.8f,1.0f });
+				}
+				//右方向
+				else if (x.type == TYPE::RIGHT) {
+					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x + delimitSize / 2.0f,x.pos.y ,x.pos.z },
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,90.0f }, { 0.5f,0.3f,0.8f,1.0f });
+				}
+				//前方向
+				else if (x.type == TYPE::FRONT) {
+					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z - delimitSize / 2.0f },
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
+				}
+				//後方向
+				else if (x.type == TYPE::BACK) {
+					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z + delimitSize / 2.0f },
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 			}
 		}
@@ -241,15 +274,17 @@ void Map::Draw()
 void Map::InstanceDraw()
 {
 	//ボックス描画
-	boxObject->Draw();
-	
+	for (auto& i : boxObject) {
+		i->Draw();
+	}
+
 	//面描画
 	if (faceObject->GetInstanceDrawNum() != 0) {
 		faceObject->Draw();
 	}
 }
 
-void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 3> _isSetObject)
+void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 9> _isSetObject)
 {
 	//設置されたボックスと当たっている時は新しいボックスを設置しない
 	if (isHitBox) {
@@ -263,7 +298,7 @@ void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 3> _isSetObj
 
 	//設置オブジェクト
 	TYPE setType = TYPE::NORMAL;
-	for (int i = 0; i < TYPE::SIZE - 1; i++) {
+	for (int i = 0; i < int(TYPE::SIZE) - 1; i++) {
 		if (_isSetObject[i]) {
 			setType = TYPE(i + 1);
 			break;
@@ -940,7 +975,7 @@ void Map::OutputMap(const std::string& _fileName, float _cameraDist)
 		for (int z = 0; z < delimitNum.z; z++) {
 			outmap[y][z].resize(delimitNum.x);
 			for (int x = 0; x < delimitNum.x; x++) {
-				outmap[y][z][x]= boxInfo[y][z][x].type;
+				outmap[y][z][x] = int(boxInfo[y][z][x].type);
 			}
 		}
 	}
@@ -1011,10 +1046,17 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	}
 
 	//ボックス初期化
-	boxModel = Model::CreateFromOBJ("NormalCube");
-	boxObject = InstanceObject::Create(boxModel.get());
-	boxObject->SetBloom(false);
-	boxObject->SetLight(true);
+	boxModel[int(BOX_TYPE::NORMAL)] = Model::CreateFromOBJ("NormalCube");
+
+	for (int i = 0; i < int(BOX_TYPE::SIZE); i++) {
+		if (i == 0) {
+			boxObject[i] = InstanceObject::Create(boxModel[i].get());
+		} else {
+			boxObject[i] = InstanceObject::Create(faceModel.get());
+		}
+		boxObject[i]->SetBloom(false);
+		boxObject[i]->SetLight(true);
+	}
 
 	pointface = { 0,0,0,0 };
 }
@@ -1204,10 +1246,14 @@ void Map::ImportFace()
 void Map::SetLight(const bool set)
 {
 	if (set) {
-		boxObject->SetLight(true);
+		for (auto& i : boxObject) {
+			i->SetLight(true);
+		}
 		lineObject->SetColor({ 0.6f,0.6f ,0.6f ,1.0f });
 	} else {
-		boxObject->SetLight(false);
+		for (auto& i : boxObject) {
+			i->SetLight(false);
+		}
 		lineObject->SetColor({ 1.0f,1.0f ,1.0f ,1.0f });
 	}
 }
@@ -1215,5 +1261,7 @@ void Map::SetLight(const bool set)
 void Map::FrameReset()
 {
 	faceObject->FrameReset();
-	boxObject->FrameReset();
+	for (auto& i : boxObject) {
+		i->FrameReset();
+	}
 }
