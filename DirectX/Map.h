@@ -68,7 +68,7 @@ private:// エイリアス
 public:
 
 	Map() {};
-	~Map() {};
+	~Map();
 
 	/// <summary>
 	/// 3Dオブジェクト生成
@@ -134,9 +134,19 @@ public:
 	void FrameReset();
 
 	/// <summary>
-	/// 
+	/// rightのon/off
 	/// </summary>
 	void SetLight(const bool set);
+
+	/// <summary>
+	/// 1つ戻る
+	/// </summary>
+	void Undo();
+
+	/// <summary>
+	/// 1つ進む
+	/// </summary>
+	void Redo();
 
 private:
 
@@ -181,6 +191,11 @@ private:
 	/// </summary>
 	void ImportFace();
 
+	/// <summary>
+	/// binaryの出力
+	/// </summary>
+	void BinaryOutput();
+
 private:
 
 	//区切りサイズ
@@ -216,10 +231,16 @@ private:
 	//設置ボックスとレイが当たっているか
 	bool isHitBox;
 
+	//現在の手順
+	int orderNum;
+	//現在の最大手順
+	int orderMaxNum;
+	//消去時の最大番号
+	int deleteOrderMaxNum;
+
 public:
 
 	XMINT3 GetDelimitNum() { return delimitNum; }
 	float GetDelimitSize() { return delimitSize; }
-
 };
 

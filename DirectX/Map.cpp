@@ -56,6 +56,15 @@ bool Map::ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMA
 	return false;
 }
 
+Map::~Map()
+{
+	const int deleteNum = deleteOrderMaxNum + 2;
+	for (int i = 0; i < deleteNum; i++) {
+		std::string name = "binary/" + std::to_string(i) + ".binary";
+		remove(name.c_str());
+	}
+}
+
 std::unique_ptr<Map> Map::Create(const float _delimitSize, const XMINT3& _delimitNum)
 {
 	// 3Dオブジェクトのインスタンスを生成
@@ -462,6 +471,7 @@ void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 9> _isSetObj
 				}
 			}
 		}
+		BinaryOutput();
 		return;
 	}
 	//xy平面の時
@@ -570,6 +580,7 @@ void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 9> _isSetObj
 				}
 			}
 		}
+		BinaryOutput();
 		return;
 	}
 	//yz平面の時
@@ -678,6 +689,7 @@ void Map::AddBox(const XMFLOAT3& _cameraPos, const std::array<bool, 9> _isSetObj
 				}
 			}
 		}
+		BinaryOutput();
 		return;
 	}
 }
@@ -796,6 +808,7 @@ void Map::DeleteBox(const XMFLOAT3& _cameraPos)
 				}
 			}
 		}
+		BinaryOutput();
 		return;
 	}
 	//xy平面の時
@@ -904,6 +917,7 @@ void Map::DeleteBox(const XMFLOAT3& _cameraPos)
 				}
 			}
 		}
+		BinaryOutput();
 		return;
 	}
 	//yz平面の時
@@ -1012,6 +1026,7 @@ void Map::DeleteBox(const XMFLOAT3& _cameraPos)
 				}
 			}
 		}
+		BinaryOutput();
 		return;
 	}
 }
@@ -1031,7 +1046,7 @@ void Map::OutputMap(const std::string& _fileName, float _cameraDist)
 		}
 	}
 
-	JsonLoader::SerializeTest(_fileName + ".json", _cameraDist, { delimitNum.x,delimitNum.y ,delimitNum.z }, outmap);
+	JsonLoader::SerializeJson(_fileName + ".json", _cameraDist, { delimitNum.x,delimitNum.y ,delimitNum.z }, outmap);
 }
 
 bool Map::ImputMap(const std::string& _fileName)
@@ -1040,7 +1055,7 @@ bool Map::ImputMap(const std::string& _fileName)
 	std::vector<std::vector<std::vector<int>>> imputmap;
 	float _cameraDist;
 
-	if (!JsonLoader::DeserializeTest(_fileName + ".json", &_cameraDist, &imputmap)) {
+	if (!JsonLoader::DeserializeJson(_fileName + ".json", &_cameraDist, &imputmap)) {
 		return false;
 	}
 
@@ -1060,6 +1075,9 @@ bool Map::ImputMap(const std::string& _fileName)
 
 	CreateLine();
 	ImportFace();
+
+	orderMaxNum = 0;
+	orderNum = 0;
 
 	return true;
 }
@@ -1110,6 +1128,21 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	}
 
 	pointface = { 0,0,0,0 };
+	orderNum = 0;
+
+	std::vector<std::vector<std::vector<int>>> outmap;
+
+	outmap.resize(delimitNum.y);
+	for (int y = 0; y < delimitNum.y; y++) {
+		outmap[y].resize(delimitNum.z);
+		for (int z = 0; z < delimitNum.z; z++) {
+			outmap[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
+				outmap[y][z][x] = int(boxInfo[y][z][x].type);
+			}
+		}
+	}
+	JsonLoader::SerializeBinary(std::to_string(orderNum), outmap);
 }
 
 void Map::CreateLine()
@@ -1294,6 +1327,31 @@ void Map::ImportFace()
 	}
 }
 
+void Map::BinaryOutput()
+{
+	std::vector<std::vector<std::vector<int>>> outmap;
+
+	outmap.resize(delimitNum.y);
+	for (int y = 0; y < delimitNum.y; y++) {
+		outmap[y].resize(delimitNum.z);
+		for (int z = 0; z < delimitNum.z; z++) {
+			outmap[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
+				outmap[y][z][x] = int(boxInfo[y][z][x].type);
+			}
+		}
+	}
+
+	orderNum++;
+	JsonLoader::SerializeBinary(std::to_string(orderNum), outmap);
+
+	if (orderMaxNum > deleteOrderMaxNum) {
+		deleteOrderMaxNum = orderMaxNum;
+	}
+
+	orderMaxNum = orderNum;
+}
+
 void Map::SetLight(const bool set)
 {
 	if (set) {
@@ -1307,6 +1365,62 @@ void Map::SetLight(const bool set)
 		}
 		lineObject->SetColor({ 1.0f,1.0f ,1.0f ,1.0f });
 	}
+}
+
+void Map::Undo()
+{
+	if (orderNum == 0) { return; }
+
+	orderNum--;
+
+	std::vector<std::vector<std::vector<int>>> imputmap;
+
+	JsonLoader::DeserializeBinary(std::to_string(orderNum), &imputmap);
+	
+	delimitNum = { int(imputmap[0][0].size()),int(imputmap.size()),int(imputmap[0].size()) };
+
+	boxInfo.resize(delimitNum.y);
+	for (int y = 0; y < delimitNum.y; y++) {
+		boxInfo[y].resize(delimitNum.z);
+		for (int z = 0; z < delimitNum.z; z++) {
+			boxInfo[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
+				boxInfo[y][z][x].type = TYPE(imputmap[y][z][x]);
+				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+			}
+		}
+	}
+
+	CreateLine();
+	ImportFace();
+}
+
+void Map::Redo()
+{
+	if (orderNum == orderMaxNum) { return; }
+
+	orderNum++;
+
+	std::vector<std::vector<std::vector<int>>> imputmap;
+
+	JsonLoader::DeserializeBinary(std::to_string(orderNum), &imputmap);
+
+	delimitNum = { int(imputmap[0][0].size()),int(imputmap.size()),int(imputmap[0].size()) };
+
+	boxInfo.resize(delimitNum.y);
+	for (int y = 0; y < delimitNum.y; y++) {
+		boxInfo[y].resize(delimitNum.z);
+		for (int z = 0; z < delimitNum.z; z++) {
+			boxInfo[y][z].resize(delimitNum.x);
+			for (int x = 0; x < delimitNum.x; x++) {
+				boxInfo[y][z][x].type = TYPE(imputmap[y][z][x]);
+				boxInfo[y][z][x].pos = { delimitSize / 2.0f + x * delimitSize ,delimitSize / 2.0f + y * delimitSize ,delimitSize / 2.0f + z * delimitSize };
+			}
+		}
+	}
+
+	CreateLine();
+	ImportFace();
 }
 
 void Map::FrameReset()

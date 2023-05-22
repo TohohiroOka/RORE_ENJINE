@@ -102,6 +102,12 @@ void Scene1::Update()
 		}
 	}
 
+	if (input->PushKey(DIK_LCONTROL) && input->TriggerKey(DIK_Z)) {
+		map->Undo();
+	} else if (input->PushKey(DIK_LCONTROL) && input->TriggerKey(DIK_Y)) {
+		map->Redo();
+	}
+
 	if (input->TriggerKey(DIK_1)) {
 		for (int i = 0; i < 9; i++) {
 			if (i == 0) { isSetObject[i] = true; } else { isSetObject[i] = false; }
