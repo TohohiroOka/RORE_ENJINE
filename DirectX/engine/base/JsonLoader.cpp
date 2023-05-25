@@ -12,14 +12,6 @@ void JsonLoader::SerializeJson(const std::string& _fileName, const float _camera
     std::ofstream os(_fileName, std::ios::out);
     cereal::JSONOutputArchive archiveFile(os);
     x.serialize(archiveFile);
-
-    // 標準出力
-    std::stringstream ss;
-    {
-        cereal::JSONOutputArchive archiveStdout(ss);
-        x.serialize(archiveStdout);
-    }
-    std::cout << ss.str() << std::endl;
 }
 
 bool JsonLoader::DeserializeJson(const std::string _fileName,
@@ -49,14 +41,6 @@ void JsonLoader::SerializeBinary(const std::string& _fileName,std::vector<std::v
     std::ofstream os("binary/" + _fileName + ".binary", std::ios::out | std::ios::binary);
     cereal::BinaryOutputArchive archive(os);
     x.serialize(archive);
-
-    // 標準出力
-    std::stringstream ss;
-    {
-        cereal::BinaryOutputArchive archiveStdout(ss);
-        x.serialize(archiveStdout);
-    }
-    std::cout << ss.str() << std::endl;
 }
 
 bool JsonLoader::DeserializeBinary(const std::string _fileName, std::vector<std::vector<std::vector<int>>>* _map)

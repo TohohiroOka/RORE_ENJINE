@@ -163,9 +163,9 @@ float4 main(VSOutput input) : SV_TARGET
 
 
 	// シェーディングによる色で描画
-	shadecolor.x += step(shadecolor.x, 0.4) * 0.4;
-	shadecolor.y += step(shadecolor.y, 0.4) * 0.4;
-	shadecolor.z += step(shadecolor.z, 0.4) * 0.4;
+	shadecolor.x += step(shadecolor.x, 0.4) + 0.4;
+	shadecolor.y += step(shadecolor.y, 0.4) + 0.4;
+	shadecolor.z += step(shadecolor.z, 0.4) + 0.4;
 
 	float4 mainColor = shadecolor * texcolor * color;
 	return float4(mainColor.rgb, color.w);;

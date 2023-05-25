@@ -294,7 +294,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 				//ã•ûŒü
 				else if (x.type == TYPE::UP) {
 					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y + delimitSize / 2.0f,x.pos.z },
-						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,180.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//‰º•ûŒü
 				else if (x.type == TYPE::DOWN) {
@@ -304,7 +304,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 				//¶•ûŒü
 				else if (x.type == TYPE::LEFT) {
 					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x - delimitSize / 2.0f,x.pos.y ,x.pos.z },
-						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,90.0f }, { 0.5f,0.3f,0.8f,1.0f });
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,270.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//‰E•ûŒü
 				else if (x.type == TYPE::RIGHT) {
@@ -319,7 +319,7 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 				//Œã•ûŒü
 				else if (x.type == TYPE::BACK) {
 					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z + delimitSize / 2.0f },
-						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
+						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 270.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 			}
 		}
@@ -1076,9 +1076,6 @@ bool Map::ImputMap(const std::string& _fileName)
 	CreateLine();
 	ImportFace();
 
-	orderMaxNum = 0;
-	orderNum = 0;
-
 	return true;
 }
 
@@ -1090,6 +1087,7 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	delimitNum = _delimitNum;
 
 	faceModel = Model::CreateFromOBJ("Face");
+	faceModel2 = Model::CreateFromOBJ("Face1");
 
 	faceObject = InstanceObject::Create(faceModel.get());
 	faceObject->SetBloom(false);
@@ -1121,7 +1119,7 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 		if (i == 0) {
 			boxObject[i] = InstanceObject::Create(boxModel[i].get());
 		} else {
-			boxObject[i] = InstanceObject::Create(faceModel.get());
+			boxObject[i] = InstanceObject::Create(faceModel2.get());
 		}
 		boxObject[i]->SetBloom(false);
 		boxObject[i]->SetLight(true);

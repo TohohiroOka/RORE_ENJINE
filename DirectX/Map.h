@@ -213,6 +213,7 @@ private:
 
 	//İ’u‰Â”\êŠ‚Ì–Ê
 	std::unique_ptr<Model> faceModel;
+	std::unique_ptr<Model> faceModel2;
 	std::unique_ptr<InstanceObject> faceObject;
 	std::vector<std::vector<std::vector<FACE_CHIP>>> faceInfo;
 
