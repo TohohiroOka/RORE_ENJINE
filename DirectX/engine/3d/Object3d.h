@@ -7,6 +7,22 @@ class LightGroup;
 
 class Object3d : public InterfaceObject3d
 {
+private:// サブクラス
+
+	// 定数バッファ用データ構造体B0
+	struct CONST_BUFFER_DATA_B0
+	{
+		XMFLOAT4 baseColor;//ベースカラー
+		XMMATRIX viewproj; // ビュープロジェクション行列
+		XMMATRIX world; // ワールド行列
+		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
+		unsigned int isSkinning;//スキニングを行うか
+		unsigned int isBloom;//ブルームの有無
+		unsigned int isToon;//トゥーンの有無
+		unsigned int isOutline;//アウトラインの有無
+		unsigned int isLight;//ライティングの有無
+	};
+
 public: // 静的メンバ関数
 
 	/// <summary>
@@ -27,22 +43,29 @@ public: // 静的メンバ関数
 	/// <param name="_pipeline">パイプライン</param>
 	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { Object3d::pipeline = _pipeline; }
 
-private: // 静的メンバ変数
-
-	//パイプライン
-	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
-
-public: // メンバ関数
+private:
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize() override;
 
+public: // メンバ関数
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update() override;
+
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw() override;
+
+private: // 静的メンバ変数
+
+	//パイプライン
+	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 
 protected: // メンバ変数
 

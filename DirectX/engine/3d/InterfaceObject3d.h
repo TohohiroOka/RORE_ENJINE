@@ -25,22 +25,6 @@ protected:// エイリアス
 	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-protected:// サブクラス
-
-	// 定数バッファ用データ構造体B0
-	struct CONST_BUFFER_DATA_B0
-	{
-		XMFLOAT4 baseColor;//ベースカラー
-		XMMATRIX viewproj; // ビュープロジェクション行列
-		XMMATRIX world; // ワールド行列
-		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		unsigned int isSkinning;//スキニングを行うか
-		unsigned int isBloom;//ブルームの有無
-		unsigned int isToon;//トゥーンの有無
-		unsigned int isOutline;//アウトラインの有無
-		unsigned int isLight;//ライティングの有無
-	};
-
 public:
 
 	/// <summary>
@@ -64,8 +48,7 @@ public:
 	/// カメラのセット
 	/// </summary>
 	/// <param name="_camera">カメラ</param>
-	static void SetCamera(int _useCameraNum, Camera* _camera) {
-		useCameraNum = _useCameraNum;
+	static void SetCamera(Camera* _camera) {
 		InterfaceObject3d::camera = _camera;
 	}
 
@@ -81,20 +64,23 @@ public:
 	/// <param name="_cubetex">キューブマップテクスチャ</param>
 	static void SetLightGroup(Texture* _cubetex) { InterfaceObject3d::cubetex = _cubetex; }
 
+private:
+
 	/// <summary>
-	/// 更新
+	/// 初期化
 	/// </summary>
-	void Update();
+	virtual void Initialize() = 0;
 
 public:
 
 	InterfaceObject3d() = default;
 	virtual ~InterfaceObject3d();
 
+
 	/// <summary>
-	/// 初期化
+	/// 更新
 	/// </summary>
-	virtual void Initialize() = 0;
+	virtual void Update() = 0;
 
 	/// <summary>
 	/// 描画
@@ -125,23 +111,15 @@ protected:
 	static ID3D12GraphicsCommandList* cmdList;
 	//カメラ
 	static Camera* camera;
-	//カメラ番号
-	static int useCameraNum;
 	//ライト
 	static LightGroup* light;
-	//アウトラインの色
-	static XMFLOAT4 outlineColor;
-	//アウトラインの幅
-	static float outlineWidth;
 	//キューブマップ
 	static Texture* cubetex;
 
 protected:
 
 	//定数バッファ
-	std::array<ComPtr<ID3D12Resource>, 7> constBuffB0;
-	//定数バッファ
-	ComPtr<ID3D12Resource> constBuffB1;
+	ComPtr<ID3D12Resource> constBuffB0;
 	//ベースカラー
 	XMFLOAT4 baseColor = { 1,1,1,1 };
 	//ブルームの有無
@@ -236,30 +214,6 @@ public:
 	/// </summary>
 	/// <param name="_isOutline">アウトライン有->true / 無->false</param>
 	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
-
-	/// <summary>
-	/// アウトラインの色セット
-	/// </summary>
-	/// <param name="_outlineColor">幅</param>
-	static void SetOutlineColor(const XMFLOAT4& _outlineColor) { InterfaceObject3d::outlineColor = _outlineColor; }
-
-	/// <summary>
-	/// アウトラインの幅セット
-	/// </summary>
-	/// <param name="_outlineWidth">幅</param>
-	static void SetOutlineWidth(float _outlineWidth) { InterfaceObject3d::outlineWidth = _outlineWidth; }
-
-	/// <summary>
-	/// アウトラインの色取得
-	/// </summary>
-	/// <param name="outlineColor">幅</param>
-	static XMFLOAT4 GetOutlineColor() { return outlineColor; }
-
-	/// <summary>
-	/// アウトラインの幅取得
-	/// </summary>
-	/// <param name="outlineWidth">幅</param>
-	static float GetOutlineWidth() { return outlineWidth; }
 
 	/// <summary>
 	/// コライダーのセット

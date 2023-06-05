@@ -53,10 +53,6 @@ public://メンバ関数
 	/// <param name="inScene">次シーンのインスタンス</param>
 	static void SetNextScene(InterfaceScene* inScene) { nextScene = inScene; }
 
-	void SetCameraNum(const int _num) {
-		useCamera = _num;
-	}
-
 	void FrameReset();
 
 private://メンバ変数
@@ -66,12 +62,11 @@ private://メンバ変数
 	//次シーン
 	static InterfaceScene* nextScene;
 	//Cameraのインスタンス
-	std::array<std::unique_ptr<Camera>,7> camera;
+	std::unique_ptr<Camera> camera;
 	//オーディオ
 	std::unique_ptr<Audio> audio = nullptr;
 	//ライト
 	std::unique_ptr<LightGroup> light = nullptr;
 	//パイプライン
 	std::unique_ptr<GraphicsPipelineManager> graphicsPipeline = nullptr;
-	int useCamera;
 };

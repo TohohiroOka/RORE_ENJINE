@@ -301,8 +301,8 @@
     <ClCompile Include="engine\base\JsonLoader.cpp">
       <Filter>エンジンシステム\Base\FileLoder</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>ゲームシステム</Filter>
+    <ClCompile Include="engine\3d\TerrainModel.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -604,8 +604,8 @@
     <ClInclude Include="game\GameHelper.h">
       <Filter>ゲームシステム</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>ゲームシステム</Filter>
+    <ClInclude Include="engine\3d\TerrainModel.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

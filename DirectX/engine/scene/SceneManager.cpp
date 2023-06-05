@@ -101,10 +101,9 @@ void SceneManager::Initialize()
 	CreatePipeline();
 
 	//カメラの初期化
-	for (int i = 0; i < 7; i++) {
-		camera[i] = Camera::Create(0 == i);
-		camera[i]->SetEye({ 0,0,10 });
-	}
+	camera = Camera::Create(0);
+	camera->SetEye({ 0,0,10 });
+
 	//サウンド用
 	audio = std::make_unique<Audio>();
 	//ライト
@@ -369,14 +368,14 @@ void SceneManager::Update()
 	scene->Update();
 
 	//カメラ更新
-	camera[useCamera]->Update();
+	camera->Update();
 
-	InterfaceObject3d::SetCamera(useCamera,camera[useCamera].get());
-	InstanceObject::SetCamera(useCamera, camera[useCamera].get());
-	DrawLine3D::SetCamera(camera[useCamera].get());
-	ParticleManager::SetCamera(camera[useCamera].get());
-	CubeMap::SetCamera(camera[useCamera].get());
-	HeightMap::SetCamera(useCamera, camera[useCamera].get());
+	InterfaceObject3d::SetCamera(camera.get());
+	InstanceObject::SetCamera(camera.get());
+	DrawLine3D::SetCamera(camera.get());
+	ParticleManager::SetCamera(camera.get());
+	CubeMap::SetCamera(camera.get());
+	HeightMap::SetCamera(camera.get());
 
 	//ライト
 	light->Update();
@@ -393,21 +392,9 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
 	scene->SetCmdList(cmdList);
 
 	//シーンでのカメラ更新
-	scene->CameraUpdate(useCamera, camera[useCamera].get());
+	scene->CameraUpdate(0, camera.get());
 
-	if (useCamera != 0) {
-		//カメラ更新
-		camera[useCamera]->Update();
-
-		InterfaceObject3d::SetCamera(useCamera, camera[useCamera].get());
-		InstanceObject::SetCamera(useCamera, camera[useCamera].get());
-		DrawLine3D::SetCamera(camera[useCamera].get());
-		ParticleManager::SetCamera(camera[useCamera].get());
-		CubeMap::SetCamera(camera[useCamera].get());
-		HeightMap::SetCamera(useCamera, camera[useCamera].get());
-	}
-
-	scene->Draw(useCamera);
+	scene->Draw(0);
 }
 
 void SceneManager::ImguiDraw()

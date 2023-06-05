@@ -59,13 +59,12 @@ private:
 	//GameSceneのインスタンス
 	std::unique_ptr<SceneManager> scene = nullptr;
 	//ポストエフェクトのインスタンス
-	std::array<std::unique_ptr<PostEffect>, 7> postEffect;
+	std::unique_ptr<PostEffect> postEffect;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//キューブマップ
 	//std::unique_ptr<CubeMap> cubemap;
 	//数字表示デバッグ用
 	wchar_t str[256] = {};
-	int useCamera;
 
 };

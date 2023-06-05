@@ -1,0 +1,12 @@
+{
+    "name": "scene",
+    "pipeline":[
+        {
+            "name": "Object3D",
+            "InputLayoutType": ["POSITION","NORMAL","TEXCOORD_2D"],
+            "RtvNum": 1,
+            "BlendMode": "ALPHA",
+            "Rootparams": 3
+        }
+    ]
+}

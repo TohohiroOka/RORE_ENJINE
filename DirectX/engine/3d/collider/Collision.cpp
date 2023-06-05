@@ -1,5 +1,8 @@
 ﻿#include "Collision.h"
 #include <array>
+#include "Camera.h"
+#include "WindowApp.h"
+
 using namespace DirectX;
 
 bool Collision::CheckCircle2Circle(const DirectX::XMFLOAT3& pos1, float radius1, const DirectX::XMFLOAT3& pos2, float radius2)
@@ -510,4 +513,34 @@ bool Collision::CheckSegmentSegment(const XMVECTOR& p1, const XMVECTOR& q1,const
 	}
 
 	return true;
+}
+
+void Collision::CalcScreenToWorld(XMFLOAT3* _worldPos, Camera* _camera, const DirectX::XMFLOAT2& _pos, const float fz)
+{
+	XMMATRIX view = DirectX::XMMatrixIdentity();
+	XMMATRIX prj = DirectX::XMMatrixIdentity();
+	if (_camera != nullptr) {
+		view = _camera->GetView();
+		prj = _camera->GetProjection();
+	}
+	XMMATRIX InvView, InvPrj, VP, InvViewport;
+	InvView = DirectX::XMMatrixInverse(nullptr, view);
+	InvPrj = DirectX::XMMatrixInverse(nullptr, prj);
+	VP = DirectX::XMMatrixIdentity();
+	XMFLOAT4X4 mtx;
+	XMStoreFloat4x4(&mtx, VP);
+
+	XMFLOAT2 screen = { float(WindowApp::GetWindowWidth()),float(WindowApp::GetWindowHeight()) };
+	mtx._11 = screen.x / 2.0f;
+	mtx._22 = -screen.y / 2.0f;
+	mtx._41 = screen.x / 2.0f;
+	mtx._42 = screen.y / 2.0f;
+	VP = XMLoadFloat4x4(&mtx);
+	InvViewport = XMMatrixInverse(nullptr, VP);
+	// 逆行列
+   // 逆変換
+	XMMATRIX tmp = InvViewport * InvPrj * InvView;
+	XMVECTOR pout = DirectX::XMVector3TransformCoord(XMVECTOR{ _pos.x, _pos.y, fz }, tmp);
+
+	*_worldPos = XMFLOAT3{ pout.m128_f32[0], pout.m128_f32[1], pout.m128_f32[2] };
 }

@@ -83,8 +83,6 @@ protected://メンバ変数
 	ComPtr<ID3D12Resource> indexBuff;
 	//インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView{};
-	//定数バッファ
-	std::array<ComPtr<ID3D12Resource>, 7> constBuff;
 
 public:
 

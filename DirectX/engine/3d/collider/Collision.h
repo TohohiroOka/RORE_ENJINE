@@ -1,7 +1,8 @@
 ﻿#pragma once
-
 #include "CollisionPrimitive.h"
 #include "Vector3.h"
+
+class Camera;
 
 /// <summary>
 /// 当たり判定ヘルパークラス
@@ -153,6 +154,16 @@ public:
 	static bool CheckSegmentSegment(const DirectX::XMVECTOR& p1, const DirectX::XMVECTOR& q1,
 		const DirectX::XMVECTOR& p2, const DirectX::XMVECTOR& q2,
 		float* pOut_dist = nullptr, DirectX::XMVECTOR* pOut_pos1 = nullptr, DirectX::XMVECTOR* pOut_pos2 = nullptr);
+
+	/// <summary>
+	/// スクリーン座標からワールド座標への変換
+	/// </summary>
+	/// <param name="_worldPos">ワールド座標の出力用</param>
+	/// <param name="_camera">カメラクラス</param>
+	/// <param name="_pos">スクリーン座標</param>
+	/// <param name="fz">奥行（0.0f～1.0f）</param>
+	static void CalcScreenToWorld(DirectX::XMFLOAT3* _worldPos, Camera* _camera, const DirectX::XMFLOAT2& _pos, const float fz);
+
 
 	//値を範囲内に収める[low, high]
 	static float clamp(float x, float low, float high)

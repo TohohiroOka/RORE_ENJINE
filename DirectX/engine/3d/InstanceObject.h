@@ -1,11 +1,5 @@
 #pragma once
-#include <wrl.h>
-#include <d3d12.h>
-#include <d3dx12.h>
-#include <DirectXMath.h>
-#include "GraphicsPipelineManager.h"
-#include "Texture.h"
-#include "Model.h"
+#include "InterfaceObject3d.h"
 
 class Camera;
 class LightGroup;
@@ -67,8 +61,7 @@ public://メンバ関数
 	/// カメラのセット
 	/// </summary>
 	/// <param name="_camera">カメラ</param>
-	static void SetCamera(int _useCameraNum,Camera* _camera) {
-		useCameraNum = _useCameraNum;
+	static void SetCamera(Camera* _camera) {
 		InstanceObject::camera = _camera;
 	}
 
@@ -162,14 +155,8 @@ private:
 	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
 	//カメラ
 	static Camera* camera;
-	//カメラ番号
-	static int useCameraNum;
 	//ライト
 	static LightGroup* light;
-	//アウトラインの色
-	static XMFLOAT4 outlineColor;
-	//アウトラインの幅
-	static float outlineWidth;
 
 private:
 
@@ -178,7 +165,7 @@ private:
 	//ベースカラー
 	OBJECT_INFO objInform;
 	//定数バッファ
-	std::array<ComPtr<ID3D12Resource>, 7> constBuffB0;
+	ComPtr<ID3D12Resource> constBuffB0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
 	//ブルームの有無
@@ -217,30 +204,6 @@ public:
 	/// </summary>
 	/// <param name="_isOutline">アウトライン有->true / 無->false</param>
 	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
-
-	/// <summary>
-	/// アウトラインの色セット
-	/// </summary>
-	/// <param name="_outlineColor">幅</param>
-	static void SetOutlineColor(const XMFLOAT4& _outlineColor) { InstanceObject::outlineColor = _outlineColor; }
-
-	/// <summary>
-	/// アウトラインの幅セット
-	/// </summary>
-	/// <param name="_outlineWidth">幅</param>
-	static void SetOutlineWidth(float _outlineWidth) { InstanceObject::outlineWidth = _outlineWidth; }
-
-	/// <summary>
-	/// アウトラインの色取得
-	/// </summary>
-	/// <param name="outlineColor">幅</param>
-	static XMFLOAT4 GetOutlineColor() { return outlineColor; }
-
-	/// <summary>
-	/// アウトラインの幅取得
-	/// </summary>
-	/// <param name="outlineWidth">幅</param>
-	static float GetOutlineWidth() { return outlineWidth; }
 
 	/// <summary>
 	/// ワールド座標を取得
