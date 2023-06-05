@@ -1,21 +1,23 @@
 #include <JsonLoader.h>
 
-void JsonLoader::SerializeJson(const std::string& _fileName, const float _cameraDist,
+void JsonLoader::SerializeJson(const std::string& _fileName, const std::array<float, 3> _cameraDist,
     const std::array<int, 3> _mapSize, std::vector<std::vector<std::vector<int>>> _map)
 {
     Json x;
     x.name = _fileName;
-    x.cameraDist = 30.0f;
-	x.mapSize = _mapSize;
+    x.cameraDist = _cameraDist;
+    x.mapSize = _mapSize;
 	x.map = _map;
-	// ファイル出力
+    x.installationSurface = 0;
+
+    // ファイル出力
     std::ofstream os(_fileName, std::ios::out);
     cereal::JSONOutputArchive archiveFile(os);
     x.serialize(archiveFile);
 }
 
 bool JsonLoader::DeserializeJson(const std::string _fileName,
-    float* _cameraDist, std::vector<std::vector<std::vector<int>>>* _map)
+    std::array<float, 3>* _cameraDist, std::vector<std::vector<std::vector<int>>>* _map)
 {
     Json x;
 
