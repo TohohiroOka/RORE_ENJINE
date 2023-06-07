@@ -9,7 +9,7 @@
                 "RtvNum": 1,
                 "BlendMode": "ALPHA",
                 "DrawMode": "3D",
-                "DrawType": "LINE",
+                "DrawType": "LINE_LIST",
                 "TextureNum": 0,
                 "Rootparams": 1
                 }
@@ -22,7 +22,7 @@
                 "RtvNum": 1,
                 "BlendMode": "ADD",
                 "DrawMode": "3D",
-                "DrawType": "LINE",
+                "DrawType": "LINE_LIST",
                 "TextureNum": 0,
                 "Rootparams": 1
                 }

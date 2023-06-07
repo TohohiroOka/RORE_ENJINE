@@ -81,7 +81,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw(const DrawMode _drawMode);
+	void Draw(const DrawMode _drawMode = DrawMode::alpha);
 
 	/// <summary>
 	/// インスタンシング描画最大描画数になっていないかのチェック
@@ -131,10 +131,4 @@ public:
 	void SetToon(bool _isToon) { this->isToon = _isToon; }
 	void SetLight(bool _isLight) { this->isLight = _isLight; }
 	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	/// <returns></returns>
-	XMFLOAT3 GetWorldPosition();
 };

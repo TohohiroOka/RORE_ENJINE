@@ -22,7 +22,7 @@ public://Ã“Iƒƒ“ƒoŠÖ”
 	/// </summary>
 	/// <returns></returns>
 	/// <param name="_mode">true->3D/false->2D</param>
-	static std::unique_ptr<Camera> Create(const bool _mode);
+	static std::unique_ptr<Camera> Create(const bool _mode = true);
 
 public: // ƒƒ“ƒoŠÖ”
 

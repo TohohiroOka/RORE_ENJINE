@@ -160,9 +160,9 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 	//図形の形状を三角形に設定
 	if (_pepeline.drawType == "POINT") {
 		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-	}else if (_pepeline.drawType == "LINE") {
+	}else if (_pepeline.drawType == "LINE_LIST"|| _pepeline.drawType == "LINE_STRIP") {
 		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-	}else if (_pepeline.drawType == "TRIANGLE") {
+	}else if (_pepeline.drawType == "TRIANGLE_LIST"|| _pepeline.drawType == "TRIANGLE_STRIP") {
 		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	}
 
@@ -284,10 +284,14 @@ void GraphicsPipelineManager::CreatePipeline(const std::string& _name, const PEP
 	_drawSet.pipeName= pepelineName;
 	if (_pepeline.drawType == "POINT") {
 		_drawSet.drawType = DrawType::POINT;
-	} else if (_pepeline.drawType == "LINE") {
-		_drawSet.drawType = DrawType::LINE;
-	} else if (_pepeline.drawType == "TRIANGLE") {
-		_drawSet.drawType = DrawType::TRIANGLE;
+	}else if (_pepeline.drawType == "LINE_LIST") {
+		_drawSet.drawType = DrawType::LINE_LIST;
+	} else if (_pepeline.drawType == "LINE_STRIP") {
+		_drawSet.drawType = DrawType::LINE_STRIP;
+	} else if (_pepeline.drawType == "TRIANGLE_LIST") {
+		_drawSet.drawType = DrawType::TRIANGLE_LIST;
+	} else if (_pepeline.drawType == "TRIANGLE_STRIP") {
+		_drawSet.drawType = DrawType::TRIANGLE_STRIP;
 	}
 	_drawSet.constBuffNum = _pepeline.rootparams;
 	_drawSet.texNum = _pepeline.textureNum;
@@ -308,11 +312,16 @@ void GraphicsPipelineManager::PreDraw(ID3D12GraphicsCommandList* _cmdList,const 
 	// プリミティブ形状を設定
 	if (_drawSet.drawType == DrawType::POINT) {
 		_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	} else if (_drawSet.drawType == DrawType::LINE) {
+	}else if (_drawSet.drawType == DrawType::LINE_LIST) {
 		_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	} else if (_drawSet.drawType == DrawType::TRIANGLE) {
+	} else if (_drawSet.drawType == DrawType::LINE_STRIP) {
+		_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	} else if (_drawSet.drawType == DrawType::TRIANGLE_LIST) {
 		_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	} else if (_drawSet.drawType == DrawType::TRIANGLE_STRIP) {
+		_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	}
+
 }
 
 void GraphicsPipelineManager::ResetDrawSet()

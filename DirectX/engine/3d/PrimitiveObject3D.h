@@ -95,5 +95,5 @@ public:
 	int VertexNum() { return int(vertices.size()); }
 
 	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
-
+	void SetColor(const XMFLOAT4& _color) { baseColor = _color; }
 };

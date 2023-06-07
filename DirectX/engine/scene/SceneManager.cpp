@@ -55,7 +55,7 @@ void SceneManager::Initialize()
 	CreatePipeline();
 
 	//カメラの初期化
-	camera = Camera::Create(0);
+	camera = Camera::Create();
 	camera->SetEye({ 0,0,10 });
 
 	//サウンド用

@@ -11,7 +11,7 @@ using namespace DirectX;
 
 std::vector<GraphicsPipelineManager::DrawSet> Object3d::pipeline;
 
-std::unique_ptr<Object3d> Object3d::Create()
+std::unique_ptr<Object3d> Object3d::Create(Model* _model)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Object3d* instance = new Object3d();
@@ -22,9 +22,9 @@ std::unique_ptr<Object3d> Object3d::Create()
 	// 初期化
 	instance->Initialize();
 
-	//if (_model) {
-	//	instance->SetModel(_model);
-	//}
+	if (_model) {
+		instance->SetModel(_model);
+	}
 
 	return std::unique_ptr<Object3d>(instance);
 }

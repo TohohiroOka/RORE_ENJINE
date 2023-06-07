@@ -26,7 +26,7 @@ public: // 静的メンバ関数
 	/// </summary>
 	/// <param name="_model">モデル</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Object3d> Create();
+	static std::unique_ptr<Object3d> Create(Model* _model);
 
 private:
 

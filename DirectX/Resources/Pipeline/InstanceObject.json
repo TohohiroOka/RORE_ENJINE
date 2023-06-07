@@ -9,7 +9,7 @@
                 "RtvNum": 1,
                 "BlendMode": "ALPHA",
                 "DrawMode": "3D",
-                "DrawType": "TRIANGLE",
+                "DrawType": "TRIANGLE_LIST",
                 "TextureNum": 1,
                 "Rootparams": 4
                 }
@@ -22,7 +22,7 @@
                 "RtvNum": 1,
                 "BlendMode": "ADD",
                 "DrawMode": "3D",
-                "DrawType": "TRIANGLE",
+                "DrawType": "TRIANGLE_LIST",
                 "TextureNum": 1,
                 "Rootparams": 4
                 }

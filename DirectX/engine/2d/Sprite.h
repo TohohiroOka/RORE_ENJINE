@@ -90,12 +90,12 @@ public: // ƒƒ“ƒoŠÖ”
 	/// <summary>
 	/// •`‰æ
 	/// </summary>
-	void Draw(const DrawMode _drawMode = DrawMode::add);
+	void Draw(const DrawMode _drawMode = DrawMode::alpha);
 
 	/// <summary>
 	/// •`‰æ
 	/// </summary>
-	void Draw(const Texture* _tex, const DrawMode _drawMode = DrawMode::add);
+	void Draw(const Texture* _tex, const DrawMode _drawMode = DrawMode::alpha);
 
 private:
 

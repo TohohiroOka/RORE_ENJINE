@@ -289,6 +289,9 @@
     <ClCompile Include="engine\easing\Easing.cpp">
       <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
     </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>ゲームシステム</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -564,6 +567,9 @@
     </ClInclude>
     <ClInclude Include="engine\easing\Easing.h">
       <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>ゲームシステム</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
