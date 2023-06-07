@@ -1,12 +1,8 @@
 #include "MainEngine.h"
-//#include "DrawLine.h"
 #include "InstanceObject.h"
-#include "DrawLine3D.h"
-#include "InterfaceObject3d.h"
 #include "Sprite.h"
 #include "DebugText.h"
 #include "Emitter.h"
-//#include "Fbx.h"
 #include "SafeDelete.h"
 #include "ComputeShaderManager.h"
 #include "GraphicsPipelineManager.h"
@@ -24,7 +20,6 @@ MainEngine::~MainEngine()
 	//DrawLine::Finalize();
 	Sprite::Finalize();
 	//Fbx::Finalize();
-	CubeMap::Finalize();
 	ParticleManager::Finalize();
 	postEffect->Finalize();
 	ComputeShaderManager::Finalize();
@@ -45,18 +40,11 @@ void MainEngine::Initialize()
 	xinput->Initialize();
 
 	//ObjectŒn‚Ì‰Šú‰»
-	InstanceObject::StaticInitialize(dXCommon->GetDevice());
 	GraphicsPipelineManager::SetDevice(dXCommon->GetDevice());
-	InterfaceObject3d::StaticInitialize(dXCommon->GetDevice());
-	Sprite::StaticInitialize(dXCommon->GetDevice());
-	DrawLine3D::StaticInitialize(dXCommon->GetDevice());
-	ParticleManager::SetDevice(dXCommon->GetDevice());
+	ObjectBase::StaticInitialize(dXCommon->GetDevice());
 	LightGroup::StaticInitialize(dXCommon->GetDevice());
-	//Fbx::StaticInitialize(dXCommon->GetDevice());
-	PostEffect::StaticInitialize();
 	ComputeShaderManager::StaticInitialize(dXCommon->GetDevice());
 	DebugText::GetInstance()->Initialize();
-	CubeMap::StaticInitialize(dXCommon->GetDevice());
 
 	scene = SceneManager::Create();
 
@@ -83,10 +71,11 @@ void MainEngine::Draw()
 {
 	//•`‰æ
 	DescriptorHeapManager::PreDraw(dXCommon->GetCmdList());
+	ObjectBase::SetCmdList(dXCommon->GetCmdList());
 
-	postEffect->PreDrawScene(dXCommon->GetCmdList());
+	postEffect->PreDrawScene();
 	scene->Draw(dXCommon->GetCmdList());
-	postEffect->PostDrawScene(dXCommon->GetCmdList());
+	postEffect->PostDrawScene();
 
 	//•`‰æ‘OÝ’è
 	dXCommon->PreDraw();
@@ -94,11 +83,14 @@ void MainEngine::Draw()
 	//imgui•\Ž¦
 	scene->ImguiDraw();
 	ImguiDraw();
-	postEffect->Draw(dXCommon->GetCmdList());
+	postEffect->Draw();
 	//ƒRƒ}ƒ“ƒhŽÀs
 	dXCommon->PostDraw();
 
 	scene->FrameReset();
+
+	ObjectBase::ReleaseCmdList();
+	GraphicsPipelineManager::ResetDrawSet();
 }
 
 void MainEngine::ImguiDraw()

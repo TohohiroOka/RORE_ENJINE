@@ -20,9 +20,6 @@
     <Filter Include="シェーダーファイル\Sprite">
       <UniqueIdentifier>{c79de487-cd11-4978-a7f8-3162e4c4f1d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\Obj">
-      <UniqueIdentifier>{47c0745e-d963-4c4e-a611-83305efb37e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\Particle">
       <UniqueIdentifier>{50e7d2ef-5d76-4f6d-8d0c-5c54df89cb0f}</UniqueIdentifier>
     </Filter>
@@ -34,9 +31,6 @@
     </Filter>
     <Filter Include="エンジンシステム\Light">
       <UniqueIdentifier>{4aa578b4-27fc-4eb3-ab2f-ee4aa96fefae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="シェーダーファイル\Fbx">
-      <UniqueIdentifier>{929a2fcd-b7c7-40f9-aed6-c72f40ae73a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="エンジンシステム\Object">
       <UniqueIdentifier>{f9763ffe-2661-489a-b178-3b5613888aef}</UniqueIdentifier>
@@ -56,12 +50,6 @@
     <Filter Include="エンジンシステム\Object\2d\PostEffect">
       <UniqueIdentifier>{0395157f-cfe5-4ae8-b61c-ca939ad99a27}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\Object\3d\DrawLine3D">
-      <UniqueIdentifier>{23dfebfc-16ed-4a5a-ab22-b48d8195c6e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="シェーダーファイル\DrawLine3D">
-      <UniqueIdentifier>{39c8b700-fc76-4b07-b2e0-aafb12ec0439}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\PostEffect">
       <UniqueIdentifier>{bcc09153-9725-4d08-aad7-fe6fcebe4240}</UniqueIdentifier>
     </Filter>
@@ -70,9 +58,6 @@
     </Filter>
     <Filter Include="シェーダーファイル\Basic">
       <UniqueIdentifier>{a8a993ee-4e2d-4f0e-bfdd-b29afe531222}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="シェーダーファイル\DrawLine2d">
-      <UniqueIdentifier>{e1ee08c3-3b6d-4994-8504-e70b2931b8f7}</UniqueIdentifier>
     </Filter>
     <Filter Include="エンジンシステム\Base">
       <UniqueIdentifier>{67675b7e-5f68-4193-8d4f-1cc9fe252ed8}</UniqueIdentifier>
@@ -97,9 +82,6 @@
     </Filter>
     <Filter Include="エンジンシステム\Base\ShaderManager">
       <UniqueIdentifier>{356b25fe-ae5a-4de6-8b21-156452afe5c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="シェーダーファイル\CubeBox">
-      <UniqueIdentifier>{7508ff1d-e35f-4500-975c-5425a099d05b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Imgui">
       <UniqueIdentifier>{23249f82-5888-449d-8f3a-edc0bb3f0345}</UniqueIdentifier>
@@ -143,6 +125,12 @@
     <Filter Include="エンジンシステム\Base\FileLoder\CSV">
       <UniqueIdentifier>{89695aff-10b9-4ffc-a805-fceb5d716a93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダーファイル\PrimitiveObject3D">
+      <UniqueIdentifier>{39c8b700-fc76-4b07-b2e0-aafb12ec0439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Object3D">
+      <UniqueIdentifier>{47c0745e-d963-4c4e-a611-83305efb37e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -175,16 +163,7 @@
     <ClCompile Include="engine\3d\Material.cpp">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClCompile>
-    <ClCompile Include="engine\3d\DrawLine3D.cpp">
-      <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
-    </ClCompile>
     <ClCompile Include="engine\3d\HeightMap.cpp">
-      <Filter>エンジンシステム\Object\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\InterfaceObject3d.cpp">
-      <Filter>エンジンシステム\Object\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\CubeMap.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\PrimitiveObject3D.cpp">
@@ -223,26 +202,11 @@
     <ClCompile Include="engine\base\GraphicsPipelineManager.cpp">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\FrameRateKeep.cpp">
-      <Filter>エンジンシステム\Base\Helpar\FrameRateKeep</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\Matrix4.cpp">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
-    </ClCompile>
     <ClCompile Include="engine\base\ShaderManager.cpp">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\Singleton.cpp">
-      <Filter>エンジンシステム\Base\Helpar\Singleton</Filter>
-    </ClCompile>
     <ClCompile Include="engine\base\Texture.cpp">
       <Filter>エンジンシステム\Base\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\Vector2.cpp">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\Vector3.cpp">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\WindowApp.cpp">
       <Filter>エンジンシステム\Base\WindowApp</Filter>
@@ -261,9 +225,6 @@
     </ClCompile>
     <ClCompile Include="engine\audio\Audio.cpp">
       <Filter>エンジンシステム\Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\easing\Easing.cpp">
-      <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
     </ClCompile>
     <ClCompile Include="engine\external\imgui\imgui_demo.cpp">
       <Filter>Imgui</Filter>
@@ -289,9 +250,6 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>エンジンシステム\Base\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\Quaternion.cpp">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
-    </ClCompile>
     <ClCompile Include="game\scene\Scene1.cpp">
       <Filter>ゲームシステム\Scene</Filter>
     </ClCompile>
@@ -304,6 +262,33 @@
     <ClCompile Include="engine\3d\TerrainModel.cpp">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\ObjectBase.cpp">
+      <Filter>エンジンシステム\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\Base3D.cpp">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Helpar\Quaternion.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Helpar\Vector2.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Helpar\Vector3.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Helpar\Matrix4.cpp">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Helpar\FrameRateKeep.cpp">
+      <Filter>エンジンシステム\Base\Helpar\FrameRateKeep</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Helpar\Singleton.cpp">
+      <Filter>エンジンシステム\Base\Helpar\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\easing\Easing.cpp">
+      <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -312,11 +297,11 @@
     <FxCompile Include="Resources\Shaders\SpritePS.hlsl">
       <Filter>シェーダーファイル\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\ObjVS.hlsl">
-      <Filter>シェーダーファイル\Obj</Filter>
+    <FxCompile Include="Resources\Shaders\Object3DVS.hlsl">
+      <Filter>シェーダーファイル\Object3D</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\ObjPS.hlsl">
-      <Filter>シェーダーファイル\Obj</Filter>
+    <FxCompile Include="Resources\Shaders\Object3DPS.hlsl">
+      <Filter>シェーダーファイル\Object3D</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\ParticleGS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
@@ -327,17 +312,11 @@
     <FxCompile Include="Resources\Shaders\ParticleVS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\FbxPS.hlsl">
-      <Filter>シェーダーファイル\Fbx</Filter>
+    <FxCompile Include="Resources\Shaders\PrimitiveObject3DPS.hlsl">
+      <Filter>シェーダーファイル\PrimitiveObject3D</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\FbxVS.hlsl">
-      <Filter>シェーダーファイル\Fbx</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine3DPS.hlsl">
-      <Filter>シェーダーファイル\DrawLine3D</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine3DVS.hlsl">
-      <Filter>シェーダーファイル\DrawLine3D</Filter>
+    <FxCompile Include="Resources\Shaders\PrimitiveObject3DVS.hlsl">
+      <Filter>シェーダーファイル\PrimitiveObject3D</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\PostEffectPS.hlsl">
       <Filter>シェーダーファイル\PostEffect</Filter>
@@ -347,18 +326,6 @@
     </FxCompile>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
       <Filter>シェーダーファイル\Basic</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine2DPS.hlsl">
-      <Filter>シェーダーファイル\DrawLine2d</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine2DVS.hlsl">
-      <Filter>シェーダーファイル\DrawLine2d</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\CubeBoxPS.hlsl">
-      <Filter>シェーダーファイル\CubeBox</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\CubeBoxVS.hlsl">
-      <Filter>シェーダーファイル\CubeBox</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\HeightMapPS.hlsl">
       <Filter>シェーダーファイル\HeightMap</Filter>
@@ -377,26 +344,17 @@
     <None Include="Resources\Shaders\Sprite.hlsli">
       <Filter>シェーダーファイル\Sprite</Filter>
     </None>
-    <None Include="Resources\Shaders\Obj.hlsli">
-      <Filter>シェーダーファイル\Obj</Filter>
+    <None Include="Resources\Shaders\Object3D.hlsli">
+      <Filter>シェーダーファイル\Object3D</Filter>
     </None>
     <None Include="Resources\Shaders\Particle.hlsli">
       <Filter>シェーダーファイル\Particle</Filter>
     </None>
-    <None Include="Resources\Shaders\Fbx.hlsli">
-      <Filter>シェーダーファイル\Fbx</Filter>
-    </None>
-    <None Include="Resources\Shaders\DrawLine3D.hlsli">
-      <Filter>シェーダーファイル\DrawLine3D</Filter>
+    <None Include="Resources\Shaders\PrimitiveObject3D.hlsli">
+      <Filter>シェーダーファイル\PrimitiveObject3D</Filter>
     </None>
     <None Include="Resources\Shaders\PostEffect.hlsli">
       <Filter>シェーダーファイル\PostEffect</Filter>
-    </None>
-    <None Include="Resources\Shaders\DrawLine2D.hlsli">
-      <Filter>シェーダーファイル\DrawLine2d</Filter>
-    </None>
-    <None Include="Resources\Shaders\CubeBox.hlsli">
-      <Filter>シェーダーファイル\CubeBox</Filter>
     </None>
     <None Include="Resources\Shaders\HeightMap.hlsli">
       <Filter>シェーダーファイル\HeightMap</Filter>
@@ -451,16 +409,7 @@
     <ClInclude Include="engine\3d\Material.h">
       <Filter>エンジンシステム\Object\3d\OBJ</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\DrawLine3D.h">
-      <Filter>エンジンシステム\Object\3d\DrawLine3D</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\HeightMap.h">
-      <Filter>エンジンシステム\Object\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\InterfaceObject3d.h">
-      <Filter>エンジンシステム\Object\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\CubeMap.h">
       <Filter>エンジンシステム\Object\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\PrimitiveObject3D.h">
@@ -511,29 +460,14 @@
     <ClInclude Include="engine\base\GraphicsPipelineManager.h">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\FrameRateKeep.h">
-      <Filter>エンジンシステム\Base\Helpar\FrameRateKeep</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\Matrix4.h">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
-    </ClInclude>
     <ClInclude Include="engine\base\PipelineHelpar.h">
       <Filter>エンジンシステム\Base\GraphicsPipelineManager</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\ShaderManager.h">
       <Filter>エンジンシステム\Base\ShaderManager</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\Singleton.h">
-      <Filter>エンジンシステム\Base\Helpar\Singleton</Filter>
-    </ClInclude>
     <ClInclude Include="engine\base\Texture.h">
       <Filter>エンジンシステム\Base\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\Vector2.h">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\Vector3.h">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\WindowApp.h">
       <Filter>エンジンシステム\Base\WindowApp</Filter>
@@ -552,9 +486,6 @@
     </ClInclude>
     <ClInclude Include="engine\audio\Audio.h">
       <Filter>エンジンシステム\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\easing\Easing.h">
-      <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
     </ClInclude>
     <ClInclude Include="engine\external\imgui\imgui_impl_dx12.h">
       <Filter>Imgui</Filter>
@@ -586,14 +517,8 @@
     <ClInclude Include="engine\scene\InterfaceScene.h">
       <Filter>エンジンシステム\Base\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\Quaternion.h">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
-    </ClInclude>
     <ClInclude Include="game\scene\Scene1.h">
       <Filter>ゲームシステム\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\SafeDelete.h">
-      <Filter>エンジンシステム\Base\Helpar</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\InstanceObject.h">
       <Filter>エンジンシステム\Object\3d</Filter>
@@ -606,6 +531,39 @@
     </ClInclude>
     <ClInclude Include="engine\3d\TerrainModel.h">
       <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\ObjectBase.h">
+      <Filter>エンジンシステム\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Base3D.h">
+      <Filter>エンジンシステム\Object\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\Matrix4.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\Quaternion.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\SafeDelete.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\Vector2.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\Vector3.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\Helpar.h">
+      <Filter>エンジンシステム\Base\Helpar</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\FrameRateKeep.h">
+      <Filter>エンジンシステム\Base\Helpar\FrameRateKeep</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Helpar\Singleton.h">
+      <Filter>エンジンシステム\Base\Helpar\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\easing\Easing.h">
+      <Filter>エンジンシステム\Base\Helpar\Easing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

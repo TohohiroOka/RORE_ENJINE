@@ -14,7 +14,7 @@ ID3D12Device* Material::device = nullptr;
 Material::~Material()
 {
 	texture.reset();
-	constBuffMaterial.Reset();
+	constBuff.Reset();
 }
 
 void Material::StaticInitialize(ID3D12Device* _device)
@@ -50,7 +50,7 @@ void Material::CreateConstantBuffer()
 		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B1) + 0xff)&~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&constBuffMaterial));
+		IID_PPV_ARGS(&constBuff));
 	if (FAILED(result)) { assert(0); }
 }
 
@@ -72,12 +72,12 @@ void Material::Update()
 	HRESULT result;
 	// 定数バッファへデータ転送
 	CONST_BUFFER_DATA_B1* constMap = nullptr;
-	result = constBuffMaterial->Map(0, nullptr, (void**)&constMap);
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result)) {
 		constMap->ambient = ambient;
 		constMap->diffuse = diffuse;
 		constMap->specular = specular;
 		constMap->alpha = alpha;
-		constBuffMaterial->Unmap(0, nullptr);
+		constBuff->Unmap(0, nullptr);
 	}
 }

@@ -147,5 +147,5 @@ float4 main(VSOutput input) : SV_TARGET
 
 	float4 mainColor = shadecolor * addColor;
 
-	return float4(mainColor.rgb, ratio);
+	return float4(mainColor.rgb, 1.0f);
 }

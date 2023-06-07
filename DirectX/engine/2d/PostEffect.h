@@ -3,6 +3,12 @@
 
 class PostEffect : public Sprite
 {
+public:
+
+	enum class EffectTyep {
+		normal,
+	};
+
 public://メンバ関数
 
 	/// <summary>
@@ -45,26 +51,17 @@ public://メンバ関数
 	/// <summary>
 	/// 描画コマンドの発行
 	/// </summary>
-	/// <param name="_cmdList">コマンドリスト</param>
-	void Draw(ID3D12GraphicsCommandList* _cmdList);
+	void Draw(const EffectTyep _drawMode = EffectTyep::normal);
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
-	/// <param name="_cmdList">描画コマンドリスト</param>
-	void PreDrawScene(ID3D12GraphicsCommandList* _cmdList);
+	void PreDrawScene();
 
 	/// <summary>
 	/// 描画後処理
 	/// </summary>
-	/// <param name="_cmdList">描画コマンドリスト</param>
-	void PostDrawScene(ID3D12GraphicsCommandList* _cmdList);
-
-	/// <summary>
-	/// パイプラインのセット
-	/// </summary>
-	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
+	void PostDrawScene();
 
 	Texture* GetTex() {
 		return texture.get();
@@ -74,8 +71,8 @@ private://静的メンバ変数
 
 	//画面クリアカラー
 	static const float clearColor[4];
-	//パイプライン
-	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
+	//パイプライン情報
+	static std::vector<GraphicsPipelineManager::DrawSet> pipeline;
 
 private://メンバ変数
 
@@ -87,4 +84,8 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
 	//深度バッファ
 	ComPtr<ID3D12Resource> depthBuffer;
+
+public:
+	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { PostEffect::pipeline = _pipeline; }
+
 };

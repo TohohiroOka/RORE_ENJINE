@@ -6,7 +6,7 @@
 struct QUERY_HIT
 {
 	// 衝突相手のオブジェクト
-	InterfaceObject3d* object = nullptr;
+	Base3D* object = nullptr;
 	// 衝突相手のコライダー
 	BaseCollider* collider = nullptr;
 	// 衝突点

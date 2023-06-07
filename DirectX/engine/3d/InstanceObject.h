@@ -1,20 +1,12 @@
 #pragma once
-#include "InterfaceObject3d.h"
+#include "Base3D.h"
 
 class Camera;
 class LightGroup;
 
-class InstanceObject
+class InstanceObject : public Base3D
 {
-private: // エイリアス
-	// Microsoft::WRL::を省略
-	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DirectX::を省略
-	using XMFLOAT2 = DirectX::XMFLOAT2;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMMATRIX = DirectX::XMMATRIX;
-
+private:
 	//頂点データ3D
 	struct VERTEX {
 		XMFLOAT3 pos;
@@ -45,42 +37,11 @@ private: // エイリアス
 public://メンバ関数
 
 	/// <summary>
-	/// 静的初期化
-	/// </summary>
-	/// <param name="_device">デバイス</param>
-	static void StaticInitialize(ID3D12Device* _device);
-
-	/// <summary>
 	/// 
 	/// </summary>
 	/// <param name="_model">モデル</param>
 	/// <returns>インスタンス</returns>
 	static std::unique_ptr<InstanceObject> Create(Model* _model);
-
-	/// <summary>
-	/// カメラのセット
-	/// </summary>
-	/// <param name="_camera">カメラ</param>
-	static void SetCamera(Camera* _camera) {
-		InstanceObject::camera = _camera;
-	}
-
-	/// <summary>
-	/// ライトグループのセット
-	/// </summary>
-	/// <param name="_light">ライトグループ</param>
-	static void SetLightGroup(LightGroup* _light) { InstanceObject::light = _light; }
-
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	/// <param name="_cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
-
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	static void PostDraw();
 
 private://メンバ関数
 
@@ -120,13 +81,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
-
-	/// <summary>
-	/// パイプラインのセット
-	/// </summary>
-	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
+	void Draw(const DrawMode _drawMode);
 
 	/// <summary>
 	/// インスタンシング描画最大描画数になっていないかのチェック
@@ -147,22 +102,12 @@ public:
 
 private:
 
-	//デバイス
-	static ID3D12Device* device;
-	//コマンドリスト
-	static ID3D12GraphicsCommandList* cmdList;
-	//パイプライン
-	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
-	//カメラ
-	static Camera* camera;
-	//ライト
-	static LightGroup* light;
-
-private:
+	//パイプライン情報
+	static std::vector<GraphicsPipelineManager::DrawSet> pipeline;
 
 	//モデル
 	Model* model;
-	//ベースカラー
+	//オブジェクト情報配列
 	OBJECT_INFO objInform;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB0;
@@ -181,28 +126,10 @@ private:
 
 public:
 
-	/// <summary>
-	/// ブルームのセット
-	/// </summary>
-	/// <param name="_isBloom">ブルーム有->true / 無->false</param>
+	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { InstanceObject::pipeline = _pipeline; }
 	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
-
-	/// <summary>
-	/// トゥーンのセット
-	/// </summary>
-	/// <param name="_isToon">トゥーン有->true / 無->false</param>
 	void SetToon(bool _isToon) { this->isToon = _isToon; }
-
-	/// <summary>
-	/// ライティングのセット
-	/// </summary>
-	/// <param name="_isLight">ライティング有->true / 無->false</param>
 	void SetLight(bool _isLight) { this->isLight = _isLight; }
-
-	/// <summary>
-	/// アウトラインのセット
-	/// </summary>
-	/// <param name="_isOutline">アウトライン有->true / 無->false</param>
 	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
 
 	/// <summary>

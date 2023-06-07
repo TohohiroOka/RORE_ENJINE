@@ -3,12 +3,9 @@
 #include"Camera.h"
 
 using namespace DirectX;
-using namespace Microsoft::WRL;
 
-ID3D12Device* ParticleManager::device = nullptr;
-ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
 Camera* ParticleManager::camera = nullptr;
-GraphicsPipelineManager::GRAPHICS_PIPELINE ParticleManager::pipeline;
+std::vector<GraphicsPipelineManager::DrawSet> ParticleManager::pipeline;
 std::map<std::string, ParticleManager::INFORMATION> ParticleManager::texture;
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
@@ -45,9 +42,6 @@ void ParticleManager::LoadTexture(const std::string& _keepName, const std::strin
 
 void ParticleManager::Initialize()
 {
-	assert(pipeline.pipelineState);
-	assert(pipeline.rootSignature);
-
 	HRESULT result = S_FALSE;
 
 	// 頂点バッファ生成
@@ -260,30 +254,12 @@ void ParticleManager::Update()
 	constBuff->Unmap(0, nullptr);
 }
 
-void ParticleManager::PreDraw(ID3D12GraphicsCommandList* _cmdList)
+void ParticleManager::Draw(const DrawMode _drawMode)
 {
-	// PreDrawとPostDrawがペアで呼ばれていなければエラー
-	assert(ParticleManager::cmdList == nullptr);
+	int modeNum = int(_drawMode);
 
-	ParticleManager::cmdList = _cmdList;
+	ObjectBase::Draw(pipeline[modeNum]);
 
-	// パイプラインステートの設定
-	_cmdList->SetPipelineState(pipeline.pipelineState.Get());
-	// ルートシグネチャの設定
-	_cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-
-	//プリミティブ形状の設定コマンド
-	_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-}
-
-void ParticleManager::PostDraw()
-{
-	// コマンドリストを解除
-	ParticleManager::cmdList = nullptr;
-}
-
-void ParticleManager::Draw()
-{
 	//頂点バッファをセット
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 

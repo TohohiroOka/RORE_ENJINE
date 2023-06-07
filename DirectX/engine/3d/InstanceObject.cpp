@@ -7,19 +7,7 @@
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
-ID3D12Device* InstanceObject::device = nullptr;
-ID3D12GraphicsCommandList* InstanceObject::cmdList = nullptr;
-GraphicsPipelineManager::GRAPHICS_PIPELINE InstanceObject::pipeline;
-Camera* InstanceObject::camera = nullptr;
-LightGroup* InstanceObject::light = nullptr;
-
-void InstanceObject::StaticInitialize(ID3D12Device* _device)
-{
-	// 再初期化チェック
-	assert(!InstanceObject::device);
-	assert(_device);
-	InstanceObject::device = _device;
-}
+std::vector<GraphicsPipelineManager::DrawSet> InstanceObject::pipeline;
 
 std::unique_ptr<InstanceObject> InstanceObject::Create(Model* _model)
 {
@@ -33,29 +21,6 @@ std::unique_ptr<InstanceObject> InstanceObject::Create(Model* _model)
 	instance->Initialize(_model);
 
 	return std::unique_ptr<InstanceObject>(instance);
-}
-
-void InstanceObject::PreDraw(ID3D12GraphicsCommandList* _cmdList)
-{
-	// PreDrawとPostDrawがペアで呼ばれていなければエラー
-	assert(InstanceObject::cmdList == nullptr);
-
-	InstanceObject::cmdList = _cmdList;
-
-	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline.pipelineState.Get());
-
-	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-
-	//プリミティブ形状の設定コマンド
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void InstanceObject::PostDraw()
-{
-	// コマンドリストを解除
-	InstanceObject::cmdList = nullptr;
 }
 
 void InstanceObject::Initialize(Model* _model)
@@ -164,18 +129,18 @@ void InstanceObject::Update()
 	}
 }
 
-void InstanceObject::Draw()
+void InstanceObject::Draw(const DrawMode _drawMode)
 {
-	// nullptrチェック
-	assert(InstanceObject::device);
-	assert(InstanceObject::cmdList);
-
 	Update();
 
 	// モデルの割り当てがなければ描画しない
 	if (model == nullptr) {
 		return;
 	}
+
+	int modeNum = int(_drawMode);
+
+	Base3D::Draw(pipeline[modeNum]);
 
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());

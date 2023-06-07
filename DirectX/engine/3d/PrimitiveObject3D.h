@@ -1,13 +1,13 @@
 #pragma once
-#include "InterfaceObject3d.h"
+#include "Base3D.h"
 
 class BaseCollider;
 class Camera;
 class LightGroup;
 
-class PrimitiveObject3D : public InterfaceObject3d
+class PrimitiveObject3D : public Base3D
 {
-public://構造体宣言
+private://構造体宣言
 
 	//定数バッファの構造体
 	struct CONST_BUFFER_DATA {
@@ -16,12 +16,7 @@ public://構造体宣言
 		XMMATRIX viewproj;//3D変換行列
 	};
 
-public://静的メンバ関数
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~PrimitiveObject3D();
+public:
 
 	/// <summary>
 	/// 生成
@@ -29,47 +24,37 @@ public://静的メンバ関数
 	/// <returns></returns>
 	static std::unique_ptr<PrimitiveObject3D> Create();
 
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	static void PreDraw();
-
-	/// <summary>
-	/// パイプラインのセット
-	/// </summary>
-	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
-
-private:
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
-
 public://メンバ関数
+
+
+	PrimitiveObject3D() {};
+	~PrimitiveObject3D();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize() override;
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update() override;
+
 
 	/// <summary>
 	/// //描画
 	/// </summary>
-	void Draw() override;
+	void Draw(const DrawMode _drawMode = DrawMode::alpha);
 
 	/// <summary>
 	/// 頂点情報の再設定
 	/// </summary>
 	void VertexInit();
 
-private://静的メンバ変数
-
-	//パイプライン
-	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
-
 protected://メンバ変数
+
+	//パイプライン情報
+	static std::vector<GraphicsPipelineManager::DrawSet> pipeline;
 
 	// 頂点配列
 	std::vector<XMFLOAT3> vertices;
@@ -83,6 +68,10 @@ protected://メンバ変数
 	ComPtr<ID3D12Resource> indexBuff;
 	//インデックスバッファビュー
 	D3D12_INDEX_BUFFER_VIEW ibView{};
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuffB0;
+	//ベースカラー
+	XMFLOAT4 baseColor = { 1,1,1,1 };
 
 public:
 
@@ -104,5 +93,7 @@ public:
 	/// 頂点の数
 	/// </summary>
 	int VertexNum() { return int(vertices.size()); }
+
+	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { PrimitiveObject3D::pipeline = _pipeline; }
 
 };

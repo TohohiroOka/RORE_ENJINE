@@ -6,13 +6,28 @@
 
 using namespace DirectX;
 
-GraphicsPipelineManager::GRAPHICS_PIPELINE PrimitiveObject3D::pipeline;
+std::vector<GraphicsPipelineManager::DrawSet> PrimitiveObject3D::pipeline;
+
+std::unique_ptr<PrimitiveObject3D> PrimitiveObject3D::Create()
+{
+	//インスタンスを生成
+	PrimitiveObject3D* instance = new PrimitiveObject3D();
+	if (instance == nullptr) {
+		return nullptr;
+	}
+
+	//初期化
+	instance->Initialize();
+
+	//ワールド行列生成
+	instance->UpdateWorldMatrix();
+
+	return std::unique_ptr<PrimitiveObject3D>(instance);
+}
 
 PrimitiveObject3D::~PrimitiveObject3D()
 {
-	//バッファを解放
-	vertBuff.Reset();
-	indexBuff.Reset();
+	DeleteCollider();
 }
 
 void PrimitiveObject3D::Initialize()
@@ -52,38 +67,13 @@ void PrimitiveObject3D::Update()
 	}
 }
 
-std::unique_ptr<PrimitiveObject3D> PrimitiveObject3D::Create()
-{
-	//インスタンスを生成
-	PrimitiveObject3D* instance = new PrimitiveObject3D();
-	if (instance == nullptr) {
-		return nullptr;
-	}
-
-	//初期化
-	instance->Initialize();
-
-	//ワールド行列生成
-	instance->UpdateWorldMatrix();
-
-	return std::unique_ptr<PrimitiveObject3D>(instance);
-}
-
-void PrimitiveObject3D::PreDraw()
-{
-	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline.pipelineState.Get());
-
-	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-
-	//プリミティブ形状の設定コマンド
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-}
-
-void PrimitiveObject3D::Draw()
+void PrimitiveObject3D::Draw(const DrawMode _drawMode)
 {
 	Update();
+
+	int modeNum = int(_drawMode);
+
+	ObjectBase::Draw(pipeline[modeNum]);
 
 	//インデックスバッファの設定
 	cmdList->IASetIndexBuffer(&ibView);

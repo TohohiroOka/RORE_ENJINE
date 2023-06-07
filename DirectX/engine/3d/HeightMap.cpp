@@ -1,12 +1,17 @@
 #include "HeightMap.h"
-#include "Camera.h"
-#include "SafeDelete.h"
 #include "Easing.h"
+#include "Camera.h"
+#include "LightGroup.h"
+#include "Texture.h"
 
-using namespace Microsoft::WRL;
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+
 using namespace DirectX;
 
-GraphicsPipelineManager::GRAPHICS_PIPELINE HeightMap::pipeline;
+std::vector<GraphicsPipelineManager::DrawSet> HeightMap::pipeline;
 
 std::unique_ptr<HeightMap> HeightMap::Create(TerrainModel* _model)
 {
@@ -24,24 +29,10 @@ std::unique_ptr<HeightMap> HeightMap::Create(TerrainModel* _model)
 	return std::unique_ptr<HeightMap>(instance);
 }
 
-void HeightMap::PreDraw()
-{
-	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline.pipelineState.Get());
-
-	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-
-	//プリミティブ形状の設定コマンド
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
 void HeightMap::Initialize()
 {
 	// nullptrチェック
 	assert(device);
-
-	name = typeid(*this).name();
 
 	HRESULT result = S_FALSE;
 
@@ -56,8 +47,16 @@ void HeightMap::Initialize()
 	if (FAILED(result)) { assert(0); }
 }
 
+HeightMap::~HeightMap()
+{
+	DeleteCollider();
+}
+
 void HeightMap::Update()
 {
+	Base3D::Update();
+	UpdateWorldMatrix();
+
 	//定数バッファにデータを転送
 	CONST_BUFFER_DATA_B0* constMap = nullptr;
 	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
@@ -82,11 +81,19 @@ void HeightMap::Update()
 	}
 }
 
-void HeightMap::Draw()
+void HeightMap::Draw(const DrawMode _drawMode)
 {
-	InterfaceObject3d::Draw();
+	Update();
 
-	cmdList->SetGraphicsRootConstantBufferView(3, constBufferOData->GetGPUVirtualAddress());
+	int modeNum= int(_drawMode);
+
+	Base3D::Draw(pipeline[modeNum]);
+
+	// 定数バッファビューをセット
+	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
+
+	// ライトの描画
+	light->Draw(cmdList, 2);
 
 	model->Draw(cmdList);
 }

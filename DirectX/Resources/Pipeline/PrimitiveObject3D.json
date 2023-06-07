@@ -1,0 +1,31 @@
+{
+    "name": "scene",
+    "pipelines":[
+        {
+            "pipeline":{
+                "Name": "PrimitiveObject3D",
+                "ShaderType": ["v","p"],
+                "InputLayoutType": ["POSITION"],
+                "RtvNum": 1,
+                "BlendMode": "ALPHA",
+                "DrawMode": "3D",
+                "DrawType": "LINE",
+                "TextureNum": 0,
+                "Rootparams": 1
+                }
+        },
+        {
+            "pipeline":{
+                "Name": "PrimitiveObject3D",
+                "ShaderType": ["v","p"],
+                "InputLayoutType": ["POSITION"],
+                "RtvNum": 1,
+                "BlendMode": "ADD",
+                "DrawMode": "3D",
+                "DrawType": "LINE",
+                "TextureNum": 0,
+                "Rootparams": 1
+                }
+        }
+    ]
+}

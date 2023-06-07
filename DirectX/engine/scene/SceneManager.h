@@ -11,6 +11,13 @@ public://静的メンバ関数
 	/// <returns></returns>
 	static std::unique_ptr<SceneManager> Create();
 
+private:
+
+	/// <summary>
+	/// pipelineのセット
+	/// </summary>
+	void SetPipeline(const std::string& name, std::vector<GraphicsPipelineManager::DrawSet>& _drawSet);
+
 public://メンバ関数
 
 	SceneManager() {};

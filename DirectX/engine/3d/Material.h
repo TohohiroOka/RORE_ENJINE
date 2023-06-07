@@ -76,7 +76,7 @@ public:
 	/// 定数バッファの取得
 	/// </summary>
 	/// <returns></returns>
-	ID3D12Resource* GetConstantBuffer() { return constBuffMaterial.Get(); }
+	ID3D12Resource* GetConstantBuffer() { return constBuff.Get(); }
 
 	/// テクスチャ読み込み
 	/// </summary>
@@ -96,7 +96,7 @@ private:
 	//テクスチャ情報
 	std::unique_ptr<Texture> texture = nullptr;
 	// 定数バッファ
-	ComPtr<ID3D12Resource> constBuffMaterial;
+	ComPtr<ID3D12Resource> constBuff;
 
 private:
 	// コンストラクタ

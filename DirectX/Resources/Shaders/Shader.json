@@ -1,0 +1,47 @@
+{
+    "name": "scene",
+    "shaders":[
+        {
+            "shader":{
+                "Name":"Object3D",
+                "Type":["v","p"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"InstanceObject",
+                "Type":["v","p"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"HeightMap",
+                "Type":["v","p"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"PrimitiveObject3D",
+                "Type":["v","p"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"Sprite",
+                "Type":["v","p"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"Particle",
+                "Type":["v","p","g"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"PostEffect",
+                "Type":["v","p"]
+            }
+        }
+    ]
+}

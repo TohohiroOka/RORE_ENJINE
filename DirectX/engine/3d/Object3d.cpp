@@ -1,11 +1,6 @@
 ﻿#include "Object3d.h"
-
-#include "BaseCollider.h"
-#include "CollisionManager.h"
 #include "Camera.h"
 #include "LightGroup.h"
-#include "Model.h"
-#include "Texture.h"
 
 #include <fstream>
 #include <sstream>
@@ -13,11 +8,10 @@
 #include <vector>
 
 using namespace DirectX;
-using namespace Microsoft::WRL;
 
-GraphicsPipelineManager::GRAPHICS_PIPELINE Object3d::pipeline;
+std::vector<GraphicsPipelineManager::DrawSet> Object3d::pipeline;
 
-std::unique_ptr<Object3d> Object3d::Create(Model* _model)
+std::unique_ptr<Object3d> Object3d::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Object3d* instance = new Object3d();
@@ -28,9 +22,9 @@ std::unique_ptr<Object3d> Object3d::Create(Model* _model)
 	// 初期化
 	instance->Initialize();
 
-	if (_model) {
-		instance->SetModel(_model);
-	}
+	//if (_model) {
+	//	instance->SetModel(_model);
+	//}
 
 	return std::unique_ptr<Object3d>(instance);
 }
@@ -55,8 +49,16 @@ void Object3d::Initialize()
 	if (FAILED(result)) { assert(0); }
 }
 
+Object3d::~Object3d()
+{
+	DeleteCollider();
+}
+
 void Object3d::Update()
 {
+	Base3D::Update();
+	UpdateWorldMatrix();
+
 	//定数バッファにデータを転送
 	CONST_BUFFER_DATA_B0* constMap = nullptr;
 	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
@@ -81,19 +83,7 @@ void Object3d::Update()
 	}
 }
 
-void Object3d::PreDraw()
-{
-	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline.pipelineState.Get());
-
-	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-
-	// プリミティブ形状を設定
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void Object3d::Draw()
+void Object3d::Draw(const DrawMode _drawMode)
 {
 	// nullptrチェック
 	assert(device);
@@ -104,7 +94,17 @@ void Object3d::Draw()
 		return;
 	}
 
-	InterfaceObject3d::Draw();
+	Update();
+
+	int modeNum = int(_drawMode);
+
+	Base3D::Draw(pipeline[modeNum]);
+
+	// 定数バッファビューをセット
+	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
+
+	// ライトの描画
+	light->Draw(cmdList, 2);
 
 	// モデル描画
 	model->Draw(cmdList);

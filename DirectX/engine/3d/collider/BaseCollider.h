@@ -1,8 +1,7 @@
 ﻿#pragma once
-
 #include "CollisionTypes.h"
 #include "CollisionInfo.h"
-#include "InterfaceObject3d.h"
+#include "Base3D.h"
 
 /// <summary>
 /// コライダー基底クラス
@@ -14,11 +13,11 @@ public:
 	BaseCollider() = default;
 	virtual ~BaseCollider() = default;
 
-	inline void SetObject(InterfaceObject3d* object) {
+	inline void SetObject(Base3D* object) {
 		this->object3d = object;
 	}
 
-	inline InterfaceObject3d* GetObject3d() {
+	inline Base3D* GetObject3d() {
 		return object3d;
 	}
 
@@ -39,7 +38,7 @@ public:
 	/// </summary>
 	/// <param name="info">衝突情報</param>
 	inline void OnCollision(const CollisionInfo& _info) {
-		object3d->OnCollision(_info);
+		//object3d->OnCollision(_info);
 	}
 
 	/// <summary>
@@ -67,7 +66,7 @@ public:
 	}
 
 protected:
-	InterfaceObject3d* object3d = nullptr;
+	Base3D* object3d = nullptr;
 	// 形状タイプ
 	COLILSION_SHAPE_TYPE shapeType = SHAPE_UNKNOWN;
 	// 当たり判定属性

@@ -1,0 +1,31 @@
+{
+    "name": "scene",
+    "pipelines":[
+        {
+            "pipeline":{
+                "Name": "Particle",
+                "ShaderType": ["v","p","g"],
+                "InputLayoutType": ["POSITION","SCALE","COLOR"],
+                "RtvNum": 1,
+                "BlendMode": "ALPHA",
+                "DrawMode": "PARTICLE",
+                "DrawType": "POINT",
+                "TextureNum": 1,
+                "Rootparams": 1
+                }
+        },
+        {
+            "pipeline":{
+                "Name": "Particle",
+                "ShaderType": ["v","p","g"],
+                "InputLayoutType": ["POSITION","SCALE","COLOR"],
+                "RtvNum": 1,
+                "BlendMode": "ADD",
+                "DrawMode": "PARTICLE",
+                "DrawType": "POINT",
+                "TextureNum": 1,
+                "Rootparams": 1
+                }
+        }
+    ]
+}

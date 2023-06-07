@@ -3,11 +3,8 @@
 #include <cassert>
 
 using namespace DirectX;
-using namespace Microsoft::WRL;
 
-ID3D12Device* Sprite::device = nullptr;
-ID3D12GraphicsCommandList* Sprite::cmdList = nullptr;
-GraphicsPipelineManager::GRAPHICS_PIPELINE Sprite::pipeline;
+std::vector<GraphicsPipelineManager::DrawSet> Sprite::pipeline;
 std::map<std::string, Sprite::INFORMATION> Sprite::texture;
 XMMATRIX Sprite::matProjection;
 
@@ -17,16 +14,8 @@ Sprite::~Sprite()
 	constBuff.Reset();
 }
 
-bool Sprite::StaticInitialize(ID3D12Device* _device)
+void Sprite::StaticInitialize()
 {
-	// 初期化チェック
-	assert(!Sprite::device);
-
-	// nullptrチェック
-	assert(_device);
-
-	Sprite::device = _device;
-
 	// 射影行列計算
 	matProjection = XMMatrixOrthographicOffCenterLH(
 		0.0f, float(WindowApp::GetWindowWidth()),
@@ -34,8 +23,6 @@ bool Sprite::StaticInitialize(ID3D12Device* _device)
 		0.0f, 1.0f);
 
 	Sprite::LoadTexture("debugfont", "Resources/LetterResources/debugfont.png", false);
-
-	return true;
 }
 
 void Sprite::LoadTexture(const std::string& _keepName, const std::string& _filename, bool _isDelete)
@@ -49,27 +36,6 @@ void Sprite::LoadTexture(const std::string& _keepName, const std::string& _filen
 	//テクスチャ読み込み
 	texture[_keepName].instance = Texture::Create(_filename);
 	texture[_keepName].isDelete = _isDelete;
-}
-
-void Sprite::PreDraw(ID3D12GraphicsCommandList* _cmdList)
-{
-	// PreDrawとPostDrawがペアで呼ばれていなければエラー
-	assert(Sprite::cmdList == nullptr);
-
-	Sprite::cmdList = _cmdList;
-
-	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipeline.pipelineState.Get());
-	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-	// プリミティブ形状を設定
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-}
-
-void Sprite::PostDraw()
-{
-	// コマンドリストを解除
-	Sprite::cmdList = nullptr;
 }
 
 std::unique_ptr<Sprite> Sprite::Create(const std::string& _name)
@@ -163,8 +129,12 @@ void Sprite::Update()
 	this->constBuff->Unmap(0, nullptr);
 }
 
-void Sprite::Draw()
+void Sprite::Draw(const DrawMode _drawMode)
 {
+	int modeNum = int(_drawMode);
+
+	ObjectBase::Draw(pipeline[modeNum]);
+
 	// 頂点バッファの設定
 	cmdList->IASetVertexBuffers(0, 1, &this->vbView);
 	// 定数バッファビューをセット
@@ -176,7 +146,12 @@ void Sprite::Draw()
 	cmdList->DrawInstanced(4, 1, 0, 0);
 }
 
-void Sprite::Draw(const Texture* _tex) {
+void Sprite::Draw(const Texture* _tex, const DrawMode _drawMode)
+{
+	int modeNum = int(_drawMode);
+
+	ObjectBase::Draw(pipeline[modeNum]);
+
 	// 頂点バッファの設定
 	cmdList->IASetVertexBuffers(0, 1, &this->vbView);
 	// 定数バッファビューをセット

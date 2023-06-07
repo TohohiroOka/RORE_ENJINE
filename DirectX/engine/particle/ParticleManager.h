@@ -1,16 +1,10 @@
 #pragma once
-#include <wrl.h>
-#include <d3d12.h>
-#include <d3dx12.h>
-#include <DirectXMath.h>
+#include "ObjectBase.h"
 #include<forward_list>
-
-#include "GraphicsPipelineManager.h"
-#include "Texture.h"
 
 class Camera;
 
-class ParticleManager
+class ParticleManager : public ObjectBase
 {
 private: // エイリアス
 	// Microsoft::WRL::を省略
@@ -97,14 +91,6 @@ public: // 静的メンバ関数
 	static std::unique_ptr<ParticleManager> Create(const std::string& _name);
 
 	/// <summary>
-	/// デバイスのセット
-	/// </summary>
-	/// <param name="_device">デバイス</param>
-	static void SetDevice(ID3D12Device* _device) {
-		ParticleManager::device = _device;
-	}
-
-	/// <summary>
 	/// カメラのセット
 	/// </summary>
 	/// <param name="_camera">カメラ</param>
@@ -121,29 +107,6 @@ public: // 静的メンバ関数
 	/// 解放処理
 	/// </summary>
 	static void Finalize();
-
-	/// <summary>
-	/// パイプラインのセット
-	/// </summary>
-	/// <param name="pipeline">パイプライン</param>
-	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { pipeline = _pipeline; }
-
-private: // 静的メンバ変数
-
-	// デバイス
-	static ID3D12Device* device;
-	//コマンドリスト
-	static ID3D12GraphicsCommandList* cmdList;
-	//カメラ
-	static Camera* camera;
-	//パイプライン
-	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
-	//テクスチャ情報
-	static std::map<std::string, INFORMATION> texture;
-	//ビルボード行列
-	static XMMATRIX matBillboard;
-	//Y軸回りのビルボード行列
-	static XMMATRIX matBillboardY;
 
 private:// 静的メンバ関数
 
@@ -183,20 +146,9 @@ public: // メンバ関数
 	void Update();
 
 	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	/// <param name="_cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* _cmdList);
-
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	static void PostDraw();
-
-	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const DrawMode _drawMode = DrawMode::add);
 
 	/// <summary>
 	/// 出現しているパーティクルを全て削除する
@@ -211,6 +163,17 @@ public: // メンバ関数
 	}
 
 private: // メンバ変数
+
+	//カメラ
+	static Camera* camera;
+	//パイプライン情報
+	static std::vector<GraphicsPipelineManager::DrawSet> pipeline;
+	//テクスチャ情報
+	static std::map<std::string, INFORMATION> texture;
+	//ビルボード行列
+	static XMMATRIX matBillboard;
+	//Y軸回りのビルボード行列
+	static XMMATRIX matBillboardY;
 
 	//テクスチャ名
 	std::string name;
@@ -229,9 +192,6 @@ private: // メンバ変数
 
 public:
 
-	/// <summary>
-	/// ブルームのセット
-	/// </summary>
-	/// <param name="isBloom">ブルーム有->true / 無->false</param>
+	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { ParticleManager::pipeline = _pipeline; }
 	void SetBloom(bool isBloom) { this->isBloom = isBloom; }
 };

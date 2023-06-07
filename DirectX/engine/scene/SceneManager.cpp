@@ -1,81 +1,10 @@
 #include "SceneManager.h"
 #include "Scene1.h"
 #include "PostEffect.h"
+#include "JsonLoader.h"
 
 std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
 InterfaceScene* SceneManager::nextScene = nullptr;
-
-void SetLayout(D3D12_INPUT_ELEMENT_DESC* inputLayout, GraphicsPipelineManager::INPUT_LAYOUT_NUMBER* inputLayoutType,
-	int layoutNum, bool instance)
-{
-	D3D12_INPUT_CLASSIFICATION input = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-	if (instance)
-	{
-		input = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA;
-	}
-	using LAYOUT = GraphicsPipelineManager::INPUT_LAYOUT_NUMBER;
-	// 頂点レイアウトの設定
-	for (int i = 0; i < layoutNum; i++)
-	{
-		int layoutNumber = inputLayoutType[i];
-		//座標
-		if (layoutNumber == LAYOUT::POSITION)
-		{
-			inputLayout[i] = {
-				"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//法線
-		else if (layoutNumber == LAYOUT::NORMAL)
-		{
-			inputLayout[i] = {
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//2Duv座標
-		else if (layoutNumber == LAYOUT::TEXCOORD_2D)
-		{
-			inputLayout[i] = {
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//3Duv座標
-		else if (layoutNumber == LAYOUT::TEXCOORD_3D)
-		{
-			inputLayout[i] = {
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//ボーン番号
-		else if (layoutNumber == LAYOUT::BONEINDICES)
-		{
-			inputLayout[i] = {
-				"BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//ボーン影響度
-		else if (layoutNumber == LAYOUT::BONEWEIGHTS)
-		{
-			inputLayout[i] = {
-				"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//スケール
-		else if (layoutNumber == LAYOUT::SCALE)
-		{
-			inputLayout[i] = {
-				"SCALE", 0, DXGI_FORMAT_R32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-		//色
-		else if (layoutNumber == LAYOUT::COLOR)
-		{
-			inputLayout[i] = {
-				"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-				D3D12_APPEND_ALIGNED_ELEMENT,input, 0 };
-		}
-	}
-}
 
 std::unique_ptr<SceneManager> SceneManager::Create()
 {
@@ -89,6 +18,31 @@ std::unique_ptr<SceneManager> SceneManager::Create()
 	instance->Initialize();
 
 	return std::unique_ptr<SceneManager>(instance);
+}
+
+void SceneManager::SetPipeline(const std::string& name,std::vector<GraphicsPipelineManager::DrawSet>& _drawSet) {
+	std::vector<JsonLoader::Pipeline> addPipe{};
+	JsonLoader::LoadPipeline(name, &addPipe);
+
+	const int size = int(addPipe.size());
+	_drawSet.resize(size);
+
+	for (int i = 0; i < size; i++) {
+		GraphicsPipelineManager::PEPELINE inPepeline{};
+		inPepeline.name = addPipe[i].name;
+		inPepeline.shaderType = addPipe[i].shaderType;
+		inPepeline.inputLayoutType = addPipe[i].inputLayoutType;
+		inPepeline.rtvNum = addPipe[i].rtvNum;
+		inPepeline.blendMode = addPipe[i].blendMode;
+		inPepeline.drawMode = addPipe[i].drawMode;
+		inPepeline.drawType = addPipe[i].drawType;
+		inPepeline.textureNum = addPipe[i].textureNum;
+		inPepeline.rootparams = addPipe[i].rootparams;
+
+		GraphicsPipelineManager::DrawSet addDrawSet{};
+		graphicsPipeline->CreatePipeline(name, inPepeline, addDrawSet);
+		_drawSet[i] = addDrawSet;
+	}
 }
 
 SceneManager::~SceneManager()
@@ -122,226 +76,48 @@ void SceneManager::CreatePipeline()
 {
 	graphicsPipeline = std::make_unique<GraphicsPipelineManager>();
 
-	GraphicsPipelineManager::PEPELINE_DESC inPepeline{};
-	GraphicsPipelineManager::SIGNATURE_DESC inSignature{};
-
 	//OBJ
 	{
-		inPepeline.object2d = false;
-		inPepeline.vertShader = "OBJ";
-		inPepeline.pixelShader = "OBJ";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::NORMAL,GraphicsPipelineManager::TEXCOORD_2D };
-
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-
-		graphicsPipeline->CreatePipeline("OBJ", inPepeline, inSignature);
-		Object3d::SetPipeline(graphicsPipeline->graphicsPipeline["OBJ"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("Object3D", addDrawSet);
+		Object3d::SetPipeline(addDrawSet);
 	}
 	//InstanceObject
 	{
-		inPepeline.object2d = false;
-		inPepeline.vertShader = "InstanceObject";
-		inPepeline.pixelShader = "InstanceObject";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::NORMAL,GraphicsPipelineManager::TEXCOORD_2D };
-
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
-
-		inSignature.instanceDraw = true;
-
-		graphicsPipeline->CreatePipeline("InstanceObject", inPepeline, inSignature);
-		InstanceObject::SetPipeline(graphicsPipeline->graphicsPipeline["InstanceObject"]);
-	}
-	//CUBE_BOX
-	{
-		inPepeline.object2d = false;
-		inPepeline.vertShader = "CUBE_BOX";
-		inPepeline.pixelShader = "CUBE_BOX";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::TEXCOORD_3D };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-
-		inSignature.instanceDraw = false;
-
-		graphicsPipeline->CreatePipeline("CUBE_BOX", inPepeline, inSignature);
-		CubeMap::SetPipeline(graphicsPipeline->graphicsPipeline["CUBE_BOX"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("InstanceObject", addDrawSet);
+		InstanceObject::SetPipeline(addDrawSet);
 	}
 	//HEIGHT_MAP
 	{
-		inPepeline.object2d = false;
-		inPepeline.vertShader = "HEIGHT_MAP";
-		inPepeline.pixelShader = "HEIGHT_MAP";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::NORMAL,GraphicsPipelineManager::TEXCOORD_2D };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
-
-		inSignature.object2d = false;
-		inSignature.textureNum = 3;
-		inSignature.light = true;
-		inSignature.instanceDraw = true;//定数バッファとしてインスタンス描画用の物を用いる
-
-		graphicsPipeline->CreatePipeline("HEIGHT_MAP", inPepeline, inSignature);
-		HeightMap::SetPipeline(graphicsPipeline->graphicsPipeline["HEIGHT_MAP"]);
-	}
-	//DRAW_LINE_3D
-	{
-		inPepeline.object2d = false;
-		inPepeline.vertShader = "DRAW_LINE_3D";
-		inPepeline.pixelShader = "DRAW_LINE_3D";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-
-		inSignature.object2d = false;
-		inSignature.materialData = false;
-		inSignature.textureNum = 0;
-		inSignature.light = false;
-		inSignature.instanceDraw = false;
-
-		graphicsPipeline->CreatePipeline("DRAW_LINE_3D", inPepeline, inSignature);
-		DrawLine3D::SetPipeline(graphicsPipeline->graphicsPipeline["DRAW_LINE_3D"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("HeightMap", addDrawSet);
+		HeightMap::SetPipeline(addDrawSet);
 	}
 	//PrimitiveObject3D
 	{
-		inPepeline.object2d = false;
-		inPepeline.vertShader = "DRAW_LINE_3D";
-		inPepeline.pixelShader = "DRAW_LINE_3D";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-
-		inSignature.object2d = false;
-		inSignature.materialData = false;
-		inSignature.textureNum = 0;
-		inSignature.light = false;
-
-		graphicsPipeline->CreatePipeline("PrimitiveObject3D", inPepeline, inSignature);
-		PrimitiveObject3D::SetPipeline(graphicsPipeline->graphicsPipeline["PrimitiveObject3D"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("PrimitiveObject3D", addDrawSet);
+		PrimitiveObject3D::SetPipeline(addDrawSet);
 	}
 	//SPRITE
 	{
-		inPepeline.object2d = true;
-		inPepeline.vertShader = "SPRITE";
-		inPepeline.pixelShader = "SPRITE";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::TEXCOORD_2D };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-		inSignature.object2d = true;
-		inSignature.textureNum = 1;
-		inSignature.light = false;
-
-		graphicsPipeline->CreatePipeline("SPRITE", inPepeline, inSignature);
-		Sprite::SetPipeline(graphicsPipeline->graphicsPipeline["SPRITE"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("Sprite", addDrawSet);
+		Sprite::SetPipeline(addDrawSet);
 	}
 	//PARTICLE
 	{
-		inPepeline.object2d = true;
-		inPepeline.vertShader = "PARTICLE";
-		inPepeline.pixelShader = "PARTICLE";
-		inPepeline.geometryShader = "PARTICLE";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::SCALE,GraphicsPipelineManager::COLOR };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ADD;
-		inPepeline.particl = true;
-
-		inSignature.object2d = true;
-		inSignature.textureNum = 1;
-		inSignature.light = false;
-
-		graphicsPipeline->CreatePipeline("PARTICLE", inPepeline, inSignature);
-		ParticleManager::SetPipeline(graphicsPipeline->graphicsPipeline["PARTICLE"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("Particle", addDrawSet);
+		ParticleManager::SetPipeline(addDrawSet);
 	}
 	//POST_EFFECT
 	{
-		inPepeline.object2d = true;
-		inPepeline.vertShader = "POST_EFFECT";
-		inPepeline.pixelShader = "POST_EFFECT";
-		inPepeline.geometryShader = "null";
-		GraphicsPipelineManager::INPUT_LAYOUT_NUMBER inputLayoutType[] = {
-			GraphicsPipelineManager::POSITION ,GraphicsPipelineManager::TEXCOORD_2D };
-		//配列サイズ
-		const int arrayNum = sizeof(inputLayoutType) / sizeof(inputLayoutType[0]);
-
-		inPepeline.layoutNum = arrayNum;
-		D3D12_INPUT_ELEMENT_DESC inputLayout[arrayNum];
-		SetLayout(inputLayout, inputLayoutType, arrayNum, false);
-		inPepeline.inputLayout = inputLayout;
-		inPepeline.rtvNum = 1;
-		inPepeline.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		inPepeline.blendMode = GraphicsPipelineManager::BLEND_MODE::ALPHA;
-		inPepeline.particl = false;
-		
-		inSignature.object2d = true;
-		inSignature.textureNum = 1;
-		inSignature.light = false;
-		graphicsPipeline->CreatePipeline("POST_EFFECT", inPepeline, inSignature);
-		PostEffect::SetPipeline(graphicsPipeline->graphicsPipeline["POST_EFFECT"]);
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("PostEffect", addDrawSet);
+		PostEffect::SetPipeline(addDrawSet);
 	}
-
 }
 
 void SceneManager::Update()
@@ -370,21 +146,15 @@ void SceneManager::Update()
 	//カメラ更新
 	camera->Update();
 
-	InterfaceObject3d::SetCamera(camera.get());
-	InstanceObject::SetCamera(camera.get());
-	DrawLine3D::SetCamera(camera.get());
+	Base3D::SetCamera(camera.get());
 	ParticleManager::SetCamera(camera.get());
-	CubeMap::SetCamera(camera.get());
-	HeightMap::SetCamera(camera.get());
 
 	//ライト
 	light->Update();
 	scene->SetLight(light.get());
 
 	// 3Dオブエクトにライトをセット
-	InstanceObject::SetLightGroup(light.get());
-	InterfaceObject3d::SetLightGroup(light.get());
-	HeightMap::SetLightGroup(light.get());
+	Base3D::SetLightGroup(light.get());
 }
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)

@@ -45,6 +45,25 @@ private:
 				CEREAL_NVP(cameraPos), CEREAL_NVP(cameraPosPhase), CEREAL_NVP(cameraRota), CEREAL_NVP(playerPos));
 		}
 	};
+	
+public:
+
+	struct Shader {
+		std::string name;
+		std::vector<std::string> type;
+	};
+
+	struct Pipeline {
+		std::string name;
+		std::vector<std::string> shaderType;
+		std::vector<std::string> inputLayoutType;
+		int rtvNum;
+		std::string blendMode;
+		std::string drawMode;
+		std::string drawType;
+		int textureNum;
+		int rootparams;
+	};
 
 public:
 
@@ -52,13 +71,15 @@ public:
 	/// jsonの読み込み
 	/// </summary>
 	/// <param name="_fileName">ファイル名</param>
-	/// <param name="_name"></param>
-	/// <param name="_inputLayoutType"></param>
-	/// <param name="_rtvNum"></param>
-	/// <param name="_blendMode"></param>
-	/// <param name="_rootparams"></param>
-	static void LoadPipelineNlohmannJson(const std::string& _fileName, std::string& _name,
-		std::vector<std::string>* _inputLayoutType, int* _rtvNum, std::string& _blendMode, int* _rootparams);
+	/// <param name="_shaderName">シェーダー名</param>
+	static void LoadShaderName(const std::string& _fileName, std::vector<Shader>* _shaderName);
+
+	/// <summary>
+	/// jsonの読み込み
+	/// </summary>
+	/// <param name="_fileName">ファイル名</param>
+	/// <param name="_pipeline">パイプライン情報</param>
+	static void LoadPipeline(const std::string& _fileName, std::vector<Pipeline>* _pipeline);
 
 	/// <summary>
 	/// 出力

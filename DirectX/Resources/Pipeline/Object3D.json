@@ -1,0 +1,31 @@
+{
+    "name": "scene",
+    "pipelines":[
+        {
+            "pipeline":{
+                "Name": "Object3D",
+                "ShaderType": ["v","p"],
+                "InputLayoutType": ["POSITION","NORMAL","TEXCOORD_2D"],
+                "RtvNum": 1,
+                "BlendMode": "ALPHA",
+                "DrawMode": "3D",
+                "DrawType": "TRIANGLE",
+                "TextureNum": 1,
+                "Rootparams": 3
+                }
+        },
+        {
+            "pipeline":{
+                "Name": "Object3D",
+                "ShaderType": ["v","p"],
+                "InputLayoutType": ["POSITION","NORMAL","TEXCOORD_2D"],
+                "RtvNum": 1,
+                "BlendMode": "ADD",
+                "DrawMode": "3D",
+                "DrawType": "TRIANGLE",
+                "TextureNum": 1,
+                "Rootparams": 3
+                }
+        }
+    ]
+}

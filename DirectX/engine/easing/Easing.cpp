@@ -1,12 +1,24 @@
 #include "Easing.h"
 #include <cmath>
 
+using namespace DirectX;
+
 //“™‘¬’¼ü‰^“®
-float Easing::Lerp(float _start, float _end, float _time)
+float Easing::Lerp(const float _start, const float _end, const float _time)
 {
 	return _start * (1.0f - _time) + _end * _time;
 }
 
+XMFLOAT3 Easing::Lerp(const XMFLOAT3& _start, const XMFLOAT3& _end, const float _time)
+{
+	XMFLOAT3 rPos = {};
+
+	rPos.x = Lerp(_start.x, _end.x, _time);
+	rPos.y = Lerp(_start.y, _end.y, _time);
+	rPos.z = Lerp(_start.z, _end.z, _time);
+
+	return rPos;
+}
 //sin In
 float Easing::InSine(float _start, float _end, float _time)
 {

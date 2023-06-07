@@ -1,9 +1,16 @@
 #pragma once
+#include <DirectXMath.h>
+
 class Easing
 {
+private: // エイリアス
+	using XMFLOAT2 = DirectX::XMFLOAT2;
+	using XMFLOAT3 = DirectX::XMFLOAT3;
+
 public:
 	//等速直線運動
-	static float Lerp(float _start, float _end, float _time);
+	static float Lerp(const float _start, const float _end, const float _time);
+	static XMFLOAT3 Lerp(const XMFLOAT3& _start, const XMFLOAT3& _end, const float _time);
 
 	//sin
 	static float InSine(float _start, float _end, float _time);

@@ -4,7 +4,6 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 #include "ShaderManager.h"
-
 #include <unordered_map>
 
 class GraphicsPipelineManager
@@ -23,70 +22,38 @@ public://メンバenum
 		ComPtr<ID3D12PipelineState> pipelineState = nullptr;
 	};
 
-	//ブレンドモード
-	enum BLEND_MODE
-	{
-		NOBLEND,//デフォルト設定
-		ALPHA,//α合成
-		ADD,//加算合成
-		SUB,//減算合成
-		MULA,//乗算合成
-		INVSRC,//反転合成
-	};
-
-	//頂点レイアウトメンバー
-	enum INPUT_LAYOUT_NUMBER
-	{
-		POSITION,
-		NORMAL,
-		TEXCOORD_2D,
-		TEXCOORD_3D,
-		BONEINDICES,
-		BONEWEIGHTS,
-		SCALE,
-		COLOR,
-	};
-
-	//パイプライン設定
-	struct PEPELINE_DESC
-	{
-		//2D描画か
-		bool object2d = false;
-		//パーティクル描画か
-		bool particl = false;
-		//頂点シェーダー
-		std::string vertShader = "null";
-		//ピクセルシェーダー
-		std::string pixelShader = "null";
-		//ジオメトリシェーダー
-		std::string geometryShader = "null";
-		//レイアウト数
-		int layoutNum = 0;
-		//頂点レイアウト設定
-		D3D12_INPUT_ELEMENT_DESC* inputLayout = nullptr;
+	struct PEPELINE {
+		//shader名
+		std::string name;
+		//使うshaderの種類
+		std::vector<std::string> shaderType;
+		//layout設定
+		std::vector<std::string> inputLayoutType;
 		//レンダーターゲット数
-		int rtvNum = 1;
-		//ブレンドの種類
-		BLEND_MODE blendMode = BLEND_MODE::ALPHA;
+		int rtvNum;
+		//ブレンドモード
+		std::string blendMode;
+		//3D/2D/Particle
+		std::string drawMode;
 		//描画方法
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		std::string drawType;
+		//画像数
+		int textureNum;
+		//定数バッファ数
+		int rootparams;
 	};
 
-	//ルートシグネチャ設定
-	struct SIGNATURE_DESC
-	{
-		//2D描画か
-		bool object2d = false;
-		//マテリアルデータの有無
-		bool materialData = true;
-		//インスタンシング描画
-		bool instanceDraw = false;
-		//テクスチャ数
-		int textureNum = 1;
-		//ライト有無
-		bool light = true;
-		//キューブマップ有無
-		bool cubemap = false;
+	enum class DrawType {
+		POINT,
+		LINE,
+		TRIANGLE,
+	};
+
+	struct DrawSet {
+		std::string pipeName;
+		DrawType drawType;
+		int constBuffNum;
+		int texNum;
 	};
 
 private://メンバ関数
@@ -96,20 +63,21 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="_mode">ブレンドの種類</param>
 	/// <returns>ブレンド設定</returns>
-	D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(const BLEND_MODE& _mode);
+	D3D12_RENDER_TARGET_BLEND_DESC CreateBlendDesc(const std::string& _mode);
 
 	/// <summary>
 	/// パイプラインデスクの生成
 	/// </summary>
-	/// <param name="_pepelineDescSet">パイプライン設定</param>
+	/// <param name="_pepeline">パイプライン設定</param>
 	/// <returns>パイプラインデスク</returns>
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatepelineDesc(const PEPELINE_DESC& _pepelineDescSet);
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatepelineDesc(const PEPELINE& _pepeline);
 
 	/// <summary>
 	/// ルートシグネチャの生成
 	/// </summary>
-	/// <param name="_signatureDescSet">ルートシグネチャ設定</param>
-	void CreateRootSignature(const SIGNATURE_DESC& _signatureDescSet);
+	/// <param name="_pepelineName">パイプライン名</param>
+	/// <param name="_pepeline">パイプライン設定</param>
+	void CreateRootSignature(const std::string& _pepelineName, const PEPELINE& _pepeline);
 
 public://メンバ関数
 
@@ -127,25 +95,31 @@ public://メンバ関数
 	/// enum OBJECT_KINDSの中から一を引数とする
 	/// </summary>
 	/// <param name="_name">パイプライン名</param>
-	/// <param name="_pepelineDescSet">パイプラインの設定</param>
-	/// <param name="_signatureDescSet">ルートシグネチャ設定</param>
-	void CreatePipeline(const std::string& _name, const PEPELINE_DESC& _pepelineDescSet, const SIGNATURE_DESC& _signatureDescSet);
+	/// <param name="_pepeline">パイプライン設定</param>
+	/// <returns>パイプライン情報</returns>
+	void CreatePipeline(const std::string& _name, const PEPELINE& _pepeline, GraphicsPipelineManager::DrawSet& _drawSet);
+
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	static void PreDraw(ID3D12GraphicsCommandList* _cmdList, const DrawSet& _drawSet);
+
+	/// <summary>
+	/// フレーム初期化
+	/// </summary>
+	static void ResetDrawSet();
 
 private://静的メンバ変数
 
 	// デバイス
 	static ID3D12Device* device;
+	//パイプライン保存配列
+	static std::unordered_map<std::string, GRAPHICS_PIPELINE> graphicsPipeline;
+	//ひとつ前のパイプライン設定
+	static DrawSet oldDraw;
 
 private://メンバ変数
 
 	//シェーダー
 	std::unique_ptr<ShaderManager> shaderManager;
-
-public://メンバ変数
-
-	//名前の保持
-	std::string name;
-	//パイプライン保存配列
-	std::unordered_map<std::string, GRAPHICS_PIPELINE> graphicsPipeline;
-
 };

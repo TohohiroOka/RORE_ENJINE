@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\Helpar;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -81,7 +81,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\Helpar;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -100,20 +100,19 @@
     <ClCompile Include="engine\2d\DebugText.cpp" />
     <ClCompile Include="engine\2d\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
+    <ClCompile Include="engine\3d\Base3D.cpp" />
     <ClCompile Include="engine\3d\collider\Collision.cpp" />
     <ClCompile Include="engine\3d\collider\CollisionManager.cpp" />
     <ClCompile Include="engine\3d\collider\CollisionPrimitive.cpp" />
     <ClCompile Include="engine\3d\collider\MeshCollider.cpp" />
     <ClCompile Include="engine\3d\collider\SphereCollider.cpp" />
-    <ClCompile Include="engine\3d\CubeMap.cpp" />
-    <ClCompile Include="engine\3d\DrawLine3D.cpp" />
     <ClCompile Include="engine\3d\HeightMap.cpp" />
     <ClCompile Include="engine\3d\InstanceObject.cpp" />
-    <ClCompile Include="engine\3d\InterfaceObject3d.cpp" />
     <ClCompile Include="engine\3d\Material.cpp" />
     <ClCompile Include="engine\3d\Mesh.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
+    <ClCompile Include="engine\3d\ObjectBase.cpp" />
     <ClCompile Include="engine\3d\PrimitiveObject3D.cpp" />
     <ClCompile Include="engine\3d\TerrainModel.cpp" />
     <ClCompile Include="engine\audio\Audio.cpp" />
@@ -121,19 +120,19 @@
     <ClCompile Include="engine\base\Csv.cpp" />
     <ClCompile Include="engine\base\DescriptorHeapManager.cpp" />
     <ClCompile Include="engine\base\DirectXCommon.cpp" />
-    <ClCompile Include="engine\base\FrameRateKeep.cpp" />
     <ClCompile Include="engine\base\GraphicsPipelineManager.cpp" />
+    <ClCompile Include="engine\base\Helpar\FrameRateKeep.cpp" />
+    <ClCompile Include="engine\base\Helpar\Matrix4.cpp" />
+    <ClCompile Include="engine\base\Helpar\Quaternion.cpp" />
+    <ClCompile Include="engine\base\Helpar\Singleton.cpp" />
+    <ClCompile Include="engine\base\Helpar\Vector2.cpp" />
+    <ClCompile Include="engine\base\Helpar\Vector3.cpp" />
     <ClCompile Include="engine\base\input\DirectInput.cpp" />
     <ClCompile Include="engine\base\input\XInputManager.cpp" />
     <ClCompile Include="engine\base\JsonLoader.cpp" />
     <ClCompile Include="engine\base\MainEngine.cpp" />
-    <ClCompile Include="engine\base\Matrix4.cpp" />
-    <ClCompile Include="engine\base\Quaternion.cpp" />
     <ClCompile Include="engine\base\ShaderManager.cpp" />
-    <ClCompile Include="engine\base\Singleton.cpp" />
     <ClCompile Include="engine\base\Texture.cpp" />
-    <ClCompile Include="engine\base\Vector2.cpp" />
-    <ClCompile Include="engine\base\Vector3.cpp" />
     <ClCompile Include="engine\base\WindowApp.cpp" />
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\easing\Easing.cpp" />
@@ -161,18 +160,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\CubeBoxPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\CubeBoxVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
     <FxCompile Include="Resources\Shaders\HeightMapPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -197,49 +184,25 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine3DPS.hlsl">
+    <FxCompile Include="Resources\Shaders\PrimitiveObject3DPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine3DVS.hlsl">
+    <FxCompile Include="Resources\Shaders\PrimitiveObject3DVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine2DPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\DrawLine2DVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\FbxPS.hlsl">
+    <FxCompile Include="Resources\Shaders\Object3DPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\FbxVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\ObjPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\ObjVS.hlsl">
+    <FxCompile Include="Resources\Shaders\Object3DVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -289,13 +252,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\CubeBox.hlsli" />
     <None Include="Resources\Shaders\HeightMap.hlsli" />
     <None Include="Resources\Shaders\InstanceObject.hlsli" />
-    <None Include="Resources\Shaders\DrawLine2D.hlsli" />
-    <None Include="Resources\Shaders\DrawLine3D.hlsli" />
-    <None Include="Resources\Shaders\Fbx.hlsli" />
-    <None Include="Resources\Shaders\Obj.hlsli" />
+    <None Include="Resources\Shaders\PrimitiveObject3D.hlsli" />
+    <None Include="Resources\Shaders\Object3D.hlsli" />
     <None Include="Resources\Shaders\Particle.hlsli" />
     <None Include="Resources\Shaders\PostEffect.hlsli" />
     <None Include="Resources\Shaders\Sprite.hlsli" />
@@ -304,6 +264,7 @@
     <ClInclude Include="engine\2d\DebugText.h" />
     <ClInclude Include="engine\2d\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
+    <ClInclude Include="engine\3d\Base3D.h" />
     <ClInclude Include="engine\3d\collider\BaseCollider.h" />
     <ClInclude Include="engine\3d\collider\Collision.h" />
     <ClInclude Include="engine\3d\collider\CollisionAttribute.h" />
@@ -315,15 +276,13 @@
     <ClInclude Include="engine\3d\collider\QueryCallback.h" />
     <ClInclude Include="engine\3d\collider\RaycastHit.h" />
     <ClInclude Include="engine\3d\collider\SphereCollider.h" />
-    <ClInclude Include="engine\3d\CubeMap.h" />
-    <ClInclude Include="engine\3d\DrawLine3D.h" />
     <ClInclude Include="engine\3d\HeightMap.h" />
     <ClInclude Include="engine\3d\InstanceObject.h" />
-    <ClInclude Include="engine\3d\InterfaceObject3d.h" />
     <ClInclude Include="engine\3d\Material.h" />
     <ClInclude Include="engine\3d\Mesh.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\Object3d.h" />
+    <ClInclude Include="engine\3d\ObjectBase.h" />
     <ClInclude Include="engine\3d\PrimitiveObject3D.h" />
     <ClInclude Include="engine\3d\TerrainModel.h" />
     <ClInclude Include="engine\audio\Audio.h" />
@@ -331,21 +290,22 @@
     <ClInclude Include="engine\base\Csv.h" />
     <ClInclude Include="engine\base\DescriptorHeapManager.h" />
     <ClInclude Include="engine\base\DirectXCommon.h" />
-    <ClInclude Include="engine\base\FrameRateKeep.h" />
     <ClInclude Include="engine\base\GraphicsPipelineManager.h" />
+    <ClInclude Include="engine\base\Helpar\FrameRateKeep.h" />
+    <ClInclude Include="engine\base\Helpar\Helpar.h" />
+    <ClInclude Include="engine\base\Helpar\Matrix4.h" />
+    <ClInclude Include="engine\base\Helpar\Quaternion.h" />
+    <ClInclude Include="engine\base\Helpar\SafeDelete.h" />
+    <ClInclude Include="engine\base\Helpar\Singleton.h" />
+    <ClInclude Include="engine\base\Helpar\Vector2.h" />
+    <ClInclude Include="engine\base\Helpar\Vector3.h" />
     <ClInclude Include="engine\base\input\DirectInput.h" />
     <ClInclude Include="engine\base\input\XInputManager.h" />
     <ClInclude Include="engine\base\JsonLoader.h" />
     <ClInclude Include="engine\base\MainEngine.h" />
-    <ClInclude Include="engine\base\Matrix4.h" />
     <ClInclude Include="engine\base\PipelineHelpar.h" />
-    <ClInclude Include="engine\base\Quaternion.h" />
-    <ClInclude Include="engine\base\SafeDelete.h" />
     <ClInclude Include="engine\base\ShaderManager.h" />
-    <ClInclude Include="engine\base\Singleton.h" />
     <ClInclude Include="engine\base\Texture.h" />
-    <ClInclude Include="engine\base\Vector2.h" />
-    <ClInclude Include="engine\base\Vector3.h" />
     <ClInclude Include="engine\base\WindowApp.h" />
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\easing\Easing.h" />

@@ -1,4 +1,4 @@
-#include "DrawLine3D.hlsli"
+#include "PrimitiveObject3D.hlsli"
 
 VSOutput main( float4 pos : POSITION ) : SV_POSITION
 {

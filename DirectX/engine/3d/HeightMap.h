@@ -1,12 +1,11 @@
 #pragma once
-#include "InterfaceObject3d.h"
+#include "Base3D.h"
 #include "TerrainModel.h"
 
-class BaseCollider;
 class Camera;
 class LightGroup;
 
-class HeightMap : public InterfaceObject3d
+class HeightMap : public Base3D
 {
 private:// サブクラス
 
@@ -33,47 +32,28 @@ public://メンバ関数
 	/// <returns>インスタンス</returns>
 	static std::unique_ptr<HeightMap> Create(TerrainModel* _model);
 
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	static void PreDraw();
-
 private://メンバ関数
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize() override;
-
-	/// <summary>
-	/// モデルセット
-	/// </summary>
-	/// <param name="_model">モデル</param>
-	void SetModel(TerrainModel* _model) {
-		model = _model;
-	}
+	void Initialize();
 
 public:
 
 	HeightMap() {};
-	~HeightMap() {};
+	~HeightMap();
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update() override;
+	void Update();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw() override;
+	void Draw(const DrawMode _drawMode = DrawMode::alpha);
 
-	/// <summary>
-	/// パイプラインのセット
-	/// </summary>
-	/// <param name="_pipeline">パイプライン</param>
-	static void SetPipeline(const GraphicsPipelineManager::GRAPHICS_PIPELINE& _pipeline) { HeightMap::pipeline = _pipeline; }
-	
 	/// <summary>
 	/// モデルの変換
 	/// </summary>
@@ -92,18 +72,31 @@ public:
 
 private:
 
-	//パイプライン
-	static GraphicsPipelineManager::GRAPHICS_PIPELINE pipeline;
+	//パイプライン情報
+	static std::vector<GraphicsPipelineManager::DrawSet> pipeline;
 
-private:
-
-	//定数バッファ
-	ComPtr<ID3D12Resource> constBufferOData;
 	// モデル
 	TerrainModel* model = nullptr;
 
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuffB0;
+	//ベースカラー
+	XMFLOAT4 baseColor = { 1,1,1,1 };
+	//ブルームの有無
+	bool isBloom = false;
+	//トゥーンの有無
+	bool isToon = false;
+	//アウトラインの有無
+	bool isOutline = false;
+	//スキニング
+	bool isSkinning = false;
+	//ライティング
+	bool isLight = true;
+
 public:
 
+	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { HeightMap::pipeline = _pipeline; }
+	void SetModel(TerrainModel* _model) { model = _model; }
 	Model* GetModel() { return model->GetModel(); }
 	std::vector<Mesh::VERTEX>& GetHitVertices() { return model->GetHitVertices(); }
 	std::vector<unsigned long>& GetHitIndices() { return model->GetHitIndices(); }

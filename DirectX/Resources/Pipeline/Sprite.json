@@ -1,0 +1,31 @@
+{
+    "name": "scene",
+    "pipelines":[
+        {
+            "pipeline":{
+                "Name": "Sprite",
+                "ShaderType": ["v","p"],
+                "InputLayoutType": ["POSITION","TEXCOORD_2D"],
+                "RtvNum": 1,
+                "BlendMode": "ALPHA",
+                "DrawMode": "2D",
+                "DrawType": "TRIANGLE",
+                "TextureNum": 1,
+                "Rootparams": 1
+                }
+        },
+        {
+            "pipeline":{
+                "Name": "Sprite",
+                "ShaderType": ["v","p"],
+                "InputLayoutType": ["POSITION","TEXCOORD_2D"],
+                "RtvNum": 1,
+                "BlendMode": "ADD",
+                "DrawMode": "2D",
+                "DrawType": "TRIANGLE",
+                "TextureNum": 1,
+                "Rootparams": 1
+                }
+        }
+    ]
+}

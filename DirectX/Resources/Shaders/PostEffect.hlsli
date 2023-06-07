@@ -1,7 +1,6 @@
 cbuffer cbuff0:register(b0)
 {
 	float4 outlineColor;//アウトラインの色
-	matrix a;
 };
 
 struct VSOutput

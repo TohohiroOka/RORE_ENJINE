@@ -4,10 +4,9 @@
 using njson = nlohmann::json;
 const std::string JsonLoader::base_directory = "Resources/";
 
-void JsonLoader::LoadPipelineNlohmannJson(const std::string& _fileName, std::string& _name,
-    std::vector<std::string>* _inputLayoutType, int* _rtvNum, std::string& _blendMode, int* _rootparams)
+void JsonLoader::LoadShaderName(const std::string& _fileName, std::vector<Shader>* _shaderName)
 {
-    const std::string fullpath = base_directory + _fileName + ".json";
+    const std::string fullpath = base_directory + "Shaders/" + _fileName + ".json";
 
     //ファイルストリーム
     std::ifstream file;
@@ -34,14 +33,70 @@ void JsonLoader::LoadPipelineNlohmannJson(const std::string& _fileName, std::str
     //正しいレベルデータファイルかチェック
     assert(name.compare("scene") == 0);
 
-    //トランスフォーム情報
-    njson& data = deserialized["pipeline"];
-    _name = data["name"];
-    for (auto& i : data["InputLayoutType"]) {
-        _inputLayoutType->emplace_back(i);
+    for (njson& itr : deserialized["shaders"])
+    {
+        njson& data = itr["shader"];
+
+        Shader add{};
+        add.name = data["Name"];
+        for (auto& i : data["Type"]) {
+            add.type.emplace_back(i);
+        }
+        _shaderName->emplace_back(add);
     }
-    *_rtvNum = data["rtvNum"];
-    *_rootparams = data["Rootparams"];
+}
+
+
+void JsonLoader::LoadPipeline(const std::string& _fileName, std::vector<Pipeline>* _pipeline)
+{
+    const std::string fullpath = base_directory + "Pipeline/" + _fileName + ".json";
+
+    //ファイルストリーム
+    std::ifstream file;
+
+    //ファイルを開く
+    file.open(fullpath);
+    if (file.fail()) {
+        assert(0);
+    }
+
+    //解凍データ保存先
+    njson deserialized;
+
+    //解凍
+    file >> deserialized;
+
+    //データが正しいかのチェック
+    assert(deserialized.is_object());
+    assert(deserialized.contains("name"));
+    assert(deserialized["name"].is_string());
+
+    //"name"を文字列として取得
+    std::string name = deserialized["name"].get<std::string>();
+    //正しいレベルデータファイルかチェック
+    assert(name.compare("scene") == 0);
+
+    for (njson& itr : deserialized["pipelines"])
+    {
+        Pipeline addPipe{};
+        //トランスフォーム情報
+        njson& data = itr["pipeline"];
+        addPipe.name = data["Name"];
+        for (auto& i : data["ShaderType"]) {
+            addPipe.shaderType.emplace_back(i);
+        }
+        for (auto& i : data["InputLayoutType"]) {
+            addPipe.inputLayoutType.emplace_back(i);
+        }
+        addPipe.rtvNum = data["RtvNum"];
+        addPipe.blendMode = data["BlendMode"];
+        addPipe.drawMode = data["DrawMode"];
+        addPipe.drawType = data["DrawType"];
+        addPipe.textureNum = data["TextureNum"];
+        addPipe.rootparams = data["Rootparams"];
+
+        _pipeline->emplace_back(addPipe);
+    }
 }
 
 void JsonLoader::SerializeJsonMap(const std::string& _fileName, const float _cameraDist,

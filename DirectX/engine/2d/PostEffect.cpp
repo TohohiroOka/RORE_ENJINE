@@ -1,13 +1,10 @@
 #include "PostEffect.h"
 #include "WindowApp.h"
-#include "DirectInput.h"
-#include "InterfaceObject3d.h"
 
 using namespace DirectX;
-using namespace Microsoft::WRL;
 
 const float PostEffect::clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };
-GraphicsPipelineManager::GRAPHICS_PIPELINE PostEffect::pipeline;
+std::vector<GraphicsPipelineManager::DrawSet> PostEffect::pipeline;
 
 PostEffect::PostEffect()
 	:Sprite()
@@ -215,31 +212,26 @@ std::unique_ptr<PostEffect> PostEffect::Create()
 	return std::unique_ptr<PostEffect>(instance);
 }
 
-void PostEffect::Draw(ID3D12GraphicsCommandList* _cmdList)
+void PostEffect::Draw(const EffectTyep _drawMode)
 {
-	// パイプラインステートの設定
-	_cmdList->SetPipelineState(pipeline.pipelineState.Get());
+	int modeNum = int(_drawMode);
 
-	// ルートシグネチャの設定
-	_cmdList->SetGraphicsRootSignature(pipeline.rootSignature.Get());
-
-	//プリミティブ形状を設定
-	_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	ObjectBase::Draw(pipeline[modeNum]);
 
 	// 頂点バッファの設定
-	_cmdList->IASetVertexBuffers(0, 1, &this->vbView);
+	cmdList->IASetVertexBuffers(0, 1, &this->vbView);
 
 	// 定数バッファビューをセット
-	_cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 
 	//シェーダーリソースビュー
-	_cmdList->SetGraphicsRootDescriptorTable(1, texture->descriptor->gpu);
+	cmdList->SetGraphicsRootDescriptorTable(pipeline[modeNum].constBuffNum, texture->descriptor->gpu);
 
 	// 描画コマンド
-	_cmdList->DrawInstanced(4, 1, 0, 0);
+	cmdList->DrawInstanced(4, 1, 0, 0);
 }
 
-void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
+void PostEffect::PreDrawScene()
 {
 	//リソースバリアを変更
 	cmdList->ResourceBarrier(1,
@@ -273,7 +265,7 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
-void PostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList)
+void PostEffect::PostDrawScene()
 {
 	//リソースバリアを変更
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(texture->texBuffer.Get(),

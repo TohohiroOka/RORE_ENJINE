@@ -77,11 +77,6 @@ cbuffer cbuff2 : register(b2)
 	CircleShadow circleShadows[CIRCLESHADOW_NUM];
 }
 
-cbuffer cbuff1 : register(b3)
-{
-	float ratio;
-};
-
 // 頂点シェーダーからピクセルシェーダーへのやり取りに使用する構造体
 struct VSOutput
 {
