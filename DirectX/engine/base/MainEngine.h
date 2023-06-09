@@ -4,6 +4,7 @@
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "PostEffect.h"
+#include "BasePostEffect.h"
 #include "FrameRateKeep.h"
 #include "CubeMap.h"
 
@@ -60,11 +61,10 @@ private:
 	std::unique_ptr<SceneManager> scene = nullptr;
 	//ポストエフェクトのインスタンス
 	std::unique_ptr<PostEffect> postEffect;
+	//ポストエフェクト加工用
+	std::array<std::unique_ptr<BasePostEffect>, int(BasePostEffect::EffectTyep::size)> basePostEffect;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
-	//キューブマップ
-	//std::unique_ptr<CubeMap> cubemap;
 	//数字表示デバッグ用
 	wchar_t str[256] = {};
-
 };

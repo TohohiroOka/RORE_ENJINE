@@ -13,38 +13,6 @@ char Scene1::fileName[36] = "";
 
 const std::array<XMFLOAT4, 2> COLOR = { XMFLOAT4{ 0.0f,0.0f,0.8f,1.0f } ,{ 0.8f,0.0f,0.0f,1.0f } };
 
-// スクリーン座標をワールド座標に変換
-Vector3* Scene1::CalcScreenToWorld(Vector3* _pout, XMFLOAT2 _screenPos, float fz)
-{
-	XMMATRIX view = DirectX::XMMatrixIdentity();
-	XMMATRIX prj = DirectX::XMMatrixIdentity();
-	if (camera != nullptr) {
-		view = camera->GetView();
-		prj = camera->GetProjection();
-	}
-	XMMATRIX InvView, InvPrj, VP, InvViewport;
-	InvView = DirectX::XMMatrixInverse(nullptr, view);
-	InvPrj = DirectX::XMMatrixInverse(nullptr, prj);
-	VP = DirectX::XMMatrixIdentity();
-	XMFLOAT4X4 mtx;
-	XMStoreFloat4x4(&mtx, VP);
-
-	XMFLOAT2 screen = { float(WindowApp::GetWindowWidth()),float(WindowApp::GetWindowHeight()) };
-	mtx._11 = screen.x / 2.0f;
-	mtx._22 = -screen.y / 2.0f;
-	mtx._41 = screen.x / 2.0f;
-	mtx._42 = screen.y / 2.0f;
-	VP = XMLoadFloat4x4(&mtx);
-	InvViewport = XMMatrixInverse(nullptr, VP);
-	// 逆行列
-   // 逆変換
-	XMMATRIX tmp = InvViewport * InvPrj * InvView;
-	XMVECTOR pout = DirectX::XMVector3TransformCoord(XMVECTOR{ _screenPos.x, _screenPos.y, fz }, tmp);
-
-	*_pout = Vector3{ pout.m128_f32[0], pout.m128_f32[1], pout.m128_f32[2] };
-	return _pout;
-}
-
 void Scene1::Initialize()
 {
 	camera = nullptr;
@@ -101,8 +69,8 @@ void Scene1::Update()
 	XMFLOAT2 mousePos = input->GetMousePoint();
 	Vector3 pout = {};
 	Vector3 target = {};
-	CalcScreenToWorld(&pout, mousePos, 0.0f);
-	CalcScreenToWorld(&target, mousePos, 1.0f);
+	Collision::CalcScreenToWorld(&pout, camera, mousePos, 0.0f);
+	Collision::CalcScreenToWorld(&target, camera, mousePos, 1.0f);
 
 	if (!kaburi) {
 		//オブジェクト設置

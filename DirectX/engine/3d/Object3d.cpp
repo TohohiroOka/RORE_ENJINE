@@ -74,7 +74,6 @@ void Object3d::Update()
 			constMap->cameraPos = { 0,0,0 };
 		}
 		constMap->world = matWorld;
-		constMap->isSkinning = isSkinning;
 		constMap->isBloom = isBloom;
 		constMap->isToon = isToon;
 		constMap->isOutline = isOutline;

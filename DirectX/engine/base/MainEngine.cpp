@@ -50,6 +50,10 @@ void MainEngine::Initialize()
 
 	postEffect = PostEffect::Create();
 
+	//for (auto& i : basePostEffect) {
+	//	i=Bse
+	//}
+
 	fps = FrameRateKeep::Create();
 }
 

@@ -28,12 +28,11 @@ private:
 	{
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		unsigned int isBloom;//ブルームの有無
-		unsigned int isToon;//トゥーンの有無
-		unsigned int isOutline;//アウトラインの有無
-		unsigned int isLight;//ライティングの有無
+		bool isBloom;//ブルームの有無
+		bool isToon;//トゥーンの有無
+		bool isOutline;//アウトラインの有無
+		bool isLight;//ライティングの有無
 	};
-
 public://メンバ関数
 
 	/// <summary>
@@ -127,8 +126,4 @@ private:
 public:
 
 	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { InstanceObject::pipeline = _pipeline; }
-	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
-	void SetToon(bool _isToon) { this->isToon = _isToon; }
-	void SetLight(bool _isLight) { this->isLight = _isLight; }
-	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
 };

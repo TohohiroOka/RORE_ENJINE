@@ -53,17 +53,6 @@ public:
 
 private:
 
-	/// <summary>
-	/// スクリーン座標からワールド座標への変換
-	/// </summary>
-	/// <param name="pout">ワールド座標</param>
-	/// <param name="_screenPos">スクリーン座標</param>
-	/// <param name="fZ">射影空間でのZ値（0～1</param>
-	/// <returns>ワールド座標</returns>
-	Vector3* CalcScreenToWorld(Vector3* _pout, XMFLOAT2 _screenPos, float fz);
-
-private:
-
 	Camera* camera;
 
 	//カメラ座標

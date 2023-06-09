@@ -4,11 +4,10 @@ cbuffer cbuff0 : register(b0)
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
-	uint isSkinning;//スキニング
-	uint isBloom;//ブルームの有無
-	uint isToon;//トゥーンの有無
-	uint isOutline;//アウトラインの有無
-	uint isLight;
+	bool isBloom;//ブルームの有無
+	bool isToon;//トゥーンの有無
+	bool isOutline;//アウトラインの有無
+	bool isLight;
 };
 
 cbuffer cbuff1 : register(b1)
@@ -92,5 +91,5 @@ struct PSOutput
 {
 	float4 target0 : SV_TARGET0;
 	float4 target1 : SV_TARGET1;
-	float4 target2 : SV_TARGET2;
+    float4 target2 : SV_TARGET2;
 };

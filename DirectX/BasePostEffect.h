@@ -1,15 +1,14 @@
 #pragma once
 #include "Sprite.h"
 
-class PostEffect : public Sprite
+class BasePostEffect : public Sprite
 {
 public:
 
-	enum class TexType {
+	enum class EffectTyep {
 		normal,
 		bloom,
 		outline,
-		depth,
 		size,
 	};
 
@@ -18,7 +17,7 @@ public://メンバ関数
 	/// <summary>
 	/// インスタンスの生成
 	/// </summary>
-	static std::unique_ptr<PostEffect> Create();
+	static std::unique_ptr<BasePostEffect> Create();
 
 	/// <summary>
 	/// 解放処理
@@ -30,12 +29,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	PostEffect();
+	BasePostEffect();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~PostEffect();
+	~BasePostEffect();
 
 	/// <summary>
 	/// 初期化
@@ -47,7 +46,10 @@ public://メンバ関数
 	/// </summary>
 	void CreateDepthBuffer();
 
-	void Draw();
+	/// <summary>
+	/// 描画コマンドの発行
+	/// </summary>
+	void Draw(const EffectTyep _drawMode = EffectTyep::normal);
 
 	/// <summary>
 	/// 描画前処理
@@ -59,8 +61,8 @@ public://メンバ関数
 	/// </summary>
 	void PostDrawScene();
 
-	Texture* GetTex(TexType _type) {
-		return texture[int(_type)].get();
+	Texture* GetTex() {
+		return texture.get();
 	}
 
 private://静的メンバ変数
@@ -73,7 +75,7 @@ private://静的メンバ変数
 private://メンバ変数
 
 	//テクスチャ情報
-	std::array<std::unique_ptr<Texture>, int(TexType::size)> texture;
+	std::unique_ptr<Texture> texture;
 	//RTV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	//DSV用デスクリプタヒープ
@@ -82,6 +84,6 @@ private://メンバ変数
 	ComPtr<ID3D12Resource> depthBuffer;
 
 public:
-	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { PostEffect::pipeline = _pipeline; }
+	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { BasePostEffect::pipeline = _pipeline; }
 
 };

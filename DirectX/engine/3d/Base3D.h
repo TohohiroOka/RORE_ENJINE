@@ -70,6 +70,15 @@ protected:
 	// 親オブジェクト
 	Base3D* parent = nullptr;
 
+	//ブルームの有無
+	bool isBloom = false;
+	//トゥーンの有無
+	bool isToon = false;
+	//アウトラインの有無
+	bool isOutline = false;
+	//ライティング
+	bool isLight = true;
+
 public:
 
 	const XMFLOAT3& GetPosition() { return position; }
@@ -84,5 +93,9 @@ public:
 	void SetScale(const XMFLOAT3& _scale) { this->scale = _scale; }
 	void SetCollider(BaseCollider* _collider);
 	void SetMatWorld(const XMMATRIX& _matWorld) { this->matWorld = _matWorld; }
+	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
+	void SetToon(bool _isToon) { this->isToon = _isToon; }
+	void SetLight(bool _isLight) { this->isLight = _isLight; }
+	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
 
 };

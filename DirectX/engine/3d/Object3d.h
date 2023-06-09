@@ -12,7 +12,6 @@ private:// サブクラス
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		unsigned int isSkinning;//スキニングを行うか
 		unsigned int isBloom;//ブルームの有無
 		unsigned int isToon;//トゥーンの有無
 		unsigned int isOutline;//アウトラインの有無
@@ -63,24 +62,10 @@ private: // 静的メンバ変数
 	ComPtr<ID3D12Resource> constBuffB0;
 	//ベースカラー
 	XMFLOAT4 baseColor = { 1,1,1,1 };
-	//ブルームの有無
-	bool isBloom = false;
-	//トゥーンの有無
-	bool isToon = false;
-	//アウトラインの有無
-	bool isOutline = false;
-	//スキニング
-	bool isSkinning = false;
-	//ライティング
-	bool isLight = true;
 
 public:
 
 	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { Object3d::pipeline = _pipeline; }
 	void SetModel(Model* _model) { this->model = _model; }
-	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
-	void SetToon(bool _isToon) { this->isToon = _isToon; }
-	void SetLight(bool _isLight) { this->isLight = _isLight; }
-	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
 	inline Model* GetModel() { return model; }
 };

@@ -16,11 +16,10 @@ private:// サブクラス
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		unsigned int isSkinning;//スキニングを行うか
-		unsigned int isBloom;//ブルームの有無
-		unsigned int isToon;//トゥーンの有無
-		unsigned int isOutline;//アウトラインの有無
-		unsigned int isLight;//ライティングの有無
+		bool isBloom;//ブルームの有無
+		bool isToon;//トゥーンの有無
+		bool isOutline;//アウトラインの有無
+		bool isLight;//ライティングの有無
 	};
 
 public://メンバ関数
@@ -82,16 +81,6 @@ private:
 	ComPtr<ID3D12Resource> constBuffB0;
 	//ベースカラー
 	XMFLOAT4 baseColor = { 1,1,1,1 };
-	//ブルームの有無
-	bool isBloom = false;
-	//トゥーンの有無
-	bool isToon = false;
-	//アウトラインの有無
-	bool isOutline = false;
-	//スキニング
-	bool isSkinning = false;
-	//ライティング
-	bool isLight = true;
 
 public:
 
