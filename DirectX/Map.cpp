@@ -1046,16 +1046,15 @@ void Map::OutputMap(const std::string& _fileName, float _cameraDist)
 		}
 	}
 
-	JsonLoader::SerializeJson(_fileName + ".json", { 30.0f,30.0f ,30.0f }, { delimitNum.x,delimitNum.y ,delimitNum.z }, outmap);
+	JsonLoader::SerializeJson(_fileName + ".json", cameraDist, { delimitNum.x,delimitNum.y ,delimitNum.z }, outmap);
 }
 
 bool Map::ImputMap(const std::string& _fileName)
 {
 	XMINT3 mapSize={};
 	std::vector<std::vector<std::vector<int>>> imputmap;
-	std::array<float, 3> _cameraDist;
 
-	if (!JsonLoader::DeserializeJson(_fileName + ".json", &_cameraDist, &imputmap)) {
+	if (!JsonLoader::DeserializeJson(_fileName + ".json", &cameraDist, &imputmap)) {
 		return false;
 	}
 

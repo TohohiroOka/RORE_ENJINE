@@ -239,6 +239,9 @@ private:
 	//Á‹‚ÌÅ‘å”Ô†
 	int deleteOrderMaxNum;
 
+	//ƒJƒƒ‰‹——£
+	std::array<float, 3> cameraDist;
+
 public:
 
 	XMINT3 GetDelimitNum() { return delimitNum; }
