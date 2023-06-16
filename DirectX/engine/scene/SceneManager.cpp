@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "Scene1.h"
 #include "PostEffect.h"
+#include "BasePostEffect.h"
 #include "JsonLoader.h"
 
 std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
@@ -117,6 +118,12 @@ void SceneManager::CreatePipeline()
 		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
 		SetPipeline("PostEffect", addDrawSet);
 		PostEffect::SetPipeline(addDrawSet);
+	}
+	//BASE_POST_EFFECT
+	{
+		std::vector<GraphicsPipelineManager::DrawSet> addDrawSet{};
+		SetPipeline("BasePostEffect", addDrawSet);
+		BasePostEffect::SetPipeline(addDrawSet);
 	}
 }
 

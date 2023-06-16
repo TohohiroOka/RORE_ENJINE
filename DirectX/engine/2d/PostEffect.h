@@ -13,6 +13,16 @@ public:
 		size,
 	};
 
+private:
+
+	/// <summary>
+	/// 定数バッファ用データ構造体
+	/// </summary>
+	struct CONST_BUFFER_DATA
+	{
+		float outline;
+	};
+
 public://メンバ関数
 
 	/// <summary>
@@ -47,13 +57,16 @@ public://メンバ関数
 	/// </summary>
 	void CreateDepthBuffer();
 
-	void Draw();
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw(const std::vector<Texture*>& _tex);
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	void PreDrawScene();
-
+	
 	/// <summary>
 	/// 描画後処理
 	/// </summary>
@@ -78,8 +91,6 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	//DSV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
-	//深度バッファ
-	ComPtr<ID3D12Resource> depthBuffer;
 
 public:
 	static void SetPipeline(const std::vector<GraphicsPipelineManager::DrawSet>& _pipeline) { PostEffect::pipeline = _pipeline; }

@@ -28,10 +28,13 @@ private:
 	{
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		bool isBloom;//ブルームの有無
-		bool isToon;//トゥーンの有無
-		bool isOutline;//アウトラインの有無
-		bool isLight;//ライティングの有無
+		unsigned int isBloom;//ブルームの有無
+		unsigned int isToon;//トゥーンの有無
+		unsigned int isOutline;//アウトラインの有無
+		unsigned int isLight;//ライティングの有無
+		float pad;
+		XMFLOAT3 outlineColor;
+		float pad1;
 	};
 public://メンバ関数
 
@@ -52,7 +55,7 @@ private://メンバ関数
 
 public:
 
-	InstanceObject() {};
+	InstanceObject();
 	~InstanceObject();
 
 	/// <summary>
@@ -112,14 +115,6 @@ private:
 	ComPtr<ID3D12Resource> constBuffB0;
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1;
-	//ブルームの有無
-	bool isBloom = false;
-	//トゥーンの有無
-	bool isToon = false;
-	//アウトラインの有無
-	bool isOutline = false;
-	//ライティング
-	bool isLight = true;
 	//インスタンシング描画個数
 	int instanceDrawNum = 0;
 

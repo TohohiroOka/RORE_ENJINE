@@ -161,7 +161,7 @@ PSOutput main(VSOutput input) : SV_TARGET
 		shadecolor = SetToon(shadecolor);
 	}
 
-	// シェーディングによる色で描画
+	// シェーディングの濃さ調整
     shadecolor.x += step(shadecolor.x, 0.4) + 0.4;
     shadecolor.y += step(shadecolor.y, 0.4) + 0.4;
     shadecolor.z += step(shadecolor.z, 0.4) + 0.4;
@@ -171,7 +171,7 @@ PSOutput main(VSOutput input) : SV_TARGET
 	float4 mainColor = shadecolor * texcolor * color;
     output.target0 = float4(mainColor.rgb, color.w);
     output.target1 = bloom;
-    output.target2 = float4(0.5, 0.5, 0.5, 1.0) * isOutline;
+    output.target2 = float4(outlineColor, 1.0f) * isOutline;
 
     return output;
 }

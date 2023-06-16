@@ -40,6 +40,7 @@ void Scene1::Initialize()
 	model = Model::CreateFromOBJ("NormalCube");
 	obj = Object3d::Create(model.get());
 	obj->SetScale({ 10.0f,10.0f ,10.0f });
+	obj->SetBloom(true);
 
 	Sprite::LoadTexture("amm","Resources/amm.jpg");
 	sprite = Sprite::Create("amm");

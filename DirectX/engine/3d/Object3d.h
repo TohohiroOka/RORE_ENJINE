@@ -16,6 +16,9 @@ private:// サブクラス
 		unsigned int isToon;//トゥーンの有無
 		unsigned int isOutline;//アウトラインの有無
 		unsigned int isLight;//ライティングの有無
+		float pad;
+		XMFLOAT3 outlineColor;
+		float pad1;
 	};
 
 public: // 静的メンバ関数
@@ -36,7 +39,7 @@ private:
 
 public: // メンバ関数w
 
-	Object3d(){};
+	Object3d();
 	~Object3d();
 
 	/// <summary>

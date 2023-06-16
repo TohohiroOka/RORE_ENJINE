@@ -2,10 +2,11 @@ cbuffer cbuff0 : register(b0)
 {
 	matrix viewproj; // ビュープロジェクション行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
-	bool isBloom;//ブルームの有無
-	bool isToon;//トゥーンの有無
-	bool isOutline;//アウトラインの有無
-	bool isLight;
+	uint isBloom;//ブルームの有無
+	uint isToon;//トゥーンの有無
+	uint isOutline;//アウトラインの有無
+    uint isLight;//ライトの有無
+    float3 outlineColor;//アウトラインの色
 };
 
 cbuffer cbuff1 : register(b1)
@@ -74,7 +75,7 @@ cbuffer cbuff2 : register(b2)
 
 //world行列の数
 static const int INSTANCE_NUM = 512;
-cbuffer cbuff1 : register(b3)
+cbuffer cbuff3 : register(b3)
 {
 	float4 baseColor[INSTANCE_NUM];//色
 	matrix matWorld[INSTANCE_NUM]; // ワールド行列

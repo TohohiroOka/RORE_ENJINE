@@ -58,6 +58,11 @@ void InstanceObject::Initialize(Model* _model)
 	if (FAILED(result)) { assert(0); }
 }
 
+InstanceObject::InstanceObject()
+{
+	outlineColor = { 1.0f,1.0f, 1.0f };
+}
+
 InstanceObject::~InstanceObject()
 {
 	constBuffB0.Reset();
@@ -114,6 +119,7 @@ void InstanceObject::Update()
 		constMap->isToon = isToon;
 		constMap->isOutline = isOutline;
 		constMap->isLight = isLight;
+		constMap->outlineColor = outlineColor;
 		constBuffB0->Unmap(0, nullptr);
 	}
 

@@ -4,10 +4,11 @@ cbuffer cbuff0 : register(b0)
 	matrix viewproj; // ビュープロジェクション行列
 	matrix world; // ワールド行列
 	float3 cameraPos; // カメラ座標（ワールド座標）
-	uint isSkinning;//スキニング
 	uint isBloom;//ブルームの有無
 	uint isToon;//トゥーンの有無
 	uint isOutline;//アウトラインの有無
+    uint isLight; //ライトの有無
+    float3 outlineColor; //アウトラインの色
 };
 
 cbuffer cbuff1 : register(b1)
@@ -85,4 +86,12 @@ struct VSOutput
 	float4 localpos : POSITION2;//ローカル
 	float3 normal :NORMAL; // 法線
 	float2 uv : TEXCOORD;//uv
+};
+
+//ピクセルシェーダーから実行処理へのやり取りに使用する構造体
+struct PSOutput
+{
+    float4 target0 : SV_TARGET0;
+    float4 target1 : SV_TARGET1;
+    float4 target2 : SV_TARGET2;
 };

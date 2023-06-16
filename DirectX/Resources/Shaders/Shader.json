@@ -42,6 +42,18 @@
                 "Name":"PostEffect",
                 "Type":["v","p"]
             }
+        },
+        {
+            "shader":{
+                "Name":"Bloom",
+                "Type":["v","p"]
+            }
+        },
+        {
+            "shader":{
+                "Name":"Outline",
+                "Type":["v","p"]
+            }
         }
     ]
 }

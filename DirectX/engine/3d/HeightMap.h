@@ -16,10 +16,13 @@ private:// サブクラス
 		XMMATRIX viewproj; // ビュープロジェクション行列
 		XMMATRIX world; // ワールド行列
 		XMFLOAT3 cameraPos; // カメラ座標（ワールド座標）
-		bool isBloom;//ブルームの有無
-		bool isToon;//トゥーンの有無
-		bool isOutline;//アウトラインの有無
-		bool isLight;//ライティングの有無
+		unsigned int isBloom;//ブルームの有無
+		unsigned int isToon;//トゥーンの有無
+		unsigned int isOutline;//アウトラインの有無
+		unsigned int isLight;//ライティングの有無
+		float pad;
+		XMFLOAT3 outlineColor;
+		float pad1;
 	};
 
 public://メンバ関数
@@ -40,7 +43,7 @@ private://メンバ関数
 
 public:
 
-	HeightMap() {};
+	HeightMap();
 	~HeightMap();
 
 	/// <summary>

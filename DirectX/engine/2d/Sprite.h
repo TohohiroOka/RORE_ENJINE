@@ -14,6 +14,14 @@ public: // サブクラス
 		XMFLOAT2 uv;  // uv座標
 	};
 
+	struct INFORMATION
+	{
+		bool isDelete = false; //シーン遷移で削除を行うか
+		std::unique_ptr<Texture> instance = nullptr;
+	};
+
+private:
+	
 	/// <summary>
 	/// 定数バッファ用データ構造体
 	/// </summary>
@@ -21,12 +29,6 @@ public: // サブクラス
 	{
 		XMFLOAT4 color;	// 色 (RGBA)
 		XMMATRIX mat;	// ３Ｄ変換行列
-	};
-
-	struct INFORMATION
-	{
-		bool isDelete = false; //シーン遷移で削除を行うか
-		std::unique_ptr<Texture> instance = nullptr;
 	};
 
 public: // 静的メンバ関数

@@ -1090,7 +1090,7 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	faceModel2 = Model::CreateFromOBJ("Face1");
 
 	faceObject = InstanceObject::Create(faceModel.get());
-	faceObject->SetBloom(false);
+	faceObject->SetBloom(true);
 	faceObject->SetLight(false);
 
 	//ü‚ÆÚ’n–Ê‚Ì¶¬
@@ -1121,7 +1121,8 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 		} else {
 			boxObject[i] = InstanceObject::Create(faceModel2.get());
 		}
-		boxObject[i]->SetBloom(false);
+		boxObject[i]->SetBloom(true);
+		boxObject[i]->SetOutline(true);
 		boxObject[i]->SetLight(true);
 	}
 

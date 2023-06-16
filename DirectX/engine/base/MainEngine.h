@@ -62,7 +62,7 @@ private:
 	//ポストエフェクトのインスタンス
 	std::unique_ptr<PostEffect> postEffect;
 	//ポストエフェクト加工用
-	std::array<std::unique_ptr<BasePostEffect>, int(BasePostEffect::EffectTyep::size)> basePostEffect;
+	std::array<std::unique_ptr<BasePostEffect>, int(BasePostEffect::EffectTyep::size)> basePost;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//数字表示デバッグ用

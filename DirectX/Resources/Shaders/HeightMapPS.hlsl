@@ -5,7 +5,17 @@ Texture2D<float4> tex : register(t1);  // 0番スロットに設定されたテクスチャ
 Texture2D<float4> tex2 : register(t2);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
-float4 main(VSOutput input) : SV_TARGET
+/// <summary>
+/// ブルームのセット
+/// </summary>
+float4 SetBloom(float4 shadecolor, float4 texcolor);
+
+/// <summary>
+/// トゥーンのセット
+/// </summary>
+float4 SetToon(float4 shadecolor);
+
+PSOutput main(VSOutput input) : SV_TARGET
 {
 	float4 m_baseColor = float4(baseColor.rgb,1.0);
 	float3 m_ambient = float3(0.5, 0.5, 0.5);
@@ -145,7 +155,72 @@ float4 main(VSOutput input) : SV_TARGET
 	float stepNum2 = 3.0;
 	float4 addColor = smoothstep(stepNum1, stepNum2, input.localpos.y) * color1 + (1 - smoothstep(stepNum1, stepNum2, input.localpos.y)) * color2;
 
-	float4 mainColor = shadecolor * addColor;
+	//ブルーム処理
+    float4 bloom = float4(0, 0, 0, 0);
+    if (isBloom)
+    {
+        bloom = SetBloom(shadecolor, addColor);
+        bloom = float4(bloom.rgb, 0.1);
+    }
 
-	return float4(mainColor.rgb, 1.0f);
+	//トゥーンシェード
+    if (isToon)
+    {
+        shadecolor = SetToon(shadecolor);
+    }
+
+
+	// シェーディングの濃さ調整
+    shadecolor.x += step(shadecolor.x, 0.4) + 0.4;
+    shadecolor.y += step(shadecolor.y, 0.4) + 0.4;
+    shadecolor.z += step(shadecolor.z, 0.4) + 0.4;
+
+
+	// シェーディングによる色で描画
+    PSOutput output;
+    float4 mainColor = shadecolor * addColor;
+    output.target0 = float4(mainColor.rgb, 1.0);
+    output.target1 = bloom;
+    output.target2 = float4(outlineColor, 1.0f) * isOutline;
+
+    return output;
+}
+
+float4 SetBloom(float4 shadecolor, float4 texcolor)
+{
+	//光度値の抽出
+    float LuminousIntensity = dot(shadecolor.rgb * texcolor.rgb, float3(0.2125, 0.7154, 0.0712));
+
+	//ブルームをかける場所
+    float4 bloomColor = step(1.0, LuminousIntensity) * texcolor;
+
+    return bloomColor;
+}
+
+float4 SetToon(float4 shadecolor)
+{
+	//トゥーンの色範囲
+    float toonLighrRange = 0.525;
+	//明暗の中間幅
+    float contourWidth = 0.1;
+
+	//明るい
+    float3 bright;
+    bright.r = step(toonLighrRange, shadecolor.r);
+    bright.g = step(toonLighrRange, shadecolor.g);
+    bright.b = step(toonLighrRange, shadecolor.b);
+	//暗い
+    float3 dark;
+    dark.r = (1 - step(toonLighrRange, shadecolor.r));
+    dark.g = (1 - step(toonLighrRange, shadecolor.g));
+    dark.b = (1 - step(toonLighrRange, shadecolor.b));
+
+	//中間
+    float3 intermediate;
+    intermediate.r = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.r);
+    intermediate.g = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.g);
+    intermediate.b = smoothstep(toonLighrRange, toonLighrRange + contourWidth, shadecolor.b);
+
+	//現在の色
+    return float4(bright + dark + intermediate, 1);
 }

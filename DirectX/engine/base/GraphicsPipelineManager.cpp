@@ -258,8 +258,12 @@ void GraphicsPipelineManager::CreatePipeline(const std::string& _name, const PEP
 {
 	HRESULT result = S_FALSE;
 
-	std::string pepelineName = _name + _pepeline.blendMode;
-
+	std::string pepelineName;
+	if (_name == "BasePostEffect") {
+		pepelineName = _pepeline.name;
+	} else {
+		pepelineName = _name + _pepeline.blendMode;
+	}
 	//同じキーがあればエラーを出力
 	assert(!graphicsPipeline.count(_name));
 	size_t L_size = graphicsPipeline.size() + 1;

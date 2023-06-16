@@ -71,13 +71,15 @@ protected:
 	Base3D* parent = nullptr;
 
 	//ブルームの有無
-	bool isBloom = false;
+	bool isBloom;
 	//トゥーンの有無
-	bool isToon = false;
+	bool isToon;
 	//アウトラインの有無
-	bool isOutline = false;
+	bool isOutline;
 	//ライティング
-	bool isLight = true;
+	bool isLight;
+	//アウトライン色
+	XMFLOAT3 outlineColor;
 
 public:
 
@@ -87,15 +89,17 @@ public:
 	BaseCollider* GetCollider() { return collider; }
 	const XMMATRIX& GetMatWorld() { return matWorld; }
 	const XMFLOAT3 GetWorldPosition();
+	bool GetBloom() { return isBloom; }
 	void SetParent(Base3D* _parent) { parent = _parent; }
-	void SetPosition(const XMFLOAT3& _position) { this->position = _position; }
-	void SetRotation(const XMFLOAT3& _rotation) { this->rotation = _rotation; }
-	void SetScale(const XMFLOAT3& _scale) { this->scale = _scale; }
+	void SetPosition(const XMFLOAT3& _position) { position = _position; }
+	void SetRotation(const XMFLOAT3& _rotation) { rotation = _rotation; }
+	void SetScale(const XMFLOAT3& _scale) { scale = _scale; }
 	void SetCollider(BaseCollider* _collider);
-	void SetMatWorld(const XMMATRIX& _matWorld) { this->matWorld = _matWorld; }
-	void SetBloom(bool _isBloom) { this->isBloom = _isBloom; }
-	void SetToon(bool _isToon) { this->isToon = _isToon; }
-	void SetLight(bool _isLight) { this->isLight = _isLight; }
-	void SetOutline(bool _isOutline) { this->isOutline = _isOutline; }
+	void SetMatWorld(const XMMATRIX& _matWorld) { matWorld = _matWorld; }
+	void SetBloom(bool _isBloom) { isBloom = _isBloom; }
+	void SetToon(bool _isToon) { isToon = _isToon; }
+	void SetLight(bool _isLight) { isLight = _isLight; }
+	void SetOutline(bool _isOutline) { isOutline = _isOutline; }
+	void SetOutlineColor(const XMFLOAT3& _outlineColor) { outlineColor = _outlineColor; }
 
 };

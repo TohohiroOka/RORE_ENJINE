@@ -49,6 +49,11 @@ void Object3d::Initialize()
 	if (FAILED(result)) { assert(0); }
 }
 
+Object3d::Object3d()
+{
+	outlineColor = { 1.0f,1.0f, 1.0f };
+}
+
 Object3d::~Object3d()
 {
 	DeleteCollider();
@@ -78,6 +83,7 @@ void Object3d::Update()
 		constMap->isToon = isToon;
 		constMap->isOutline = isOutline;
 		constMap->isLight = isLight;
+		constMap->outlineColor = outlineColor;
 		constBuffB0->Unmap(0, nullptr);
 	}
 }

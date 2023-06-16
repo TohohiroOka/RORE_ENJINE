@@ -50,9 +50,6 @@
     <Filter Include="エンジンシステム\Object\2d\PostEffect">
       <UniqueIdentifier>{0395157f-cfe5-4ae8-b61c-ca939ad99a27}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\PostEffect">
-      <UniqueIdentifier>{bcc09153-9725-4d08-aad7-fe6fcebe4240}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ゲームシステム\Scene">
       <UniqueIdentifier>{8677fbf2-e109-497b-99fb-14bb695dc881}</UniqueIdentifier>
     </Filter>
@@ -130,6 +127,18 @@
     </Filter>
     <Filter Include="シェーダーファイル\Object3D">
       <UniqueIdentifier>{47c0745e-d963-4c4e-a611-83305efb37e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\PostEffect">
+      <UniqueIdentifier>{f42395bc-1263-4d63-9668-38b81bc7a3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\PostEffect\PostEffect">
+      <UniqueIdentifier>{bcc09153-9725-4d08-aad7-fe6fcebe4240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\PostEffect\Bloom">
+      <UniqueIdentifier>{2463f470-7111-4766-ad3d-034396afd645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\PostEffect\Outline">
+      <UniqueIdentifier>{d1c3f653-9c60-4f5a-8cb7-5ffa7128cc34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -292,7 +301,7 @@
     <ClCompile Include="Map.cpp">
       <Filter>ゲームシステム</Filter>
     </ClCompile>
-    <ClCompile Include="BasePostEffect.cpp">
+    <ClCompile Include="engine\2d\BasePostEffect.cpp">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
   </ItemGroup>
@@ -325,10 +334,10 @@
       <Filter>シェーダーファイル\PrimitiveObject3D</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\PostEffectPS.hlsl">
-      <Filter>シェーダーファイル\PostEffect</Filter>
+      <Filter>シェーダーファイル\PostEffect\PostEffect</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\PostEffectVS.hlsl">
-      <Filter>シェーダーファイル\PostEffect</Filter>
+      <Filter>シェーダーファイル\PostEffect\PostEffect</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
       <Filter>シェーダーファイル\Basic</Filter>
@@ -345,6 +354,18 @@
     <FxCompile Include="Resources\Shaders\InstanceObjectVS.hlsl">
       <Filter>シェーダーファイル\InstanceObject</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\BloomVS.hlsl">
+      <Filter>シェーダーファイル\PostEffect\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\BloomPS.hlsl">
+      <Filter>シェーダーファイル\PostEffect\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\OutlinePS.hlsl">
+      <Filter>シェーダーファイル\PostEffect\Outline</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\OutlineVS.hlsl">
+      <Filter>シェーダーファイル\PostEffect\Outline</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite.hlsli">
@@ -360,13 +381,19 @@
       <Filter>シェーダーファイル\PrimitiveObject3D</Filter>
     </None>
     <None Include="Resources\Shaders\PostEffect.hlsli">
-      <Filter>シェーダーファイル\PostEffect</Filter>
+      <Filter>シェーダーファイル\PostEffect\PostEffect</Filter>
     </None>
     <None Include="Resources\Shaders\HeightMap.hlsli">
       <Filter>シェーダーファイル\HeightMap</Filter>
     </None>
     <None Include="Resources\Shaders\InstanceObject.hlsli">
       <Filter>シェーダーファイル\InstanceObject</Filter>
+    </None>
+    <None Include="Resources\Shaders\Bloom.hlsli">
+      <Filter>シェーダーファイル\PostEffect\Bloom</Filter>
+    </None>
+    <None Include="Resources\Shaders\Outline.hlsli">
+      <Filter>シェーダーファイル\PostEffect\Outline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -574,7 +601,7 @@
     <ClInclude Include="Map.h">
       <Filter>ゲームシステム</Filter>
     </ClInclude>
-    <ClInclude Include="BasePostEffect.h">
+    <ClInclude Include="engine\2d\BasePostEffect.h">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
   </ItemGroup>

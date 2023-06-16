@@ -47,6 +47,11 @@ void HeightMap::Initialize()
 	if (FAILED(result)) { assert(0); }
 }
 
+HeightMap::HeightMap()
+{
+	outlineColor = { 1.0f,1.0f, 1.0f };
+}
+
 HeightMap::~HeightMap()
 {
 	DeleteCollider();
@@ -76,6 +81,7 @@ void HeightMap::Update()
 		constMap->isToon = isToon;
 		constMap->isOutline = isOutline;
 		constMap->isLight = isLight;
+		constMap->outlineColor = outlineColor;
 		constBuffB0->Unmap(0, nullptr);
 	}
 }

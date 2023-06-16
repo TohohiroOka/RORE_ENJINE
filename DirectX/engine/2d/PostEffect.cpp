@@ -67,15 +67,6 @@ void PostEffect::Initialize()
 		IID_PPV_ARGS(&constBuff));
 	if (FAILED(result)) { assert(0); }
 
-	// 定数バッファにデータ転送
-	CONST_BUFFER_DATA* constMap = nullptr;
-	result = constBuff->Map(0, nullptr, (void**)&constMap);
-	if (SUCCEEDED(result)) {
-		constMap->color = color;
-		constMap->mat = matProjection;
-		constBuff->Unmap(0, nullptr);
-	}
-
 	std::array<UINT, 2> texSize = texSize = { WindowApp::GetWindowWidth(),WindowApp::GetWindowHeight() };
 
 	//テクスチャバッファ生成用変数
@@ -219,8 +210,16 @@ std::unique_ptr<PostEffect> PostEffect::Create()
 	return std::unique_ptr<PostEffect>(instance);
 }
 
-void PostEffect::Draw()
+void PostEffect::Draw(const std::vector<Texture*>& _tex)
 {
+	// 定数バッファへデータ転送
+	CONST_BUFFER_DATA* constMap = nullptr;
+	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);
+	if (SUCCEEDED(result)) {
+		constMap->outline = 1.0f;
+		constBuff->Unmap(0, nullptr);
+	}
+
 	ObjectBase::Draw(pipeline[0]);
 
 	// 頂点バッファの設定
@@ -230,8 +229,9 @@ void PostEffect::Draw()
 	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 
 	//シェーダーリソースビュー
-	cmdList->SetGraphicsRootDescriptorTable(pipeline[0].constBuffNum, texture[0]->descriptor->gpu);
-
+	for (int i = 0; i < pipeline[0].texNum; i++) {
+		cmdList->SetGraphicsRootDescriptorTable(i + 1, _tex[i]->descriptor->gpu);
+	}
 	// 描画コマンド
 	cmdList->DrawInstanced(4, 1, 0, 0);
 }
