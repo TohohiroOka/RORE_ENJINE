@@ -140,6 +140,9 @@
     <Filter Include="シェーダーファイル\PostEffect\Outline">
       <UniqueIdentifier>{d1c3f653-9c60-4f5a-8cb7-5ffa7128cc34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダーファイル\PostEffect\Fog">
+      <UniqueIdentifier>{5d37ce9d-524c-48be-bc93-4c83913e01e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -189,9 +192,6 @@
     </ClCompile>
     <ClCompile Include="engine\2d\DebugText.cpp">
       <Filter>エンジンシステム\Object\2d\DebugText</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\PostEffect.cpp">
-      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="engine\light\LightGroup.cpp">
       <Filter>エンジンシステム\Light</Filter>
@@ -301,13 +301,19 @@
     <ClCompile Include="Map.cpp">
       <Filter>ゲームシステム</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\BasePostEffect.cpp">
+    <ClCompile Include="engine\2d\PostEffect\Fog.cpp">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\Bloom.cpp">
+    <ClCompile Include="engine\2d\PostEffect\Outline.cpp">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\Outline.cpp">
+    <ClCompile Include="engine\2d\PostEffect\PostEffect.cpp">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\PostEffect\BasePostEffect.cpp">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\PostEffect\Bloom.cpp">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
   </ItemGroup>
@@ -372,6 +378,12 @@
     <FxCompile Include="Resources\Shaders\OutlineVS.hlsl">
       <Filter>シェーダーファイル\PostEffect\Outline</Filter>
     </FxCompile>
+    <FxCompile Include="FogVS.hlsl">
+      <Filter>シェーダーファイル\PostEffect\Fog</Filter>
+    </FxCompile>
+    <FxCompile Include="FogPS.hlsl">
+      <Filter>シェーダーファイル\PostEffect\Fog</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite.hlsli">
@@ -400,6 +412,9 @@
     </None>
     <None Include="Resources\Shaders\Outline.hlsli">
       <Filter>シェーダーファイル\PostEffect\Outline</Filter>
+    </None>
+    <None Include="Fog.hlsli">
+      <Filter>シェーダーファイル\PostEffect\Fog</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -465,9 +480,6 @@
     </ClInclude>
     <ClInclude Include="engine\2d\DebugText.h">
       <Filter>エンジンシステム\Object\2d\DebugText</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\PostEffect.h">
-      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="engine\light\LightGroup.h">
       <Filter>エンジンシステム\Light</Filter>
@@ -607,13 +619,19 @@
     <ClInclude Include="Map.h">
       <Filter>ゲームシステム</Filter>
     </ClInclude>
-    <ClInclude Include="engine\2d\BasePostEffect.h">
+    <ClInclude Include="engine\2d\PostEffect\Bloom.h">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
-    <ClInclude Include="engine\2d\Bloom.h">
+    <ClInclude Include="engine\2d\PostEffect\Fog.h">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
-    <ClInclude Include="engine\2d\Outline.h">
+    <ClInclude Include="engine\2d\PostEffect\Outline.h">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\PostEffect\PostEffect.h">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\PostEffect\BasePostEffect.h">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
   </ItemGroup>

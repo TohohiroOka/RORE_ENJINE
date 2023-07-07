@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\Helpar;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\2d\PostEffect;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\Helpar;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\scene;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -81,7 +81,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\Helpar;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\2d\PostEffect;$(ProjectDir)engine\3d;$(ProjectDir)engine\3d\collider;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\easing;$(ProjectDir)engine\external;$(ProjectDir)engine\scene;$(ProjectDir)engine\base\Helpar;$(ProjectDir)engine\base\input;$(ProjectDir)game\;$(ProjectDir)game\object;$(ProjectDir)game\object\Bullet;$(ProjectDir)game\object\Beam;$(ProjectDir)game\object\Enemy;$(ProjectDir)game\scene;$(ProjectDir)game\ui;$(ProjectDir)engine\light;$(ProjectDir)object;$(ProjectDir)engine\particle;$(ProjectDir)scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -97,11 +97,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="engine\2d\BasePostEffect.cpp" />
-    <ClCompile Include="engine\2d\Bloom.cpp" />
     <ClCompile Include="engine\2d\DebugText.cpp" />
-    <ClCompile Include="engine\2d\Outline.cpp" />
-    <ClCompile Include="engine\2d\PostEffect.cpp" />
+    <ClCompile Include="engine\2d\PostEffect\BasePostEffect.cpp" />
+    <ClCompile Include="engine\2d\PostEffect\Bloom.cpp" />
+    <ClCompile Include="engine\2d\PostEffect\Fog.cpp" />
+    <ClCompile Include="engine\2d\PostEffect\Outline.cpp" />
+    <ClCompile Include="engine\2d\PostEffect\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\3d\Base3D.cpp" />
     <ClCompile Include="engine\3d\collider\Collision.cpp" />
@@ -158,6 +159,14 @@
     <ClCompile Include="Map.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="FogPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="FogVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="Resources\Shaders\BasicCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -270,6 +279,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Fog.hlsli" />
     <None Include="Resources\Shaders\Bloom.hlsli" />
     <None Include="Resources\Shaders\HeightMap.hlsli" />
     <None Include="Resources\Shaders\InstanceObject.hlsli" />
@@ -281,11 +291,12 @@
     <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\2d\BasePostEffect.h" />
-    <ClInclude Include="engine\2d\Bloom.h" />
     <ClInclude Include="engine\2d\DebugText.h" />
-    <ClInclude Include="engine\2d\Outline.h" />
-    <ClInclude Include="engine\2d\PostEffect.h" />
+    <ClInclude Include="engine\2d\PostEffect\BasePostEffect.h" />
+    <ClInclude Include="engine\2d\PostEffect\Bloom.h" />
+    <ClInclude Include="engine\2d\PostEffect\Fog.h" />
+    <ClInclude Include="engine\2d\PostEffect\Outline.h" />
+    <ClInclude Include="engine\2d\PostEffect\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\3d\Base3D.h" />
     <ClInclude Include="engine\3d\collider\BaseCollider.h" />
