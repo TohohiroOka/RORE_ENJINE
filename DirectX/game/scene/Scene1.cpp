@@ -67,6 +67,8 @@ void Scene1::Initialize()
 	isOutsideCollision = true;
 
 	mapChangeDirection = true;
+
+	maxline = 17;
 }
 
 void Scene1::Update()
@@ -95,9 +97,9 @@ void Scene1::Update()
 
 	if (!kaburi) {
 		//オブジェクト設置
-		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
+		if (input->PushMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
 			map->AddBox(camera->GetEye(), isSetObject);
-		} else if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT)) {
+		} else if (input->PushMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT)) {
 			map->DeleteBox(camera->GetEye());
 		}
 	}
@@ -157,6 +159,14 @@ void Scene1::Update()
 	if (input->TriggerKey(DIK_F6)) {
 		for (int i = 0; i < 9; i++) {
 			if (i == 8) { isSetObject[i] = true; } else { isSetObject[i] = false; }
+		}
+	}
+
+	if (input->PushKey(DIK_P) && input->PushKey(DIK_O) && input->TriggerKey(DIK_I)) {
+		if (maxline == 17) {
+			maxline = 230;
+		} else {
+			maxline = 17;
 		}
 	}
 
@@ -228,9 +238,9 @@ void Scene1::ImguiDraw()
 		isImprot = true;
 	}
 	ImGui::Checkbox("Map Change Direction", &mapChangeDirection);
-	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, 17);
-	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, 17);
-	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, 17);
+	ImGui::SliderInt("MapSize : X", &mapChangeSize.x, 1, maxline);
+	ImGui::SliderInt("MapSize : Y", &mapChangeSize.y, 1, maxline);
+	ImGui::SliderInt("MapSize : Z", &mapChangeSize.z, 1, maxline);
 	ImGui::Checkbox("Player [1]", &isSetObject[0]);
 	ImGui::Checkbox("Goal [2]", &isSetObject[1]);
 	ImGui::Checkbox("NormalObject [3]", &isSetObject[2]);

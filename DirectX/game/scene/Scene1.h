@@ -104,4 +104,7 @@ private:
 
 	//Ú’n–Ê‚Ì’Ç‰Á•ûŒü
 	bool mapChangeDirection;
+
+	//Å‘å’l‚ÌC³
+	int maxline;
 };
