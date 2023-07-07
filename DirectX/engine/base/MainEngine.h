@@ -4,7 +4,8 @@
 #include "DirectInput.h"
 #include "XInputManager.h"
 #include "PostEffect.h"
-#include "BasePostEffect.h"
+#include "Bloom.h"
+#include "Outline.h"
 #include "FrameRateKeep.h"
 #include "CubeMap.h"
 
@@ -62,7 +63,9 @@ private:
 	//ポストエフェクトのインスタンス
 	std::unique_ptr<PostEffect> postEffect;
 	//ポストエフェクト加工用
-	std::array<std::unique_ptr<BasePostEffect>, int(BasePostEffect::EffectTyep::size)> basePost;
+	std::unique_ptr<Bloom> bloom;
+	//ポストエフェクト加工用
+	std::unique_ptr<Outline> outline;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//数字表示デバッグ用

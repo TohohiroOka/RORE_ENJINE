@@ -98,7 +98,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="engine\2d\BasePostEffect.cpp" />
+    <ClCompile Include="engine\2d\Bloom.cpp" />
     <ClCompile Include="engine\2d\DebugText.cpp" />
+    <ClCompile Include="engine\2d\Outline.cpp" />
     <ClCompile Include="engine\2d\PostEffect.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\3d\Base3D.cpp" />
@@ -280,7 +282,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\2d\BasePostEffect.h" />
+    <ClInclude Include="engine\2d\Bloom.h" />
     <ClInclude Include="engine\2d\DebugText.h" />
+    <ClInclude Include="engine\2d\Outline.h" />
     <ClInclude Include="engine\2d\PostEffect.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\3d\Base3D.h" />

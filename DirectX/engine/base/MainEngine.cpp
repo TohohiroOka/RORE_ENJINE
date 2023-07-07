@@ -50,9 +50,8 @@ void MainEngine::Initialize()
 
 	postEffect = PostEffect::Create();
 
-	for (int i = 0; i < int(BasePostEffect::EffectTyep::size); i++) {
-		basePost[i] = BasePostEffect::Create(BasePostEffect::EffectTyep(i));
-	}
+	bloom = Bloom::Create();
+	outline = Outline::Create();
 
 	fps = FrameRateKeep::Create();
 }
@@ -81,13 +80,13 @@ void MainEngine::Draw()
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene();
 
-	basePost[int(BasePostEffect::EffectTyep::bloom)]->PreDrawScene();
-	basePost[int(BasePostEffect::EffectTyep::bloom)]->Draw(postEffect->GetTex(PostEffect::TexType::bloom));
-	basePost[int(BasePostEffect::EffectTyep::bloom)]->PostDrawScene();
+	bloom->PreDrawScene();
+	bloom->Draw(postEffect->GetTex(PostEffect::TexType::bloom));
+	bloom->PostDrawScene();
 
-	basePost[int(BasePostEffect::EffectTyep::outline)]->PreDrawScene();
-	basePost[int(BasePostEffect::EffectTyep::outline)]->Draw(postEffect->GetTex(PostEffect::TexType::outline));
-	basePost[int(BasePostEffect::EffectTyep::outline)]->PostDrawScene();
+	outline->PreDrawScene();
+	outline->Draw(postEffect->GetTex(PostEffect::TexType::outline));
+	outline->PostDrawScene();
 
 	//•`‰æ‘OÝ’è
 	dXCommon->PreDraw();
@@ -97,8 +96,8 @@ void MainEngine::Draw()
 	ImguiDraw();
 	std::vector<Texture*> postTex(4);
 	postTex[0] = postEffect->GetTex(PostEffect::TexType::normal);
-	postTex[1] = basePost[int(BasePostEffect::EffectTyep::bloom)]->GetTex();
-	postTex[2] = basePost[int(BasePostEffect::EffectTyep::outline)]->GetTex();
+	postTex[1] = bloom->GetTex();
+	postTex[2] = outline->GetTex();
 	postTex[3] = postEffect->GetTex(PostEffect::TexType::depth);
 
 	postEffect->Draw(postTex);

@@ -304,6 +304,12 @@
     <ClCompile Include="engine\2d\BasePostEffect.cpp">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClCompile>
+    <ClCompile Include="engine\2d\Bloom.cpp">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\Outline.cpp">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -602,6 +608,12 @@
       <Filter>ゲームシステム</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\BasePostEffect.h">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\Bloom.h">
+      <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\Outline.h">
       <Filter>エンジンシステム\Object\2d\PostEffect</Filter>
     </ClInclude>
   </ItemGroup>

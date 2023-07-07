@@ -11,11 +11,12 @@ float4 SetColor(float4 color, float4 nowColor);
 float4 main(VSOutput input) : SV_TARGET
 {
     float4 outlineTex = float4(0, 0, 0, 0);
-
-    float xPoutline = input.uv.x + outlineWidth;
-    float xMoutline = input.uv.x - outlineWidth;
-    float yPoutline = input.uv.y + outlineWidth;
-    float yMoutline = input.uv.y - outlineWidth;
+    float _outlineWidth = outlineWidth / 100;
+    
+    float xPoutline = input.uv.x + _outlineWidth;
+    float xMoutline = input.uv.x - _outlineWidth;
+    float yPoutline = input.uv.y + _outlineWidth;
+    float yMoutline = input.uv.y - _outlineWidth;
 
     float add1 = step(xPoutline, 1);
     float add2 = step(0, xMoutline);

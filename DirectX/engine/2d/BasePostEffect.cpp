@@ -6,9 +6,11 @@ using namespace DirectX;
 const float BasePostEffect::clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };
 std::vector<GraphicsPipelineManager::DrawSet> BasePostEffect::pipeline;
 
-void BasePostEffect::Initialize()
+void BasePostEffect::Initialize(const EffectTyep _type)
 {
 	HRESULT result;
+
+	type = _type;
 
 	//頂点バッファ生成
 	result = device->CreateCommittedResource(
@@ -147,54 +149,8 @@ void BasePostEffect::CreateDepthBuffer()
 	device->CreateDepthStencilView(depthBuffer.Get(), &dsvDesc, descHeapDSV->GetCPUDescriptorHandleForHeapStart());
 }
 
-void BasePostEffect::CreateConstBuffer(const EffectTyep _type)
-{
-	type = _type;
-
-	HRESULT result;
-
-	// 定数バッファの生成
-	if (type == EffectTyep::bloom) {
-		result = device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
-			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_BLOOM) + 0xff) & ~0xff),
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(&constBuff));
-		if (FAILED(result)) { assert(0); }
-	}else if(type == EffectTyep::outline) {
-		result = device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
-			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_OUTLINE) + 0xff) & ~0xff),
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(&constBuff));
-		if (FAILED(result)) { assert(0); }
-	}
-}
-
 void BasePostEffect::Draw(const Texture* _tex)
 {
-	HRESULT result;
-	// 定数バッファへデータ転送
-	if (type == EffectTyep::bloom) {
-		CONST_BUFFER_DATA_BLOOM* constMap = nullptr;
-		result = constBuff->Map(0, nullptr, (void**)&constMap);
-		if (SUCCEEDED(result)) {
-			constMap->strength = strength;
-			constBuff->Unmap(0, nullptr);
-		}
-	} else if (type == EffectTyep::outline) {
-		CONST_BUFFER_DATA_OUTLINE* constMap = nullptr;
-		result = constBuff->Map(0, nullptr, (void**)&constMap);
-		if (SUCCEEDED(result)) {
-			constMap->outlineWidth = outlineWidth;
-			constBuff->Unmap(0, nullptr);
-		}
-	}
-
 	int modeNum = int(type);
 
 	ObjectBase::Draw(pipeline[modeNum]);
@@ -215,33 +171,10 @@ void BasePostEffect::Draw(const Texture* _tex)
 BasePostEffect::BasePostEffect()
 	:Sprite()
 {
-	//ブルームの強さ
-	strength = 0.001f;
-	//アウトラインの太さ初期化
-	outlineWidth = 0.005f;
 }
 
 BasePostEffect::~BasePostEffect()
 {
-}
-
-std::unique_ptr<BasePostEffect> BasePostEffect::Create(const EffectTyep _type)
-{
-	// Spriteのインスタンスを生成
-	BasePostEffect* instance = new BasePostEffect();
-	if (instance == nullptr) {
-		return nullptr;
-	}
-
-	// 初期化
-	instance->Initialize();
-	//定数バッファ
-	instance->CreateConstBuffer(_type);
-	//深度バッファ生成
-	instance->CreateDepthBuffer();
-
-	//ユニークポインタを返す
-	return std::unique_ptr<BasePostEffect>(instance);
 }
 
 void BasePostEffect::PreDrawScene()

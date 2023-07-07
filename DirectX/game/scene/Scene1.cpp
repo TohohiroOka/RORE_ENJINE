@@ -44,6 +44,8 @@ void Scene1::Initialize()
 
 	Sprite::LoadTexture("amm","Resources/amm.jpg");
 	sprite = Sprite::Create("amm");
+	sprite->SetTexSize({ 1059.0f,1500.0f });
+	sprite->SetSize({ 1059.0f / 5.0f,1500.0f / 5.0f });
 	sprite->Update();
 }
 

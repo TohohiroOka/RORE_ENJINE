@@ -12,7 +12,7 @@ float4 main(VSOutput input) : SV_TARGET
 {
     float totalWeight = 0;
     float sigma = 0.005;
-    float stepWidth = strength;
+    float stepWidth = 0.001;
     float4 color = { 0, 0, 0, 0 };
 
     for (float py = -sigma * 2; py <= sigma * 2; py += stepWidth)
@@ -31,7 +31,6 @@ float4 main(VSOutput input) : SV_TARGET
     color.rgb = color.rgb / totalWeight;
 
 	//ˆê’èˆÈ‰ºØ‚èŽÌ‚Ä
-    color = color * step(0.4, color.r + color.g + color.b);
     return color;
 }
 
