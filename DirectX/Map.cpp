@@ -56,6 +56,16 @@ bool Map::ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMA
 	return false;
 }
 
+int Map::GetBoxInstanceCount()
+{
+	for (int i = 0; i < int(CREATE_BOX_NUM::NORMAL); i++) {
+		if (boxObject[i]->GetInstanceDrawCheck()) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 Map::~Map()
 {
 	const int deleteNum = deleteOrderMaxNum + 2;
@@ -279,46 +289,50 @@ void Map::Update(const XMFLOAT3& _pos, const XMFLOAT3& _cameraTarget, const bool
 		{
 			for (auto& x : z)
 			{
+				int instanceCount = 0;
+				if (x.type <= TYPE::NORMAL) {
+					instanceCount = GetBoxInstanceCount();
+				}
 				//プレイヤー
 				if (x.type == TYPE::PLAYER) {
-					boxObject[int(BOX_TYPE::NORMAL)]->DrawInstance(x.worldMat, {0.2f,0.2f,0.8f,1.0f});
+					boxObject[instanceCount]->DrawInstance(x.worldMat, {0.2f,0.2f,0.8f,1.0f});
 				}
 				//ゴール
 				else if (x.type == TYPE::GOAL) {
-					boxObject[int(BOX_TYPE::NORMAL)]->DrawInstance(x.worldMat, { 0.8f,0.2f,0.2f,1.0f });
+					boxObject[instanceCount]->DrawInstance(x.worldMat, { 0.8f,0.2f,0.2f,1.0f });
 				}
 				//通常
 				else if (x.type == TYPE::NORMAL) {
-					boxObject[int(BOX_TYPE::NORMAL)]->DrawInstance(x.worldMat, { 0.2f,0.8f,0.2f,1.0f });
+					boxObject[instanceCount]->DrawInstance(x.worldMat, { 0.2f,0.8f,0.2f,1.0f });
 				}
 				//上方向
 				else if (x.type == TYPE::UP) {
-					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y + delimitSize / 2.0f,x.pos.z },
+					boxObject[int(CREATE_BOX_NUM::FACE)]->DrawInstance({ x.pos.x,x.pos.y + delimitSize / 2.0f,x.pos.z },
 						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,180.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//下方向
 				else if (x.type == TYPE::DOWN) {
-					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y - delimitSize / 2.0f,x.pos.z },
+					boxObject[int(CREATE_BOX_NUM::FACE)]->DrawInstance({ x.pos.x,x.pos.y - delimitSize / 2.0f,x.pos.z },
 						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 0.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//左方向
 				else if (x.type == TYPE::LEFT) {
-					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x - delimitSize / 2.0f,x.pos.y ,x.pos.z },
+					boxObject[int(CREATE_BOX_NUM::FACE)]->DrawInstance({ x.pos.x - delimitSize / 2.0f,x.pos.y ,x.pos.z },
 						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,270.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//右方向
 				else if (x.type == TYPE::RIGHT) {
-					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x + delimitSize / 2.0f,x.pos.y ,x.pos.z },
+					boxObject[int(CREATE_BOX_NUM::FACE)]->DrawInstance({ x.pos.x + delimitSize / 2.0f,x.pos.y ,x.pos.z },
 						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,90.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//前方向
 				else if (x.type == TYPE::FRONT) {
-					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z - delimitSize / 2.0f },
+					boxObject[int(CREATE_BOX_NUM::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z - delimitSize / 2.0f },
 						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 90.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 				//後方向
 				else if (x.type == TYPE::BACK) {
-					boxObject[int(BOX_TYPE::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z + delimitSize / 2.0f },
+					boxObject[int(CREATE_BOX_NUM::FACE)]->DrawInstance({ x.pos.x,x.pos.y ,x.pos.z + delimitSize / 2.0f },
 						{ delimitSize / 2.0f ,delimitSize / 2.0f ,delimitSize / 2.0f }, { 270.0f,0.0f,0.0f }, { 0.5f,0.3f,0.8f,1.0f });
 				}
 			}
@@ -1112,11 +1126,11 @@ void Map::Initialize(const float _delimitSize, const XMINT3& _delimitNum)
 	}
 
 	//ボックス初期化
-	boxModel[int(BOX_TYPE::NORMAL)] = Model::CreateFromOBJ("NormalCube");
+	boxModel = Model::CreateFromOBJ("NormalCube");
 
-	for (int i = 0; i < int(BOX_TYPE::SIZE); i++) {
-		if (i == 0) {
-			boxObject[i] = InstanceObject::Create(boxModel[i].get());
+	for (int i = 0; i < int(CREATE_BOX_NUM::SIZE); i++) {
+		if (i <= int(CREATE_BOX_NUM::NORMAL)) {
+			boxObject[i] = InstanceObject::Create(boxModel.get());
 		} else {
 			boxObject[i] = InstanceObject::Create(faceModel2.get());
 		}

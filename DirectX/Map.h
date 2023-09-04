@@ -39,6 +39,12 @@ private:// エイリアス
 		SIZE,
 	};
 
+	enum class CREATE_BOX_NUM {
+		NORMAL = 10,
+		FACE,
+		SIZE,
+	};
+
 	struct BOX_INFO {
 		TYPE type = TYPE::NONE;
 		XMFLOAT3 pos;
@@ -170,6 +176,11 @@ private:
 	bool ColRayBox(const XMFLOAT3& _point1, const XMFLOAT3& _point2, const XMMATRIX& _boxMat, HIT_INFO* _hitInfo);
 
 	/// <summary>
+	/// 使用するInstance番号取得
+	/// </summary>
+	int GetBoxInstanceCount();
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="_delimitSize">区切りの大きさ</param>
@@ -218,8 +229,8 @@ private:
 	std::vector<std::vector<std::vector<FACE_CHIP>>> faceInfo;
 
 	//mapのボックス
-	std::array<std::unique_ptr<Model>, int(BOX_TYPE::SIZE)> boxModel;
-	std::array<std::unique_ptr<InstanceObject>, int(BOX_TYPE::SIZE)> boxObject;
+	std::unique_ptr<Model> boxModel;
+	std::array<std::unique_ptr<InstanceObject>, int(CREATE_BOX_NUM::SIZE)> boxObject;
 	std::vector<std::vector<std::vector<BOX_INFO>>> boxInfo;
 
 	//マウスのレイ情報

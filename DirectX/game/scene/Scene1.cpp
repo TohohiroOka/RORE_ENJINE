@@ -97,9 +97,13 @@ void Scene1::Update()
 
 	if (!kaburi) {
 		//オブジェクト設置
-		if (input->PushMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
+		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT) ||
+			(input->PushMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT) && input->PushKey(DIK_LCONTROL))) {
 			map->AddBox(camera->GetEye(), isSetObject);
-		} else if (input->PushMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT)) {
+		}
+		//オブジェクト消去
+		else if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT) ||
+			(input->PushMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT) && input->PushKey(DIK_LCONTROL))) {
 			map->DeleteBox(camera->GetEye());
 		}
 	}
@@ -164,7 +168,7 @@ void Scene1::Update()
 
 	if (input->PushKey(DIK_P) && input->PushKey(DIK_O) && input->TriggerKey(DIK_I)) {
 		if (maxline == 17) {
-			maxline = 230;
+			maxline = 314;
 		} else {
 			maxline = 17;
 		}
@@ -193,6 +197,7 @@ void Scene1::Draw(const int _cameraNum)
 	map->SetLight(_cameraNum == 0);
 
 	InterfaceObject3d::SetCmdList(cmdList);
+
 	//線
 	PrimitiveObject3D::PreDraw();
 	if (isDrawLine) {
