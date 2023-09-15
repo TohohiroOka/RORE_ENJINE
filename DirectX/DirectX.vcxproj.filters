@@ -378,10 +378,10 @@
     <FxCompile Include="Resources\Shaders\OutlineVS.hlsl">
       <Filter>シェーダーファイル\PostEffect\Outline</Filter>
     </FxCompile>
-    <FxCompile Include="FogVS.hlsl">
+    <FxCompile Include="Resources\Shaders\FogPS.hlsl">
       <Filter>シェーダーファイル\PostEffect\Fog</Filter>
     </FxCompile>
-    <FxCompile Include="FogPS.hlsl">
+    <FxCompile Include="Resources\Shaders\FogVS.hlsl">
       <Filter>シェーダーファイル\PostEffect\Fog</Filter>
     </FxCompile>
   </ItemGroup>
@@ -413,7 +413,7 @@
     <None Include="Resources\Shaders\Outline.hlsli">
       <Filter>シェーダーファイル\PostEffect\Outline</Filter>
     </None>
-    <None Include="Fog.hlsli">
+    <None Include="Resources\Shaders\Fog.hlsli">
       <Filter>シェーダーファイル\PostEffect\Fog</Filter>
     </None>
   </ItemGroup>

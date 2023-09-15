@@ -6,6 +6,7 @@
 #include "PostEffect.h"
 #include "Bloom.h"
 #include "Outline.h"
+#include "Fog.h"
 #include "FrameRateKeep.h"
 #include "CubeMap.h"
 
@@ -66,6 +67,8 @@ private:
 	std::unique_ptr<Bloom> bloom;
 	//ポストエフェクト加工用
 	std::unique_ptr<Outline> outline;
+	//ポストエフェクト加工用
+	std::unique_ptr<Fog> fog;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//数字表示デバッグ用

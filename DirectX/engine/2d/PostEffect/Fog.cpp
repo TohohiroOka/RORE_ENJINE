@@ -28,8 +28,9 @@ void Fog::Update()
 
 Fog::Fog()
 {
-	//ブルームの強さ
+	//フォグの強さ
 	strength = 1.0f;
+	color = { 1.0f,1.0f,1.0f };
 }
 
 std::unique_ptr<Fog> Fog::Create()
@@ -41,7 +42,7 @@ std::unique_ptr<Fog> Fog::Create()
 	}
 
 	// 初期化
-	instance->Initialize(EffectTyep::outline);
+	instance->Initialize(EffectTyep::fog);
 	//定数バッファ
 	instance->CreateConstBuffer();
 	//深度バッファ生成

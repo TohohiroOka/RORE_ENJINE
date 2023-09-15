@@ -28,7 +28,7 @@ void Bloom::Update()
 Bloom::Bloom()
 {
 	//ブルームの強さ
-	strength = 1.0f;
+	strength = 5.0f;
 }
 
 std::unique_ptr<Bloom> Bloom::Create()
@@ -40,7 +40,7 @@ std::unique_ptr<Bloom> Bloom::Create()
 	}
 
 	// 初期化
-	instance->Initialize(EffectTyep::outline);
+	instance->Initialize(EffectTyep::bloom);
 	//定数バッファ
 	instance->CreateConstBuffer();
 	//深度バッファ生成

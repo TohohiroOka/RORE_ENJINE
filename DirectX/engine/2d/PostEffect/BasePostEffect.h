@@ -15,6 +15,7 @@ public:
 	enum class EffectTyep {
 		bloom,
 		outline,
+		fog,
 		size,
 	};
 

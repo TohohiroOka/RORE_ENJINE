@@ -29,7 +29,7 @@ Outline::Outline()
 	:BasePostEffect()
 {
 	//アウトラインの太さ初期化
-	outlineWidth = 5.0f;
+	outlineWidth = 1.0f;
 }
 
 std::unique_ptr<Outline> Outline::Create()
@@ -41,7 +41,7 @@ std::unique_ptr<Outline> Outline::Create()
 	}
 
 	// 初期化
-	instance->Initialize(EffectTyep::bloom);
+	instance->Initialize(EffectTyep::outline);
 	//定数バッファ
 	instance->CreateConstBuffer();
 	//深度バッファ生成

@@ -52,6 +52,7 @@ void MainEngine::Initialize()
 
 	bloom = Bloom::Create();
 	outline = Outline::Create();
+	fog = Fog::Create();
 
 	fps = FrameRateKeep::Create();
 }
@@ -88,17 +89,22 @@ void MainEngine::Draw()
 	outline->Draw(postEffect->GetTex(PostEffect::TexType::outline));
 	outline->PostDrawScene();
 
+	fog->PreDrawScene();
+	fog->Draw(postEffect->GetTex(PostEffect::TexType::depth));
+	fog->PostDrawScene();
+
 	//描画前設定
 	dXCommon->PreDraw();
 
 	//imgui表示
 	scene->ImguiDraw();
 	ImguiDraw();
-	std::vector<Texture*> postTex(4);
+	std::vector<Texture*> postTex(5);
 	postTex[0] = postEffect->GetTex(PostEffect::TexType::normal);
 	postTex[1] = bloom->GetTex();
 	postTex[2] = outline->GetTex();
-	postTex[3] = postEffect->GetTex(PostEffect::TexType::depth);
+	postTex[3] = fog->GetTex();
+	postTex[4] = postEffect->GetTex(PostEffect::TexType::depth);
 
 	postEffect->Draw(postTex);
 	//コマンド実行
@@ -112,6 +118,14 @@ void MainEngine::Draw()
 
 void MainEngine::ImguiDraw()
 {
+	static float t = 0;
+	ImGui::Begin("debug imgui");
+	ImGui::SetWindowSize(ImVec2(300, 300), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+	ImGui::SliderFloat("slider 1", &t, 0.0f, 1.0f);
+	ImGui::End();
+
+	fog->SetStrength(t);
 }
 
 void MainEngine::FrameControl()

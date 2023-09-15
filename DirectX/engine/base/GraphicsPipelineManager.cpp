@@ -169,7 +169,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC GraphicsPipelineManager::CreatepelineDesc(con
 	//その他の設定
 	gpipeline.NumRenderTargets = _pepeline.rtvNum;	//描画対象は1つ
 	for (int i = 0; i < _pepeline.rtvNum; i++) {
-		gpipeline.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;	//0～255指定のRGBA
+		gpipeline.RTVFormats[i] = DXGI_FORMAT_R16G16B16A16_FLOAT;	//0～255指定のRGBA
 	}
 	gpipeline.SampleDesc.Count = 1;	//1ピクセルにつき1回サンプリング
 

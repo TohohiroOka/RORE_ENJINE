@@ -10,7 +10,7 @@
                 "BlendMode": "ALPHA",
                 "DrawMode": "2D",
                 "DrawType": "TRIANGLE_STRIP",
-                "TextureNum": 4,
+                "TextureNum": 5,
                 "Rootparams": 1
             }
         }

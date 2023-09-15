@@ -45,7 +45,7 @@ public:
 
 private:
 
-	//ブルームの強さ
+	//フォグの強さ
 	float strength;
 	//フォグの色
 	XMFLOAT3 color;

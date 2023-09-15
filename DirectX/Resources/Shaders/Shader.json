@@ -54,6 +54,12 @@
                 "Name":"Outline",
                 "Type":["v","p"]
             }
+        },
+        {
+            "shader":{
+                "Name":"Fog",
+                "Type":["v","p"]
+            }
         }
     ]
 }
