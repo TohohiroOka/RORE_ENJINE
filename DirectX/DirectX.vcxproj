@@ -100,6 +100,7 @@
     <ClCompile Include="engine\2d\DebugText.cpp" />
     <ClCompile Include="engine\2d\PostEffect\BasePostEffect.cpp" />
     <ClCompile Include="engine\2d\PostEffect\Bloom.cpp" />
+    <ClCompile Include="engine\2d\PostEffect\Depth.cpp" />
     <ClCompile Include="engine\2d\PostEffect\Fog.cpp" />
     <ClCompile Include="engine\2d\PostEffect\Outline.cpp" />
     <ClCompile Include="engine\2d\PostEffect\PostEffect.cpp" />
@@ -182,6 +183,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\FogVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -303,6 +305,7 @@
     <ClInclude Include="engine\2d\DebugText.h" />
     <ClInclude Include="engine\2d\PostEffect\BasePostEffect.h" />
     <ClInclude Include="engine\2d\PostEffect\Bloom.h" />
+    <ClInclude Include="engine\2d\PostEffect\Depth.h" />
     <ClInclude Include="engine\2d\PostEffect\Fog.h" />
     <ClInclude Include="engine\2d\PostEffect\Outline.h" />
     <ClInclude Include="engine\2d\PostEffect\PostEffect.h" />

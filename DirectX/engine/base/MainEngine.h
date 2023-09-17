@@ -7,6 +7,7 @@
 #include "Bloom.h"
 #include "Outline.h"
 #include "Fog.h"
+#include "Depth.h"
 #include "FrameRateKeep.h"
 #include "CubeMap.h"
 
@@ -69,6 +70,8 @@ private:
 	std::unique_ptr<Outline> outline;
 	//ポストエフェクト加工用
 	std::unique_ptr<Fog> fog;
+	//ポストエフェクトで使用する深度
+	std::unique_ptr<Depth> depth;
 	//Fps固定用クラスのインスタンス
 	std::unique_ptr<FrameRateKeep> fps = nullptr;
 	//数字表示デバッグ用

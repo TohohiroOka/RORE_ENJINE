@@ -54,6 +54,11 @@ public:
 	virtual void Draw(const int _cameraNum) {};
 
 	/// <summary>
+	/// ポストエフェクトをかけない描画
+	/// </summary>
+	virtual void NonPostEffectDraw(const int _cameraNum){};
+
+	/// <summary>
 	/// 解放
 	/// </summary>
 	virtual void Finalize() = 0;

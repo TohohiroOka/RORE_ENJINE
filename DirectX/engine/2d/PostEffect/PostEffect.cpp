@@ -75,7 +75,7 @@ void PostEffect::Initialize()
 		texSize[0], texSize[1],
 		1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
-	const int renderNum = int(TexType::size) - 1;
+	const int renderNum = int(TexType::size);
 
 	// テクスチャ用バッファの生成
 	for (int i = 0; i < renderNum; i++)
@@ -149,7 +149,7 @@ void PostEffect::CreateDepthBuffer()
 	//深度バッファリソース設定
 	CD3DX12_RESOURCE_DESC depthResDesc =
 		CD3DX12_RESOURCE_DESC::Tex2D(
-			DXGI_FORMAT_R32_TYPELESS,
+			DXGI_FORMAT_D32_FLOAT,
 			WindowApp::GetWindowWidth(),
 			(UINT)WindowApp::GetWindowHeight(),
 			1, 0,
@@ -157,14 +157,13 @@ void PostEffect::CreateDepthBuffer()
 			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 
 	//深度バッファの生成
-	texture[int(TexType::depth)] = std::make_unique<Texture>();
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&depthResDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,//深度値書き込みに使用
 		&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0),
-		IID_PPV_ARGS(&texture[int(TexType::depth)]->texBuffer));
+		IID_PPV_ARGS(&depthBuff));
 	if (FAILED(result)) { assert(0); }
 
 	//DSV用デスクリプタヒープを生成
@@ -180,17 +179,7 @@ void PostEffect::CreateDepthBuffer()
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	device->CreateDepthStencilView(texture[int(TexType::depth)]->texBuffer.Get(), &dsvDesc, descHeapDSV->GetCPUDescriptorHandleForHeapStart());
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	//デスクリプタヒープにSRV生成
-	texture[int(TexType::depth)]->descriptor = std::make_unique<DescriptorHeapManager>();
-	texture[int(TexType::depth)]->descriptor->CreateSRV(texture[int(TexType::depth)]->texBuffer, srvDesc);
+	device->CreateDepthStencilView(depthBuff.Get(), &dsvDesc, descHeapDSV->GetCPUDescriptorHandleForHeapStart());
 }
 
 std::unique_ptr<PostEffect> PostEffect::Create()
@@ -210,7 +199,7 @@ std::unique_ptr<PostEffect> PostEffect::Create()
 	return std::unique_ptr<PostEffect>(instance);
 }
 
-void PostEffect::Draw(const std::vector<Texture*>& _tex)
+void PostEffect::Draw(const std::vector<Texture*> _tex)
 {
 	// 定数バッファへデータ転送
 	CONST_BUFFER_DATA* constMap = nullptr;
@@ -238,7 +227,7 @@ void PostEffect::Draw(const std::vector<Texture*>& _tex)
 
 void PostEffect::PreDrawScene()
 {
-	const int renderNum = int(TexType::size) - 1;
+	const int renderNum = int(TexType::size);
 
 	//リソースバリアを変更
 	for (int i = 0; i < renderNum; i++) {
@@ -285,7 +274,7 @@ void PostEffect::PreDrawScene()
 
 void PostEffect::PostDrawScene()
 {
-	const int renderNum = int(TexType::size) - 1;
+	const int renderNum = int(TexType::size);
 
 	//リソースバリアを変更
 	for (int i = 0; i < renderNum; i++)

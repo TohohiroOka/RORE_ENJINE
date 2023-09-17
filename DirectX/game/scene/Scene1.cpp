@@ -6,6 +6,8 @@
 #include "WindowApp.h"
 #include <imgui.h>
 #include "Collision.h"
+#include "MeshCollider.h"
+#include "CollisionAttribute.h"
 
 using namespace DirectX;
 
@@ -37,23 +39,36 @@ void Scene1::Initialize()
 
 	mapChangeDirection = true;
 
-	model = Model::CreateFromOBJ("NormalCube");
-	obj = Object3d::Create(model.get());
-	obj->SetScale({ 10.0f,10.0f ,10.0f });
-	obj->SetBloom(true);
-
 	Sprite::LoadTexture("amm","Resources/amm.jpg");
 	sprite = Sprite::Create("amm");
 	sprite->SetTexSize({ 1059.0f,1500.0f });
 	sprite->SetSize({ 1059.0f / 5.0f,1500.0f / 5.0f });
 	sprite->Update();
+
+	const std::string jimen = "jimen.png";
+	const std::string kabe = "kabe.png";
+
+	m_model = TerrainModel::Create("heightmap02.bmp", 1.0f, TerrainModel::FACE_DIRECTION(0),
+		{ 0,0,0 }, 5.0f, jimen, kabe);
+
+	object = HeightMap::Create(m_model.get());
+	//元の判定消去
+	object->DeleteCollider();
+
+	// コライダーの追加
+	MeshCollider* collider = new MeshCollider;
+	object->SetCollider(collider);
+	collider->ConstructTriangles(object->GetHitVertices(), object->GetHitIndices());
+	collider->SetAttribute(COLLISION_ATTR_LANDSHAPE);
+
 }
 
 void Scene1::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	obj->Update();
+
+	object->Update();
 
 	//フレームの最初に初期化するもの
 	kaburi = false;
@@ -164,8 +179,6 @@ void Scene1::Draw(const int _cameraNum)
 {
 	map->SetLight(_cameraNum == 0);
 
-	obj->Draw();
-
 	//line
 	if (isDrawLine) {
 		map->Draw();
@@ -174,6 +187,11 @@ void Scene1::Draw(const int _cameraNum)
 	//Instance
 	map->InstanceDraw();
 
+	//object->Draw();
+}
+
+void Scene1::NonPostEffectDraw(const int _cameraNum)
+{
 	//スプライト
 	if (_cameraNum == 0) {
 		DebugText::GetInstance()->DrawAll();

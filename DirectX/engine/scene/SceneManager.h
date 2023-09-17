@@ -45,6 +45,11 @@ public://メンバ関数
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
+	/// ポストエフェクトをかけない描画
+	/// </summary>
+	void NonPostEffectDraw();
+
+	/// <summary>
 	/// imguiの表示
 	/// </summary>
 	void ImguiDraw();

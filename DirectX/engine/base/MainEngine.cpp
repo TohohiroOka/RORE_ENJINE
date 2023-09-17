@@ -53,6 +53,7 @@ void MainEngine::Initialize()
 	bloom = Bloom::Create();
 	outline = Outline::Create();
 	fog = Fog::Create();
+	depth = Depth::Create();
 
 	fps = FrameRateKeep::Create();
 }
@@ -81,6 +82,10 @@ void MainEngine::Draw()
 	scene->Draw(dXCommon->GetCmdList());
 	postEffect->PostDrawScene();
 
+	depth->PreDrawScene();
+	scene->Draw(dXCommon->GetCmdList());
+	depth->PostDrawScene();
+
 	bloom->PreDrawScene();
 	bloom->Draw(postEffect->GetTex(PostEffect::TexType::bloom));
 	bloom->PostDrawScene();
@@ -90,23 +95,28 @@ void MainEngine::Draw()
 	outline->PostDrawScene();
 
 	fog->PreDrawScene();
-	fog->Draw(postEffect->GetTex(PostEffect::TexType::depth));
+	fog->Draw(depth->GetTex());
 	fog->PostDrawScene();
 
 	//描画前設定
 	dXCommon->PreDraw();
 
-	//imgui表示
-	scene->ImguiDraw();
 	ImguiDraw();
 	std::vector<Texture*> postTex(5);
 	postTex[0] = postEffect->GetTex(PostEffect::TexType::normal);
 	postTex[1] = bloom->GetTex();
 	postTex[2] = outline->GetTex();
 	postTex[3] = fog->GetTex();
-	postTex[4] = postEffect->GetTex(PostEffect::TexType::depth);
+	postTex[4] = depth->GetTex();
 
 	postEffect->Draw(postTex);
+
+	//ポストエフェクトをかけない描画
+	scene->NonPostEffectDraw();
+
+	//imgui表示
+	scene->ImguiDraw();
+
 	//コマンド実行
 	dXCommon->PostDraw();
 

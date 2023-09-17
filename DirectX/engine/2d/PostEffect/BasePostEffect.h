@@ -58,9 +58,7 @@ public://ƒƒ“ƒoŠÖ”
 	/// </summary>
 	void PostDrawScene();
 
-	Texture* GetTex() {
-		return texture.get();
-	}
+	Texture* GetTex() { return texture.get(); }
 
 private://Ã“Iƒƒ“ƒo•Ï”
 

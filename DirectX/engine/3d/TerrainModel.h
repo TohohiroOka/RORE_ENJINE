@@ -124,7 +124,7 @@ private:
 	//座標移動時の距離
 	XMFLOAT3 transformPos;
 	// モデル
-	Model* model = nullptr;
+	std::unique_ptr<Model> model = nullptr;
 	//インデックスの大きさ
 	int indexNum = 0;
 	//頂点数
@@ -133,12 +133,14 @@ private:
 	std::vector<Mesh::VERTEX> hitVertices;
 	std::vector<unsigned long> hitIndices;
 
+
+
 	//モデルの向き
 	FACE_DIRECTION direction;
 
 public:
 
-	Model* GetModel() { return model; }
+	Model* GetModel() { return model.get(); }
 	std::vector<Mesh::VERTEX>& GetHitVertices() { return hitVertices; }
 	std::vector<unsigned long>& GetHitIndices() { return hitIndices; }
 	void SetMesh(Mesh* _mesh) { model->ResetASetMeshes(_mesh); }

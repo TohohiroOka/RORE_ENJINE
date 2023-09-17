@@ -25,6 +25,17 @@ private:// サブクラス
 		float pad1;
 	};
 
+	struct CONST_BUFFER_DATA_B1
+	{
+		XMFLOAT3 m_baseColor;//ベースカラー
+		XMFLOAT3 m_ambient; //アンビエント係数
+		XMFLOAT3 m_diffuse; //ディフューズ係数
+		float m_metalness; //金属度
+		float m_specular; //スペキュラー係数
+		float m_roughness; //粗さ
+		float m_alpha; //アルファ
+	};
+
 public://メンバ関数
 
 	/// <summary>
@@ -82,6 +93,7 @@ private:
 
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuffB0;
+	ComPtr<ID3D12Resource> constBuffB1;
 	//ベースカラー
 	XMFLOAT4 baseColor = { 1,1,1,1 };
 

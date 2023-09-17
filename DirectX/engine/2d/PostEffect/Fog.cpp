@@ -52,7 +52,7 @@ std::unique_ptr<Fog> Fog::Create()
 	return std::unique_ptr<Fog>(instance);
 }
 
-void Fog::Draw(const Texture* _tex)
+void Fog::Draw(const Texture*_tex)
 {
 	Fog::Update();
 

@@ -23,7 +23,7 @@ public:
 	/// <param name="_light">ライトグループ</param>
 	static void SetLightGroup(LightGroup* _light) { Base3D::light = _light; }
 
-protected:
+public:
 
 	/// <summary>
 	/// 更新

@@ -20,7 +20,7 @@ float4 main(VSOutput input) : SV_TARGET
 	
 	//fog
 	float4 fogColor = fog.Sample(smp, input.uv);
-	
+
 	//ポストエフェクトの合成
-	return mainColor + bloomColor + outlineColor + fogColor;
+    return mainColor + bloomColor + outlineColor + fogColor;
 }

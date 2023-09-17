@@ -45,6 +45,16 @@ void HeightMap::Initialize()
 		nullptr,
 		IID_PPV_ARGS(&constBuffB0));
 	if (FAILED(result)) { assert(0); }
+
+	//定数バッファの生成
+	result = device->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),//アップロード可能
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(CONST_BUFFER_DATA_B1) + 0xff) & ~0xff),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffB1));
+	if (FAILED(result)) { assert(0); }
 }
 
 HeightMap::HeightMap()
@@ -63,26 +73,39 @@ void HeightMap::Update()
 	UpdateWorldMatrix();
 
 	//定数バッファにデータを転送
-	CONST_BUFFER_DATA_B0* constMap = nullptr;
-	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
+	CONST_BUFFER_DATA_B0* constMap1 = nullptr;
+	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap1);//マッピング
 	if (SUCCEEDED(result)) {
-		constMap->baseColor = baseColor;
+		constMap1->baseColor = baseColor;
 		if (camera)
 		{
-			constMap->viewproj = camera->GetView() * camera->GetProjection();
-			constMap->cameraPos = camera->GetEye();;
+			constMap1->viewproj = camera->GetView() * camera->GetProjection();
+			constMap1->cameraPos = camera->GetEye();;
 		} else
 		{
-			constMap->viewproj = XMMatrixIdentity();
-			constMap->cameraPos = { 0,0,0 };
+			constMap1->viewproj = XMMatrixIdentity();
+			constMap1->cameraPos = { 0,0,0 };
 		}
-		constMap->world = matWorld;
-		constMap->isBloom = isBloom;
-		constMap->isToon = isToon;
-		constMap->isOutline = isOutline;
-		constMap->isLight = isLight;
-		constMap->outlineColor = outlineColor;
+		constMap1->world = matWorld;
+		constMap1->isBloom = isBloom;
+		constMap1->isToon = isToon;
+		constMap1->isOutline = isOutline;
+		constMap1->isLight = isLight;
+		constMap1->outlineColor = outlineColor;
 		constBuffB0->Unmap(0, nullptr);
+	}
+
+	CONST_BUFFER_DATA_B1* constMap2 = nullptr;
+	result = constBuffB1->Map(0, nullptr, (void**)&constMap2);//マッピング
+	if (SUCCEEDED(result)) {
+		constMap2->m_baseColor = { baseColor.x,baseColor.y,baseColor.z };
+		constMap2->m_ambient = { 0.5f,0.5f,0.5f };
+		constMap2->m_diffuse = { 0.5f,0.5f,0.5f };
+		constMap2->m_metalness = 0.0f;
+		constMap2->m_specular = 0.5f;
+		constMap2->m_roughness = 0.0f;
+		constMap2->m_alpha = 1.0f;
+		constBuffB1->Unmap(0, nullptr);
 	}
 }
 
@@ -96,6 +119,7 @@ void HeightMap::Draw(const DrawMode _drawMode)
 
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffB0->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(1, constBuffB1->GetGPUVirtualAddress());
 
 	// ライトの描画
 	light->Draw(cmdList, 2);

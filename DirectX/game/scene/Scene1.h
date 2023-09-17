@@ -2,6 +2,7 @@
 #include "InterfaceScene.h"
 #include "Vector3.h"
 #include "Map.h"
+#include "HeightMap.h"
 
 class Scene1 : public InterfaceScene
 {
@@ -36,6 +37,11 @@ public:
 	/// <param name="_cameraNum">カメラ番号</param>
 	void Draw(const int _cameraNum) override;
 	
+	/// <summary>
+	/// ポストエフェクトをかけない描画
+	/// </summary>
+	void NonPostEffectDraw(const int _cameraNum) override;
+
 	/// <summary>
 	///	解放
 	/// </summary>
@@ -95,7 +101,12 @@ private:
 	bool mapChangeDirection;
 	
 	std::unique_ptr<Model> model;
-	std::unique_ptr<Object3d> obj;
 
 	std::unique_ptr<Sprite> sprite;
+
+	//地形情報
+	std::unique_ptr<TerrainModel> m_model;
+	//描画設定
+	std::unique_ptr<HeightMap> object;
+
 };

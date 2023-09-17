@@ -49,9 +49,9 @@ void TerrainModel::Draw(ID3D12GraphicsCommandList* _cmdList)
 	model->VIDraw(_cmdList);
 
 	//テクスチャ転送
-	_cmdList->SetGraphicsRootDescriptorTable(4, texture[TEXTURE::HEIGHT_MAP_TEX]->descriptor->gpu);
-	_cmdList->SetGraphicsRootDescriptorTable(5, texture[TEXTURE::GRAPHIC_TEX_1]->descriptor->gpu);
-	_cmdList->SetGraphicsRootDescriptorTable(6, texture[TEXTURE::GRAPHIC_TEX_2]->descriptor->gpu);
+	_cmdList->SetGraphicsRootDescriptorTable(3, texture[TEXTURE::HEIGHT_MAP_TEX]->descriptor->gpu);
+	_cmdList->SetGraphicsRootDescriptorTable(4, texture[TEXTURE::GRAPHIC_TEX_1]->descriptor->gpu);
+	_cmdList->SetGraphicsRootDescriptorTable(5, texture[TEXTURE::GRAPHIC_TEX_2]->descriptor->gpu);
 
 	//描画コマンド
 	_cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
@@ -491,6 +491,6 @@ void TerrainModel::CreaetModel(const FACE_DIRECTION _direction)
 
 	mesh->CreateBuffers();
 
-	model = new Model;
+	model = std::make_unique<Model>();
 	model->SetMeshes(mesh);
 }

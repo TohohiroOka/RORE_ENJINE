@@ -174,6 +174,11 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
 	scene->Draw(0);
 }
 
+void SceneManager::NonPostEffectDraw()
+{
+	scene->NonPostEffectDraw(0);
+}
+
 void SceneManager::ImguiDraw()
 {
 	scene->ImguiDraw();

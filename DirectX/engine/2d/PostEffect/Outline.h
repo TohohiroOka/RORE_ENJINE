@@ -42,7 +42,7 @@ public:
 	/// <summary>
 	/// 描画コマンドの発行
 	/// </summary>
-	void Draw(const Texture* _tex = nullptr);
+	void Draw(const Texture* _tex);
 
 private:
 
