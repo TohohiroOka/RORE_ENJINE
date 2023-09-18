@@ -1,22 +1,22 @@
 #pragma once
 #include <DirectXMath.h>
-#include "Camera.h"
-#include "Audio.h"
+#include "Camera/Camera.h"
+#include "Audio/Audio.h"
 
 //オブジェクト系
-#include "Object3d.h"
-#include "Sprite.h"
-#include "Emitter.h"
-#include "LightGroup.h"
-#include "Easing.h"
-#include "HeightMap.h"
-#include "PrimitiveObject3D.h"
-#include "InstanceObject.h"
+#include "Object/3d/Object3d.h"
+#include "Object/2d/Sprite.h"
+#include "Particle/Emitter.h"
+#include "Light/LightGroup.h"
+#include "Math/Easing/Easing.h"
+#include "Object/3d/HeightMap.h"
+#include "Object/3d/PrimitiveObject3D.h"
+#include "Object/3d/InstanceObject.h"
 
-#include "GraphicsPipelineManager.h"
+#include "Pipeline/GraphicsPipelineManager.h"
 
 //計算シェーダー
-#include "ComputeShaderManager.h"
+#include "Pipeline/ComputeShaderManager.h"
 
 class InterfaceScene
 {

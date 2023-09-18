@@ -1,8 +1,8 @@
 #include "SceneManager.h"
-#include "Scene1.h"
-#include "PostEffect.h"
-#include "BasePostEffect.h"
-#include "JsonLoader.h"
+#include "Scene/Scene1.h"
+#include "Object/2d/PostEffect/PostEffect.h"
+#include "Object/2d/PostEffect/BasePostEffect.h"
+#include "Loader/JsonLoader.h"
 
 std::unique_ptr<InterfaceScene> SceneManager::scene = nullptr;
 InterfaceScene* SceneManager::nextScene = nullptr;
@@ -150,6 +150,9 @@ void SceneManager::Update()
 	//シーン更新
 	scene->Update();
 
+	//シーンでのカメラ更新
+	scene->CameraUpdate(0, camera.get());
+
 	//カメラ更新
 	camera->Update();
 
@@ -167,9 +170,6 @@ void SceneManager::Update()
 void SceneManager::Draw(ID3D12GraphicsCommandList* cmdList)
 {
 	scene->SetCmdList(cmdList);
-
-	//シーンでのカメラ更新
-	scene->CameraUpdate(0, camera.get());
 
 	scene->Draw(0);
 }

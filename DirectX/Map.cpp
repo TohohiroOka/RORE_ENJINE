@@ -1,8 +1,8 @@
 #include "Map.h"
-#include "Collision.h"
-#include "DebugText.h"
-#include <JsonLoader.h>
-#include "DirectInput.h"
+#include "Object/3d/collider/Collision.h"
+#include "Object/2d/DebugText.h"
+#include "Loader/JsonLoader.h"
+#include "Input/DirectInput.h"
 
 const std::array<DirectX::XMFLOAT4,2> COLOR = {
 DirectX::XMFLOAT4{ 0.5f,0.5f,0.5f,0.5f },DirectX::XMFLOAT4{1.0f,1.0f,1.0f,1.0f}};

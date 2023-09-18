@@ -1,6 +1,6 @@
 #include "ParticleManager.h"
 #include <DirectXTex.h>
-#include"Camera.h"
+#include"Camera/Camera.h"
 
 using namespace DirectX;
 

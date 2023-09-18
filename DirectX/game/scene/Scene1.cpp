@@ -1,43 +1,21 @@
 #include "Scene1.h"
-#include "SceneManager.h"
-#include "DirectInput.h"
-#include "XInputManager.h"
-#include "DebugText.h"
+#include "Scene/SceneManager.h"
+#include "Input/DirectInput.h"
+#include "Input/XInputManager.h"
+#include "Object/2d/DebugText.h"
 #include "WindowApp.h"
 #include <imgui.h>
-#include "Collision.h"
-#include "MeshCollider.h"
-#include "CollisionAttribute.h"
+#include "Object/3d/collider/Collision.h"
+#include "Object/3d/collider/MeshCollider.h"
+#include "Object/3d/collider/CollisionAttribute.h"
 
 using namespace DirectX;
-
-char Scene1::fileName[36] = "";
 
 const std::array<XMFLOAT4, 2> COLOR = { XMFLOAT4{ 0.0f,0.0f,0.8f,1.0f } ,{ 0.8f,0.0f,0.0f,1.0f } };
 
 void Scene1::Initialize()
 {
 	camera = nullptr;
-
-	map = Map::Create();
-	isDrawLine = true;
-	isSetObject = { false,false,true };
-
-	cameraPos = { 0,0,-10 };
-	cameraTarget = { 135,0,0 };
-
-	imguiPos = { 0,0 };
-	kaburi = false;
-
-	exportTimer = 100;
-	improtTimer = 100;
-	isImprot = false;
-
-	imguiColor = COLOR[0];
-
-	isOutsideCollision = true;
-
-	mapChangeDirection = true;
 
 	Sprite::LoadTexture("amm","Resources/amm.jpg");
 	sprite = Sprite::Create("amm");
@@ -48,146 +26,40 @@ void Scene1::Initialize()
 	const std::string jimen = "jimen.png";
 	const std::string kabe = "kabe.png";
 
-	m_model = TerrainModel::Create("heightmap02.bmp", 1.0f, TerrainModel::FACE_DIRECTION(0),
+	m_model = TerrainModel::Create("heightmap02.bmp", 5.0f, TerrainModel::FACE_DIRECTION::Y_PLUS,
 		{ 0,0,0 }, 5.0f, jimen, kabe);
 
 	object = HeightMap::Create(m_model.get());
+	object->SetScale({ 5.0f ,5.0f ,5.0f });
+
+	//object->SetLight(false);
 	//元の判定消去
 	object->DeleteCollider();
 
 	// コライダーの追加
 	MeshCollider* collider = new MeshCollider;
 	object->SetCollider(collider);
-	collider->ConstructTriangles(object->GetHitVertices(), object->GetHitIndices());
+	collider->ConstructTriangles(object->GetModel());
 	collider->SetAttribute(COLLISION_ATTR_LANDSHAPE);
 
+	player = std::make_unique<Player>();
 }
 
 void Scene1::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-
+	player->Update();
 	object->Update();
-
-	//フレームの最初に初期化するもの
-	kaburi = false;
-	if (mapChange) {
-		map->ChangeDelimitNum(mapChangeDirection, mapChangeSize);
-		mapChange = false;
-	}
-	if (isImprot) {
-		if (!map->ImputMap(fileName)) {
-			imguiColor = COLOR[1];
-		}
-		improtTimer = 0;
-		isImprot = false;
-	}
-	//マウス座標
-	XMFLOAT2 mousePos = input->GetMousePoint();
-	Vector3 pout = {};
-	Vector3 target = {};
-	Collision::CalcScreenToWorld(&pout, camera, mousePos, 0.0f);
-	Collision::CalcScreenToWorld(&target, camera, mousePos, 1.0f);
-
-	if (!kaburi) {
-		//オブジェクト設置
-		if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_LEFT)) {
-			map->AddBox(camera->GetEye(), isSetObject);
-		} else if (input->TriggerMouseButton(DirectInput::MOUSE_BUTTON::MOUSE_RIGHT)) {
-			map->DeleteBox(camera->GetEye());
-		}
-	}
-
-	if (input->PushKey(DIK_LCONTROL) && input->TriggerKey(DIK_Z)) {
-		map->Undo();
-	} else if (input->PushKey(DIK_LCONTROL) && input->TriggerKey(DIK_Y)) {
-		map->Redo();
-	}
-
-	if (input->TriggerKey(DIK_1)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 0) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_2)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 1) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_3)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 2) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_4)) {
-		isDrawLine = !isDrawLine;
-	}
-	if (input->TriggerKey(DIK_5)) {
-		isOutsideCollision = !isOutsideCollision;
-	}
-	if (input->TriggerKey(DIK_F1)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 3) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_F2)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 4) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_F3)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 5) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_F4)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 6) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_F5)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 7) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-	if (input->TriggerKey(DIK_F6)) {
-		for (int i = 0; i < 9; i++) {
-			if (i == 8) { isSetObject[i] = true; } else { isSetObject[i] = false; }
-		}
-	}
-
-	map->Update(pout, target, kaburi, isOutsideCollision);
-
-	DebugText* text = DebugText::GetInstance();
-	if (exportTimer != 100) {
-		exportTimer++;
-		text->Print("export", 100, 100, { 1.0f,1.0f ,1.0f }, 20);
-		if (exportTimer == 20) { exportTimer = 100; }
-	}
-	if (improtTimer != 100) {
-		improtTimer++;
-		if (improtTimer == 40) {
-			exportTimer = 100;
-			imguiColor = COLOR[0];
-		}
-	}
-	text = nullptr;
 }
 
 void Scene1::Draw(const int _cameraNum)
 {
-	map->SetLight(_cameraNum == 0);
-
-	//line
-	if (isDrawLine) {
-		map->Draw();
-	}
-
-	//Instance
-	map->InstanceDraw();
-
 	//object->Draw();
+
+	object->ColliderDraw();
+
+	player->Draw();
 }
 
 void Scene1::NonPostEffectDraw(const int _cameraNum)
@@ -240,37 +112,39 @@ void Scene1::CameraUpdate(const int _cameraNum, Camera* _camera)
 		float Pspeed = 1.0f;
 		XMFLOAT2 radian = { XMConvertToRadians(cameraTarget.x + 90),XMConvertToRadians(cameraTarget.x) };
 
-		//右入力
-		if (input->PushKey(DIK_S)) {
-			cameraPos.x += Pspeed * cos(radian.x);
-			cameraPos.z += Pspeed * sin(radian.x);
-		}
-		//左入力
-		if (input->PushKey(DIK_W)) {
-			cameraPos.x -= Pspeed * cos(radian.x);
-			cameraPos.z -= Pspeed * sin(radian.x);
-		}
-		//下入力
-		if (input->PushKey(DIK_D)) {
-			cameraPos.x -= Pspeed * cos(radian.y);
-			cameraPos.z -= Pspeed * sin(radian.y);
-		}
-		//上入力
-		if (input->PushKey(DIK_A)) {
-			cameraPos.x += Pspeed * cos(radian.y);
-			cameraPos.z += Pspeed * sin(radian.y);
-		}
-		//下入力
-		if (input->PushKey(DIK_SPACE)) {
-			cameraPos.y += Pspeed;
-		}
-		//上入力
-		if (input->PushKey(DIK_LSHIFT)) {
-			cameraPos.y -= Pspeed;
-		}
+		////右入力
+		//if (input->PushKey(DIK_S)) {
+		//	cameraPos.x += Pspeed * cos(radian.x);
+		//	cameraPos.z += Pspeed * sin(radian.x);
+		//}
+		////左入力
+		//if (input->PushKey(DIK_W)) {
+		//	cameraPos.x -= Pspeed * cos(radian.x);
+		//	cameraPos.z -= Pspeed * sin(radian.x);
+		//}
+		////下入力
+		//if (input->PushKey(DIK_D)) {
+		//	cameraPos.x -= Pspeed * cos(radian.y);
+		//	cameraPos.z -= Pspeed * sin(radian.y);
+		//}
+		////上入力
+		//if (input->PushKey(DIK_A)) {
+		//	cameraPos.x += Pspeed * cos(radian.y);
+		//	cameraPos.z += Pspeed * sin(radian.y);
+		//}
+		////下入力
+		//if (input->PushKey(DIK_SPACE)) {
+		//	cameraPos.y += Pspeed;
+		//}
+		////上入力
+		//if (input->PushKey(DIK_LSHIFT)) {
+		//	cameraPos.y -= Pspeed;
+		//}
 
-		_camera->SetEye(cameraPos);
-		_camera->SetTarget({ cameraPos.x - cosf(radian.x),cameraPos.y + cameraTarget.y ,cameraPos.z - sinf(radian.x) });
+		Vector3 ppos= player->GetPos();
+
+		_camera->SetEye({ ppos.x,ppos.y + 10.0f,ppos.z - 20.0f });
+		_camera->SetTarget(ppos);
 
 		camera = _camera;
 	}
@@ -278,5 +152,4 @@ void Scene1::CameraUpdate(const int _cameraNum, Camera* _camera)
 
 void Scene1::FrameReset()
 {
-	map->FrameReset();
 }

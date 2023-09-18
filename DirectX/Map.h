@@ -1,11 +1,11 @@
 #pragma once
 #include <DirectXMath.h>
-#include "PrimitiveObject3D.h"
-#include "InstanceObject.h"
-#include "Object3d.h"
+#include "Object/3d/PrimitiveObject3D.h"
+#include "Object/3d/InstanceObject.h"
+#include "Object/3d/Object3d.h"
 #include <vector>
-#include "CollisionManager.h"
-#include <Object3d.h>
+#include "Object/3d/collider/CollisionManager.h"
+#include "Object/3d/Object3d.h"
 
 class Map
 {
@@ -223,7 +223,7 @@ private:
 	std::vector<std::vector<std::vector<BOX_INFO>>> boxInfo;
 
 	//マウスのレイ情報
-	Ray mouseLay;
+	Segment mouseLay;
 
 	//現在の指定面
 	XMINT4 pointface;

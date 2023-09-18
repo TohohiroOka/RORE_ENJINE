@@ -1,5 +1,5 @@
 #include "Emitter.h"
-#include "Camera.h"
+#include "Camera/Camera.h"
 
 std::unique_ptr<Emitter> Emitter::Create(const std::string& _name)
 {
