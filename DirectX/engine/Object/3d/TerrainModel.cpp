@@ -5,26 +5,8 @@ using namespace DirectX;
 
 const std::string TerrainModel::baseDirectory = "Resources/HeightMap/";
 
-std::unique_ptr<TerrainModel> TerrainModel::FlatlandModelCreate(const FACE_DIRECTION _direction,
-	const XMFLOAT3& _pos, const float _scale, const std::string& _filename1, const std::string& _filename2)
-{
-	//インスタンスを生成
-	TerrainModel* instance = new TerrainModel();
-	if (instance == nullptr) {
-		return nullptr;
-	}
-
-	//テクスチャ読み込み
-	instance->LoadTexture(_filename1, _filename2);
-
-	//平面の生成
-	instance->FlatlandMap(_direction, _pos, _scale);
-
-	return std::unique_ptr<TerrainModel>(instance);
-}
-
 std::unique_ptr<TerrainModel> TerrainModel::Create(const std::string& _heightmapFilename, const float _heightRate,
-	const FACE_DIRECTION _direction, const XMFLOAT3& _pos, const float _scale, const std::string& _filename1, const std::string& _filename2)
+	const XMFLOAT3& _pos, const XMFLOAT3& _rota, const float _scale, const std::string& _filename1, const std::string& _filename2)
 {
 	//インスタンスを生成
 	TerrainModel* instance = new TerrainModel();
@@ -33,13 +15,13 @@ std::unique_ptr<TerrainModel> TerrainModel::Create(const std::string& _heightmap
 	}
 
 	//地形用テクスチャ読み込み
-	instance->HeightMapLoad(_direction, _heightRate, _pos, _scale, _heightmapFilename);
+	instance->HeightMapLoad(_heightRate, _pos, _rota, _scale, _heightmapFilename);
 
 	//テクスチャ読み込み
 	instance->LoadTexture(_filename1, _filename2);
 
 	//モデル生成
-	instance->CreaetModel(_direction);
+	instance->CreaetModel();
 
 	return std::unique_ptr<TerrainModel>(instance);
 }
@@ -57,70 +39,8 @@ void TerrainModel::Draw(ID3D12GraphicsCommandList* _cmdList)
 	_cmdList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }
 
-bool TerrainModel::FlatlandMap(const FACE_DIRECTION _direction, const XMFLOAT3& _pos, const float _scale)
-{
-	//平面用テクスチャ
-	std::string flatlandFilename = "heightmap0.bmp";
-	texture[TEXTURE::HEIGHT_MAP_TEX] = Texture::Create(baseDirectory + flatlandFilename);
-
-	hmInfo.terrainWidth = 256;
-	hmInfo.terrainHeight = 256;
-
-	size_t resize = hmInfo.terrainWidth * hmInfo.terrainHeight;
-	hmInfo.heightMap.resize(resize);
-
-	//座標移動距離
-	transformPos.x = _pos.x / _scale;
-	transformPos.y = _pos.y / _scale;
-	transformPos.z = _pos.z / _scale;
-
-	// 画像データの読み込み
-	for (int z = 0; z < hmInfo.terrainHeight; z++)
-	{
-		for (int x = 0; x < hmInfo.terrainWidth; x++)
-		{
-			int index = (hmInfo.terrainHeight * z) + x;
-
-			hmInfo.heightMap[index].x = transformPos.x;
-			hmInfo.heightMap[index].y = transformPos.y;
-			hmInfo.heightMap[index].z = transformPos.z;
-
-			if (_direction == FACE_DIRECTION::X_PLUS)
-			{
-				hmInfo.heightMap[index].x += 0.0f;
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += float(x);
-			} else if (_direction == FACE_DIRECTION::X_MINUS) {
-				hmInfo.heightMap[index].x += 0.0f;
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += -float(x);
-			} else if (_direction == FACE_DIRECTION::Y_PLUS) {
-				hmInfo.heightMap[index].x += float(x);
-				hmInfo.heightMap[index].y += 0.0f;
-				hmInfo.heightMap[index].z += float(z);
-			} else if (_direction == FACE_DIRECTION::Y_MINUS) {
-				hmInfo.heightMap[index].x += float(x);
-				hmInfo.heightMap[index].y += 0.0f;
-				hmInfo.heightMap[index].z += -float(z);
-			} else if (_direction == FACE_DIRECTION::Z_PLUS) {
-				hmInfo.heightMap[index].x += -float(x);
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += 0.0f;
-			} else if (_direction == FACE_DIRECTION::Z_MINUS) {
-				hmInfo.heightMap[index].x += float(x);
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += 0.0f;
-			}
-		}
-	}
-
-	CreaetModel(_direction);
-
-	return true;
-}
-
-bool TerrainModel::HeightMapLoad(const FACE_DIRECTION _direction, const float _heightRate,
-	const XMFLOAT3& _pos, const float _scale, const std::string& _filename)
+bool TerrainModel::HeightMapLoad(const float _heightRate,
+	const XMFLOAT3& _pos, const XMFLOAT3& _rota, const float _scale, const std::string& _filename)
 {
 	//名前結合
 	std::string fname = baseDirectory + _filename;
@@ -192,10 +112,21 @@ bool TerrainModel::HeightMapLoad(const FACE_DIRECTION _direction, const float _h
 	//地形をちょうどよくするために割る値
 	float heightFactor = 10.0f;
 
-	//座標移動距離
-	transformPos.x = _pos.x / _scale;
-	transformPos.y = _pos.y / _scale;
-	transformPos.z = _pos.z / _scale;
+	//ワールド行列変換
+	XMMATRIX matWorld = XMMatrixIdentity();
+	XMMATRIX matScale = XMMatrixScaling(_scale, _scale, _scale);
+	matWorld *= matScale;
+
+	XMMATRIX matRot;//角度
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(_rota.z));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(_rota.x));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(_rota.y));
+	matWorld *= matRot;
+
+	XMMATRIX matTrans;//平行方向
+	matTrans = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	matWorld *= matTrans;
 
 	// 画像データの読み込み
 	for (int z = 0; z < hmInfo.terrainHeight; z++)
@@ -203,40 +134,17 @@ bool TerrainModel::HeightMapLoad(const FACE_DIRECTION _direction, const float _h
 		for (int x = 0; x < hmInfo.terrainWidth; x++)
 		{
 			float height = static_cast<float>(bitmapImage[k]);
+			if (height < 15.0f) { height = 0.0f; }
 			height = height / _heightRate;
-
+			//if(height<)
 			int index = (hmInfo.terrainHeight * z) + x;
 
-			hmInfo.heightMap[index].x = transformPos.x;
-			hmInfo.heightMap[index].y = transformPos.y;
-			hmInfo.heightMap[index].z = transformPos.z;
+			XMVECTOR pos = XMVector3Transform({ float(x),float(height) ,float(z) }, matWorld);
 
-			if (_direction == FACE_DIRECTION::X_PLUS)
-			{
-				hmInfo.heightMap[index].x += float(height);
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += float(x);
-			} else if (_direction == FACE_DIRECTION::X_MINUS) {
-				hmInfo.heightMap[index].x += -float(height);
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += -float(x);
-			} else if (_direction == FACE_DIRECTION::Y_PLUS) {
-				hmInfo.heightMap[index].x += float(x);
-				hmInfo.heightMap[index].y += float(height);
-				hmInfo.heightMap[index].z += float(z);
-			} else if (_direction == FACE_DIRECTION::Y_MINUS) {
-				hmInfo.heightMap[index].x += float(x);
-				hmInfo.heightMap[index].y += -float(height);
-				hmInfo.heightMap[index].z += -float(z);
-			} else if (_direction == FACE_DIRECTION::Z_PLUS) {
-				hmInfo.heightMap[index].x += -float(x);
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += float(height);
-			} else if (_direction == FACE_DIRECTION::Z_MINUS) {
-				hmInfo.heightMap[index].x += float(x);
-				hmInfo.heightMap[index].y += float(z);
-				hmInfo.heightMap[index].z += -float(height);
-			}
+			hmInfo.heightMap[index].x += pos.m128_f32[0];
+			hmInfo.heightMap[index].y += pos.m128_f32[1];
+			hmInfo.heightMap[index].z += pos.m128_f32[2];
+
 
 			k += 3;
 		}
@@ -277,18 +185,8 @@ void TerrainModel::LoadTexture(const std::string& _filename1, const std::string&
 	texture[TEXTURE::GRAPHIC_TEX_2] = Texture::Create(filepath);
 }
 
-void TerrainModel::CreaetModel(const FACE_DIRECTION _direction)
+void TerrainModel::CreaetModel()
 {
-	//向き
-	direction = _direction;
-
-	//int windthSize = hmInfo.terrainWidth - 1;
-	//int heightSize = hmInfo.terrainHeight - 1;
-
-	//int surfaceNum = windthSize * heightSize;
-	//vertNum = surfaceNum * 4;
-	//indexNum = surfaceNum * 6;
-
 	int surfaceNum = hmInfo.terrainWidth * hmInfo.terrainHeight;
 	vertNum = surfaceNum;
 	indexNum = surfaceNum * 6;

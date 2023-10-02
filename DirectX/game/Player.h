@@ -27,6 +27,8 @@ public:
 
 	Vector3 GetPos() { return pos; }
 
+	void SetMoveRota(const float _rota) { moveRota = _rota; }
+
 private:
 
 	std::unique_ptr<Model> model = nullptr;
@@ -34,5 +36,6 @@ private:
 
 	Vector3 pos;
 	Vector3 moveVec;
+	float moveRota;
 
 };

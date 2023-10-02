@@ -137,6 +137,30 @@ const Vector3 operator/(const Vector3& v, float s) {
 	return temp /= s;
 }
 
+const bool operator==(const Vector3& a, const Vector3& b) {
+	return (a.x == b.x) * (a.y == b.y) * (a.z == b.z);
+}
+
+const bool operator!=(const Vector3& a, const Vector3& b) {
+	return (a.x != b.x) || (a.y != b.y) || (a.z != b.z);
+}
+
+const bool operator<(const Vector3& a, const Vector3& b) {
+	return (a.x < b.x) && (a.y < b.y) && (a.z < b.z);
+}
+
+const bool operator>(const Vector3& a, const Vector3& b) {
+	return (a.x > b.x) && (a.y >= b.y) && (a.z > b.z);
+}
+
+const bool operator<=(const Vector3& a, const Vector3& b) {
+	return (a.x <= b.x) && (a.y <= b.y) && (a.z <= b.z);
+}
+
+const bool operator>=(const Vector3& a, const Vector3& b) {
+	return (a.x >= b.x) && (a.y >= b.y) && (a.z >= b.z);
+}
+
 //ê¸å`ï‚ä‘
 const Vector3 lerp(const Vector3& start, const Vector3& end, const float time) {
 	return start * (1.0f - time) + end * time;

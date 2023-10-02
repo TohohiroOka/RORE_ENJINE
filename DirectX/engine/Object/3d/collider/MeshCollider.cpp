@@ -11,7 +11,7 @@ const bool operator==(const XMINT3& a, const XMINT3& b) {
 }
 
 const bool operator!=(const XMINT3& a, const XMINT3& b) {
-	return !(a.x == b.x) || !(a.y == b.y) || !(a.z == b.z);
+	return (a.x != b.x) || (a.y != b.y) || (a.z != b.z);
 }
 
 const bool operator<=(const XMFLOAT3& a, const XMFLOAT3& b) {
@@ -28,7 +28,7 @@ void MeshCollider::MinMax(Model* _model)
 	std::vector<Mesh*>::const_iterator it = meshes.cbegin();
 
 	//[0]最大[1]最小
-	XMFLOAT3 minmax[2] = { {0,0,0},{100,100,100} };
+	XMFLOAT3 minmax[2] = { {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	for (; it != meshes.cend(); ++it) {
 		Mesh* mesh = *it;
@@ -63,14 +63,14 @@ void MeshCollider::MinMax(Model* _model)
 		}
 	}
 
-	min = { minmax[1].x,minmax[1].y,minmax[1].z };
-	max = { minmax[0].x,minmax[0].y,minmax[0].z };
+	min = { minmax[1].x,minmax[1].y,minmax[1].z,1.0f };
+	max = { minmax[0].x,minmax[0].y,minmax[0].z ,1.0f };
 }
 
 void MeshCollider::MinMax(const std::vector<Mesh::VERTEX>& _vertices)
 {
 	//[0]最大[1]最小
-	XMFLOAT3 minmax[2] = { {0,0,0},{100,100,100} };
+	XMFLOAT3 minmax[2] = { {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	const std::vector<Mesh::VERTEX> vertices = _vertices;
 	const int size = static_cast<int>(vertices.size());
@@ -197,7 +197,10 @@ void MeshCollider::ConstructTriangles(Model* _model)
 	}
 
 	//八分木用最大最小値
-	MinMax(_model);
+	//MinMax(_model);
+	min = { 0.0f,0.0f,0.0f };
+	max = { 256.0f,256.0f,256.0f };
+
 
 	SetOctreeRange();
 
@@ -244,7 +247,7 @@ void MeshCollider::ConstructTriangles(Model* _model)
 			XMINT3 Octree3 = OctreeSet(vertices[idx2].pos);
 
 			triangle[Octree1.x][Octree1.y][Octree1.z].emplace_back(addTriangle);
-			if (Octree1 != Octree2)
+			if (Octree1 != Octree2 || (Octree1 == Octree2 && Octree3 != Octree2))
 			{
 				triangle[Octree2.x][Octree2.y][Octree2.z].emplace_back(addTriangle);
 			}
@@ -339,9 +342,14 @@ void MeshCollider::Update()
 {
 	matWorld = GetObject3d()->GetMatWorld();
 	invMatWorld = XMMatrixInverse(nullptr, matWorld);
-	if (isInit && !isCreateBuffer)
+	if (isInit)
 	{
 		object->Initialize();
+		isInit = false;
+	}
+	if(object){
+		object->SetWorld(matWorld);
+		object->Update();
 	}
 }
 
@@ -400,19 +408,19 @@ bool MeshCollider::CheckCollisionSegment(const Segment& _ray, float* _distance, 
 	localRay.dir = XMVector3TransformNormal(_ray.dir, invMatWorld);
 	localRay.dir = XMVector3Normalize(localRay.dir);
 
-	XMVECTOR worldmax = XMVector3Transform(max, matWorld);
-	XMVECTOR worldmin = XMVector3Transform(min, matWorld);
+	//XMVECTOR worldmax = XMVector3Transform(max, matWorld);
+	//XMVECTOR worldmin = XMVector3Transform(min, matWorld);
 
-	//範囲探索
-	if ((_ray.start.m128_f32[0] < worldmin.m128_f32[0] || _ray.start.m128_f32[0] > worldmax.m128_f32[0] ||
-		_ray.start.m128_f32[1] < worldmin.m128_f32[1] || _ray.start.m128_f32[1] > worldmax.m128_f32[1] ||
-		_ray.start.m128_f32[2] < worldmin.m128_f32[2] || _ray.start.m128_f32[2] > worldmax.m128_f32[2])&&
-		(_ray.end.m128_f32[0] < worldmin.m128_f32[0] || _ray.end.m128_f32[0] > worldmax.m128_f32[0] ||
-			_ray.end.m128_f32[1] < worldmin.m128_f32[1] || _ray.end.m128_f32[1] > worldmax.m128_f32[1] ||
-			_ray.end.m128_f32[2] < worldmin.m128_f32[2] || _ray.end.m128_f32[2] > worldmax.m128_f32[2]))
-	{
-		return false;
-	}
+	////範囲探索
+	//if ((_ray.start.m128_f32[0] < worldmin.m128_f32[0] || _ray.start.m128_f32[0] > worldmax.m128_f32[0] ||
+	//	_ray.start.m128_f32[1] < worldmin.m128_f32[1] || _ray.start.m128_f32[1] > worldmax.m128_f32[1] ||
+	//	_ray.start.m128_f32[2] < worldmin.m128_f32[2] || _ray.start.m128_f32[2] > worldmax.m128_f32[2])&&
+	//	(_ray.end.m128_f32[0] < worldmin.m128_f32[0] || _ray.end.m128_f32[0] > worldmax.m128_f32[0] ||
+	//		_ray.end.m128_f32[1] < worldmin.m128_f32[1] || _ray.end.m128_f32[1] > worldmax.m128_f32[1] ||
+	//		_ray.end.m128_f32[2] < worldmin.m128_f32[2] || _ray.end.m128_f32[2] > worldmax.m128_f32[2]))
+	//{
+	//	return false;
+	//}
 
 	//プレイヤーの八分木位置
 	const std::array<XMINT3, 2> Octree = {
@@ -420,9 +428,13 @@ bool MeshCollider::CheckCollisionSegment(const Segment& _ray, float* _distance, 
 	OctreeSet({localRay.end.m128_f32[0],localRay.end.m128_f32[1],localRay.end.m128_f32[2]}),
 	};
 	//区分内を捜索
-	for (auto& oct : Octree) {
-		std::vector<Triangle>::const_iterator it = triangle[oct.x][oct.y][oct.z].cbegin();
-		for (; it != triangle[oct.x][oct.y][oct.z].cend(); ++it) {
+
+	const int roopNum = 1 + (Octree[0] != Octree[1]);
+
+	for (int i = 0; i < roopNum; i++)
+	{
+		std::vector<Triangle>::const_iterator it = triangle[Octree[i].x][Octree[i].y][Octree[i].z].cbegin();
+		for (; it != triangle[Octree[i].x][Octree[i].y][Octree[i].z].cend(); ++it) {
 			const Triangle& mesh = *it;
 
 			//判定
@@ -436,8 +448,9 @@ bool MeshCollider::CheckCollisionSegment(const Segment& _ray, float* _distance, 
 				*_distance = XMVector3Dot(sub, _ray.dir).m128_f32[0];
 			}
 
-			if (_inter) {
-				*_inter = tempInter;
+			if (_inter) { 
+				XMMATRIX rot= GetObject3d()->GetMatRot();
+				*_inter = tempInter;//XMVector3Transform(tempInter, rot);
 			}
 
 			return true;

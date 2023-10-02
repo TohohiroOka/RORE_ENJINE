@@ -286,6 +286,8 @@
     <ClCompile Include="engine\Math\Easing\Easing.cpp">
       <Filter>Engine\Math\Easing</Filter>
     </ClCompile>
+    <ClCompile Include="GroundManager.cpp" />
+    <ClCompile Include="Ground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\SpriteVS.hlsl">
@@ -603,6 +605,11 @@
     </ClInclude>
     <ClInclude Include="engine\Math\Easing\Easing.h">
       <Filter>Engine\Math\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="GroundManager.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="GroundiInformation.h">
+      <Filter>ゲームシステム</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -51,6 +51,13 @@ public://メンバ関数
 	/// </summary>
 	void VertexInit();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	void SetWorld(const XMMATRIX& _world) {
+		matWorld =_world;
+	}
+
 protected://メンバ変数
 
 	//パイプライン情報

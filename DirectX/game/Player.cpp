@@ -4,6 +4,7 @@
 #include "Object/3d/collider/SphereCollider.h"
 #include "Object/3d/collider/CollisionManager.h"
 #include "Object/3d/collider/CollisionAttribute.h"
+#include "Math/Vector2.h"
 
 using namespace DirectX;
 
@@ -15,7 +16,7 @@ Player::Player()
 	moveVec = { 0.0f,0.0f,0.0f };
 
 	// コライダーの追加
-	float radius = 1.0f;
+	float radius = 0.2f;
 	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	object->GetCollider()->SetAttribute(COLLISION_ATTR_ALLIES);
 
@@ -38,20 +39,33 @@ void Player::Move()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	if (input->PushKey(DIK_A)) {
-		moveVec.x -= 5.0f;
-	}else if (input->PushKey(DIK_D)) {
-		moveVec.x += 5.0f;
-	}
-	if (input->PushKey(DIK_W)) {
-		moveVec.z += 5.0f;
-	} else if (input->PushKey(DIK_S)) {
-		moveVec.z -= 5.0f;
-	}
+	Vector2 raidan = Vector2(XMConvertToRadians(moveRota), XMConvertToRadians(moveRota + 90));
 
-	if (input->PushKey(DIK_Q)) {
+	//player移動
+	float Pspeed = 5.0f;
+	//右入力
+	if (input->PushKey(DIK_D)) {
+		moveVec.x += Pspeed * cosf(raidan.x);
+		moveVec.z += Pspeed * cosf(raidan.y);
+	}
+	//左入力
+	if (input->PushKey(DIK_A)) {
+		moveVec.x -= Pspeed * cosf(raidan.x);
+		moveVec.z -= Pspeed * cosf(raidan.y);
+	}
+	//下入力
+	if (input->PushKey(DIK_W)) {
+		moveVec.x += Pspeed * cosf(XMConvertToRadians(360.0f - moveRota + 90));
+		moveVec.z += Pspeed * cosf(XMConvertToRadians(360.0f - moveRota));
+	}
+	//上入力
+	if (input->PushKey(DIK_S)) {
+		moveVec.x -= Pspeed * cosf(XMConvertToRadians(360.0f - moveRota + 90));
+		moveVec.z -= Pspeed * cosf(XMConvertToRadians(360.0f - moveRota));
+	}
+	if (input->PushKey(DIK_LSHIFT)) {
 		moveVec.y += 5.0f;
-	} else if (input->PushKey(DIK_Z)) {
+	} else if (input->PushKey(DIK_LCONTROL)) {
 		moveVec.y -= 5.0f;
 	}
 }
@@ -163,7 +177,6 @@ void Player::Collider()
 		// 球の上端から球の下端までのレイキャスト
 		Segment ray;
 		ray.start = sphereCollider->center;
-		ray.start.m128_f32[1] += sphereCollider->GetRadius();
 		ray.end = { pos.x + moveVec.x,pos.y + moveVec.y,pos.z + moveVec.z };
 		Vector3 nMove = moveVec;
 		nMove.normalize();
@@ -175,9 +188,16 @@ void Player::Collider()
 
 		// 接地を維持
 		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.length())) {
-			pos.x += (raycastHit.inter.m128_f32[0] - pos.x) * 0.99f;
-			pos.y += (raycastHit.inter.m128_f32[1] - pos.y) * 0.99f;
-			pos.z += (raycastHit.inter.m128_f32[2] - pos.z) * 0.99f;
+			Vector3 a = { (raycastHit.inter.m128_f32[0] - pos.x) * 0.99f,
+							(raycastHit.inter.m128_f32[1] - pos.y) * 0.99f,
+							(raycastHit.inter.m128_f32[2] - pos.z) * 0.99f };
+			if (abs(a.x) < 0.003f) { a.x = 0.0f; }
+			if (abs(a.y) < 0.003f) { a.y = 0.0f; }
+			if (abs(a.z) < 0.003f) { a.z = 0.0f; }
+
+			pos.x += a.x;
+			pos.y += a.y;
+			pos.z += a.z;
 		} else {
 			pos.x += moveVec.x;
 			pos.y += moveVec.y;

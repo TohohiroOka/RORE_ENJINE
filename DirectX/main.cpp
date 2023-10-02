@@ -19,6 +19,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	MainEngine* engine = new MainEngine();
 	engine->Initialize();
 
+	SYSTEMTIME StartTime;
+	SYSTEMTIME NowTime;
+	__int64 m_ProgressTime;
+
 	while (true)
 	{
 		if (engine->Update()|| winApp->Update()) { break; }
@@ -26,6 +30,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		//フレームレート管理
 		engine->FrameControl();
+
+		while (1) {
+			// 現在時刻
+			GetLocalTime(&NowTime);
+			// 変換
+			FILETIME ftime1;
+			FILETIME ftime2;
+			SystemTimeToFileTime(&StartTime, &ftime1);
+			SystemTimeToFileTime(&NowTime, &ftime2);
+			// int64にキャスト
+			__int64* nTime1 = (__int64*)&ftime1;
+			__int64* nTime2 = (__int64*)&ftime2;
+			// 経過秒
+			m_ProgressTime = (*nTime2 - *nTime1);
+			if (m_ProgressTime >= __int64(100000)) {
+				break;
+			}
+		}
+
 	}
 
 	//登録解除

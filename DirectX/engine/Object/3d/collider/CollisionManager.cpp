@@ -103,7 +103,7 @@ bool CollisionManager::Raycast(const Segment& _ray, const unsigned short& _attri
 			float tempDistance;
 			DirectX::XMVECTOR tempInter;
 			if (!meshCollider->CheckCollisionSegment(_ray, &tempDistance, &tempInter)) continue;
-			if (tempDistance >= distance) continue;
+			if (tempDistance > distance) continue;
 
 			result = true;
 			distance = tempDistance;

@@ -59,6 +59,12 @@ protected:
 
 	// コライダー
 	BaseCollider* collider = nullptr;
+	// ローカル座標変換行列
+	XMMATRIX matTrans = {};
+	// サイズ変換行列
+	XMMATRIX matScale = {};
+	// 角度変換行列
+	XMMATRIX matRot = {};
 	// ローカルワールド変換行列
 	XMMATRIX matWorld = {};
 	// ローカルスケール
@@ -87,6 +93,7 @@ public:
 	const XMFLOAT3& GetRotation() { return rotation; }
 	const XMFLOAT3& GetScale() { return scale; }
 	BaseCollider* GetCollider() { return collider; }
+	const XMMATRIX& GetMatRot() { return matRot; }
 	const XMMATRIX& GetMatWorld() { return matWorld; }
 	const XMFLOAT3 GetWorldPosition();
 	bool GetBloom() { return isBloom; }

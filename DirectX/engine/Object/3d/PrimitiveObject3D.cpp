@@ -50,10 +50,6 @@ void PrimitiveObject3D::Initialize()
 
 void PrimitiveObject3D::Update()
 {
-	assert(camera);
-
-	const XMMATRIX& matViewProjection = camera->GetView() * camera->GetProjection();
-
 	//定数バッファにデータを転送
 	CONST_BUFFER_DATA* constMap = nullptr;
 	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
@@ -62,9 +58,9 @@ void PrimitiveObject3D::Update()
 		constMap->matWorld = matWorld;
 		if (camera != nullptr)
 		{
-			constMap->viewproj = matViewProjection;
+			constMap->viewproj = camera->GetView() * camera->GetProjection();
 		} else {
-			constMap->viewproj = matViewProjection;
+			constMap->viewproj = XMMatrixIdentity();
 		}
 		constBuffB0->Unmap(0, nullptr);
 	}

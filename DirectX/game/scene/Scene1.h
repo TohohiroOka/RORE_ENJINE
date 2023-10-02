@@ -1,8 +1,9 @@
 #pragma once
 #include "Scene/InterfaceScene.h"
 #include "Math/Vector3.h"
-#include "Object/3d/HeightMap.h"
+#include "GroundManager.h"
 #include "Player.h"
+
 
 class Scene1 : public InterfaceScene
 {
@@ -66,13 +67,18 @@ private:
 	//カメラ座標
 	XMFLOAT3 cameraTarget;
 
+	//ターゲット角度
+	XMFLOAT3 cameraRota;
+
 	std::unique_ptr<Sprite> sprite;
 
-	//地形情報
-	std::unique_ptr<TerrainModel> m_model;
-	//描画設定
-	std::unique_ptr<HeightMap> object;
+	std::unique_ptr<Model> model;
 
+	std::unique_ptr<Object3d> obj;
+
+	//地形
+	std::unique_ptr<GroundManager> object;
+	
 	std::unique_ptr<Player> player;
 
 };
