@@ -38,4 +38,8 @@ private:
 	Vector3 moveVec;
 	float moveRota;
 
+	bool onGround = true;
+	// 落下ベクトル
+	DirectX::XMVECTOR fallV;
+
 };

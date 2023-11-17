@@ -10,13 +10,13 @@ using namespace DirectX;
 
 Player::Player()
 {
-	model = Model::CreateFromOBJ("player");
+	model = Model::CreateFromOBJ("NormalCube");
 	object = Object3d::Create(model.get());
-	pos = { 0.0f,0.0f,0.0f };
+	pos = { 100.0f,200.0f,100.0f };
 	moveVec = { 0.0f,0.0f,0.0f };
 
 	// コライダーの追加
-	float radius = 0.2f;
+	float radius = 0.6f;
 	object->SetCollider(new SphereCollider(XMVECTOR({ 0,radius,0,0 }), radius));
 	object->GetCollider()->SetAttribute(COLLISION_ATTR_ALLIES);
 
@@ -63,10 +63,22 @@ void Player::Move()
 		moveVec.x -= Pspeed * cosf(XMConvertToRadians(360.0f - moveRota + 90));
 		moveVec.z -= Pspeed * cosf(XMConvertToRadians(360.0f - moveRota));
 	}
-	if (input->PushKey(DIK_LSHIFT)) {
-		moveVec.y += 5.0f;
-	} else if (input->PushKey(DIK_LCONTROL)) {
-		moveVec.y -= 5.0f;
+
+	// 落下処理
+	if (!onGround) {
+		// 下向き加速度
+		const float fallAcc = -0.05f;
+		const float fallVYMin = -5.0f;
+		// 加速
+		fallV.m128_f32[1] = max(fallV.m128_f32[1] + fallAcc, fallVYMin);
+		// 移動
+		moveVec.y += fallV.m128_f32[1];
+	}
+	// ジャンプ操作
+	else if (input->TriggerKey(DIK_SPACE)) {
+		onGround = false;
+		const float jumpVYFist = 2.0f;
+		fallV = { 0, jumpVYFist, 0, 0 };
 	}
 }
 
@@ -113,103 +125,138 @@ void Player::Collider()
 	pos.z += callback.move.m128_f32[2];
 
 	{
-		//	// 球の上端から球の下端までのレイキャスト
-		//	Ray ray;
-		//	ray.start = sphereCollider->center;
-		//	ray.start.m128_f32[1] += sphereCollider->GetRadius();
-		//	ray.dir = { 0.0f,-1.0f,0.0f,0.0f };
-		//	RAYCAST_HIT raycastHit;
-
-		//	// スムーズに坂を下る為の吸着距離
-		//	const float adsDistance = 1.0f;
-
-		//	//下の判定
-		//	{
-		//		// 接地を維持
-		//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance)) {
-		//			float a = (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
-		//			position.y -= a;
-		//		}
-		//	}
-		//	//左の判定
-		//	{
-		//		ray.dir = { -1.0f,0.0f,0.0f,0.0f };
-		//		// 接地を維持
-		//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
-		//		{
-		//			float a = (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
-		//			position.x -= a;
-		//		}
-		//	}
-		//	//右の判定
-		//	{
-		//		ray.dir = { 1.0f,0.0f,0.0f,0.0f };
-		//		// 接地を維持
-		//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
-		//		{
-		//			float a = (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
-		//			position.x += a;
-		//		}
-		//	}
-		//	//前の判定
-		//	{
-		//		ray.dir = { 0.0f,0.0f,-1.0f,0.0f };
-		//		// 接地を維持
-		//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
-		//		{
-		//			float a = (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
-		//			position.z -= a;
-		//		}
-		//	}
-		//	//後の判定
-		//	{
-		//		ray.dir = { 0.0f,0.0f,1.0f,0.0f };
-		//		// 接地を維持
-		//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance))
-		//		{
-		//			float a = (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
-		//			position.z += a;
-		//		}
-		//	}
-	}
-
-	{
 		// 球の上端から球の下端までのレイキャスト
 		Segment ray;
 		ray.start = sphereCollider->center;
-		ray.end = { pos.x + moveVec.x,pos.y + moveVec.y,pos.z + moveVec.z };
-		Vector3 nMove = moveVec;
-		nMove.normalize();
-		ray.dir = { nMove.x, nMove.y,nMove.z,0.0f };
+		ray.start.m128_f32[1] += sphereCollider->GetRadius();
+		ray.dir = { 0.0f,-1.0f,0.0f,0.0f };
 		RAYCAST_HIT raycastHit;
 
 		// スムーズに坂を下る為の吸着距離
 		const float adsDistance = 1.0f;
 
-		// 接地を維持
-		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.length())) {
-			Vector3 a = { (raycastHit.inter.m128_f32[0] - pos.x) * 0.99f,
-							(raycastHit.inter.m128_f32[1] - pos.y) * 0.99f,
-							(raycastHit.inter.m128_f32[2] - pos.z) * 0.99f };
-			if (abs(a.x) < 0.003f) { a.x = 0.0f; }
-			if (abs(a.y) < 0.003f) { a.y = 0.0f; }
-			if (abs(a.z) < 0.003f) { a.z = 0.0f; }
+		//下の判定
+		{
+			// 接地を維持
+			if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.length())) {
+				float a = (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
+				pos.y -= a;
+				moveVec.y = 0;
+				fallV = {};
+				onGround = true;
 
-			pos.x += a.x;
-			pos.y += a.y;
-			pos.z += a.z;
-		} else {
-			pos.x += moveVec.x;
-			pos.y += moveVec.y;
-			pos.z += moveVec.z;
+			}
+			// 地面がないので落下
+			else {
+				onGround = false;
+				pos.y += moveVec.y;
+			}
+
 		}
-
-		moveVec = { 0.0f,0.0f,0.0f };
-
-		object->SetPosition(pos);
+		//左の判定
+		{
+			ray.dir = { -1.0f,0.0f,0.0f,0.0f };
+			// 接地を維持
+			if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.x + adsDistance))
+			{
+				float a = (raycastHit.distance - moveVec.x);
+				pos.x -= a;
+				moveVec.x = 0;
+			}
+		}
+		//右の判定
+		{
+			ray.dir = { 1.0f,0.0f,0.0f,0.0f };
+			// 接地を維持
+			if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.x + adsDistance))
+			{
+				float a = (raycastHit.distance - moveVec.x);
+				pos.x += a;
+				moveVec.x = 0;
+			}
+		}
+		//前の判定
+		{
+			ray.dir = { 0.0f,0.0f,-1.0f,0.0f };
+			// 接地を維持
+			if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.z + adsDistance))
+			{
+				float a = (raycastHit.distance - moveVec.z);
+				pos.z -= a;
+				moveVec.z = 0;
+			}
+		}
+		//後の判定
+		{
+			ray.dir = { 0.0f,0.0f,1.0f,0.0f };
+			// 接地を維持
+			if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.z + adsDistance))
+			{
+				float a = (raycastHit.distance - moveVec.z);
+				pos.z += a;
+				moveVec.z = 0;
+			}
+		}
 	}
 
-	//position.x += moveVec[2].x;
-	//position.y += moveVec[2].y;
-	//position.z += moveVec[2].z;
+	{
+	//	// 球の上端から球の下端までのレイキャスト
+	//	Segment ray;
+	//	ray.start = sphereCollider->center;
+	//	ray.end = { pos.x + moveVec.x,pos.y + moveVec.y,pos.z + moveVec.z };
+	//	Vector3 nMove = moveVec;
+	//	nMove.normalize();
+	//	ray.dir = { nMove.x, nMove.y,nMove.z,0.0f };
+	//	RAYCAST_HIT raycastHit;
+
+	//	// スムーズに坂を下る為の吸着距離
+	//	const float adsDistance = 0.2f;
+
+	//	//// 接地を維持
+	//	//if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.length())) {
+	//	//	Vector3 a = { (raycastHit.inter.m128_f32[0] - pos.x) * 0.99f,
+	//	//					(raycastHit.inter.m128_f32[1] - pos.y) * 0.99f,
+	//	//					(raycastHit.inter.m128_f32[2] - pos.z) * 0.99f };
+	//	//	if (abs(a.x) < 0.003f) { a.x = 0.0f; }
+	//	//	if (abs(a.y) < 0.003f) { a.y = 0.0f; }
+	//	//	if (abs(a.z) < 0.003f) { a.z = 0.0f; }
+
+	//	//	pos.x += a.x;
+	//	//	pos.y += a.y;
+	//	//	pos.z += a.z;
+	//	//}
+
+	//	// 球の上端から球の下端までのレイキャスト
+	//	ray.start = { pos.x,pos.y,pos.z };
+	//	ray.end = { pos.x,pos.y + moveVec.y,pos.z };
+	//	ray.dir = { 0,-1,0,0 };
+	//	raycastHit = {};
+	//	if (onGround) {
+	//		// スムーズに坂を下る為の吸着距離
+	//		const float adsDistance = 0.2f;
+	//		// 接地を維持
+	//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.y + adsDistance)) {
+	//			onGround = true;
+	//			pos.y += (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
+	//			moveVec.y = 0;
+	//		}
+	//	}
+	//	// 落下状態
+	//	else if (fallV.m128_f32[1] <= 0.0f) {
+	//		if (CollisionManager::GetInstance()->Raycast(ray, COLLISION_ATTR_LANDSHAPE, &raycastHit, moveVec.y)) {
+	//			// 着地
+	//			onGround = true;
+	//			pos.y += (raycastHit.distance - moveVec.y);
+	//			moveVec.y = 0;
+	//		}else{
+	//			pos.y += moveVec.y;
+	//		}
+	//	}
+	}
+
+	pos.x += moveVec.x;
+	pos.z += moveVec.z;
+	object->SetPosition(pos);
+
+	moveVec={};
 }

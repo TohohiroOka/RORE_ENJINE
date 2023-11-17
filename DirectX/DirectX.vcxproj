@@ -152,10 +152,9 @@
     <ClCompile Include="engine\Texture\DescriptorHeapManager.cpp" />
     <ClCompile Include="engine\Texture\Texture.cpp" />
     <ClCompile Include="engine\WindowApp.cpp" />
+    <ClCompile Include="game\Field.cpp" />
     <ClCompile Include="game\Player.cpp" />
     <ClCompile Include="game\scene\Scene1.cpp" />
-    <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="GroundManager.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -373,12 +372,10 @@
     <ClInclude Include="engine\Texture\DescriptorHeapManager.h" />
     <ClInclude Include="engine\Texture\Texture.h" />
     <ClInclude Include="engine\WindowApp.h" />
+    <ClInclude Include="game\Field.h" />
     <ClInclude Include="game\GameHelper.h" />
     <ClInclude Include="game\Player.h" />
     <ClInclude Include="game\scene\Scene1.h" />
-    <ClInclude Include="Ground.h" />
-    <ClInclude Include="GroundiInformation.h" />
-    <ClInclude Include="GroundManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="engine\external\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

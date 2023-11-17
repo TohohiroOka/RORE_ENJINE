@@ -1,8 +1,8 @@
 #pragma once
 #include "Scene/InterfaceScene.h"
 #include "Math/Vector3.h"
-#include "GroundManager.h"
 #include "Player.h"
+#include "Field.h"
 
 
 class Scene1 : public InterfaceScene
@@ -72,13 +72,8 @@ private:
 
 	std::unique_ptr<Sprite> sprite;
 
-	std::unique_ptr<Model> model;
+	std::shared_ptr<Player> player;
 
-	std::unique_ptr<Object3d> obj;
-
-	//ínå`
-	std::unique_ptr<GroundManager> object;
-	
-	std::unique_ptr<Player> player;
+	std::unique_ptr<Field> field;
 
 };

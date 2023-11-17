@@ -13,42 +13,34 @@ const std::array<XMFLOAT4, 2> COLOR = { XMFLOAT4{ 0.0f,0.0f,0.8f,1.0f } ,{ 0.8f,
 void Scene1::Initialize()
 {
 	camera = nullptr;
-
-	Sprite::LoadTexture("amm","Resources/amm.jpg");
+	
+	Sprite::LoadTexture("amm", "Resources/amm.jpg");
 	sprite = Sprite::Create("amm");
 	sprite->SetTexSize({ 1059.0f,1500.0f });
 	sprite->SetSize({ 1059.0f / 5.0f,1500.0f / 5.0f });
 	sprite->Update();
 
-	Ground::StaticInitialize();
-
-	object.reset(new GroundManager());
-
 	player = std::make_unique<Player>();
 
-	model=Model::CreateFromOBJ("NormalCube");
-	obj = Object3d::Create(model.get());
-	obj->SetScale({ 5.0f,5.0f, 5.0f });
+	field = std::make_unique<Field>();
 }
 
 void Scene1::Update()
 {
 	DirectInput* input = DirectInput::GetInstance();
 
-	obj->Update();
 	player->Update();
-	object->Update();
+
+	field->Update();
 }
 
 void Scene1::Draw(const int _cameraNum)
 {
-	obj->Draw();
-
-	object->Draw();
-
-	//object->ColliderDraw();
+	//gobject->ColliderDraw();
 
 	player->Draw();
+
+	field->Draw();
 }
 
 void Scene1::NonPostEffectDraw(const int _cameraNum)
@@ -110,8 +102,9 @@ void Scene1::CameraUpdate(const int _cameraNum, Camera* _camera)
 
 		Vector3 ppos= player->GetPos();
 
-		_camera->SetEye({ ppos.x + sinf(radian2.x) * 10.0f,ppos.y + sinf(radian2.y) * 10.0f,ppos.z + cosf(radian2.x) * 10.0f });
-		_camera->SetTarget({ ppos.x + sinf(radian.x) * 10.0f,ppos.y + sinf(radian.y) * 10.0f,ppos.z + cosf(radian.x) * 10.0f });
+		const float dist = 15.0f;
+		_camera->SetEye({ ppos.x + sinf(radian2.x) * dist,ppos.y + sinf(radian2.y) * dist,ppos.z + cosf(radian2.x) * dist });
+		_camera->SetTarget({ ppos.x + sinf(radian.x) * dist,ppos.y + sinf(radian.y) * dist,ppos.z + cosf(radian.x) * dist });
 
 		player->SetMoveRota(cameraRota.x);
 
